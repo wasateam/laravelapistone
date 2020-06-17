@@ -81,7 +81,11 @@ class StorageHelper
 
   public static function get_signed_url_by_link($link, $with_parent = false)
   {
-    $info = self::get_signed_url_info_by_store_data($link, $with_parent);
+    try {
+      $info = self::get_signed_url_info_by_store_data($link, $with_parent);
+    } catch (\Throwable $th) {
+      return null;
+    }
     if ($with_parent) {
       $value = self::get_signed_url($info->repo, $info->name, $info->type, $info->parent, $info->parent_id);
     } else {
@@ -92,6 +96,9 @@ class StorageHelper
 
   public static function get_store_data_by_url($url, $with_parent = false)
   {
+    if (!$url) {
+      return null;
+    }
     $parse_url = parse_url($url);
     $arr       = explode('/', $parse_url['path']);
     if ($with_parent) {

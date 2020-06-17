@@ -1,5 +1,6 @@
 {
     "name": "wasateam/laravelapistone",
+    "description": "",
     "authors": [
         {
             "name": "davidturtle",
@@ -8,7 +9,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Wasateam\\Laravelapistone\\": "packages/wasateam/laravelapistone/src"
+            "Wasateam\\Laravelapistone\\": "src"
         }
     },
     "minimum-stability": "dev",

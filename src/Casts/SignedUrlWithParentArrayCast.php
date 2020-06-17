@@ -1,5 +1,5 @@
 <?php
-namespace App\Casts;
+namespace Wasateam\Laravelapistone\Casts;
 
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;

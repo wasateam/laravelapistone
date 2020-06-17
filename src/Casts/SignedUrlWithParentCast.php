@@ -1,8 +1,9 @@
 <?php
-namespace App\Casts;
 
-use Wasateam\Laravelapistone\Helpers\StorageHelper;
+namespace Wasateam\Laravelapistone\Casts;
+
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
 class SignedUrlWithParentCast implements CastsAttributes
 {

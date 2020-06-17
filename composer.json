@@ -1,0 +1,16 @@
+{
+    "name": "wasateam/laravelapistone",
+    "authors": [
+        {
+            "name": "davidturtle",
+            "email": "davidturtle0313@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Wasateam\\Laravelapistone\\": "packages/wasateam/laravelapistone/src"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {}
+}

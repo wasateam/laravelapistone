@@ -4,12 +4,12 @@ namespace Wasateam\Laravelapistone\Auth;
 
 use App\Http\Controllers\Controller;
 use App\User;
-use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Validator;
+use Wasateam\Laravelapistone\Helpers\AuthHelper;
 
 class AuthController extends Controller
 {
@@ -48,16 +48,7 @@ class AuthController extends Controller
     $user->save();
     return (new $setting->resource($user));
   }
-  /**
-   * Login user and create token
-   *
-   * @param  [string] email
-   * @param  [string] password
-   * @param  [boolean] remember_me
-   * @return [string] access_token
-   * @return [string] token_type
-   * @return [string] expires_at
-   */
+
   public function signin(Request $request)
   {
     $setting = AuthHelper::getSetting($this);
@@ -92,19 +83,29 @@ class AuthController extends Controller
     ], 200);
   }
 
-  /**
-   * Get the authenticated User
-   *
-   * @return [json] user object
-   */
   public function user()
   {
-    $user = Auth::user();
+    $setting = AuthHelper::getSetting($this);
+    $user    = Auth::user();
     if (!$user) {
       return response()->json([
         'message' => 'cannot find user.',
       ], 401);
     }
     return (new $setting->resource($user));
+  }
+
+  public function signout(Request $request)
+  {
+    try {
+      $request->user()->token()->revoke();
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'signout fail.',
+      ]);
+    }
+    return response()->json([
+      'message' => 'signout successed.',
+    ]);
   }
 }

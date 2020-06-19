@@ -17,6 +17,7 @@ class AuthRoutesHelper
         "middleware" => ["auth:{$guard}", "client:{$name}"],
       ], function () use ($controller_name, $guard) {
         Route::get("user", "{$controller_name}@user");
+        Route::post('signout', "{$controller_name}@signout");
       });
     });
   }

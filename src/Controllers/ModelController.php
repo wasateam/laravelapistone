@@ -21,6 +21,7 @@ class ModelController extends Controller
     $snap = ModelHelper::indexGetSnap($setting, $request, $id);
 
     // Collection
+    return $snap->get();
     $collection = ModelHelper::indexGetPaginate($snap, $request);
     try {
     } catch (\Throwable $th) {

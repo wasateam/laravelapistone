@@ -114,7 +114,7 @@ class ModelHelper
         foreach ($search_field_value as $search_field_item) {
           $searchQuerys[] = [$search_field_item, 'LIKE', "%{$search}%"];
         }
-        $snap = $snap->with($search_field_key)->whereHas($search_field_key, function ($query) use ($searchQuerys) {
+        $snap = $snap->with($search_field_key)->orWhereHas($search_field_key, function ($query) use ($searchQuerys) {
           $query->where($searchQuerys);
         });
       }

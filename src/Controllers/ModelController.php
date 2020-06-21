@@ -21,9 +21,8 @@ class ModelController extends Controller
     $snap = ModelHelper::indexGetSnap($setting, $request, $id);
 
     // Collection
-    return $snap->get();
-    $collection = ModelHelper::indexGetPaginate($snap, $request);
     try {
+      $collection = ModelHelper::indexGetPaginate($snap, $request);
     } catch (\Throwable $th) {
       return response()->json([
         'message' => 'get index error.',

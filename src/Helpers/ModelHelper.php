@@ -2,9 +2,9 @@
 
 namespace Wasateam\Laravelapistone\Helpers;
 
+use App;
 use Auth;
 use Exception;
-use App;
 
 class ModelHelper
 {
@@ -100,22 +100,31 @@ class ModelHelper
 
     // Search
     if ($search && count($setting->search_fields)) {
+      $key_count = 0;
       foreach ($setting->search_fields as $search_field_key => $search_field_item) {
-        if ($search_field_key == 0) {
-          $snap = $snap->Where($search_field_item, 'LIKE', "%{$search}%");
+        if ($key_count == 0) {
+          $snap = $snap->where($search_field_item, 'LIKE', "%{$search}%");
+          $key_count++;
         } else {
           $snap = $snap->orWhere($search_field_item, 'LIKE', "%{$search}%");
+          $key_count++;
         }
       }
     }
     if ($search && count($setting->search_relationship_fields)) {
       foreach ($setting->search_relationship_fields as $search_field_key => $search_field_value) {
-        $searchQuerys = [];
+        $search_querys = [];
         foreach ($search_field_value as $search_field_item) {
-          $searchQuerys[] = [$search_field_item, 'LIKE', "%{$search}%"];
+          $search_querys[] = [$search_field_item, 'LIKE', "%{$search}%"];
         }
-        $snap = $snap->with($search_field_key)->orWhereHas($search_field_key, function ($query) use ($searchQuerys) {
-          $query->where($searchQuerys);
+        $snap = $snap->with($search_field_key)->orWhereHas($search_field_key, function ($query) use ($search_querys) {
+          foreach ($search_querys as $search_query_key => $search_query) {
+            if ($search_query_key == 0) {
+              $query->where([$search_query]);
+            } else {
+              $query->orWhere([$search_query]);
+            }
+          }
         });
       }
     }
@@ -274,7 +283,7 @@ class ModelHelper
       return $setting->resource::collection($collection);
     }
   }
-  
+
   public static function getMainLocale($data_locales, $attribute_name)
   {
     $main_locale_code = App::getLocale();

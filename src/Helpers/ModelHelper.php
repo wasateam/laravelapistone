@@ -67,7 +67,7 @@ class ModelHelper
       foreach ($setting->filter_belongs_to_many as $filter_belongs_to_many_item) {
         if ($request->filled($filter_belongs_to_many_item)) {
           $item_arr = array_map('intval', explode(',', $request->{$filter_belongs_to_many_item}));
-          $snap     = $snap->with($filter_belongs_to_many_item)->whereHas($filter_belongs_to_many_item, function ($query) use ($item_arr) {
+          $snap     = $snap->with($filter_belongs_to_many_item)->orWhereHas($filter_belongs_to_many_item, function ($query) use ($item_arr) {
             foreach ($item_arr as $item_key => $item) {
               if ($item_key == 0) {
                 $query = $query->WhereIn('id', $item_arr);
@@ -84,7 +84,7 @@ class ModelHelper
       foreach ($setting->filter_has_many as $filter_has_many_item) {
         if ($request->filled($filter_has_many_item)) {
           $item_arr = array_map('intval', explode(',', $request->{$filter_has_many_item}));
-          $snap     = $snap->with($filter_has_many_item)->whereHas($filter_has_many_item, function ($query) use ($item_arr) {
+          $snap     = $snap->with($filter_has_many_item)->orWhereHas($filter_has_many_item, function ($query) use ($item_arr) {
             foreach ($item_arr as $item_key => $item) {
               if ($item_key == 0) {
                 $query = $query->WhereIn('id', $item_arr);

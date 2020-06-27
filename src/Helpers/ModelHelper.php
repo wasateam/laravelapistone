@@ -59,7 +59,8 @@ class ModelHelper
     if (($request != null) && count($setting->filter_belongs_to)) {
       foreach ($setting->filter_belongs_to as $filter_belongs_to_item) {
         if ($request->filled($filter_belongs_to_item)) {
-          $snap = $snap->where("{$filter_belongs_to_item}_id", $request->{$filter_belongs_to_item});
+          $item_arr = array_map('intval', explode(',', $request->{$filter_belongs_to_item}));
+          $snap     = $snap->orWhereIn("{$filter_belongs_to_item}_id", $item_arr);
         }
       }
     }
@@ -70,7 +71,7 @@ class ModelHelper
           $snap     = $snap->with($filter_belongs_to_many_item)->orWhereHas($filter_belongs_to_many_item, function ($query) use ($item_arr) {
             foreach ($item_arr as $item_key => $item) {
               if ($item_key == 0) {
-                $query = $query->WhereIn('id', $item_arr);
+                $query = $query->orWhereIn('id', $item_arr);
               } else {
                 $query = $query->orWhereIn('id', $item_arr);
               }
@@ -130,10 +131,9 @@ class ModelHelper
     }
 
     // Parent
-    if ($setting->parent_id_field) {
+    if ($setting->parent_id_field && $parent_id) {
       $snap = $snap->where($setting->parent_id_field, $parent_id);
     }
-
     return $snap;
   }
 
@@ -219,17 +219,21 @@ class ModelHelper
           $model_locale->locale_id                = $locale->id;
           $model_locale->{$setting->name . '_id'} = $model->id;
         }
+        $has_value = 0;
         foreach ($setting->locale_fields as $locale_field) {
           if (isset($request->locales[$locale->code][$locale_field])) {
             $model_locale->{$locale_field} = $request->locales[$locale->code][$locale_field];
+            $has_value                     = 1;
           }
         }
-        $model_locale = self::setUserRecord($model_locale, $setting);
-        try {
-          //code...
-          $model_locale->save();
-        } catch (\Throwable $th) {
-          throw $th;
+        if ($has_value) {
+          $model_locale = self::setUserRecord($model_locale, $setting);
+          try {
+            //code...
+            $model_locale->save();
+          } catch (\Throwable $th) {
+            throw $th;
+          }
         }
       }
     }

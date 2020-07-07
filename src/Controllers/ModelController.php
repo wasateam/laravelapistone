@@ -3,9 +3,9 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
-use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Illuminate\Http\Request;
 use Validator;
+use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 class ModelController extends Controller
 {
@@ -22,7 +22,7 @@ class ModelController extends Controller
 
     // Collection
     try {
-      $collection = ModelHelper::indexGetPaginate($snap, $request);
+      $collection = ModelHelper::indexGetPaginate($setting, $snap, $request);
     } catch (\Throwable $th) {
       return response()->json([
         'message' => 'get index error.',

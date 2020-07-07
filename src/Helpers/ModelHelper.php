@@ -14,6 +14,7 @@ class ModelHelper
     $setting->model                      = $controller->model;
     $setting->name                       = $controller->name;
     $setting->resource                   = $controller->resource;
+    $setting->paginate                   = isset($controller->paginate) ? $controller->paginate : 15;
     $setting->resource_for_collection    = isset($controller->resource_for_collection) ? $controller->resource_for_collection : null;
     $setting->belongs_to                 = isset($controller->belongs_to) ? $controller->belongs_to : [];
     $setting->has_many                   = isset($controller->has_many) ? $controller->has_many : [];
@@ -138,10 +139,14 @@ class ModelHelper
     return $snap;
   }
 
-  public static function indexGetPaginate($snap, $request)
+  public static function indexGetPaginate($setting, $snap, $request)
   {
     $page = ($request != null) && $request->filled('page') ? $request->page : 1;
-    return $snap->paginate(15, ['*'], 'page', $page);
+    if (!$setting->paginate) {
+      return $snap->get();
+    } else {
+      return $snap->paginate($setting->paginate, ['*'], 'page', $page);
+    }
   }
 
   public static function storeDefaultValueSet($model, $setting)

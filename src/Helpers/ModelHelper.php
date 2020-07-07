@@ -48,12 +48,13 @@ class ModelHelper
   public static function indexGetSnap($setting, $request, $parent_id)
   {
     // Variable
-    $order_by  = ($request != null) && $request->filled('order_by') ? $request->order_by : 'created_at';
+    $order_by  = ($request != null) && $request->filled('order_by') ? $request->order_by : 'id';
     $order_way = ($request != null) && $request->filled('order_way') ? $request->order_way : 'asc';
     $search    = ($request != null) && $request->filled('search') ? $request->search : null;
 
     // Snap
     $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many)->orderBy($order_by, $order_way)->where($setting->custom_get_conditions);
+    // $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many)->orderByRaw("-{$oder_by} {$order_way}")->where($setting->custom_get_conditions);
 
     // Filter
     if (($request != null) && count($setting->filter_belongs_to)) {

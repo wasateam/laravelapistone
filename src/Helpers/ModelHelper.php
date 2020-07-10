@@ -20,7 +20,7 @@ class ModelHelper
 
     // Collection
     try {
-      $collection = self::indexGetPaginate($snap, $request);
+      $collection = self::indexGetPaginate($setting, $snap, $request);
     } catch (\Throwable $th) {
       return response()->json([
         'message' => 'get index error.',

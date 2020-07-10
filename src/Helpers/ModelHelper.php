@@ -5,9 +5,107 @@ namespace Wasateam\Laravelapistone\Helpers;
 use App;
 use Auth;
 use Exception;
+use Illuminate\Http\Request;
+use Validator;
 
 class ModelHelper
 {
+  public static function ws_IndexHandler($controller, $request, $id = null)
+  {
+    // Setting
+    $setting = self::getSetting($controller);
+
+    // Snap
+    $snap = self::indexGetSnap($setting, $request, $id);
+
+    // Collection
+    try {
+      $collection = self::indexGetPaginate($snap, $request);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'get index error.',
+      ]);
+    }
+
+    // Return Result
+    return self::indexGetResourceCollection($collection, $setting);
+  }
+
+  public static function ws_StoreHandler($controller, $request, $id = null)
+  {
+    // Setting
+    $setting = self::getSetting($controller);
+
+    // Validation
+    $rules     = self::getValidatorRules($setting, 'store');
+    $validator = Validator::make($request->all(), $rules);
+    if ($validator->fails()) {
+      return response()->json([
+        'message' => $validator->messages(),
+      ], 400);
+    }
+
+    // New Model
+    $model = new $setting->model;
+
+    // Default Value
+    $model = self::storeDefaultValueSet($model, $setting);
+
+    // Input Value
+    $model = self::setInputFields($model, $setting, $request);
+
+    // User Updated Record
+    $model = self::setUserRecord($model, $setting);
+
+    // Parent
+    try {
+      $model = self::storeParentId($model, $setting, $id);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'store parent id fail.',
+      ], 400);
+    }
+
+    // Save
+    $model->save();
+    try {
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'data store fail.',
+      ], 400);
+    }
+
+    // Belongs To Value
+    $model = self::setBelongsTo($model, $setting, $request);
+
+    // Belongs To Many Value
+    $model = self::setBelongsToMany($model, $setting, $request);
+
+    // Locale Set
+    try {
+      self::setLocale($model, $setting, $request);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'locales data store fail.',
+      ], 400);
+    }
+
+    if (count($setting->child_models)) {
+      foreach ($setting->child_models as $child_model_key => $child_model) {
+        error_log($child_model_key);
+        if ($request->filled($child_model_key)) {
+          error_log('aa');
+          foreach ($request->$child_model_key as $child_model_request) {
+            $child_model_request = new Request($child_model_request);
+            ModelHelper::ws_StoreHandler(new $child_model, $child_model_request, $model->id);
+          }
+        }
+      }
+    }
+
+    return new $setting->resource($model);
+  }
+
   public static function getSetting($controller)
   {
     $setting                             = collect();
@@ -16,6 +114,7 @@ class ModelHelper
     $setting->resource                   = $controller->resource;
     $setting->paginate                   = isset($controller->paginate) ? $controller->paginate : 15;
     $setting->resource_for_collection    = isset($controller->resource_for_collection) ? $controller->resource_for_collection : null;
+    $setting->child_models               = isset($controller->child_models) ? $controller->child_models : [];
     $setting->belongs_to                 = isset($controller->belongs_to) ? $controller->belongs_to : [];
     $setting->has_many                   = isset($controller->has_many) ? $controller->has_many : [];
     $setting->belongs_to_many            = isset($controller->belongs_to_many) ? $controller->belongs_to_many : [];
@@ -31,6 +130,7 @@ class ModelHelper
     $setting->input_fields               = isset($controller->input_fields) ? $controller->input_fields : [];
     $setting->locale_fields              = isset($controller->locale_fields) ? $controller->locale_fields : [];
     $setting->user_record_field          = isset($controller->user_record_field) ? $controller->user_record_field : null;
+    $setting->parent_name                = isset($controller->parent_name) ? $controller->parent_name : null;
     $setting->parent_model               = isset($controller->parent_model) ? $controller->parent_model : null;
     $setting->parent_id_field            = isset($controller->parent_id_field) ? $controller->parent_id_field : null;
     $setting->custom_get_conditions      = isset($controller->custom_get_conditions) ? $controller->custom_get_conditions : [];
@@ -141,11 +241,11 @@ class ModelHelper
 
   public static function indexGetPaginate($setting, $snap, $request)
   {
-    $page = ($request != null) && $request->filled('page') ? $request->page : 1;
-    if (!$setting->paginate) {
-      return $snap->get();
+    if ($setting->paginate) {
+      $page = ($request != null) && $request->filled('page') ? $request->page : 1;
+      return $snap->paginate(15, ['*'], 'page', $page);
     } else {
-      return $snap->paginate($setting->paginate, ['*'], 'page', $page);
+      return $snap->get();
     }
   }
 

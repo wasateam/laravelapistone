@@ -92,9 +92,7 @@ class ModelHelper
 
     if (count($setting->child_models)) {
       foreach ($setting->child_models as $child_model_key => $child_model) {
-        error_log($child_model_key);
         if ($request->filled($child_model_key)) {
-          error_log('aa');
           foreach ($request->$child_model_key as $child_model_request) {
             $child_model_request = new Request($child_model_request);
             ModelHelper::ws_StoreHandler(new $child_model, $child_model_request, $model->id);

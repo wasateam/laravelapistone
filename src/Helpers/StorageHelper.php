@@ -101,6 +101,9 @@ class StorageHelper
     }
     $parse_url = parse_url($url);
     $arr       = explode('/', $parse_url['path']);
+    if (count($arr) < 4) {
+      return null;
+    }
     if ($with_parent) {
       $value = "{$arr[3]}/{$arr[4]}/{$arr[5]}/{$arr[6]}/{$arr[7]}";
     } else {

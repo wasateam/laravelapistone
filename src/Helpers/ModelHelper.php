@@ -6,7 +6,9 @@ use App;
 use Auth;
 use Exception;
 use Illuminate\Http\Request;
+use Storage;
 use Validator;
+use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
 class ModelHelper
 {
@@ -102,6 +104,136 @@ class ModelHelper
     }
 
     return new $setting->resource($model);
+  }
+
+  public static function ws_ShowHandler($controller, $request, $id = null)
+  {
+    // Setting
+    $setting = self::getSetting($controller);
+
+    // Get
+    try {
+      $model = $setting->model::where('id', $id)->where($setting->custom_get_conditions)->first();
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
+    }
+
+    if (!$model) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
+    }
+
+    return new $setting->resource($model);
+  }
+
+  public static function ws_UpdateHandler($controller, $request, $id)
+  {
+    // Setting
+    $setting = self::getSetting($controller);
+
+    // Validation
+    $rules     = self::getValidatorRules($setting, 'update');
+    $validator = Validator::make($request->all(), $rules);
+    if ($validator->fails()) {
+      return response()->json([
+        'message' => $validator->messages(),
+      ], 400);
+    }
+
+    // Find Model
+    $model = $setting->model::find($id);
+    if (!$model) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
+    }
+
+    // Input Value
+    $model = self::setInputFields($model, $setting, $request);
+
+    // User Updated Record
+    $model = self::setUserRecord($model, $setting);
+
+    // Save
+    try {
+      $model->save();
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'data store fail.',
+      ], 400);
+    }
+
+    // Belongs To Value
+    $model = ModelHelper::setBelongsTo($model, $setting, $request);
+
+    // Belongs To Many Value
+    $model = ModelHelper::setBelongsToMany($model, $setting, $request);
+
+    // Locale Set
+    try {
+      ModelHelper::setLocale($model, $setting, $request);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'locales data store fail.',
+      ], 400);
+    }
+
+    return new $setting->resource($model);
+  }
+
+  public static function ws_DestroyHandler($controller, $id)
+  {
+    // Setting
+    $setting = self::getSetting($controller);
+
+    // Find Model
+    $model = $setting->model::find($id);
+    if (!$model) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
+    }
+
+    // Delete
+    try {
+      $destroy = $model->delete();
+      if ($destroy) {
+        return response()->json([
+          "message" => 'data deleted.',
+        ], 200);
+      } else {
+        return response()->json([
+          "message" => 'delete error.',
+        ], 400);
+      }
+    } catch (\Throwable $th) {
+      return response()->json([
+        "message" => 'delete error.',
+      ], 400);
+    }
+  }
+
+  public static function ws_ServiceFileUploadHandler($controller, $request, $filename)
+  {
+    // Setting
+    $setting      = self::getSetting($controller);
+    $content      = $request->getContent();
+    $disk         = Storage::disk('gcs');
+    $repo         = StorageHelper::getRandomPath();
+    $storage_path = "@service/{$setting->name}/{$repo}/{$filename}";
+    try {
+      $disk->put($storage_path, $content);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'store file dail.',
+      ], 400);
+    }
+    return response()->json([
+      'signed_url' => StorageHelper::get_signed_url($repo, $filename, $setting->name),
+    ]);
   }
 
   public static function getSetting($controller)

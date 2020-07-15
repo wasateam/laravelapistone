@@ -21,8 +21,8 @@ class ModelHelper
     $snap = self::indexGetSnap($setting, $request, $id);
 
     // Collection
+    $collection = self::indexGetPaginate($setting, $snap, $request);
     try {
-      $collection = self::indexGetPaginate($setting, $snap, $request);
     } catch (\Throwable $th) {
       return response()->json([
         'message' => 'get index error.',
@@ -68,6 +68,9 @@ class ModelHelper
       ], 400);
     }
 
+    // Belongs To Value
+    $model = self::setBelongsTo($model, $setting, $request);
+
     // Save
     $model->save();
     try {
@@ -76,9 +79,6 @@ class ModelHelper
         'message' => 'data store fail.',
       ], 400);
     }
-
-    // Belongs To Value
-    $model = self::setBelongsTo($model, $setting, $request);
 
     // Belongs To Many Value
     $model = self::setBelongsToMany($model, $setting, $request);
@@ -104,6 +104,14 @@ class ModelHelper
     }
 
     return new $setting->resource($model);
+  }
+
+  public static function ws_BatchStoreHandler($controller, $request, $id = null)
+  {
+    foreach ($request->datas as $request_data) {
+      $request_data = new Request($request_data);
+      ModelHelper::ws_StoreHandler($controller, $request_data, $id);
+    }
   }
 
   public static function ws_ShowHandler($controller, $request, $id = null)
@@ -393,9 +401,10 @@ class ModelHelper
       if (!$request->has($key)) {
         continue;
       }
-      $model->{$key}()->associate($request->{$key});
-      if ($model->{$key}) {
-        $model->save();
+      $test_model = $model;
+      $test_model->{$key}()->associate($request->{$key});
+      if ($test_model->{$key}) {
+        $model = $test_model;
       }
     }
     return $model;

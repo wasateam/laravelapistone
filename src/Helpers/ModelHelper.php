@@ -108,9 +108,18 @@ class ModelHelper
 
   public static function ws_BatchStoreHandler($controller, $request, $id = null)
   {
-    foreach ($request->datas as $request_data) {
-      $request_data = new Request($request_data);
-      ModelHelper::ws_StoreHandler($controller, $request_data, $id);
+    try {
+      foreach ($request->datas as $request_data) {
+        $request_data = new Request($request_data);
+        ModelHelper::ws_StoreHandler($controller, $request_data, $id);
+      }
+      return response()->json([
+        'message' => 'batch store complete.',
+      ], 200);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'batch store fail. but some have been created.',
+      ], 400);
     }
   }
 

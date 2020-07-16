@@ -70,6 +70,9 @@ class ModelController extends Controller
       ], 400);
     }
 
+    // Belongs To Value
+    $model = ModelHelper::setBelongsTo($model, $setting, $request);
+
     // Save
     try {
       $model->save();
@@ -78,9 +81,6 @@ class ModelController extends Controller
         'message' => 'data store fail.',
       ], 400);
     }
-
-    // Belongs To Value
-    $model = ModelHelper::setBelongsTo($model, $setting, $request);
 
     // Belongs To Many Value
     $model = ModelHelper::setBelongsToMany($model, $setting, $request);
@@ -148,6 +148,9 @@ class ModelController extends Controller
     // User Updated Record
     $model = ModelHelper::setUserRecord($model, $setting);
 
+    // Belongs To Value
+    $model = ModelHelper::setBelongsTo($model, $setting, $request);
+
     // Save
     try {
       $model->save();
@@ -156,9 +159,6 @@ class ModelController extends Controller
         'message' => 'data store fail.',
       ], 400);
     }
-
-    // Belongs To Value
-    $model = ModelHelper::setBelongsTo($model, $setting, $request);
 
     // Belongs To Many Value
     $model = ModelHelper::setBelongsToMany($model, $setting, $request);

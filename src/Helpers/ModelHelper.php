@@ -94,7 +94,7 @@ class ModelHelper
 
     if (count($setting->child_models)) {
       foreach ($setting->child_models as $child_model_key => $child_model) {
-        if ($request->filled($child_model_key)) {
+        if ($request->filled($child_model_key) && is_array($request->$child_model_key)) {
           foreach ($request->$child_model_key as $child_model_request) {
             $child_model_request = new Request($child_model_request);
             ModelHelper::ws_StoreHandler(new $child_model, $child_model_request, $model->id);
@@ -233,23 +233,50 @@ class ModelHelper
     }
   }
 
-  public static function ws_ServiceFileUploadHandler($controller, $request, $filename)
+  // public static function ws_ServiceFileUploadHandler($controller, $request, $filename)
+  // {
+  //   // Setting
+  //   $setting      = self::getSetting($controller);
+  //   $content      = $request->getContent();
+  //   $disk         = Storage::disk('gcs');
+  //   $repo         = StorageHelper::getRandomPath();
+  //   $store_value = "@service/{$setting->name}/{$repo}/{$filename}";
+  //   try {
+  //     $disk->put($store_value, $content);
+  //   } catch (\Throwable $th) {
+  //     return response()->json([
+  //       'message' => 'store file dail.',
+  //     ], 400);
+  //   }
+  //   return response()->json([
+  //     'signed_url' => StorageHelper::get_signed_url($repo, $filename, $setting->name),
+  //   ]);
+  // }
+
+  public static function ws_Upload($controller, $request, $filename, $type, $signed_type = 'general', $id = null, $parent = null, $parent_id = null)
   {
-    // Setting
-    $setting      = self::getSetting($controller);
-    $content      = $request->getContent();
-    $disk         = Storage::disk('gcs');
-    $repo         = StorageHelper::getRandomPath();
-    $storage_path = "@service/{$setting->name}/{$repo}/{$filename}";
+    $setting = self::getSetting($controller);
+    $content = $request->getContent();
+    $disk    = Storage::disk('gcs');
+    $repo    = StorageHelper::getRandomPath();
+    if ($signed_type == 'idmatch') {
+      $store_value = "{$setting->name}/{$id}/{$type}/{$repo}/{$filename}";
+    }
+    // if ($signed_type == 'general') {
+    //   $store_value = "{$setting->name}/$type}/{$repo}/{$filename}";
+    // }else if($signd_type)
+    //   if ($parent && $parent_id) {
+    //     $store_value = "{$parent}/{$parent_id}/{$store_value}";
+    //   }
     try {
-      $disk->put($storage_path, $content);
+      $disk->put($store_value, $content);
     } catch (\Throwable $th) {
       return response()->json([
         'message' => 'store file dail.',
       ], 400);
     }
     return response()->json([
-      'signed_url' => StorageHelper::get_signed_url($repo, $filename, $setting->name),
+      'signed_url' => StorageHelper::getSignedUrlByStoreValue($store_value, $signed_type),
     ]);
   }
 

@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Casts;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
-class SignedUrlCast implements CastsAttributes
+class SignedUrlIdmatchCast implements CastsAttributes
 {
   /**
    * Cast the given value.
@@ -20,7 +20,11 @@ class SignedUrlCast implements CastsAttributes
     if (!$value) {
       return null;
     }
-    return StorageHelper::get_signed_url_by_link($value);
+    $options = StorageHelper::getOptionsByStoreValue($value, 'idmatch');
+    if (!$options || $model->id != $options['model_id']) {
+      return null;
+    }
+    return StorageHelper::getSignedUrlByStoreValue($value, 'idmatch');
   }
 
   /**
@@ -37,6 +41,6 @@ class SignedUrlCast implements CastsAttributes
     if (!$value) {
       return null;
     }
-    return StorageHelper::get_store_data_by_url($value);
+    return StorageHelper::getSignedUrlStoreValue($value);
   }
 }

@@ -8,8 +8,10 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Storage;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
+use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
 class AuthController extends Controller
 {
@@ -53,7 +55,8 @@ class AuthController extends Controller
     $user = new $setting->model([
       'email'    => $request->email,
       'name'     => $request->name,
-      'password' => Hash::make($request->password),
+      'password' => $request->password,
+      // 'password' => Hash::make($request->password),
     ]);
     $user->save();
     return (new $setting->resource($user));
@@ -120,7 +123,7 @@ class AuthController extends Controller
 
   /**
    * Get User
-   * 
+   *
    * @authenticated
    *
    * @response
@@ -149,7 +152,7 @@ class AuthController extends Controller
 
   /**
    * Signout
-   * 
+   *
    * @authenticated
    *
    * @response
@@ -169,6 +172,69 @@ class AuthController extends Controller
     }
     return response()->json([
       'message' => 'signout successed.',
+    ]);
+  }
+
+  /**
+   * Update
+   *
+   * @authenticated
+   *
+   * @bodyParam  password string Example: 123123
+   * @bodyParam  name string User Name  Example: wasa
+   * @bodyParam  avatar signedurl
+   */
+  public function update(Request $request)
+  {
+    $setting = AuthHelper::getSetting($this);
+    $rules   = [
+      'password' => 'required|string|min:6',
+      'name'     => 'required|string|min:1|max:40',
+    ];
+    $validator = Validator::make($request->all(), $rules);
+    if ($validator->fails()) {
+      return response()->json([
+        'message' => $validator->messages(),
+      ], 400);
+    }
+    $user = Auth::user();
+    if ($request->has('name')) {
+      $user->name = $request->name;
+    }
+    if ($request->has('name')) {
+      $user->name = $request->name;
+    }
+    if ($request->has('avatar')) {
+      $user->avatar = $request->avatar;
+    }
+    $user->save();
+    return (new $setting->resource($user));
+  }
+
+  /**
+   * Upload Avatar
+   *
+   * put binary data in request body
+   *
+   * @urlParam  filename string required
+   */
+  public function avatar_upload(Request $request, $filename)
+  {
+    $setting       = AuthHelper::getSetting($this);
+    $content       = $request->getContent();
+    $disk          = Storage::disk('gcs');
+    $repo          = StorageHelper::getRandomPath();
+    $user          = Auth::user();
+    $storage_value = "{$setting->name}/{$user->id}/avatar/{$repo}/{$filename}";
+    try {
+      $disk->put($storage_value, $content);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'store file dail.',
+      ], 400);
+    }
+    return response()->json([
+      'signed_url' => StorageHelper::getSignedUrlByStoreValue($storage_value, 'idmatch'),
     ]);
   }
 }

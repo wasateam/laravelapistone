@@ -20,11 +20,6 @@ class StorageHelper
     ];
   }
 
-  public static function getRandomPath()
-  {
-    return time() . Str::random(5);
-  }
-
   public static function get_google_file_signed_url($file_path)
   {
     $url = Storage::disk('gcs')->getAdapter()->getBucket()->object($file_path)
@@ -32,83 +27,84 @@ class StorageHelper
     return $url;
   }
 
-  public static function get_file_path($url)
+  public static function getRandomPath()
   {
-    return str_replace(env('GOOGLE_CLOUD_STORAGE_PATH') . "/" . env('GOOGLE_CLOUD_STORAGE_BUCKET') . "/", '', $url);
+    return time() . Str::random(5);
   }
 
-  public static function get_pure_url($url)
+  // public static function get_signed_url($repo, $filename, $model, $type, $parent = null, $parent_id = null)
+  // {
+  //   $options = [
+  //     'model' => $model,
+  //     'repo'  => $repo,
+  //     'name'  => $filename,
+  //     'type'  => $type,
+  //   ];
+  //   if ($parent) {
+  //     $options['parent']    = $parent;
+  //     $options['parent_id'] = $parent_id;
+  //     return URL::temporarySignedRoute(
+  //       'file_show_with_parent', now()->addMinutes(15), $options);
+  //   } else {
+  //     return URL::temporarySignedRoute(
+  //       'file_general', now()->addMinutes(15), $options);
+  //   }
+  // }
+
+  public static function getSignedUrlOptionsByUrl($url, $signed_type = "general")
   {
-    $parse_url = parse_url($url);
-    return $parse_url['scheme'] . '://' . $parse_url['host'] . $parse_url['path'];
+    $parse_url   = parse_url($url);
+    $store_value = str_replace("/api/", "", $parse_url['path']);
+    return self::getOptionsByStoreValue($store_value, $signed_type);
   }
 
-  public static function get_signed_url_info_by_store_data($store_file, $with_parent = false)
+  public static function getOptionsByStoreValue($store_value, $signed_type = "general")
   {
-    $arr  = explode('/', $store_file);
-    $info = collect();
-    if ($with_parent) {
-      $info->parent    = $arr[0];
-      $info->parent_id = $arr[1];
-      $info->type      = $arr[2];
-      $info->repo      = $arr[3];
-      $info->name      = $arr[4];
-    } else {
-      $info->type = $arr[0];
-      $info->repo = $arr[1];
-      $info->name = $arr[2];
+    $store_value_arr = explode('/', $store_value);
+    if ($signed_type == 'general') {
+      if (count($store_value_arr) != 4) {
+        return null;
+      }
+      return [
+        'type'  => $store_value_arr[0],
+        'model' => $store_value_arr[1],
+        'repo'  => $store_value_arr[2],
+        'name'  => $store_value_arr[3],
+      ];
+    } else if ($signed_type == 'idmatch') {
+      if (count($store_value_arr) != 5) {
+        return null;
+      }
+      return [
+        'model'    => $store_value_arr[0],
+        'model_id' => $store_value_arr[1],
+        'type'     => $store_value_arr[2],
+        'repo'     => $store_value_arr[3],
+        'name'     => $store_value_arr[4],
+      ];
     }
-    return $info;
   }
 
-  public static function get_signed_url($repo, $filename, $type, $parent = null, $parent_id = null)
+  public static function getSignedUrlByStoreValue($store_value, $signed_type = "general")
   {
-    $options = [
-      'type' => $type,
-      'repo' => $repo,
-      'name' => $filename,
-    ];
-    if ($parent) {
-      $options['parent']    = $parent;
-      $options['parent_id'] = $parent_id;
-      return URL::temporarySignedRoute(
-        'file_show_with_parent', now()->addMinutes(15), $options);
-    } else {
-      return URL::temporarySignedRoute(
-        'file_show', now()->addMinutes(15), $options);
-    }
-  }
-
-  public static function get_signed_url_by_link($link, $with_parent = false)
-  {
-    try {
-      $info = self::get_signed_url_info_by_store_data($link, $with_parent);
-    } catch (\Throwable $th) {
+    if (!$store_value) {
       return null;
     }
-    if ($with_parent) {
-      $value = self::get_signed_url($info->repo, $info->name, $info->type, $info->parent, $info->parent_id);
-    } else {
-      $value = self::get_signed_url($info->repo, $info->name, $info->type);
-    }
-    return $value;
+    $options = self::getOptionsByStoreValue($store_value, $signed_type);
+    return URL::temporarySignedRoute(
+      "file_{$signed_type}", now()->addMinutes(15), $options);
   }
 
-  public static function get_store_data_by_url($url, $with_parent = false)
+  public static function getSignedUrlStoreValue($url)
   {
     if (!$url) {
       return null;
     }
     $parse_url = parse_url($url);
-    $arr       = explode('/', $parse_url['path']);
-    if (count($arr) < 4) {
+    if (!$parse_url || !$parse_url['path']) {
       return null;
-    }
-    if ($with_parent) {
-      $value = "{$arr[3]}/{$arr[4]}/{$arr[5]}/{$arr[6]}/{$arr[7]}";
     } else {
-      $value = "{$arr[3]}/{$arr[4]}/{$arr[5]}";
+      return str_replace("/api/", "", $parse_url['path']);
     }
-    return $value;
   }
 }

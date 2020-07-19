@@ -103,8 +103,12 @@ class StorageHelper
       return null;
     }
     $options = self::getOptionsByStoreValue($store_value, $signed_type);
-    return URL::temporarySignedRoute(
-      "file_{$signed_type}", now()->addMinutes(15), $options);
+    if (!$options) {
+      return null;
+    } else {
+      return URL::temporarySignedRoute(
+        "file_{$signed_type}", now()->addMinutes(15), $options);
+    }
   }
 
   public static function getSignedUrlStoreValue($url)

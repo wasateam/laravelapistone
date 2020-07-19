@@ -66,8 +66,8 @@ class StorageHelper
         return null;
       }
       return [
-        'type'  => $store_value_arr[0],
-        'model' => $store_value_arr[1],
+        'model' => $store_value_arr[0],
+        'type'  => $store_value_arr[1],
         'repo'  => $store_value_arr[2],
         'name'  => $store_value_arr[3],
       ];
@@ -81,6 +81,18 @@ class StorageHelper
         'type'     => $store_value_arr[2],
         'repo'     => $store_value_arr[3],
         'name'     => $store_value_arr[4],
+      ];
+    } else if ($signed_type == 'parentidmatch') {
+      if (count($store_value_arr) != 6) {
+        return null;
+      }
+      return [
+        'parent'    => $store_value_arr[0],
+        'parent_id' => $store_value_arr[1],
+        'model'     => $store_value_arr[2],
+        'type'      => $store_value_arr[3],
+        'repo'      => $store_value_arr[4],
+        'name'      => $store_value_arr[5],
       ];
     }
   }

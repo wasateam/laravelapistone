@@ -261,13 +261,11 @@ class ModelHelper
     $repo    = StorageHelper::getRandomPath();
     if ($signed_type == 'idmatch') {
       $store_value = "{$setting->name}/{$id}/{$type}/{$repo}/{$filename}";
+    } else if ($signed_type == 'general') {
+      $store_value = "{$setting->name}/{$type}/{$repo}/{$filename}";
+    } else if ($signed_type == 'parentidmatch') {
+      $store_value = "{$parent}/{$parent_id}/{$setting->name}/{$type}/{$repo}/{$filename}";
     }
-    // if ($signed_type == 'general') {
-    //   $store_value = "{$setting->name}/$type}/{$repo}/{$filename}";
-    // }else if($signd_type)
-    //   if ($parent && $parent_id) {
-    //     $store_value = "{$parent}/{$parent_id}/{$store_value}";
-    //   }
     try {
       $disk->put($store_value, $content);
     } catch (\Throwable $th) {

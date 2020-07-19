@@ -1,10 +1,10 @@
 <?php
 namespace Wasateam\Laravelapistone\Casts;
 
-use Wasateam\Laravelapistone\Helpers\StorageHelper;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
-class SignedUrlWithParentArrayCast implements CastsAttributes
+class SignedUrlGeneralArrayCast implements CastsAttributes
 {
   /**
    * Cast the given value.
@@ -30,7 +30,7 @@ class SignedUrlWithParentArrayCast implements CastsAttributes
       }
     }
     foreach ($_value as $value_key => $value_item) {
-      $_value[$value_key] = StorageHelper::get_signed_url_by_link($value_item, true);
+      $_value[$value_key] = StorageHelper::getSignedUrlByStoreValue($value_item, 'general');
     }
     return $_value;
   }
@@ -59,7 +59,7 @@ class SignedUrlWithParentArrayCast implements CastsAttributes
       }
     }
     foreach ($_value as $value_key => $value_item) {
-      $_value[$value_key] = StorageHelper::get_store_data_by_url($value_item, true);
+      $_value[$value_key] = StorageHelper::getSignedUrlStoreValue($value_item);
     }
     return json_encode($_value);
   }

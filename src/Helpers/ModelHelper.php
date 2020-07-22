@@ -108,14 +108,17 @@ class ModelHelper
 
   public static function ws_BatchStoreHandler($controller, $request, $id = null)
   {
+    $result_data = [];
     try {
       foreach ($request->datas as $request_data) {
-        $request_data = new Request($request_data);
-        ModelHelper::ws_StoreHandler($controller, $request_data, $id);
+        $request_data  = new Request($request_data);
+        $result_data[] = ModelHelper::ws_StoreHandler($controller, $request_data, $id);
       }
-      return response()->json([
-        'message' => 'batch store complete.',
-      ], 200);
+      return $result_data;
+      // return response()->json([
+      //   'message' => 'batch store complete.',
+      //   'data'    => $result_data,
+      // ], 200);
     } catch (\Throwable $th) {
       return response()->json([
         'message' => 'batch store fail. but some have been created.',
@@ -290,6 +293,7 @@ class ModelHelper
     $setting->belongs_to                 = isset($controller->belongs_to) ? $controller->belongs_to : [];
     $setting->has_many                   = isset($controller->has_many) ? $controller->has_many : [];
     $setting->belongs_to_many            = isset($controller->belongs_to_many) ? $controller->belongs_to_many : [];
+    $setting->filter_fields              = isset($controller->filter_fields) ? $controller->filter_fields : [];
     $setting->filter_belongs_to          = isset($controller->filter_belongs_to) ? $controller->filter_belongs_to : [];
     $setting->filter_has_many            = isset($controller->filter_has_many) ? $controller->filter_has_many : [];
     $setting->filter_belongs_to_many     = isset($controller->filter_belongs_to_many) ? $controller->filter_belongs_to_many : [];
@@ -330,11 +334,22 @@ class ModelHelper
     // $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many)->orderByRaw("-{$oder_by} {$order_way}")->where($setting->custom_get_conditions);
 
     // Filter
+    if ($request != null && count($setting->filter_fields)) {
+      foreach ($setting->filter_fields as $filter_field) {
+        if ($request->filled($filter_field)) {
+          $snap = $snap->where($filter_field, $request->{$filter_field});
+        }
+      }
+    }
     if (($request != null) && count($setting->filter_belongs_to)) {
       foreach ($setting->filter_belongs_to as $filter_belongs_to_item) {
         if ($request->filled($filter_belongs_to_item)) {
           $item_arr = array_map('intval', explode(',', $request->{$filter_belongs_to_item}));
-          $snap     = $snap->orWhereIn("{$filter_belongs_to_item}_id", $item_arr);
+          if (count($item_arr) > 1) {
+            $snap = $snap->orWhereIn("{$filter_belongs_to_item}_id", $item_arr);
+          } else {
+            $snap = $snap->whereIn("{$filter_belongs_to_item}_id", $item_arr);
+          }
         }
       }
     }
@@ -342,16 +357,27 @@ class ModelHelper
       foreach ($setting->filter_belongs_to_many as $filter_belongs_to_many_item) {
         if ($request->filled($filter_belongs_to_many_item)) {
           $item_arr = array_map('intval', explode(',', $request->{$filter_belongs_to_many_item}));
-          $snap     = $snap->with($filter_belongs_to_many_item)->orWhereHas($filter_belongs_to_many_item, function ($query) use ($item_arr) {
-            foreach ($item_arr as $item_key => $item) {
-              if ($item_key == 0) {
-                $query = $query->orWhereIn('id', $item_arr);
-              } else {
-                $query = $query->orWhereIn('id', $item_arr);
+          if (count($item_arr) > 1) {
+            $snap = $snap->with($filter_belongs_to_many_item)->orWhereHas($filter_belongs_to_many_item, function ($query) use ($item_arr) {
+              foreach ($item_arr as $item_key => $item) {
+                if ($item_key == 0) {
+                  $query = $query->orWhereIn('id', $item_arr);
+                } else {
+                  $query = $query->orWhereIn('id', $item_arr);
+                }
               }
-            }
-
-          });
+            });
+          } else {
+            $snap = $snap->with($filter_belongs_to_many_item)->whereHas($filter_belongs_to_many_item, function ($query) use ($item_arr) {
+              foreach ($item_arr as $item_key => $item) {
+                if ($item_key == 0) {
+                  $query = $query->orWhereIn('id', $item_arr);
+                } else {
+                  $query = $query->orWhereIn('id', $item_arr);
+                }
+              }
+            });
+          }
         }
       }
     }
@@ -411,11 +437,19 @@ class ModelHelper
     return $snap;
   }
 
-  public static function indexGetPaginate($setting, $snap, $request)
+  public static function indexGetPaginate($setting, $snap, $request, $getall = false)
   {
-    if ($setting->paginate) {
+    error_log($setting->paginate);
+    if ($getall) {
+      return $snap->get();
+    } else if ($request->filled('offset') || $request->filled('limit')) {
+      $offset = $request->filled('offset') ? $request->offset : 1;
+      $limit  = $request->filled('limit') ? $request->limit : 50;
+      $limit  = $limit > 500 ? 500 : $limit;
+      return $snap->offset($offset)->limit($limit)->get();
+    } else if ($setting->paginate) {
       $page = ($request != null) && $request->filled('page') ? $request->page : 1;
-      return $snap->paginate(15, ['*'], 'page', $page);
+      return $snap->paginate($setting->paginate, ['*'], 'page', $page);
     } else {
       return $snap->get();
     }

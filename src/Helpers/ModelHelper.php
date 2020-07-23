@@ -376,14 +376,11 @@ class ModelHelper
 
     // Search
     if ($search && count($setting->search_fields)) {
-      $key_count = 0;
       foreach ($setting->search_fields as $search_field_key => $search_field_item) {
-        if ($key_count == 0) {
+        if ($search_field_key == 0) {
           $snap = $snap->where($search_field_item, 'LIKE', "%{$search}%");
-          $key_count++;
         } else {
           $snap = $snap->orWhere($search_field_item, 'LIKE', "%{$search}%");
-          $key_count++;
         }
       }
     }
@@ -393,7 +390,7 @@ class ModelHelper
         foreach ($search_field_value as $search_field_item) {
           $search_querys[] = [$search_field_item, 'LIKE', "%{$search}%"];
         }
-        $snap = $snap->with($search_field_key)->orWhereHas($search_field_key, function ($query) use ($search_querys) {
+        $snap = $snap->with($search_field_key)->whereHas($search_field_key, function ($query) use ($search_querys) {
           foreach ($search_querys as $search_query_key => $search_query) {
             if ($search_query_key == 0) {
               $query->where([$search_query]);

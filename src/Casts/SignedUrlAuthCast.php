@@ -21,11 +21,6 @@ class SignedUrlAuthCast implements CastsAttributes
     if (!$value) {
       return null;
     }
-    $user    = Auth::user();
-    $options = StorageHelper::getOptionsByStoreValue($value, 'idmatch');
-    if (!$options || $user->id != $options['model_id']) {
-      return null;
-    }
     return StorageHelper::getSignedUrlByStoreValue($value, 'idmatch');
   }
 
@@ -43,6 +38,13 @@ class SignedUrlAuthCast implements CastsAttributes
     if (!$value) {
       return null;
     }
-    return StorageHelper::getSignedUrlStoreValue($value, 'idmatch');
+    $store_value = StorageHelper::getSignedUrlStoreValue($value, 'idmatch');
+    $user        = Auth::user();
+    $options     = StorageHelper::getOptionsByStoreValue($store_value, 'idmatch');
+    if (!$options || $user->id != $options['model_id']) {
+      return null;
+    } else {
+      return $store_value;
+    }
   }
 }

@@ -115,6 +115,10 @@ class ModelHelper
         $result_data[] = ModelHelper::ws_StoreHandler($controller, $request_data, $id);
       }
       return $result_data;
+      // return response()->json([
+      //   'message' => 'batch store complete.',
+      //   'data'    => $result_data,
+      // ], 200);
     } catch (\Throwable $th) {
       return response()->json([
         'message' => 'batch store fail. but some have been created.',

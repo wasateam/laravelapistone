@@ -390,10 +390,12 @@ class ModelHelper
     }
 
     // Search
+    $first_search = 0;
     if ($search && count($setting->search_fields)) {
       foreach ($setting->search_fields as $search_field_key => $search_field_item) {
-        if ($search_field_key == 0) {
-          $snap = $snap->where($search_field_item, 'LIKE', "%{$search}%");
+        if ($first_search == 0) {
+          $snap         = $snap->where($search_field_item, 'LIKE', "%{$search}%");
+          $first_search = 1;
         } else {
           $snap = $snap->orWhere($search_field_item, 'LIKE', "%{$search}%");
         }
@@ -405,15 +407,28 @@ class ModelHelper
         foreach ($search_field_value as $search_field_item) {
           $search_querys[] = [$search_field_item, 'LIKE', "%{$search}%"];
         }
-        $snap = $snap->with($search_field_key)->whereHas($search_field_key, function ($query) use ($search_querys) {
-          foreach ($search_querys as $search_query_key => $search_query) {
-            if ($search_query_key == 0) {
-              $query->where([$search_query]);
-            } else {
-              $query->orWhere([$search_query]);
+        if ($first_search == 0) {
+          $snap = $snap->with($search_field_key)->whereHas($search_field_key, function ($query) use ($search_querys) {
+            foreach ($search_querys as $search_query_key => $search_query) {
+              if ($search_query_key == 0) {
+                $query->where([$search_query]);
+              } else {
+                $query->orWhere([$search_query]);
+              }
             }
-          }
-        });
+          });
+          $first_search = 1;
+        } else {
+          $snap = $snap->with($search_field_key)->orWhereHas($search_field_key, function ($query) use ($search_querys) {
+            foreach ($search_querys as $search_query_key => $search_query) {
+              if ($search_query_key == 0) {
+                $query->where([$search_query]);
+              } else {
+                $query->orWhere([$search_query]);
+              }
+            }
+          });
+        }
       }
     }
 
@@ -426,7 +441,6 @@ class ModelHelper
 
   public static function indexGetPaginate($setting, $snap, $request, $getall = false)
   {
-    error_log($setting->paginate);
     if ($getall) {
       return $snap->get();
     } else if ($request->filled('offset') || $request->filled('limit')) {

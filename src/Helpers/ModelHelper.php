@@ -201,6 +201,21 @@ class ModelHelper
       ], 400);
     }
 
+    if (count($setting->child_models)) {
+      foreach ($setting->child_models as $child_model_key => $child_model) {
+        if ($request->filled($child_model_key) && is_array($request->$child_model_key)) {
+          foreach ($request->$child_model_key as $child_model_request) {
+            $child_model_request = new Request($child_model_request);
+            if ($child_model_request->id) {
+              ModelHelper::ws_UpdateHandler(new $child_model, $child_model_request, $child_model_request->id);
+            } else {
+              ModelHelper::ws_StoreHandler(new $child_model, $child_model_request, $model->id);
+            }
+          }
+        }
+      }
+    }
+
     return new $setting->resource($model);
   }
 

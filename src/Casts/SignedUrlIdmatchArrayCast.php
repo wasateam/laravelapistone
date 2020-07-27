@@ -20,21 +20,24 @@ class SignedUrlIdmatchArrayCast implements CastsAttributes
     if (!$value) {
       return [];
     }
-    $_value = $value;
-    if (is_string($_value)) {
-      $to_json = json_decode($_value);
+    $_value = [];
+    if (is_string($value)) {
+      $to_json = json_decode($value);
       if (json_last_error() === 0) {
-        $_value = $to_json;
+        $value = $to_json;
       } else {
         return [];
       }
     }
-    foreach ($_value as $value_key => $value_item) {
+    foreach ($value as $value_key => $value_item) {
       $options = StorageHelper::getOptionsByStoreValue($value_item, 'idmatch');
       if (!$options || $model->id != $options['model_id']) {
-        $_value[$value_key] = null;
+        continue;
       } else {
-        $_value[$value_key] = StorageHelper::getSignedUrlByStoreValue($value_item, 'idmatch');
+        $_display_value = StorageHelper::getSignedUrlByStoreValue($value_item, 'idmatch');
+        if ($_display_value) {
+          $_value[$value_key] = $_display_value;
+        }
       }
     }
     return $_value;
@@ -64,7 +67,10 @@ class SignedUrlIdmatchArrayCast implements CastsAttributes
       }
     }
     foreach ($_value as $value_key => $value_item) {
-      $_value[$value_key] = StorageHelper::getSignedUrlStoreValue($value_item);
+      $_store_value = StorageHelper::getSignedUrlStoreValue($value_item);
+      if ($_store_value) {
+        $_value[$value_key] = $_store_value;
+      }
     }
     return json_encode($_value);
   }

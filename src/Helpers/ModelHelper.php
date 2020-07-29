@@ -12,7 +12,7 @@ use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
 class ModelHelper
 {
-  public static function ws_IndexHandler($controller, $request, $id = null)
+  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -21,7 +21,7 @@ class ModelHelper
     $snap = self::indexGetSnap($setting, $request, $id);
 
     // Collection
-    $collection = self::indexGetPaginate($setting, $snap, $request);
+    $collection = self::indexGetPaginate($setting, $snap, $request, $getall);
     try {
     } catch (\Throwable $th) {
       return response()->json([

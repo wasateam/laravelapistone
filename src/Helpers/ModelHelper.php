@@ -12,13 +12,17 @@ use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
 class ModelHelper
 {
-  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false)
+  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
 
     // Snap
     $snap = self::indexGetSnap($setting, $request, $id);
+
+    if($custom_snap_handler){
+      $snap = $custom_snap_handler($snap);
+    }
 
     // Collection
     $collection = self::indexGetPaginate($setting, $snap, $request, $getall);
@@ -325,6 +329,7 @@ class ModelHelper
     $setting->parent_model               = isset($controller->parent_model) ? $controller->parent_model : null;
     $setting->parent_id_field            = isset($controller->parent_id_field) ? $controller->parent_id_field : null;
     $setting->custom_get_conditions      = isset($controller->custom_get_conditions) ? $controller->custom_get_conditions : [];
+    $setting->value_match_fields         = isset($controller->value_match_fields) ? $controller->value_match_fields : [];
     return $setting;
   }
 

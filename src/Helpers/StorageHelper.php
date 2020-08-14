@@ -8,19 +8,37 @@ use Str;
 
 class StorageHelper
 {
-  public static function get_google_upload_signed_url_by_name_and_path($file_name, $file_path)
+  public static function getGoogleUploadSignedUrlByNameAndPath($file_name, $file_path, $contentType = 'image/*')
   {
-    $disk        = Storage::disk('gcs');
-    $random_path = self::getRandomPath();
-    $path        = "{$file_path}/{$random_path}/{$file_name}";
-    $url         = Storage::disk('gcs')->getAdapter()->getBucket()->object($path)->beginSignedUploadSession();
-    return [
-      'file_url' => env('GOOGLE_CLOUD_STORAGE_PATH') . "/" . env('GOOGLE_CLOUD_STORAGE_BUCKET') . "/" . "{$file_path}/{$random_path}/{$file_name}",
-      'put_url'  => $url,
-    ];
+    try {
+      $disk        = Storage::disk('gcs');
+      $random_path = self::getRandomPath();
+      $path        = "{$file_path}/{$random_path}/{$file_name}";
+      $url         = Storage::disk('gcs')->getAdapter()->getBucket()->object($path)->beginSignedUploadSession([
+        'contentType' => $contentType,
+      ]);
+      return response()->json([
+        "put_url" => $url,
+      ], 200);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'get signed url error.',
+      ]);
+    }
   }
 
-  public static function get_google_file_signed_url($file_path)
+  public static function getGcsStoreValue($url)
+  {
+    if (!$url) {
+      return null;
+    } else {
+      $parse  = parse_url($url);
+      $bucket = env('GOOGLE_CLOUD_STORAGE_BUCKET');
+      return str_replace("/{$bucket}/", "", $parse['path']);
+    }
+  }
+
+  public static function getGcsSignedUrl($file_path)
   {
     $url = Storage::disk('gcs')->getAdapter()->getBucket()->object($file_path)
       ->signedUrl(now()->addMinutes(15));
@@ -31,25 +49,6 @@ class StorageHelper
   {
     return time() . Str::random(5);
   }
-
-  // public static function get_signed_url($repo, $filename, $model, $type, $parent = null, $parent_id = null)
-  // {
-  //   $options = [
-  //     'model' => $model,
-  //     'repo'  => $repo,
-  //     'name'  => $filename,
-  //     'type'  => $type,
-  //   ];
-  //   if ($parent) {
-  //     $options['parent']    = $parent;
-  //     $options['parent_id'] = $parent_id;
-  //     return URL::temporarySignedRoute(
-  //       'file_show_with_parent', now()->addMinutes(15), $options);
-  //   } else {
-  //     return URL::temporarySignedRoute(
-  //       'file_general', now()->addMinutes(15), $options);
-  //   }
-  // }
 
   public static function getSignedUrlOptionsByUrl($url, $signed_type = "general")
   {

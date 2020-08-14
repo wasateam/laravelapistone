@@ -20,7 +20,7 @@ class ModelHelper
     // Snap
     $snap = self::indexGetSnap($setting, $request, $id);
 
-    if($custom_snap_handler){
+    if ($custom_snap_handler) {
       $snap = $custom_snap_handler($snap);
     }
 
@@ -44,7 +44,7 @@ class ModelHelper
 
     // Validation
     $rules     = self::getValidatorRules($setting, 'store');
-    $validator = Validator::make($request->all(), $rules);
+    $validator = Validator::make($request->all(), $rules, $setting->validation_messages);
     if ($validator->fails()) {
       return response()->json([
         'message' => $validator->messages(),
@@ -153,15 +153,16 @@ class ModelHelper
     return new $setting->resource($model);
   }
 
-  public static function ws_UpdateHandler($controller, $request, $id)
+  public static function ws_UpdateHandler($controller, $request, $id, $rules=[])
   {
     // Setting
     $setting = self::getSetting($controller);
 
     // Validation
-    $rules     = self::getValidatorRules($setting, 'update');
-    $validator = Validator::make($request->all(), $rules);
+    // $rules     = self::getValidatorRules($setting, 'update');
+    $validator = Validator::make($request->all(), $rules, $setting->validation_messages);
     if ($validator->fails()) {
+      error_log('aa');
       return response()->json([
         'message' => $validator->messages(),
       ], 400);
@@ -318,6 +319,7 @@ class ModelHelper
     $setting->filter_belongs_to_many     = isset($controller->filter_belongs_to_many) ? $controller->filter_belongs_to_many : [];
     $setting->search_fields              = isset($controller->search_fields) ? $controller->search_fields : [];
     $setting->search_relationship_fields = isset($controller->search_relationship_fields) ? $controller->search_relationship_fields : [];
+    $setting->validation_messages        = isset($controller->validation_messages) ? $controller->validation_messages : [];
     $setting->validation_rules           = isset($controller->validation_rules) ? $controller->validation_rules : [];
     $setting->store_validation_rules     = isset($controller->store_validation_rules) ? $controller->store_validation_rules : null;
     $setting->update_validation_rules    = isset($controller->update_validation_rules) ? $controller->update_validation_rules : null;

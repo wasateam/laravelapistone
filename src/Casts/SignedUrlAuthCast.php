@@ -21,7 +21,11 @@ class SignedUrlAuthCast implements CastsAttributes
     if (!$value) {
       return null;
     }
-    return StorageHelper::getSignedUrlByStoreValue($value, 'idmatch');
+    if (env('SIGNED_URL_MODE') == 'gcs') {
+      return StorageHelper::getGcsSignedUrl($value);
+    } else {
+      return StorageHelper::getSignedUrlByStoreValue($value, 'idmatch');
+    }
   }
 
   /**
@@ -38,13 +42,17 @@ class SignedUrlAuthCast implements CastsAttributes
     if (!$value) {
       return null;
     }
-    $store_value = StorageHelper::getSignedUrlStoreValue($value, 'idmatch');
-    $user        = Auth::user();
-    $options     = StorageHelper::getOptionsByStoreValue($store_value, 'idmatch');
-    if (!$options || $user->id != $options['model_id']) {
-      return null;
+    if (env('SIGNED_URL_MODE') == 'gcs') {
+      return StorageHelper::getGcsStoreValue($value);
     } else {
-      return $store_value;
+      $store_value = StorageHelper::getSignedUrlStoreValue($value, 'idmatch');
+      $user        = Auth::user();
+      $options     = StorageHelper::getOptionsByStoreValue($store_value, 'idmatch');
+      if (!$options || $user->id != $options['model_id']) {
+        return null;
+      } else {
+        return $store_value;
+      }
     }
   }
 }

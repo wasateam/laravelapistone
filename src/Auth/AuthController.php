@@ -56,8 +56,10 @@ class AuthController extends Controller
       'email'    => $request->email,
       'name'     => $request->name,
       'password' => $request->password,
-      // 'password' => Hash::make($request->password),
     ]);
+    if ($setting->default_scopes) {
+      $user->scopes = $setting->default_scopes;
+    }
     $user->save();
     return (new $setting->resource($user));
   }
@@ -106,8 +108,12 @@ class AuthController extends Controller
         'message' => 'password not correct.',
       ], 401);
     }
-    $tokenResult = $user->createToken('Personal Access Token', $setting->scopes);
-    $token       = $tokenResult->token;
+    if ($setting->scopes_from_database) {
+      $tokenResult = $user->createToken('Personal Access Token', $user->scopes);
+    } else {
+      $tokenResult = $user->createToken('Personal Access Token', $setting->scopes);
+    }
+    $token = $tokenResult->token;
     if ($request->remember_me) {
       $token->expires_at = Carbon::now()->addWeeks(60);
     }
@@ -188,8 +194,8 @@ class AuthController extends Controller
   {
     $setting = AuthHelper::getSetting($this);
     $rules   = [
-      'password' => 'required|string|min:6',
-      'name'     => 'required|string|min:1|max:40',
+      'password' => 'string|min:6',
+      'name'     => 'string|min:1|max:40',
     ];
     $validator = Validator::make($request->all(), $rules);
     if ($validator->fails()) {
@@ -201,8 +207,8 @@ class AuthController extends Controller
     if ($request->has('name')) {
       $user->name = $request->name;
     }
-    if ($request->has('name')) {
-      $user->name = $request->name;
+    if ($request->has('password')) {
+      $user->password = $request->password;
     }
     if ($request->has('avatar')) {
       $user->avatar = $request->avatar;
@@ -236,5 +242,16 @@ class AuthController extends Controller
     return response()->json([
       'signed_url' => StorageHelper::getSignedUrlByStoreValue($storage_value, 'idmatch'),
     ]);
+  }
+
+  /**
+   * Get Avatar Upload Url
+   *
+   * @urlParam  filename string required Example: avatar.png
+   */
+  public function get_avatar_upload_url($filename)
+  {
+    $user = Auth::user();
+    return StorageHelper::getGoogleUploadSignedUrlByNameAndPath($filename, "admin/{$user->id}", 'image/png');
   }
 }

@@ -18,7 +18,7 @@ class AuthRoutesHelper
         Route::post("signin", "{$controller_name}@signin");
       }
       Route::group([
-        "middleware" => ["auth:{$guard}", "client:{$name}"],
+        "middleware" => ["auth:{$guard}", "scopes:{$name}"],
       ], function () use ($controller_name, $guard, $routes) {
         if (in_array('signout', $routes)) {
           Route::post('signout', "{$controller_name}@signout");
@@ -30,7 +30,11 @@ class AuthRoutesHelper
           Route::patch("user", "{$controller_name}@update");
         }
         if (in_array('avatar_upload', $routes)) {
-          Route::put("avatar/{filename}", "{$controller_name}@avatar_upload");
+          if (env('SIGNED_URL_MODE') == 'gcs') {
+            Route::get("avatar/upload_url/{filename}", "{$controller_name}@get_avatar_upload_url");
+          } else {
+            Route::put("avatar/{filename}", "{$controller_name}@avatar_upload");
+          }
         }
       });
     });

@@ -153,7 +153,7 @@ class ModelHelper
     return new $setting->resource($model);
   }
 
-  public static function ws_UpdateHandler($controller, $request, $id, $rules=[])
+  public static function ws_UpdateHandler($controller, $request, $id, $rules = [])
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -347,12 +347,23 @@ class ModelHelper
   public static function indexGetSnap($setting, $request, $parent_id)
   {
     // Variable
-    $order_by  = ($request != null) && $request->filled('order_by') ? $request->order_by : 'id';
-    $order_way = ($request != null) && $request->filled('order_way') ? $request->order_way : 'asc';
-    $search    = ($request != null) && $request->filled('search') ? $request->search : null;
+    $order_by   = ($request != null) && $request->filled('order_by') ? $request->order_by : 'id';
+    $order_way  = ($request != null) && $request->filled('order_way') ? $request->order_way : 'asc';
+    $start_time = ($request != null) && $request->filled('start_time') ? $request->start_time : null;
+    $end_time   = ($request != null) && $request->filled('end_time') ? $request->end_time : null;
+    $time_field = ($request != null) && $request->filled('time_field') ? $request->time_field : 'created_at';
+    $search     = ($request != null) && $request->filled('search') ? $request->search : null;
 
-    // Snap
+    // Order
     $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many)->orderByRaw("ISNULL({$order_by}), {$order_by} {$order_way}")->where($setting->custom_get_conditions);
+
+    // Time
+    if ($start_time) {
+      $snap = $snap->where($time_field, '>=', $start_time);
+    }
+    if ($end_time) {
+      $snap = $snap->where($time_field, '<=', $end_time);
+    }
 
     // Filter
     if ($request != null && count($setting->filter_fields)) {

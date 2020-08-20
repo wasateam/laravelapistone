@@ -256,26 +256,6 @@ class ModelHelper
     }
   }
 
-  // public static function ws_ServiceFileUploadHandler($controller, $request, $filename)
-  // {
-  //   // Setting
-  //   $setting      = self::getSetting($controller);
-  //   $content      = $request->getContent();
-  //   $disk         = Storage::disk('gcs');
-  //   $repo         = StorageHelper::getRandomPath();
-  //   $store_value = "@service/{$setting->name}/{$repo}/{$filename}";
-  //   try {
-  //     $disk->put($store_value, $content);
-  //   } catch (\Throwable $th) {
-  //     return response()->json([
-  //       'message' => 'store file dail.',
-  //     ], 400);
-  //   }
-  //   return response()->json([
-  //     'signed_url' => StorageHelper::get_signed_url($repo, $filename, $setting->name),
-  //   ]);
-  // }
-
   public static function ws_Upload($controller, $request, $filename, $type, $signed_type = 'general', $id = null, $parent = null, $parent_id = null)
   {
     $setting = self::getSetting($controller);
@@ -307,6 +287,10 @@ class ModelHelper
     $setting->model                      = $controller->model;
     $setting->name                       = $controller->name;
     $setting->resource                   = $controller->resource;
+    $setting->table_name                 = isset($controller->table_name) ? $controller->table_name : "{$setting->name}s";
+    $setting->locale_table_name          = isset($controller->locale_table_name) ? $controller->locale_table_name : "{$setting->name}_locales";
+    $setting->version_table_name         = isset($controller->version_table_name) ? $controller->version_table_name : "{$setting->name}_versions";
+    $setting->version_locale_table_name  = isset($controller->version_locale_table_name) ? $controller->version_locale_table_name : "{$setting->name}_version_locales";
     $setting->paginate                   = isset($controller->paginate) ? $controller->paginate : 15;
     $setting->resource_for_collection    = isset($controller->resource_for_collection) ? $controller->resource_for_collection : null;
     $setting->child_models               = isset($controller->child_models) ? $controller->child_models : [];
@@ -332,6 +316,9 @@ class ModelHelper
     $setting->parent_id_field            = isset($controller->parent_id_field) ? $controller->parent_id_field : null;
     $setting->custom_get_conditions      = isset($controller->custom_get_conditions) ? $controller->custom_get_conditions : [];
     $setting->value_match_fields         = isset($controller->value_match_fields) ? $controller->value_match_fields : [];
+    $setting->order_fields               = isset($controller->order_fields) ? $controller->order_fields : [];
+    $setting->order_belongs_to           = isset($controller->order_belongs_to) ? $controller->order_belongs_to : [];
+    $setting->order_layers_fields        = isset($controller->order_layers_fields) ? $controller->order_layers_fields : [];
     return $setting;
   }
 
@@ -353,9 +340,71 @@ class ModelHelper
     $end_time   = ($request != null) && $request->filled('end_time') ? $request->end_time : null;
     $time_field = ($request != null) && $request->filled('time_field') ? $request->time_field : 'created_at';
     $search     = ($request != null) && $request->filled('search') ? $request->search : null;
+    $excludes   = ($request != null) && $request->filled('excludes') ? $request->excludes : null;
+
+    // Snap
+    $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many);
 
     // Order
-    $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many)->orderByRaw("ISNULL({$order_by}), {$order_by} {$order_way}")->where($setting->custom_get_conditions);
+    if (in_array($order_by, $setting->order_fields)) {
+      $snap = $snap->orderByRaw("ISNULL({$order_by}), {$order_by} {$order_way}");
+    } else if (in_array($order_by, $setting->order_belongs_to)) {
+      $order_by = "{$order_by}_id";
+      $snap     = $snap->orderByRaw("ISNULL({$order_by}), {$order_by} {$order_way}");
+    } else if (isset($setting->order_layers_fields[$order_by])) {
+      $layers = $setting->order_layers_fields[$order_by];
+      if ($layers == 'locale') {
+        $locale_code = \App::getLocale();
+        $locale      = \App\Locale::where('code', $locale_code)->first();
+        if (!$locale) {
+          return null;
+        }
+        $snap
+          ->select("{$setting->table_name}.*")
+          ->join($setting->locale_table_name, function ($join) use ($locale, $setting, $order_by) {
+            $join->on("{$setting->locale_table_name}.{$setting->name}_id", '=', "{$setting->table_name}.id")
+              ->where("{$setting->locale_table_name}.locale_id", '=', $locale->id);
+          })->orderBy("{$setting->locale_table_name}.{$order_by}", $order_way);
+      } else if ($layers == 'version') {
+
+      } else if ($layers == 'version.locale') {
+        $locale_code = \App::getLocale();
+        $locale      = \App\Locale::where('code', $locale_code)->first();
+        if (!$locale) {
+          return null;
+        }
+        $snap
+          ->select("{$setting->table_name}.*")
+          ->join($setting->version_table_name, function ($join) use ($setting) {
+            $join->on("{$setting->version_table_name}.{$setting->name}_id", '=', "{$setting->table_name}.id")
+              ->whereRaw("{$setting->version_table_name}.id IN (select MAX(a2.id) from {$setting->version_table_name} as a2 join {$setting->table_name} as u2 on u2.id = a2.{$setting->name}_id group by u2.id)")->select('id');
+          })
+          ->join($setting->version_locale_table_name, function ($join) use ($locale, $setting) {
+            $join->on("{$setting->version_locale_table_name}.{$setting->name}_version_id", '=', "{$setting->version_table_name}.id")
+              ->where("{$setting->version_locale_table_name}.locale_id", '=', $locale->id);
+          })->orderBy("{$setting->version_locale_table_name}.{$order_by}", $order_way);
+      }
+    }
+    //  else if (in_array($order_by, $setting->locale_fields)) {
+    //   $locale_code = \App::getLocale();
+    //   $locale      = \App\Locale::where('code', $locale_code)->first();
+    //   if (!$locale) {
+    //     return null;
+    //   }
+    //   $snap->join($setting->locale_table_name, function ($join) use ($locale, $setting) {
+    //     $join->on("{$setting->locale_table_name}.{$setting->name}_id", '=', "{$setting->table_name}.id")
+    //       ->where("{$setting->locale_table_name}.locale_id", '=', $locale->id);
+    //   })->orderBy("{$setting->locale_table_name}.{$order_by}", $order_way);
+    // }
+
+    // Custom Get Conditions
+    $snap = $snap->where($setting->custom_get_conditions);
+
+    // Exclude
+    if ($excludes) {
+      $exclude_arr = array_map('intval', explode(',', $excludes));
+      $snap        = $snap->whereNotIn('id', $exclude_arr);
+    }
 
     // Time
     if ($start_time) {

@@ -364,9 +364,16 @@ class ModelHelper
           ->join($setting->locale_table_name, function ($join) use ($locale, $setting, $order_by) {
             $join->on("{$setting->locale_table_name}.{$setting->name}_id", '=', "{$setting->table_name}.id")
               ->where("{$setting->locale_table_name}.locale_id", '=', $locale->id);
-          })->orderBy("{$setting->locale_table_name}.{$order_by}", $order_way);
+          })
+          ->orderBy("{$setting->locale_table_name}.{$order_by}", $order_way);
       } else if ($layers == 'version') {
-
+        $snap
+          ->select("{$setting->table_name}.*")
+          ->join($setting->version_table_name, function ($join) use ($setting) {
+            $join->on("{$setting->version_table_name}.{$setting->name}_id", '=', "{$setting->table_name}.id")
+              ->whereRaw("{$setting->version_table_name}.id IN (select MAX(a2.id) from {$setting->version_table_name} as a2 join {$setting->table_name} as u2 on u2.id = a2.{$setting->name}_id group by u2.id)")->select('id');
+          })
+          ->orderBy("{$setting->version_table_name}.{$order_by}", $order_way);
       } else if ($layers == 'version.locale') {
         $locale_code = \App::getLocale();
         $locale      = \App\Locale::where('code', $locale_code)->first();
@@ -382,7 +389,8 @@ class ModelHelper
           ->join($setting->version_locale_table_name, function ($join) use ($locale, $setting) {
             $join->on("{$setting->version_locale_table_name}.{$setting->name}_version_id", '=', "{$setting->version_table_name}.id")
               ->where("{$setting->version_locale_table_name}.locale_id", '=', $locale->id);
-          })->orderBy("{$setting->version_locale_table_name}.{$order_by}", $order_way);
+          })
+          ->orderBy("{$setting->version_locale_table_name}.{$order_by}", $order_way);
       }
     }
     //  else if (in_array($order_by, $setting->locale_fields)) {

@@ -49,7 +49,7 @@ class SignedUrlArrayCast implements CastsAttributes
    */
   public function set($model, $key, $value, $attributes)
   {
-    if (!$value) {
+    if (!isset($value)) {
       return [];
     }
     $_value = $value;

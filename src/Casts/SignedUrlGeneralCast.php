@@ -34,7 +34,7 @@ class SignedUrlGeneralCast implements CastsAttributes
    */
   public function set($model, $key, $value, $attributes)
   {
-    if (!$value) {
+    if (!isset($value)) {
       return null;
     }
     return StorageHelper::getSignedUrlStoreValue($value);

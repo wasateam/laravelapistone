@@ -39,7 +39,7 @@ class SignedUrlAuthCast implements CastsAttributes
    */
   public function set($model, $key, $value, $attributes)
   {
-    if (!$value) {
+    if (!isset($value)) {
       return null;
     }
     if (env('SIGNED_URL_MODE') == 'gcs') {

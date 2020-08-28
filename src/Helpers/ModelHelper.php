@@ -345,7 +345,7 @@ class ModelHelper
     $start_time = ($request != null) && $request->filled('start_time') ? $request->start_time : null;
     $end_time   = ($request != null) && $request->filled('end_time') ? $request->end_time : null;
     $time_field = ($request != null) && $request->filled('time_field') ? $request->time_field : 'created_at';
-    $search     = ($request != null) && $request->filled('search') ? $request->search : null;
+    $search     = ($request != null) && $request->filled('search') ? str_replace(' ', '', $request->search) : null;
     $excludes   = ($request != null) && $request->filled('excludes') ? $request->excludes : null;
 
     // Snap

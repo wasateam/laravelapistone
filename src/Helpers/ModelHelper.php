@@ -37,7 +37,7 @@ class ModelHelper
     return self::indexGetResourceCollection($collection, $setting);
   }
 
-  public static function ws_StoreHandler($controller, $request, $id = null)
+  public static function ws_StoreHandler($controller, $request, $id = null, $complete_action = null)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -107,7 +107,11 @@ class ModelHelper
       }
     }
 
+    if ($complete_action) {
+      $complete_action($model);
+    }
     return new $setting->resource($model);
+
   }
 
   public static function ws_BatchStoreHandler($controller, $request, $id = null)
@@ -153,13 +157,12 @@ class ModelHelper
     return new $setting->resource($model);
   }
 
-  public static function ws_UpdateHandler($controller, $request, $id, $rules = [])
+  public static function ws_UpdateHandler($controller, $request, $id, $rules = [], $complete_action = null)
   {
     // Setting
     $setting = self::getSetting($controller);
 
     // Validation
-    // $rules     = self::getValidatorRules($setting, 'update');
     $validator = Validator::make($request->all(), $rules, $setting->validation_messages);
     if ($validator->fails()) {
       error_log('aa');
@@ -221,6 +224,9 @@ class ModelHelper
       }
     }
 
+    if ($complete_action) {
+      $complete_action($model);
+    }
     return new $setting->resource($model);
   }
 

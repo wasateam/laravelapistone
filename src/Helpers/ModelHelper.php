@@ -432,7 +432,13 @@ class ModelHelper
     if ($request != null && count($setting->filter_fields)) {
       foreach ($setting->filter_fields as $filter_field) {
         if ($request->filled($filter_field)) {
-          $snap = $snap->where($filter_field, $request->{$filter_field});
+          if ($request->{$filter_field} == 'null') {
+            $snap = $snap->whereNull($filter_field);
+          } else if ($request->{$filter_field} == 'not_null') {
+            $snap = $snap->whereNotNull($filter_field);
+          } else {
+            $snap = $snap->where($filter_field, $request->{$filter_field});
+          }
         }
       }
     }

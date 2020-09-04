@@ -307,6 +307,7 @@ class ModelHelper
     $setting->filter_belongs_to          = isset($controller->filter_belongs_to) ? $controller->filter_belongs_to : [];
     $setting->filter_has_many            = isset($controller->filter_has_many) ? $controller->filter_has_many : [];
     $setting->filter_belongs_to_many     = isset($controller->filter_belongs_to_many) ? $controller->filter_belongs_to_many : [];
+    $setting->filter_relationship_fields = isset($controller->filter_relationship_fields) ? $controller->filter_relationship_fields : [];
     $setting->search_fields              = isset($controller->search_fields) ? $controller->search_fields : [];
     $setting->search_relationship_fields = isset($controller->search_relationship_fields) ? $controller->search_relationship_fields : [];
     $setting->validation_messages        = isset($controller->validation_messages) ? $controller->validation_messages : [];
@@ -470,6 +471,15 @@ class ModelHelper
             foreach ($item_arr as $item_key => $item) {
               $query = $query->WhereIn('id', $item_arr);
             }
+          });
+        }
+      }
+    }
+    if (($request != null) && count($setting->filter_relationship_fields)) {
+      foreach ($setting->filter_relationship_fields as $filter_relationship_field_key => $filter_relationship_field_value) {
+        if ($request->filled($filter_relationship_field_key)) {
+          $snap = $snap->whereHas($filter_relationship_field_value[0], function ($query) use ($filter_relationship_field_value, $filter_relationship_field_key, $request) {
+            $query = $query->where($filter_relationship_field_value[1], $request->{$filter_relationship_field_key});
           });
         }
       }

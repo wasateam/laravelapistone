@@ -251,7 +251,8 @@ class AuthController extends Controller
    */
   public function get_avatar_upload_url($filename)
   {
-    $user = Auth::user();
-    return StorageHelper::getGoogleUploadSignedUrlByNameAndPath($filename, "admin/{$user->id}", 'image/png');
+    $setting = AuthHelper::getSetting($this);
+    $user    = Auth::user();
+    return StorageHelper::getGoogleUploadSignedUrlByNameAndPath($filename, "{$setting->name}/{$user->id}", 'image/png');
   }
 }

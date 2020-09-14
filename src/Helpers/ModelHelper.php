@@ -310,6 +310,7 @@ class ModelHelper
     $setting->filter_relationship_fields = isset($controller->filter_relationship_fields) ? $controller->filter_relationship_fields : [];
     $setting->search_fields              = isset($controller->search_fields) ? $controller->search_fields : [];
     $setting->search_relationship_fields = isset($controller->search_relationship_fields) ? $controller->search_relationship_fields : [];
+    $setting->time_relationship_fields   = isset($controller->time_relationship_fields) ? $controller->time_relationship_fields : [];
     $setting->validation_messages        = isset($controller->validation_messages) ? $controller->validation_messages : [];
     $setting->validation_rules           = isset($controller->validation_rules) ? $controller->validation_rules : [];
     $setting->store_validation_rules     = isset($controller->store_validation_rules) ? $controller->store_validation_rules : null;
@@ -422,11 +423,32 @@ class ModelHelper
     }
 
     // Time
-    if ($start_time) {
-      $snap = $snap->where($time_field, '>=', $start_time);
-    }
-    if ($end_time) {
-      $snap = $snap->where($time_field, '<=', $end_time);
+    if ($start_time && $end_time) {
+      if (isset($setting->time_relationship_fields[$time_field])) {
+        $snap = $snap->whereHas($setting->time_relationship_fields[$time_field], function ($query) use ($time_field, $start_time, $end_time) {
+          $query = $query->where($time_field, '>=', $start_time);
+          $query = $query->where($time_field, '<=', $end_time);
+        });
+      } else {
+        $snap = $snap->where($time_field, '>=', $start_time);
+        $snap = $snap->where($time_field, '<=', $end_time);
+      }
+    } else if ($end_time) {
+      if (isset($setting->time_relationship_fields[$time_field])) {
+        $snap = $snap->whereHas($setting->time_relationship_fields[$time_field], function ($query) use ($time_field, $end_time) {
+          $query = $query->where($time_field, '<=', $end_time);
+        });
+      } else {
+        $snap = $snap->where($time_field, '<=', $end_time);
+      }
+    } else if ($start_time) {
+      if (isset($setting->time_relationship_fields[$time_field])) {
+        $snap = $snap->whereHas($setting->time_relationship_fields[$time_field], function ($query) use ($time_field, $start_time) {
+          $query = $query->where($time_field, '>=', $start_time);
+        });
+      } else {
+        $snap = $snap->where($time_field, '>=', $start_time);
+      }
     }
 
     // Filter

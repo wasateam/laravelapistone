@@ -13,7 +13,7 @@ class AuthRoutesHelper
     }
     Route::group([
       "prefix" => $name,
-    ], function () use ($controller_name, $guard, $name, $routes, $user_scope) {
+    ], function () use ($controller_name, $guard, $routes, $user_scope) {
       if (in_array('signup', $routes)) {
         Route::post("signup", "{$controller_name}@signup");
       }

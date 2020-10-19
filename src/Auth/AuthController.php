@@ -153,7 +153,10 @@ class AuthController extends Controller
         'message' => 'cannot find user.',
       ], 401);
     }
-    return (new $setting->resource($user));
+    return response()->json([
+      'user'   => new $setting->resource($user),
+      'scopes' => $user->scopes,
+    ], 200);
   }
 
   /**

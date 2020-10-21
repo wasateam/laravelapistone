@@ -486,7 +486,9 @@ class ModelHelper
       foreach ($setting->filter_belongs_to as $filter_belongs_to_item) {
         if ($request->filled($filter_belongs_to_item)) {
           $item_arr = array_map('intval', explode(',', $request->{$filter_belongs_to_item}));
-          $snap     = $snap->whereIn("{$filter_belongs_to_item}_id", $item_arr);
+          $snap = $snap->whereHas($filter_belongs_to_item, function ($query) use ($item_arr) {
+            return $query->whereIn('id', $item_arr);
+          });
         }
       }
     }

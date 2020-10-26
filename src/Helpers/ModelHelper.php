@@ -486,7 +486,7 @@ class ModelHelper
       foreach ($setting->filter_belongs_to as $filter_belongs_to_item) {
         if ($request->filled($filter_belongs_to_item)) {
           $item_arr = array_map('intval', explode(',', $request->{$filter_belongs_to_item}));
-          $snap = $snap->whereHas($filter_belongs_to_item, function ($query) use ($item_arr) {
+          $snap     = $snap->whereHas($filter_belongs_to_item, function ($query) use ($item_arr) {
             return $query->whereIn('id', $item_arr);
           });
         }
@@ -497,9 +497,7 @@ class ModelHelper
         if ($request->filled($filter_belongs_to_many_item)) {
           $item_arr = array_map('intval', explode(',', $request->{$filter_belongs_to_many_item}));
           $snap     = $snap->with($filter_belongs_to_many_item)->whereHas($filter_belongs_to_many_item, function ($query) use ($item_arr) {
-            foreach ($item_arr as $item_key => $item) {
-              $query = $query->whereIn('id', $item_arr);
-            }
+            return $query->whereIn('id', $item_arr);
           });
         }
       }
@@ -509,9 +507,7 @@ class ModelHelper
         if ($request->filled($filter_has_many_item)) {
           $item_arr = array_map('intval', explode(',', $request->{$filter_has_many_item}));
           $snap     = $snap->with($filter_has_many_item)->whereHas($filter_has_many_item, function ($query) use ($item_arr) {
-            foreach ($item_arr as $item_key => $item) {
-              $query = $query->WhereIn('id', $item_arr);
-            }
+            return $query->whereIn('id', $item_arr);
           });
         }
       }
@@ -519,8 +515,9 @@ class ModelHelper
     if (($request != null) && count($setting->filter_relationship_fields)) {
       foreach ($setting->filter_relationship_fields as $filter_relationship_field_key => $filter_relationship_field_value) {
         if ($request->filled($filter_relationship_field_key)) {
-          $snap = $snap->whereHas($filter_relationship_field_value[0], function ($query) use ($filter_relationship_field_value, $filter_relationship_field_key, $request) {
-            $query = $query->where($filter_relationship_field_value[1], $request->{$filter_relationship_field_key});
+          $item_arr = array_map('intval', explode(',', $request->{$filter_relationship_field_key}));
+          $snap     = $snap->whereHas($filter_relationship_field_value[0], function ($query) use ($filter_relationship_field_value, $item_arr) {
+            return $query->whereIn('id', $item_arr);
           });
         }
       }

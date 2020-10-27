@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use App;
 use Auth;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Storage;
@@ -361,11 +362,15 @@ class ModelHelper
     // Variable
     $order_by   = ($request != null) && $request->filled('order_by') ? $request->order_by : 'id';
     $order_way  = ($request != null) && $request->filled('order_way') ? $request->order_way : 'asc';
-    $start_time = ($request != null) && $request->filled('start_time') ? $request->start_time : null;
-    $end_time   = ($request != null) && $request->filled('end_time') ? $request->end_time : null;
+    $start_time = ($request != null) && $request->filled('start_time') ? Carbon::parse($request->start_time) : null;
+    $end_time   = ($request != null) && $request->filled('end_time') ? Carbon::parse($request->end_time) : null;
     $time_field = ($request != null) && $request->filled('time_field') ? $request->time_field : 'created_at';
     $search     = ($request != null) && $request->filled('search') ? str_replace(' ', '', $request->search) : null;
     $excludes   = ($request != null) && $request->filled('excludes') ? $request->excludes : null;
+
+    if ($end_time->hour == 0 && $end_time->minute == 0 && $end_time->second == 0) {
+      $end_time->setTime(23, 59, 59);
+    }
 
     // Snap
     $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many);
@@ -418,17 +423,6 @@ class ModelHelper
           ->orderBy("{$setting->version_locale_table_name}.{$order_by}", $order_way);
       }
     }
-    //  else if (in_array($order_by, $setting->locale_fields)) {
-    //   $locale_code = \App::getLocale();
-    //   $locale      = \App\Locale::where('code', $locale_code)->first();
-    //   if (!$locale) {
-    //     return null;
-    //   }
-    //   $snap->join($setting->locale_table_name, function ($join) use ($locale, $setting) {
-    //     $join->on("{$setting->locale_table_name}.{$setting->name}_id", '=', "{$setting->table_name}.id")
-    //       ->where("{$setting->locale_table_name}.locale_id", '=', $locale->id);
-    //   })->orderBy("{$setting->locale_table_name}.{$order_by}", $order_way);
-    // }
 
     // Custom Get Conditions
     $snap = $snap->where($setting->custom_get_conditions);

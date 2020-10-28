@@ -368,7 +368,7 @@ class ModelHelper
     $search     = ($request != null) && $request->filled('search') ? str_replace(' ', '', $request->search) : null;
     $excludes   = ($request != null) && $request->filled('excludes') ? $request->excludes : null;
 
-    if (isset($end_time)&&$end_time->hour == 0 && $end_time->minute == 0 && $end_time->second == 0) {
+    if (isset($end_time) && $end_time->hour == 0 && $end_time->minute == 0 && $end_time->second == 0) {
       $end_time->setTime(23, 59, 59);
     }
 

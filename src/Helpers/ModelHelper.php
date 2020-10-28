@@ -316,6 +316,7 @@ class ModelHelper
     $setting->version_table_name         = isset($controller->version_table_name) ? $controller->version_table_name : "{$setting->name}_versions";
     $setting->version_locale_table_name  = isset($controller->version_locale_table_name) ? $controller->version_locale_table_name : "{$setting->name}_version_locales";
     $setting->paginate                   = isset($controller->paginate) ? $controller->paginate : 15;
+    $setting->getallwhentimefield        = isset($controller->getallwhentimefield) ? $controller->getallwhentimefield : 0;
     $setting->resource_for_collection    = isset($controller->resource_for_collection) ? $controller->resource_for_collection : null;
     $setting->child_models               = isset($controller->child_models) ? $controller->child_models : [];
     $setting->belongs_to                 = isset($controller->belongs_to) ? $controller->belongs_to : [];
@@ -435,6 +436,18 @@ class ModelHelper
 
     // Time
     if ($start_time && $end_time) {
+      $totalDuration = $end_time->diffInDays($start_time);
+      if ($totalDuration > 200) {
+        $end_time = Carbon::parse($start_time)->addDays(200);
+      }
+    } else if ($end_time) {
+      $start_time = Carbon::parse($end_time)->addDays(-2000);
+    } else if ($start_time) {
+      $end_time = Carbon::parse($start_time)->addDays(200);
+    }
+
+    if (isset($start_time) && isset($end_time)) {
+
       if (isset($setting->time_relationship_fields[$time_field])) {
         $snap = $snap->whereHas($setting->time_relationship_fields[$time_field], function ($query) use ($time_field, $start_time, $end_time) {
           $query = $query->where($time_field, '>=', $start_time);
@@ -443,22 +456,7 @@ class ModelHelper
       } else {
         $snap = $snap->where($time_field, '>=', $start_time);
         $snap = $snap->where($time_field, '<=', $end_time);
-      }
-    } else if ($end_time) {
-      if (isset($setting->time_relationship_fields[$time_field])) {
-        $snap = $snap->whereHas($setting->time_relationship_fields[$time_field], function ($query) use ($time_field, $end_time) {
-          $query = $query->where($time_field, '<=', $end_time);
-        });
-      } else {
-        $snap = $snap->where($time_field, '<=', $end_time);
-      }
-    } else if ($start_time) {
-      if (isset($setting->time_relationship_fields[$time_field])) {
-        $snap = $snap->whereHas($setting->time_relationship_fields[$time_field], function ($query) use ($time_field, $start_time) {
-          $query = $query->where($time_field, '>=', $start_time);
-        });
-      } else {
-        $snap = $snap->where($time_field, '>=', $start_time);
+
       }
     }
 
@@ -570,6 +568,8 @@ class ModelHelper
   public static function indexGetPaginate($setting, $snap, $request, $getall = false)
   {
     if ($getall) {
+      return $snap->get();
+    } else if ($setting->getallwhentimefield && ($request->filled('start_time') || $request->filled('end_time'))) {
       return $snap->get();
     } else if ($request->filled('offset') || $request->filled('limit')) {
       $offset = $request->filled('offset') ? $request->offset : 1;

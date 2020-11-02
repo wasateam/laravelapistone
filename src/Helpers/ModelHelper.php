@@ -135,14 +135,20 @@ class ModelHelper
     }
   }
 
-  public static function ws_ShowHandler($controller, $request, $id = null)
+  public static function ws_ShowHandler($controller, $request, $id = null, $custom_snap_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
 
+    // Snap
+    $snap = $setting->model::where('id', $id)->where($setting->custom_get_conditions);
+    if ($custom_snap_handler) {
+      $snap = $custom_snap_handler($snap);
+    }
+
     // Get
     try {
-      $model = $setting->model::where('id', $id)->where($setting->custom_get_conditions)->first();
+      $model = $snap->first();
     } catch (\Throwable $th) {
       return response()->json([
         'message' => 'no data.',

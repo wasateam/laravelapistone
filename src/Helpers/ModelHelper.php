@@ -25,6 +25,9 @@ class ModelHelper
       $snap = $custom_snap_handler($snap);
     }
 
+    // Filter User
+    $snap = self::userFilterSnap($snap, $setting);
+
     // Collection
     $collection = self::indexGetPaginate($setting, $snap, $request, $getall);
     try {
@@ -38,7 +41,7 @@ class ModelHelper
     return self::indexGetResourceCollection($collection, $setting);
   }
 
-  public static function ws_StoreHandler($controller, $request, $id = null, $complete_action = null)
+  public static function ws_StoreHandler($controller, $request, $id = null, $complete_action = null, $before_save_action = null)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -75,6 +78,11 @@ class ModelHelper
 
     // Belongs To Value
     $model = self::setBelongsTo($model, $setting, $request);
+
+    // Before Save Action
+    if ($before_save_action) {
+      $model = $before_save_action($model);
+    }
 
     // Save
     $model->save();
@@ -146,6 +154,9 @@ class ModelHelper
       $snap = $custom_snap_handler($snap);
     }
 
+    // Filter User
+    $snap = self::userFilterSnap($snap, $setting);
+
     // Get
     try {
       $model = $snap->first();
@@ -179,7 +190,12 @@ class ModelHelper
     }
 
     // Find Model
-    $model = $setting->model::find($id);
+    $snap = $setting->model::where('id', $id);
+
+    // Filter User
+    $snap = self::userFilterSnap($snap, $setting);
+
+    $model = $snap->first();
     if (!$model) {
       return response()->json([
         'message' => 'no data.',
@@ -260,7 +276,12 @@ class ModelHelper
     $setting = self::getSetting($controller);
 
     // Find Model
-    $model = $setting->model::find($id);
+    $snap = $setting->model::where('id', $id);
+
+    // Filter User
+    $snap = self::userFilterSnap($snap, $setting);
+
+    $model = $snap->first();
     if (!$model) {
       return response()->json([
         'message' => 'no data.',
@@ -313,45 +334,48 @@ class ModelHelper
 
   public static function getSetting($controller)
   {
-    $setting                             = collect();
-    $setting->model                      = $controller->model;
-    $setting->name                       = $controller->name;
-    $setting->resource                   = $controller->resource;
-    $setting->table_name                 = isset($controller->table_name) ? $controller->table_name : "{$setting->name}s";
-    $setting->locale_table_name          = isset($controller->locale_table_name) ? $controller->locale_table_name : "{$setting->name}_locales";
-    $setting->version_table_name         = isset($controller->version_table_name) ? $controller->version_table_name : "{$setting->name}_versions";
-    $setting->version_locale_table_name  = isset($controller->version_locale_table_name) ? $controller->version_locale_table_name : "{$setting->name}_version_locales";
-    $setting->paginate                   = isset($controller->paginate) ? $controller->paginate : 15;
-    $setting->getallwhentimefield        = isset($controller->getallwhentimefield) ? $controller->getallwhentimefield : 0;
-    $setting->resource_for_collection    = isset($controller->resource_for_collection) ? $controller->resource_for_collection : null;
-    $setting->child_models               = isset($controller->child_models) ? $controller->child_models : [];
-    $setting->belongs_to                 = isset($controller->belongs_to) ? $controller->belongs_to : [];
-    $setting->has_many                   = isset($controller->has_many) ? $controller->has_many : [];
-    $setting->belongs_to_many            = isset($controller->belongs_to_many) ? $controller->belongs_to_many : [];
-    $setting->filter_fields              = isset($controller->filter_fields) ? $controller->filter_fields : [];
-    $setting->filter_belongs_to          = isset($controller->filter_belongs_to) ? $controller->filter_belongs_to : [];
-    $setting->filter_has_many            = isset($controller->filter_has_many) ? $controller->filter_has_many : [];
-    $setting->filter_belongs_to_many     = isset($controller->filter_belongs_to_many) ? $controller->filter_belongs_to_many : [];
-    $setting->filter_relationship_fields = isset($controller->filter_relationship_fields) ? $controller->filter_relationship_fields : [];
-    $setting->search_fields              = isset($controller->search_fields) ? $controller->search_fields : [];
-    $setting->search_relationship_fields = isset($controller->search_relationship_fields) ? $controller->search_relationship_fields : [];
-    $setting->time_relationship_fields   = isset($controller->time_relationship_fields) ? $controller->time_relationship_fields : [];
-    $setting->validation_messages        = isset($controller->validation_messages) ? $controller->validation_messages : [];
-    $setting->validation_rules           = isset($controller->validation_rules) ? $controller->validation_rules : [];
-    $setting->store_validation_rules     = isset($controller->store_validation_rules) ? $controller->store_validation_rules : null;
-    $setting->update_validation_rules    = isset($controller->update_validation_rules) ? $controller->update_validation_rules : null;
-    $setting->default_values             = isset($controller->default_values) ? $controller->default_values : [];
-    $setting->input_fields               = isset($controller->input_fields) ? $controller->input_fields : [];
-    $setting->locale_fields              = isset($controller->locale_fields) ? $controller->locale_fields : [];
-    $setting->user_record_field          = isset($controller->user_record_field) ? $controller->user_record_field : null;
-    $setting->parent_name                = isset($controller->parent_name) ? $controller->parent_name : null;
-    $setting->parent_model               = isset($controller->parent_model) ? $controller->parent_model : null;
-    $setting->parent_id_field            = isset($controller->parent_id_field) ? $controller->parent_id_field : null;
-    $setting->custom_get_conditions      = isset($controller->custom_get_conditions) ? $controller->custom_get_conditions : [];
-    $setting->value_match_fields         = isset($controller->value_match_fields) ? $controller->value_match_fields : [];
-    $setting->order_fields               = isset($controller->order_fields) ? $controller->order_fields : [];
-    $setting->order_belongs_to           = isset($controller->order_belongs_to) ? $controller->order_belongs_to : [];
-    $setting->order_layers_fields        = isset($controller->order_layers_fields) ? $controller->order_layers_fields : [];
+    $setting                                  = collect();
+    $setting->model                           = $controller->model;
+    $setting->name                            = $controller->name;
+    $setting->resource                        = $controller->resource;
+    $setting->table_name                      = isset($controller->table_name) ? $controller->table_name : "{$setting->name}s";
+    $setting->locale_table_name               = isset($controller->locale_table_name) ? $controller->locale_table_name : "{$setting->name}_locales";
+    $setting->version_table_name              = isset($controller->version_table_name) ? $controller->version_table_name : "{$setting->name}_versions";
+    $setting->version_locale_table_name       = isset($controller->version_locale_table_name) ? $controller->version_locale_table_name : "{$setting->name}_version_locales";
+    $setting->paginate                        = isset($controller->paginate) ? $controller->paginate : 15;
+    $setting->getallwhentimefield             = isset($controller->getallwhentimefield) ? $controller->getallwhentimefield : 0;
+    $setting->resource_for_collection         = isset($controller->resource_for_collection) ? $controller->resource_for_collection : null;
+    $setting->child_models                    = isset($controller->child_models) ? $controller->child_models : [];
+    $setting->belongs_to                      = isset($controller->belongs_to) ? $controller->belongs_to : [];
+    $setting->has_many                        = isset($controller->has_many) ? $controller->has_many : [];
+    $setting->belongs_to_many                 = isset($controller->belongs_to_many) ? $controller->belongs_to_many : [];
+    $setting->filter_fields                   = isset($controller->filter_fields) ? $controller->filter_fields : [];
+    $setting->filter_belongs_to               = isset($controller->filter_belongs_to) ? $controller->filter_belongs_to : [];
+    $setting->filter_has_many                 = isset($controller->filter_has_many) ? $controller->filter_has_many : [];
+    $setting->filter_belongs_to_many          = isset($controller->filter_belongs_to_many) ? $controller->filter_belongs_to_many : [];
+    $setting->filter_relationship_fields      = isset($controller->filter_relationship_fields) ? $controller->filter_relationship_fields : [];
+    $setting->filter_user_fields              = isset($controller->filter_user_fields) ? $controller->filter_user_fields : [];
+    $setting->filter_user_disable_scopes      = isset($controller->filter_user_disable_scopes) ? $controller->filter_user_disable_scopes : ['boss'];
+    $setting->filter_relationship_user_fields = isset($controller->filter_relationship_user_fields) ? $controller->filter_relationship_user_fields : [];
+    $setting->search_fields                   = isset($controller->search_fields) ? $controller->search_fields : [];
+    $setting->search_relationship_fields      = isset($controller->search_relationship_fields) ? $controller->search_relationship_fields : [];
+    $setting->time_relationship_fields        = isset($controller->time_relationship_fields) ? $controller->time_relationship_fields : [];
+    $setting->validation_messages             = isset($controller->validation_messages) ? $controller->validation_messages : [];
+    $setting->validation_rules                = isset($controller->validation_rules) ? $controller->validation_rules : [];
+    $setting->store_validation_rules          = isset($controller->store_validation_rules) ? $controller->store_validation_rules : null;
+    $setting->update_validation_rules         = isset($controller->update_validation_rules) ? $controller->update_validation_rules : null;
+    $setting->default_values                  = isset($controller->default_values) ? $controller->default_values : [];
+    $setting->input_fields                    = isset($controller->input_fields) ? $controller->input_fields : [];
+    $setting->locale_fields                   = isset($controller->locale_fields) ? $controller->locale_fields : [];
+    $setting->user_record_field               = isset($controller->user_record_field) ? $controller->user_record_field : null;
+    $setting->parent_name                     = isset($controller->parent_name) ? $controller->parent_name : null;
+    $setting->parent_model                    = isset($controller->parent_model) ? $controller->parent_model : null;
+    $setting->parent_id_field                 = isset($controller->parent_id_field) ? $controller->parent_id_field : null;
+    $setting->custom_get_conditions           = isset($controller->custom_get_conditions) ? $controller->custom_get_conditions : [];
+    $setting->value_match_fields              = isset($controller->value_match_fields) ? $controller->value_match_fields : [];
+    $setting->order_fields                    = isset($controller->order_fields) ? $controller->order_fields : [];
+    $setting->order_belongs_to                = isset($controller->order_belongs_to) ? $controller->order_belongs_to : [];
+    $setting->order_layers_fields             = isset($controller->order_layers_fields) ? $controller->order_layers_fields : [];
     return $setting;
   }
 
@@ -779,5 +803,27 @@ class ModelHelper
     } else {
       return $_data_locales;
     }
+  }
+
+  public static function userFilterSnap($snap, $setting)
+  {
+    if (count($setting->filter_user_fields) == 0 && count($setting->filter_relationship_user_fields) == 0) {
+      return $snap;
+    }
+    $user        = Auth::user();
+    $user_scopes = $user->scopes;
+    if (count(array_intersect($user_scopes, $setting->filter_user_disable_scopes)) == 0) {
+      foreach ($setting->filter_user_fields as $filter_user_field) {
+        $snap = $snap->whereHas($filter_user_field, function ($query) use ($user) {
+          return $query->where('id', $user->id);
+        });
+      }
+      foreach ($setting->filter_relationship_user_fields as $filter_relationship_user_field_key => $filter_relationship_user_field) {
+        $snap = $snap->whereHas($filter_relationship_user_field, function ($query) use ($user) {
+          return $query->where('id', $user->id);
+        });
+      }
+    }
+    return $snap;
   }
 }

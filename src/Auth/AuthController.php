@@ -8,9 +8,9 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Storage;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
+use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
 class AuthController extends Controller
@@ -22,6 +22,7 @@ class AuthController extends Controller
    * @bodyParam  password string required Example: 123123
    * @bodyParam  password_confirmation string required Check Password match  Example: 123123
    * @bodyParam  name string User Name  Example: wasa
+   * @bodyParam  tel string
    * @response
    * {
    * "data": {
@@ -57,6 +58,9 @@ class AuthController extends Controller
       'name'     => $request->name,
       'password' => $request->password,
     ]);
+    if ($request->has('tel')) {
+      $user->tel = $request->tel;
+    }
     if ($setting->default_scopes) {
       $user->scopes = $setting->default_scopes;
     }
@@ -216,6 +220,9 @@ class AuthController extends Controller
     if ($request->has('avatar')) {
       $user->avatar = $request->avatar;
     }
+    if ($request->has('tel')) {
+      $user->tel = $request->tel;
+    }
     $user->save();
     return (new $setting->resource($user));
   }
@@ -229,22 +236,23 @@ class AuthController extends Controller
    */
   public function avatar_upload(Request $request, $filename)
   {
-    $setting       = AuthHelper::getSetting($this);
-    $content       = $request->getContent();
-    $disk          = Storage::disk('gcs');
-    $repo          = StorageHelper::getRandomPath();
-    $user          = Auth::user();
-    $storage_value = "{$setting->name}/{$user->id}/avatar/{$repo}/{$filename}";
-    try {
-      $disk->put($storage_value, $content);
-    } catch (\Throwable $th) {
-      return response()->json([
-        'message' => 'store file dail.',
-      ], 400);
-    }
-    return response()->json([
-      'signed_url' => StorageHelper::getSignedUrlByStoreValue($storage_value, 'idmatch'),
-    ]);
+    return ModelHelper::ws_Upload($this, $request, $filename, 'avatar', 'general');
+    // $setting       = AuthHelper::getSetting($this);
+    // $content       = $request->getContent();
+    // $disk          = Storage::disk('gcs');
+    // $repo          = StorageHelper::getRandomPath();
+    // $user          = Auth::user();
+    // $storage_value = "{$setting->name}/{$user->id}/avatar/{$repo}/{$filename}";
+    // try {
+    //   $disk->put($storage_value, $content);
+    // } catch (\Throwable $th) {
+    //   return response()->json([
+    //     'message' => 'store file dail.',
+    //   ], 400);
+    // }
+    // return response()->json([
+    //   'signed_url' => StorageHelper::getSignedUrlByStoreValue($storage_value, 'idmatch'),
+    // ]);
   }
 
   /**

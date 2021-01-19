@@ -13,13 +13,13 @@ use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
 class ModelHelper
 {
-  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null)
+  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null, $limit = true)
   {
     // Setting
     $setting = self::getSetting($controller);
 
     // Snap
-    $snap = self::indexGetSnap($setting, $request, $id);
+    $snap = self::indexGetSnap($setting, $request, $id, $limit);
 
     if ($custom_snap_handler) {
       $snap = $custom_snap_handler($snap);
@@ -388,7 +388,7 @@ class ModelHelper
     }
   }
 
-  public static function indexGetSnap($setting, $request, $parent_id, $limit = true)
+  public static function indexGetSnap($setting, $request, $parent_id, $limit)
   {
     // Variable
     $order_by   = ($request != null) && $request->filled('order_by') ? $request->order_by : 'id';

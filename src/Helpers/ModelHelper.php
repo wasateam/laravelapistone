@@ -388,7 +388,7 @@ class ModelHelper
     }
   }
 
-  public static function indexGetSnap($setting, $request, $parent_id)
+  public static function indexGetSnap($setting, $request, $parent_id, $limit = true)
   {
     // Variable
     $order_by   = ($request != null) && $request->filled('order_by') ? $request->order_by : 'id';
@@ -465,11 +465,11 @@ class ModelHelper
     }
 
     // Time
-    if ($start_time && $end_time) {
-      // $totalDuration = $end_time->diffInDays($start_time);
-      // if ($totalDuration > 366) {
-      //   $end_time = Carbon::parse($start_time)->addDays(366);
-      // }
+    if ($start_time && $end_time && $limit) {
+      $totalDuration = $end_time->diffInDays($start_time);
+      if ($totalDuration > 366) {
+        $end_time = Carbon::parse($start_time)->addDays(366);
+      }
     } else if ($end_time) {
       $start_time = Carbon::parse($end_time)->addDays(-366);
     } else if ($start_time) {

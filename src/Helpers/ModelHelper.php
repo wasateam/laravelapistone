@@ -465,10 +465,12 @@ class ModelHelper
     }
 
     // Time
-    if ($start_time && $end_time && $limit) {
-      $totalDuration = $end_time->diffInDays($start_time);
-      if ($totalDuration > 366) {
-        $end_time = Carbon::parse($start_time)->addDays(366);
+    if ($start_time && $end_time) {
+      if ($limit) {
+        $totalDuration = $end_time->diffInDays($start_time);
+        if ($totalDuration > 366) {
+          $end_time = Carbon::parse($start_time)->addDays(366);
+        }
       }
     } else if ($end_time) {
       $start_time = Carbon::parse($end_time)->addDays(-366);

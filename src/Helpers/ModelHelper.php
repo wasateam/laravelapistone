@@ -350,6 +350,7 @@ class ModelHelper
     $setting->has_many                        = isset($controller->has_many) ? $controller->has_many : [];
     $setting->belongs_to_many                 = isset($controller->belongs_to_many) ? $controller->belongs_to_many : [];
     $setting->filter_fields                   = isset($controller->filter_fields) ? $controller->filter_fields : [];
+    $setting->filter_fields_in_relationships  = isset($controller->filter_fields_in_relationships) ? $controller->filter_fields_in_relationships : [];
     $setting->filter_belongs_to               = isset($controller->filter_belongs_to) ? $controller->filter_belongs_to : [];
     $setting->filter_has_many                 = isset($controller->filter_has_many) ? $controller->filter_has_many : [];
     $setting->filter_belongs_to_many          = isset($controller->filter_belongs_to_many) ? $controller->filter_belongs_to_many : [];
@@ -503,6 +504,15 @@ class ModelHelper
           } else {
             $snap = $snap->where($filter_field, $request->{$filter_field});
           }
+        }
+      }
+    }
+    if ($request != null && count($setting->filter_fields_in_relationships)) {
+      foreach ($setting->filter_fields_in_relationships as $filter_fields_in_relationship_key => $filter_fields_in_relationship_value) {
+        if ($request->filled($filter_fields_in_relationship_key)) {
+          $snap = $snap->whereHas($filter_fields_in_relationship_value[0], function ($query) use ($request, $filter_fields_in_relationship_key) {
+            return $query->where($filter_fields_in_relationship_key, $request->{$filter_fields_in_relationship_key});
+          });
         }
       }
     }

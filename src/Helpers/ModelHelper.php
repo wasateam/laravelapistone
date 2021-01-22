@@ -389,7 +389,7 @@ class ModelHelper
     }
   }
 
-  public static function indexGetSnap($setting, $request, $parent_id, $limit)
+  public static function indexGetSnap($setting, $request, $parent_id, $limit = true)
   {
     // Variable
     $order_by   = ($request != null) && $request->filled('order_by') ? $request->order_by : 'id';

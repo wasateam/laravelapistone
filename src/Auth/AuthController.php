@@ -101,7 +101,11 @@ class AuthController extends Controller
       'password'    => 'required|string',
       'remember_me' => 'boolean',
     ]);
-    $user = $setting->model::where('email', $request->email)->first();
+    $snap = $setting->model::where('email', $request->email);
+    if ($setting->is_active_check) {
+      $snap = $snap->where('is_active', 1);
+    }
+    $user = $snap->first();
     if (!$user) {
       return response()->json([
         'message' => 'find no email.',
@@ -237,22 +241,6 @@ class AuthController extends Controller
   public function avatar_upload(Request $request, $filename)
   {
     return ModelHelper::ws_Upload($this, $request, $filename, 'avatar', 'general');
-    // $setting       = AuthHelper::getSetting($this);
-    // $content       = $request->getContent();
-    // $disk          = Storage::disk('gcs');
-    // $repo          = StorageHelper::getRandomPath();
-    // $user          = Auth::user();
-    // $storage_value = "{$setting->name}/{$user->id}/avatar/{$repo}/{$filename}";
-    // try {
-    //   $disk->put($storage_value, $content);
-    // } catch (\Throwable $th) {
-    //   return response()->json([
-    //     'message' => 'store file dail.',
-    //   ], 400);
-    // }
-    // return response()->json([
-    //   'signed_url' => StorageHelper::getSignedUrlByStoreValue($storage_value, 'idmatch'),
-    // ]);
   }
 
   /**

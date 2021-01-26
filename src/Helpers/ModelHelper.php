@@ -13,13 +13,13 @@ use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
 class ModelHelper
 {
-  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null)
+  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null, $limit = true)
   {
     // Setting
     $setting = self::getSetting($controller);
 
     // Snap
-    $snap = self::indexGetSnap($setting, $request, $id);
+    $snap = self::indexGetSnap($setting, $request, $id, $limit);
 
     if ($custom_snap_handler) {
       $snap = $custom_snap_handler($snap);
@@ -350,6 +350,7 @@ class ModelHelper
     $setting->has_many                        = isset($controller->has_many) ? $controller->has_many : [];
     $setting->belongs_to_many                 = isset($controller->belongs_to_many) ? $controller->belongs_to_many : [];
     $setting->filter_fields                   = isset($controller->filter_fields) ? $controller->filter_fields : [];
+    $setting->filter_fields_in_relationships  = isset($controller->filter_fields_in_relationships) ? $controller->filter_fields_in_relationships : [];
     $setting->filter_belongs_to               = isset($controller->filter_belongs_to) ? $controller->filter_belongs_to : [];
     $setting->filter_has_many                 = isset($controller->filter_has_many) ? $controller->filter_has_many : [];
     $setting->filter_belongs_to_many          = isset($controller->filter_belongs_to_many) ? $controller->filter_belongs_to_many : [];
@@ -388,7 +389,7 @@ class ModelHelper
     }
   }
 
-  public static function indexGetSnap($setting, $request, $parent_id)
+  public static function indexGetSnap($setting, $request, $parent_id, $limit = true)
   {
     // Variable
     $order_by   = ($request != null) && $request->filled('order_by') ? $request->order_by : 'id';
@@ -420,7 +421,7 @@ class ModelHelper
         if (!$locale) {
           return null;
         }
-        $snap
+        $snap = $snap
           ->select("{$setting->table_name}.*")
           ->join($setting->locale_table_name, function ($join) use ($locale, $setting, $order_by) {
             $join->on("{$setting->locale_table_name}.{$setting->name}_id", '=', "{$setting->table_name}.id")
@@ -428,23 +429,25 @@ class ModelHelper
           })
           ->orderBy("{$setting->locale_table_name}.{$order_by}", $order_way);
       } else if ($layers == 'version') {
-        $snap
+        $snap = $snap
           ->select("{$setting->table_name}.*")
           ->join($setting->version_table_name, function ($join) use ($setting) {
             $join->on("{$setting->version_table_name}.{$setting->name}_id", '=', "{$setting->table_name}.id")
+              ->whereNull("{$setting->version_table_name}.deleted_at")
               ->whereRaw("{$setting->version_table_name}.id IN (select MAX(a2.id) from {$setting->version_table_name} as a2 join {$setting->table_name} as u2 on u2.id = a2.{$setting->name}_id group by u2.id)")->select('id');
           })
-          ->orderBy("{$setting->version_table_name}.{$order_by}", $order_way);
+          ->orderByRaw("ISNULL({$order_by}), {$order_by} {$order_way}");
       } else if ($layers == 'version.locale') {
         $locale_code = \App::getLocale();
         $locale      = \App\Locale::where('code', $locale_code)->first();
         if (!$locale) {
           return null;
         }
-        $snap
+        $snap = $snap
           ->select("{$setting->table_name}.*")
           ->join($setting->version_table_name, function ($join) use ($setting) {
             $join->on("{$setting->version_table_name}.{$setting->name}_id", '=', "{$setting->table_name}.id")
+              ->whereNull("{$setting->version_table_name}.deleted_at")
               ->whereRaw("{$setting->version_table_name}.id IN (select MAX(a2.id) from {$setting->version_table_name} as a2 join {$setting->table_name} as u2 on u2.id = a2.{$setting->name}_id group by u2.id)")->select('id');
           })
           ->join($setting->version_locale_table_name, function ($join) use ($locale, $setting) {
@@ -466,9 +469,11 @@ class ModelHelper
 
     // Time
     if ($start_time && $end_time) {
-      $totalDuration = $end_time->diffInDays($start_time);
-      if ($totalDuration > 366) {
-        $end_time = Carbon::parse($start_time)->addDays(366);
+      if ($limit) {
+        $totalDuration = $end_time->diffInDays($start_time);
+        if ($totalDuration > 366) {
+          $end_time = Carbon::parse($start_time)->addDays(366);
+        }
       }
     } else if ($end_time) {
       $start_time = Carbon::parse($end_time)->addDays(-366);
@@ -501,6 +506,15 @@ class ModelHelper
           } else {
             $snap = $snap->where($filter_field, $request->{$filter_field});
           }
+        }
+      }
+    }
+    if ($request != null && count($setting->filter_fields_in_relationships)) {
+      foreach ($setting->filter_fields_in_relationships as $filter_fields_in_relationship_key => $filter_fields_in_relationship_value) {
+        if ($request->filled($filter_fields_in_relationship_key)) {
+          $snap = $snap->whereHas($filter_fields_in_relationship_value[0], function ($query) use ($request, $filter_fields_in_relationship_key) {
+            return $query->where($filter_fields_in_relationship_key, $request->{$filter_fields_in_relationship_key});
+          });
         }
       }
     }

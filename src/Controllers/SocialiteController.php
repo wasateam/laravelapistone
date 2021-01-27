@@ -15,4 +15,14 @@ class SocialiteController extends Controller
   {
     return $service->createOrGetUser(Socialite::driver('google')->stateless()->user(), 'google');
   }
+
+  public function facebookCallback(SocialiteAccountService $service, Request $request)
+  {
+    return $service->createOrGetUser(Socialite::driver('facebook')->userFromToken($request->token), 'facebook');
+  }
+
+  public function lineCallback(SocialiteAccountService $service, Request $request)
+  {
+    return $service->createOrGetUser(Socialite::driver('line')->stateless()->user(), 'line');
+  }
 }

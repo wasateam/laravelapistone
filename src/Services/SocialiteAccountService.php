@@ -19,6 +19,12 @@ class SocialiteAccountService
     if ($provider == 'google') {
       $socialiteModel = 'Wasateam\Laravelapistone\Models\SocialiteGoogleAccount';
     }
+    if ($provider == 'facebook') {
+      $socialiteModel = 'Wasateam\Laravelapistone\Models\SocialiteFacebookAccount';
+    }
+    if ($provider == 'line') {
+      $socialiteModel = 'Wasateam\Laravelapistone\Models\SocialiteLineAccount';
+    }
     $account = $socialiteModel::whereProvider($provider)
       ->whereProviderUserId($providerUser->getId())
       ->first();

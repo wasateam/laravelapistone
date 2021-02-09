@@ -560,16 +560,18 @@ class ModelHelper
     }
 
     // Search
-    $first_search = 0;
     if ($search && count($setting->search_fields)) {
-      foreach ($setting->search_fields as $search_field_key => $search_field_item) {
-        if ($first_search == 0) {
-          $snap         = $snap->where($search_field_item, 'LIKE', "%{$search}%");
-          $first_search = 1;
-        } else {
-          $snap = $snap->orWhere($search_field_item, 'LIKE', "%{$search}%");
+      $snap->where(function ($query) use ($setting, $search) {
+        $first_search = 0;
+        foreach ($setting->search_fields as $search_field_key => $search_field_item) {
+          if ($first_search == 0) {
+            $query->where($search_field_item, 'LIKE', "%{$search}%");
+            $first_search = 1;
+          } else {
+            $query->orWhere($search_field_item, 'LIKE', "%{$search}%");
+          }
         }
-      }
+      });
     }
     if ($search && count($setting->search_relationship_fields)) {
       foreach ($setting->search_relationship_fields as $search_field_key => $search_field_value) {

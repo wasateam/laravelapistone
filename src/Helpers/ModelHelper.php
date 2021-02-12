@@ -560,48 +560,53 @@ class ModelHelper
     }
 
     // Search
-    if ($search && count($setting->search_fields)) {
-      $snap->where(function ($query) use ($setting, $search) {
-        $first_search = 0;
-        foreach ($setting->search_fields as $search_field_key => $search_field_item) {
-          if ($first_search == 0) {
-            $query->where($search_field_item, 'LIKE', "%{$search}%");
-            $first_search = 1;
-          } else {
-            $query->orWhere($search_field_item, 'LIKE', "%{$search}%");
+    if ($search) {
+      $first_search = 0;
+      $snap->where(function ($search_query) use ($setting, $search, $first_search) {
+
+        if (count($setting->search_fields)) {
+          foreach ($setting->search_fields as $search_field_key => $search_field_item) {
+            if ($first_search == 0) {
+              $search_query->where($search_field_item, 'LIKE', "%{$search}%");
+              $first_search = 1;
+            } else {
+              $search_query->orWhere($search_field_item, 'LIKE', "%{$search}%");
+            }
+          }
+        }
+
+        // search_relationship_fields
+        if (count($setting->search_relationship_fields)) {
+          foreach ($setting->search_relationship_fields as $search_field_key => $search_field_value) {
+            $search_querys = [];
+            foreach ($search_field_value as $search_field_item) {
+              $search_querys[] = [$search_field_item, 'LIKE', "%{$search}%"];
+            }
+            if ($first_search == 0) {
+              $search_query->with($search_field_key)->whereHas($search_field_key, function ($query) use ($search_querys) {
+                foreach ($search_querys as $search_query_key => $search_query) {
+                  if ($search_query_key == 0) {
+                    $query->where([$search_query]);
+                  } else {
+                    $query->orWhere([$search_query]);
+                  }
+                }
+              });
+              $first_search = 1;
+            } else {
+              $search_query->with($search_field_key)->orWhereHas($search_field_key, function ($query) use ($search_querys) {
+                foreach ($search_querys as $search_query_key => $search_query) {
+                  if ($search_query_key == 0) {
+                    $query->where([$search_query]);
+                  } else {
+                    $query->orWhere([$search_query]);
+                  }
+                }
+              });
+            }
           }
         }
       });
-    }
-    if ($search && count($setting->search_relationship_fields)) {
-      foreach ($setting->search_relationship_fields as $search_field_key => $search_field_value) {
-        $search_querys = [];
-        foreach ($search_field_value as $search_field_item) {
-          $search_querys[] = [$search_field_item, 'LIKE', "%{$search}%"];
-        }
-        if ($first_search == 0) {
-          $snap = $snap->with($search_field_key)->whereHas($search_field_key, function ($query) use ($search_querys) {
-            foreach ($search_querys as $search_query_key => $search_query) {
-              if ($search_query_key == 0) {
-                $query->where([$search_query]);
-              } else {
-                $query->orWhere([$search_query]);
-              }
-            }
-          });
-          $first_search = 1;
-        } else {
-          $snap = $snap->with($search_field_key)->orWhereHas($search_field_key, function ($query) use ($search_querys) {
-            foreach ($search_querys as $search_query_key => $search_query) {
-              if ($search_query_key == 0) {
-                $query->where([$search_query]);
-              } else {
-                $query->orWhere([$search_query]);
-              }
-            }
-          });
-        }
-      }
     }
 
     // Parent

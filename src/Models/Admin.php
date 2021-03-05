@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Models;
+namespace Wasateam\Laravelapistone\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
-class User extends Authenticatable
+class Admin extends Authenticatable
 {
-  use HasApiTokens, HasFactory, Notifiable;
+  use HasFactory, Notifiable, HasApiTokens;
+  use \Illuminate\Database\Eloquent\SoftDeletes;
 
   /**
    * The attributes that are mass assignable.
@@ -39,5 +40,8 @@ class User extends Authenticatable
    */
   protected $casts = [
     'email_verified_at' => 'datetime',
+    'password'          => \Wasateam\Laravelapistone\Casts\PasswordCast::class,
+    'scopes'            => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    // 'avatar'            => \Wasateam\Laravelapistone\Casts\SignedUrlAuthCast::class,
   ];
 }

@@ -19,7 +19,10 @@ class CreateTulpaSectionsTable extends Migration
       $table->softDeletes();
       $table->string('updated_admin_id')->nullable();
       $table->integer('tulpa_section_template_id');
+      $table->string('name')->nullable();
       $table->text('content')->nullable();
+      $table->text('tags')->nullable();
+      $table->text('remark')->nullable();
     });
   }
 

@@ -19,7 +19,10 @@ class TulpaSectionController extends Controller
   public $name         = 'tulpa_section';
   public $resource     = 'Wasateam\Laravelapistone\Resources\TulpaSection';
   public $input_fields = [
+    'name',
     'content',
+    'tags',
+    'remark',
   ];
   public $belongs_to = [
     'tulpa_section_template',
@@ -39,7 +42,10 @@ class TulpaSectionController extends Controller
   /**
    * Store
    *
+   * @bodyParam name string Example: Section Name
    * @bodyParam content object No-example
+   * @bodyParam tags object Example: ["tag 1", "tag 2"]
+   * @bodyParam remark string Example: Remark
    * @bodyParam tulpa_section_template int Example:1
    */
   public function store(Request $request, $id = null)
@@ -61,7 +67,10 @@ class TulpaSectionController extends Controller
    * Update
    *
    * @urlParam  tulpa_section required The ID of tulpa_section. Example: 1
+   * @bodyParam name string Example: Section Name
    * @bodyParam content object No-example
+   * @bodyParam tags object Example: ["tag 1", "tag 2"]
+   * @bodyParam remark string Example: Remark
    * @bodyParam tulpa_section_template int Example:1
    */
   public function update(Request $request, $id)

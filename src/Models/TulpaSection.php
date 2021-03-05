@@ -24,5 +24,6 @@ class TulpaSection extends Model
 
   protected $casts = [
     'content' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'tags'    => \Wasateam\Laravelapistone\Casts\JsonCast::class,
   ];
 }

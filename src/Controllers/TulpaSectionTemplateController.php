@@ -24,6 +24,10 @@ class TulpaSectionTemplateController extends Controller
     'remark',
     'fields',
   ];
+  public $search_fields = [
+    'name',
+    'component_name',
+  ];
   public $user_record_field = 'updated_admin_id';
 
   /**
@@ -39,10 +43,10 @@ class TulpaSectionTemplateController extends Controller
   /**
    * Store
    *
-   * @bodyParam name string  No-example
-   * @bodyParam component_name string  No-example
-   * @bodyParam remark string  No-example
-   * @bodyParam fields object  No-example
+   * @bodyParam name string Example: Tulpa Section Template
+   * @bodyParam component_name string Example: ComponantName
+   * @bodyParam remark string Example: Remark
+   * @bodyParam fields object No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -63,10 +67,10 @@ class TulpaSectionTemplateController extends Controller
    * Update
    *
    * @urlParam  tulpa_section_template required The ID of tulpa_section_template. Example: 1
-   * @bodyParam name string  No-example
-   * @bodyParam component_name string  No-example
-   * @bodyParam remark string  No-example
-   * @bodyParam fields object  No-example
+   * @bodyParam name string Example: Tulpa Section Template
+   * @bodyParam component_name string Example: ComponantName
+   * @bodyParam remark string Example: Remark
+   * @bodyParam fields object No-example
    */
   public function update(Request $request, $id)
   {

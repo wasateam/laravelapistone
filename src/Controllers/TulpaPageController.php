@@ -49,7 +49,7 @@ class TulpaPageController extends Controller
    * @bodyParam description string Example: Description for SEO
    * @bodyParam og_image url No-example
    * @bodyParam is_active boolean Example: 1
-   * @bodyParam tags object Example: ["tag1","tag2"]
+   * @bodyParam tags object Example: ["tag 1","tag 2"]
    * @bodyParam remark string Example: Remark for admins
    * @bodyParam status int No-example
    * @bodyParam tulpa_sections object No-example
@@ -78,7 +78,7 @@ class TulpaPageController extends Controller
    * @bodyParam description string Example: Description for SEO
    * @bodyParam og_image url No-example
    * @bodyParam is_active boolean Example: 1
-   * @bodyParam tags object Example: ["tag1","tag2"]
+   * @bodyParam tags object Example: ["tag 1","tag 2"]
    * @bodyParam remark string Example: Remark for admins
    * @bodyParam status int No-example
    * @bodyParam tulpa_sections object No-example

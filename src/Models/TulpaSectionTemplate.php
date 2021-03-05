@@ -15,4 +15,8 @@ class TulpaSectionTemplate extends Model
   {
     return $this->belongsTo(Admin::class, 'updated_admin_id');
   }
+
+  protected $casts = [
+    'fields' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+  ];
 }

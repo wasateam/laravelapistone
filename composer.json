@@ -15,7 +15,7 @@
     "extra": {
       "laravel": {
         "providers": [
-          "Wasateam\\Laravel\\StoneServiceProvider"
+          "Wasateam\\Laravelapistone\\StoneServiceProvider"
         ]
       }
     },

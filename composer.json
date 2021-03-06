@@ -12,6 +12,13 @@
             "Wasateam\\Laravelapistone\\": "src"
         }
     },
+    "extra": {
+      "laravel": {
+        "providers": [
+          "Wasateam\\Laravel\\StoneServiceProvider"
+        ]
+      }
+    },
     "minimum-stability": "dev",
     "require": {}
 }

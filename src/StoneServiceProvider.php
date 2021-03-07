@@ -27,5 +27,6 @@ class StoneServiceProvider extends ServiceProvider
     $this->publishes([
       __DIR__ . '/../database/migrations/tulpa' => database_path('migrations'),
     ], 'apistone-migrations-tulpa');
+    
   }
 }

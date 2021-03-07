@@ -4,7 +4,6 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Auth;
-use Wasateam\Laravelapistone\Models\Admin;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -12,7 +11,15 @@ use Validator;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
+use Wasateam\Laravelapistone\Models\Admin;
 
+/**
+ * @group Admin
+ *
+ * @authenticated
+ *
+ * APIs for admin
+ */
 class CMSAdminController extends Controller
 {
   /**
@@ -60,11 +67,12 @@ class CMSAdminController extends Controller
     if ($request->has('tel')) {
       $admin->tel = $request->tel;
     }
-    if ($setting->default_scopes) {
-      $admin->scopes = $setting->default_scopes;
-    }
+    // if ($setting->default_scopes) {
+
+    $admin->scopes = config('apistone.default_scopes');
+    // }
     $admin->save();
-    return (new $setting->resource($admin));
+    return new \Wasateam\Laravelapistone\Resources\Admin($admin);
   }
 
   /**
@@ -100,27 +108,23 @@ class CMSAdminController extends Controller
       'password'    => 'required|string',
       'remember_me' => 'boolean',
     ]);
-    $snap = $setting->model::where('email', $request->email);
+    $snap = Admin::where('email', $request->email);
     if ($setting->is_active_check) {
       $snap = $snap->where('is_active', 1);
     }
-    $user = $snap->first();
-    if (!$user) {
+    $admin = $snap->first();
+    if (!$admin) {
       return response()->json([
         'message' => 'find no email.',
       ], 401);
     }
-    if (!Hash::check($request->password, $user->password)) {
+    if (!Hash::check($request->password, $admin->password)) {
       return response()->json([
         'message' => 'password not correct.',
       ], 401);
     }
-    if ($setting->scopes_from_database) {
-      $tokenResult = $user->createToken('Personal Access Token', $user->scopes);
-    } else {
-      $tokenResult = $user->createToken('Personal Access Token', $setting->scopes);
-    }
-    $token = $tokenResult->token;
+    $tokenResult = $admin->createToken('Personal Access Token', config('apistone.admin_scopes'));
+    $token       = $tokenResult->token;
     if ($request->remember_me) {
       $token->expires_at = Carbon::now()->addWeeks(60);
     }
@@ -130,7 +134,7 @@ class CMSAdminController extends Controller
       'expires_at'   => Carbon::parse(
         $tokenResult->token->expires_at
       )->toDateTimeString(),
-      $setting->name => $user,
+      'user'         => $admin,
     ], 200);
   }
 
@@ -153,16 +157,15 @@ class CMSAdminController extends Controller
    */
   public function user()
   {
-    $setting = AuthHelper::getSetting($this);
-    $user    = Auth::user();
-    if (!$user) {
+    $admin = Auth::user();
+    if (!$admin) {
       return response()->json([
         'message' => 'cannot find user.',
       ], 401);
     }
     return response()->json([
-      'user'   => new $setting->resource($user),
-      'scopes' => $user->scopes,
+      'user'   => new \Wasateam\Laravelapistone\Resources\Admin($admin),
+      'scopes' => $admin->scopes,
     ], 200);
   }
 
@@ -202,8 +205,7 @@ class CMSAdminController extends Controller
    */
   public function update(Request $request)
   {
-    $setting = AuthHelper::getSetting($this);
-    $rules   = [
+    $rules = [
       'password' => 'string|min:6',
       'name'     => 'string|min:1|max:40',
     ];
@@ -213,21 +215,21 @@ class CMSAdminController extends Controller
         'message' => $validator->messages(),
       ], 400);
     }
-    $user = Auth::user();
+    $admin = Auth::user();
     if ($request->has('name')) {
-      $user->name = $request->name;
+      $admin->name = $request->name;
     }
     if ($request->has('password')) {
-      $user->password = $request->password;
+      $admin->password = $request->password;
     }
     if ($request->has('avatar')) {
-      $user->avatar = $request->avatar;
+      $admin->avatar = $request->avatar;
     }
     if ($request->has('tel')) {
-      $user->tel = $request->tel;
+      $admin->tel = $request->tel;
     }
-    $user->save();
-    return (new $setting->resource($user));
+    $admin->save();
+    return new \Wasateam\Laravelapistone\Resources\Admin($admin);
   }
 
   /**
@@ -249,8 +251,7 @@ class CMSAdminController extends Controller
    */
   public function get_avatar_upload_url($filename)
   {
-    $setting = AuthHelper::getSetting($this);
-    $user    = Auth::user();
-    return StorageHelper::getGoogleUploadSignedUrlByNameAndPath($filename, "{$setting->name}/{$user->id}", 'image/png');
+    $user = Auth::user();
+    return StorageHelper::getGoogleUploadSignedUrlByNameAndPath($filename, "admin/{$user->id}", 'image/png');
   }
 }

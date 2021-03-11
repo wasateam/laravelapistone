@@ -713,7 +713,7 @@ class ModelHelper
         }
         $has_value = 0;
         foreach ($setting->locale_fields as $locale_field) {
-          if (isset($request->locales[$locale->code][$locale_field])) {
+          if (array_key_exists($locale_field, $request->locales[$locale->code]) && array_key_exists($locale_field, $model_locale->toArray())) {
             $model_locale->{$locale_field} = $request->locales[$locale->code][$locale_field];
             $has_value                     = 1;
           }

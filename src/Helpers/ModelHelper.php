@@ -433,6 +433,7 @@ class ModelHelper
           ->select("{$setting->table_name}.*")
           ->join($setting->version_table_name, function ($join) use ($setting) {
             $join->on("{$setting->version_table_name}.{$setting->name}_id", '=', "{$setting->table_name}.id")
+              ->whereNull("{$setting->version_table_name}.deleted_at")
               ->whereRaw("{$setting->version_table_name}.id IN (select MAX(a2.id) from {$setting->version_table_name} as a2 join {$setting->table_name} as u2 on u2.id = a2.{$setting->name}_id group by u2.id)")->select('id');
           })
           ->orderByRaw("ISNULL({$order_by}), {$order_by} {$order_way}");

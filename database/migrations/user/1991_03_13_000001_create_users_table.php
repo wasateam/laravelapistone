@@ -17,6 +17,7 @@ class CreateUsersTable extends Migration
       $table->id();
       $table->timestamps();
       $table->softDeletes();
+      $table->string('updated_admin_id')->nullable();
       $table->string('name');
       $table->string('email')->unique();
       $table->timestamp('email_verified_at')->nullable();
@@ -24,6 +25,7 @@ class CreateUsersTable extends Migration
       $table->integer('status')->default(0);
       $table->text('avatar')->nullable();
       $table->text('settings')->nullable();
+      $table->text('scopes')->nullable(['wasa']);
       $table->rememberToken();
     });
   }

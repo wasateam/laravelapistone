@@ -8,24 +8,23 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Validator;
-use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
 use Wasateam\Laravelapistone\Models\Admin;
 
 /**
- * @group Admin
+ * @group Auth
  *
  * @authenticated
  *
- * APIs for admin
+ * APIs for auth
  */
-class CMSAdminController extends Controller
+class AuthController extends Controller
 {
   /**
    * Signup
    *
-   * @bodyParam  email mail required Admin Email Account Example: wasa@wasateam.com
+   * @bodyParam  email mail required Auth Email Account Example: admin@wasateam.com
    * @bodyParam  password string required Example: 123123
    * @bodyParam  password_confirmation string required Check Password match  Example: 123123
    * @bodyParam  name string User Name  Example: wasa
@@ -35,7 +34,7 @@ class CMSAdminController extends Controller
    * "data": {
    * "id": 2,
    * "name": "wasa",
-   * "email": "wasa@wasateam.com",
+   * "email": "admin@wasateam.com",
    * "created_at": "2020-07-11T15:06:43.000000Z",
    * "updated_at": "2020-07-11T15:06:43.000000Z"
    * }
@@ -44,7 +43,10 @@ class CMSAdminController extends Controller
    */
   public function signup(Request $request)
   {
-    $messages = [
+    $model          = config('stone.auth.model');
+    $resource       = config('stone.auth.resource');
+    $default_scopes = config('stone.auth.default_scopes');
+    $messages       = [
       'password.min' => 'password too short.',
       'email.unique' => 'email has been token.',
     ];
@@ -59,20 +61,17 @@ class CMSAdminController extends Controller
         'message' => $validator->messages(),
       ], 401);
     }
-    $admin = new Admin([
+    $user = $model([
       'email'    => $request->email,
       'name'     => $request->name,
       'password' => $request->password,
     ]);
     if ($request->has('tel')) {
-      $admin->tel = $request->tel;
+      $user->tel = $request->tel;
     }
-    // if ($setting->default_scopes) {
-
-    $admin->scopes = config('apistone.default_scopes');
-    // }
-    $admin->save();
-    return new \Wasateam\Laravelapistone\Resources\Admin($admin);
+    $user->scopes = $default_scopes;
+    $user->save();
+    return new $resource($user);
   }
 
   /**
@@ -94,7 +93,7 @@ class CMSAdminController extends Controller
    * "updated_at": "2020-07-11T15:06:43.000000Z",
    * "deleted_at": null,
    * "name": "wasa",
-   * "email": "wasa@wasateam.com",
+   * "email": "admin@wasateam.com",
    * "email_verified_at": null
    * }
    * }
@@ -102,39 +101,41 @@ class CMSAdminController extends Controller
    */
   public function signin(Request $request)
   {
-    $setting = AuthHelper::getSetting($this);
+    $model        = config('stone.auth.model');
+    $model_name   = config('stone.auth.model_name');
+    $active_check = config('stone.auth.active_check');
     $request->validate([
       'email'       => 'required|email',
       'password'    => 'required|string',
       'remember_me' => 'boolean',
     ]);
-    $snap = Admin::where('email', $request->email);
-    if ($setting->is_active_check) {
+    $snap = $model::where('email', $request->email);
+    if ($active_check) {
       $snap = $snap->where('is_active', 1);
     }
-    $admin = $snap->first();
-    if (!$admin) {
+    $user = $snap->first();
+    if (!$user) {
       return response()->json([
         'message' => 'find no email.',
       ], 401);
     }
-    if (!Hash::check($request->password, $admin->password)) {
+    if (!Hash::check($request->password, $user->password)) {
       return response()->json([
         'message' => 'password not correct.',
       ], 401);
     }
-    $tokenResult = $admin->createToken('Personal Access Token', config('apistone.admin_scopes'));
+    $tokenResult = $user->createToken('Personal Access Token', $user->scopes);
     $token       = $tokenResult->token;
     if ($request->remember_me) {
       $token->expires_at = Carbon::now()->addWeeks(60);
     }
     $token->save();
     return response()->json([
-      'access_token' => $tokenResult->accessToken,
-      'expires_at'   => Carbon::parse(
+      'access_token'  => $tokenResult->accessToken,
+      'expires_at'    => Carbon::parse(
         $tokenResult->token->expires_at
       )->toDateTimeString(),
-      'user'         => $admin,
+      "{$model_name}" => $user,
     ], 200);
   }
 
@@ -157,15 +158,16 @@ class CMSAdminController extends Controller
    */
   public function user()
   {
-    $admin = Auth::user();
-    if (!$admin) {
+    $resource = config('stone.auth.resource');
+    $user     = Auth::user();
+    if (!$user) {
       return response()->json([
         'message' => 'cannot find user.',
       ], 401);
     }
     return response()->json([
-      'user'   => new \Wasateam\Laravelapistone\Resources\Admin($admin),
-      'scopes' => $admin->scopes,
+      'user'   => new $resource($user),
+      'scopes' => $user->scopes,
     ], 200);
   }
 
@@ -205,7 +207,8 @@ class CMSAdminController extends Controller
    */
   public function update(Request $request)
   {
-    $rules = [
+    $resource = config('stone.auth.resource');
+    $rules    = [
       'password' => 'string|min:6',
       'name'     => 'string|min:1|max:40',
     ];
@@ -215,21 +218,21 @@ class CMSAdminController extends Controller
         'message' => $validator->messages(),
       ], 400);
     }
-    $admin = Auth::user();
+    $user = Auth::user();
     if ($request->has('name')) {
-      $admin->name = $request->name;
+      $user->name = $request->name;
     }
     if ($request->has('password')) {
-      $admin->password = $request->password;
+      $user->password = $request->password;
     }
     if ($request->has('avatar')) {
-      $admin->avatar = $request->avatar;
+      $user->avatar = $request->avatar;
     }
     if ($request->has('tel')) {
-      $admin->tel = $request->tel;
+      $user->tel = $request->tel;
     }
-    $admin->save();
-    return new \Wasateam\Laravelapistone\Resources\Admin($admin);
+    $user->save();
+    return new $resource($user);
   }
 
   /**
@@ -251,7 +254,8 @@ class CMSAdminController extends Controller
    */
   public function get_avatar_upload_url($filename)
   {
-    $user = Auth::user();
-    return StorageHelper::getGoogleUploadSignedUrlByNameAndPath($filename, "admin/{$user->id}", 'image/png');
+    $model_name = config('stone.auth.model_name');
+    $user       = Auth::user();
+    return StorageHelper::getGoogleUploadSignedUrlByNameAndPath($filename, "{$model_name}/{$user->id}", 'image/png');
   }
 }

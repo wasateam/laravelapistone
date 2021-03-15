@@ -13,8 +13,12 @@ class StoneServiceProvider extends ServiceProvider
     ], 'stone-config');
 
     $this->publishes([
-      __DIR__ . '/../config/auth.php' => $this->app->configPath('auth.php'),
-    ], 'auth-config');
+      __DIR__ . '/../config/auth_user.php' => $this->app->configPath('auth.php'),
+    ], 'auth-user-config');
+
+    $this->publishes([
+      __DIR__ . '/../config/auth_admin.php' => $this->app->configPath('auth.php'),
+    ], 'auth-admin-config');
 
     $this->publishes([
       __DIR__ . '/../database/migrations/admin' => database_path('migrations'),

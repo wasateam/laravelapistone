@@ -18,8 +18,8 @@ class RoutesHelper
     "userpatch",
     "avatarpatch",
   ]) {
-    $model_name = config('apistone.auth.model_name');
-    $auth_scope = config('apistone.auth.auth_scope');
+    $model_name = config('stone.auth.model_name');
+    $auth_scope = config('stone.auth.auth_scope');
     Route::group([
       'prefix' => 'auth',
     ], function () use ($routes, $model_name, $auth_scope) {

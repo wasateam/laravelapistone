@@ -14,8 +14,8 @@ return [
    */
 
   'defaults'         => [
-    'guard'     => 'web',
-    'passwords' => 'users',
+    'guard'     => 'admin',
+    'passwords' => 'admins',
   ],
 
   /*
@@ -36,24 +36,13 @@ return [
    */
 
   'guards'           => [
-    'web'   => [
-      'driver'   => 'session',
-      'provider' => 'users',
-    ],
-
-    // User
-    'user'   => [
-      'driver'   => 'passport',
-      'provider' => 'users',
-      'hash'     => false,
-    ],
 
     // Admin
-    // 'admin' => [
-    //   'driver'   => 'passport',
-    //   'provider' => 'admins',
-    //   'hash'     => false,
-    // ],
+    'admin' => [
+      'driver'   => 'passport',
+      'provider' => 'admins',
+      'hash'     => false,
+    ],
   ],
 
   /*
@@ -75,17 +64,11 @@ return [
 
   'providers'        => [
 
-    // User
-    'users'  => [
-      'driver' => 'eloquent',
-      'model'  => Wasateam\Laravelapistone\Models\User::class,
-    ],
-
     // Admin
-    // 'admins' => [
-    //   'driver' => 'eloquent',
-    //   'model'  => Wasateam\Laravelapistone\Models\Admin::class,
-    // ],
+    'admins' => [
+      'driver' => 'eloquent',
+      'model'  => Wasateam\Laravelapistone\Models\Admin::class,
+    ],
   ],
 
   /*
@@ -105,21 +88,13 @@ return [
 
   'passwords'        => [
 
-    // User
-    'users'  => [
-      'provider' => 'users',
+    // Admin
+    'admins' => [
+      'provider' => 'admins',
       'table'    => 'password_resets',
       'expire'   => 60,
       'throttle' => 60,
     ],
-
-    // Admin
-    // 'admins' => [
-    //   'provider' => 'admins',
-    //   'table'    => 'password_resets',
-    //   'expire'   => 60,
-    //   'throttle' => 60,
-    // ],
   ],
 
   /*

@@ -21,6 +21,7 @@ class CreateImagesTable extends Migration
       $table->string('created_admin_id')->nullable();
       $table->string('created_user_id')->nullable();
       $table->boolean('signed')->default(0);
+      $table->text('signed_url')->nullable();
       $table->text('url')->nullable();
       $table->string('name');
       $table->text('tags')->nullable();

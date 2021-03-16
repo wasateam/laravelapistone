@@ -28,7 +28,7 @@ class Image extends Model
   }
 
   protected $casts = [
-    'url'  => \Wasateam\Laravelapistone\Casts\ImageUrlCast::class,
-    'tags' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'signed_url' => \Wasateam\Laravelapistone\Casts\ImageUrlCast::class,
+    'tags'       => \Wasateam\Laravelapistone\Casts\JsonCast::class,
   ];
 }

@@ -20,7 +20,9 @@ class Image extends JsonResource
       'created_admin' => new Admin_R1($this->created_admin),
       'created_at'    => $this->created_at,
       'updated_at'    => $this->updated_at,
+      'signed'        => $this->signed,
       'url'           => $this->url,
+      'signed_url'    => $this->signed_url,
       'name'          => $this->name,
       'tags'          => $this->tags,
     ];

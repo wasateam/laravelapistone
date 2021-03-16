@@ -19,15 +19,9 @@ class ImageUrlCast implements CastsAttributes
   {
     if (!$value) {
       return null;
+    } else {
+      return GcsHelper::getSignedUrl($value);
     }
-    if (!$model->signed) {
-      return $value;
-    }
-    // if (env('SIGNED_URL_MODE') == 'gcs') {
-    //   return StorageHelper::getGcsSignedUrl($value);
-    // } else {
-    //   return StorageHelper::getSignedUrlByStoreValue($value, 'idmatch');
-    // }
   }
 
   /**
@@ -43,25 +37,11 @@ class ImageUrlCast implements CastsAttributes
   {
     if (!isset($value)) {
       return null;
+    } else {
+      $service = config('stone.storage.service');
+      if ($service == 'gcs') {
+        return GcsHelper::getStoreValue($value);
+      }
     }
-    if (!$model->signed) {
-      return $value;
-    }
-    $service = config('stone.storage.service');
-    if ($service == 'gcs') {
-      return GcsHelper::getGcsStoreValue($value);
-    }
-    // if (env('SIGNED_URL_MODE') == 'gcs') {
-    //   return StorageHelper::getGcsStoreValue($value);
-    // } else {
-    //   $store_value = StorageHelper::getSignedUrlStoreValue($value, 'idmatch');
-    //   $user        = Auth::user();
-    //   $options     = StorageHelper::getOptionsByStoreValue($store_value, 'idmatch');
-    //   if (!$options || $user->id != $options['model_id']) {
-    //     return null;
-    //   } else {
-    //     return $store_value;
-    //   }
-    // }
   }
 }

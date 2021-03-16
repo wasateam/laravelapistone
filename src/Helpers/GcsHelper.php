@@ -7,9 +7,8 @@ use Storage;
 
 class GcsHelper
 {
-  public static function getGcsUploadSignedUrlByNameAndPath($file_name, $file_path, $contentType = 'image/*')
+  public static function getUploadSignedUrlByNameAndPath($file_name, $file_path, $contentType = 'image/*')
   {
-    // try {
     $disk        = Storage::disk('gcs');
     $random_path = self::getRandomPath();
     $path        = "{$file_path}/{$random_path}/{$file_name}";
@@ -17,11 +16,6 @@ class GcsHelper
       'contentType' => $contentType,
     ]);
     return response()->json($url, 200);
-    // } catch (\Throwable $th) {
-    //   return response()->json([
-    //     'message' => 'get signed url error.',
-    //   ]);
-    // }
   }
 
   public static function getRandomPath()
@@ -29,14 +23,22 @@ class GcsHelper
     return time() . Str::random(5);
   }
 
-  public static function getGcsStoreValue($url)
+  public static function getStoreValue($url)
   {
     if (!$url) {
       return null;
     } else {
       $parse  = parse_url($url);
-      $bucket = env('GOOGLE_CLOUD_STORAGE_BUCKET');
+      $stone  = config('stone');
+      $bucket = config('stone.storage.gcs.bucket');
       return str_replace("/{$bucket}/", "", $parse['path']);
     }
+  }
+
+  public static function getSignedUrl($file_path)
+  {
+    $url = Storage::disk('gcs')->getAdapter()->getBucket()->object($file_path)
+      ->signedUrl(now()->addMinutes(15));
+    return $url;
   }
 }

@@ -17,11 +17,13 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  */
 class ImageController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Models\Image';
-  public $name         = 'image';
-  public $resource     = 'Wasateam\Laravelapistone\Resources\Image';
-  public $input_fields = [
+  public $model                   = 'Wasateam\Laravelapistone\Models\Image';
+  public $name                    = 'image';
+  public $resource                = 'Wasateam\Laravelapistone\Resources\Image';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\ImageCollection';
+  public $input_fields            = [
     'url',
+    'signed_url',
     'name',
     'tags',
     'signed',
@@ -46,6 +48,7 @@ class ImageController extends Controller
    * Store
    *
    * @bodyParam url string Example: url_of_image
+   * @bodyParam signed_url string Example: signed_url_of_image
    * @bodyParam name string Example: my_image
    * @bodyParam tags object Example: ["tagA","tagB"]
    * @bodyParam signed boolean Example: 0
@@ -75,6 +78,7 @@ class ImageController extends Controller
    * Update
    *
    * @urlParam  image required The ID of image. Example: 1
+   * @bodyParam signed_url string Example: signed_url_of_image
    * @bodyParam url string Example: url_of_image
    * @bodyParam name string Example: my_image
    * @bodyParam tags object Example: ["tagA","tagB"]
@@ -104,6 +108,6 @@ class ImageController extends Controller
   public function get_upload_url(Request $request)
   {
     $name = $request->name;
-    return GcsHelper::getGcsUploadSignedUrlByNameAndPath($name, 'image');
+    return GcsHelper::getUploadSignedUrlByNameAndPath($name, 'image');
   }
 }

@@ -62,7 +62,7 @@ class AuthController extends Controller
         'message' => $validator->messages(),
       ], 401);
     }
-    $user = $model([
+    $user = new $model([
       'email'    => $request->email,
       'name'     => $request->name,
       'password' => $request->password,

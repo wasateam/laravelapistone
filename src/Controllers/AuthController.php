@@ -44,6 +44,7 @@ class AuthController extends Controller
   public function signup(Request $request)
   {
     $model          = config('stone.auth.model');
+    $model_name     = config('stone.auth.model_name');
     $resource       = config('stone.auth.resource');
     $default_scopes = config('stone.auth.default_scopes');
     $messages       = [
@@ -51,7 +52,7 @@ class AuthController extends Controller
       'email.unique' => 'email has been token.',
     ];
     $rules = [
-      'email'    => "required|string|email|unique:admins",
+      'email'    => "required|string|email|unique:{$model_name}s",
       'password' => 'required|string|confirmed|min:6',
       'name'     => 'required|string|min:1|max:40',
     ];

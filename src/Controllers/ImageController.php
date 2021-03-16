@@ -3,29 +3,32 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use Illuminate\Http\Request;
+use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group File
+ * @group Image
  *
  * @authenticated
  *
- * APIs for File
+ * APIs for Image
  */
-class FileController extends Controller
+class ImageController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Models\File';
-  public $name         = 'file';
-  public $resource     = 'Wasateam\Laravelapistone\Resources\File';
+  public $model        = 'Wasateam\Laravelapistone\Models\Image';
+  public $name         = 'image';
+  public $resource     = 'Wasateam\Laravelapistone\Resources\Image';
   public $input_fields = [
     'url',
     'name',
     'tags',
+    'signed',
   ];
   public $belongs_to = [
-    'created_user',
-    'created_admin',
+    // 'created_user',
+    // 'created_admin',
   ];
   public $user_record_field = 'updated_admin_id';
 
@@ -42,21 +45,26 @@ class FileController extends Controller
   /**
    * Store
    *
-   * @bodyParam url string Example: url_of_file
-   * @bodyParam name string Example: my_file
+   * @bodyParam url string Example: url_of_image
+   * @bodyParam name string Example: my_image
    * @bodyParam tags object Example: ["tagA","tagB"]
+   * @bodyParam signed boolean Example: 0
    * @bodyParam created_user int Example: 1
    * @bodyParam created_admin int Example: 1
    */
   public function store(Request $request, $id = null)
   {
-    return ModelHelper::ws_StoreHandler($this, $request, $id);
+    return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
+      $admin                   = Auth::user();
+      $model->created_admin_id = $admin->id;
+      $model->save();
+    });
   }
 
   /**
    * Show
    *
-   * @urlParam  file required The ID of file. Example: 1
+   * @urlParam  image required The ID of image. Example: 1
    */
   public function show(Request $request, $id = null)
   {
@@ -66,10 +74,11 @@ class FileController extends Controller
   /**
    * Update
    *
-   * @urlParam  file required The ID of file. Example: 1
-   * @bodyParam url string Example: url_of_file
-   * @bodyParam name string Example: my_file
+   * @urlParam  image required The ID of image. Example: 1
+   * @bodyParam url string Example: url_of_image
+   * @bodyParam name string Example: my_image
    * @bodyParam tags object Example: ["tagA","tagB"]
+   * @bodyParam signed boolean Example: 0
    * @bodyParam created_user int Example: 1
    * @bodyParam created_admin int Example: 1
    */
@@ -81,7 +90,7 @@ class FileController extends Controller
   /**
    * Delete
    *
-   * @urlParam  file required The ID of file. Example: 2
+   * @urlParam  image required The ID of image. Example: 2
    */
   public function destroy($id)
   {
@@ -92,8 +101,9 @@ class FileController extends Controller
    * Get Upload Url
    *
    */
-  public function get_upload_url()
+  public function get_upload_url(Request $request)
   {
-    return 'ok';
+    $name = $request->name;
+    return GcsHelper::getGcsUploadSignedUrlByNameAndPath($name, 'image');
   }
 }

@@ -29,6 +29,14 @@ class StoneServiceProvider extends ServiceProvider
     ], 'migrations-user');
 
     $this->publishes([
+      __DIR__ . '/../database/migrations/image' => database_path('migrations'),
+    ], 'migrations-image');
+
+    $this->publishes([
+      __DIR__ . '/../database/migrations/file' => database_path('migrations'),
+    ], 'migrations-file');
+
+    $this->publishes([
       __DIR__ . '/../database/seeders/auth' => database_path('seeders'),
     ], 'seeder-auth');
 

@@ -4,6 +4,8 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
 use Wasateam\Laravelapistone\Controllers\AuthController;
+use Wasateam\Laravelapistone\Controllers\FileController;
+use Wasateam\Laravelapistone\Controllers\ImageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionTemplateController;
@@ -63,5 +65,27 @@ class RoutesHelper
     Route::resource('tulpa_section_template', TulpaSectionTemplateController::class)->only([
       'index', 'show', 'store', 'update', 'destroy',
     ])->shallow();
+  }
+
+  public static function image_routes()
+  {
+    $storage_service = config('stone.storage.service');
+    if ($storage_service == 'gcs') {
+      Route::get('image/upload_url', [ImageController::class, 'get_upload_url']);
+    }
+    Route::resource('image', ImageController::class)->only([
+      'index', 'show', 'store', 'update', 'destroy',
+    ])->shallow();
+  }
+
+  public static function file_routes()
+  {
+    $storage_service = config('stone.storage.service');
+    Route::resource('file', FileController::class)->only([
+      'index', 'show', 'store', 'update', 'destroy',
+    ])->shallow();
+    if ($storage_service == 'gcs') {
+      Route::get('file/upload_url', [FileController::class, 'get_upload_url']);
+    }
   }
 }

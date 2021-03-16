@@ -9,7 +9,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Validator;
-use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
@@ -37,13 +36,18 @@ class AuthController extends Controller
    */
   public function signup(Request $request)
   {
-    $setting  = AuthHelper::getSetting($this);
+    $model_name     = config('stone.auth.model_name');
+    $model          = config('stone.auth.model');
+    $resource       = config('stone.auth.resource');
+    $auth_scope     = config('stone.auth.auth_scope');
+    $default_scopes = config('stone.auth.default_scopes');
+
     $messages = [
       'password.min' => 'password too short.',
       'email.unique' => 'email has been token.',
     ];
     $rules = [
-      'email'    => "required|string|email|unique:{$setting->table}",
+      'email'    => "required|string|email|unique:{$model_name}s",
       'password' => 'required|string|confirmed|min:6',
       'name'     => 'required|string|min:1|max:40',
     ];
@@ -53,7 +57,7 @@ class AuthController extends Controller
         'message' => $validator->messages(),
       ], 400);
     }
-    $user = new $setting->model([
+    $user = new $model([
       'email'    => $request->email,
       'name'     => $request->name,
       'password' => $request->password,
@@ -61,11 +65,9 @@ class AuthController extends Controller
     if ($request->has('tel')) {
       $user->tel = $request->tel;
     }
-    if ($setting->default_scopes) {
-      $user->scopes = $setting->default_scopes;
-    }
+    $user->scopes = $default_scopes;
     $user->save();
-    return (new $setting->resource($user));
+    return (new $resource($user));
   }
 
   /**
@@ -95,14 +97,16 @@ class AuthController extends Controller
    */
   public function signin(Request $request)
   {
-    $setting = AuthHelper::getSetting($this);
+    $model        = config('stone.auth.model');
+    $active_check = config('stone.auth.active_check');
+    $model_name   = config('stone.auth.model_name');
     $request->validate([
       'email'       => 'required|email',
       'password'    => 'required|string',
       'remember_me' => 'boolean',
     ]);
-    $snap = $setting->model::where('email', $request->email);
-    if ($setting->is_active_check) {
+    $snap = $model::where('email', $request->email);
+    if ($active_check) {
       $snap = $snap->where('is_active', 1);
     }
     $user = $snap->first();
@@ -116,22 +120,18 @@ class AuthController extends Controller
         'message' => 'password not correct.',
       ], 401);
     }
-    if ($setting->scopes_from_database) {
-      $tokenResult = $user->createToken('Personal Access Token', $user->scopes);
-    } else {
-      $tokenResult = $user->createToken('Personal Access Token', $setting->scopes);
-    }
-    $token = $tokenResult->token;
+    $tokenResult = $user->createToken('Personal Access Token', $user->scopes);
+    $token       = $tokenResult->token;
     if ($request->remember_me) {
       $token->expires_at = Carbon::now()->addWeeks(60);
     }
     $token->save();
     return response()->json([
-      'access_token' => $tokenResult->accessToken,
-      'expires_at'   => Carbon::parse(
+      'access_token'  => $tokenResult->accessToken,
+      'expires_at'    => Carbon::parse(
         $tokenResult->token->expires_at
       )->toDateTimeString(),
-      $setting->name => $user,
+      "{$model_name}" => $user,
     ], 200);
   }
 
@@ -154,15 +154,15 @@ class AuthController extends Controller
    */
   public function user()
   {
-    $setting = AuthHelper::getSetting($this);
-    $user    = Auth::user();
+    $resource = config('stone.auth.resource');
+    $user     = Auth::user();
     if (!$user) {
       return response()->json([
         'message' => 'cannot find user.',
       ], 401);
     }
     return response()->json([
-      'user'   => new $setting->resource($user),
+      'user'   => new $resource($user),
       'scopes' => $user->scopes,
     ], 200);
   }
@@ -203,8 +203,8 @@ class AuthController extends Controller
    */
   public function update(Request $request)
   {
-    $setting = AuthHelper::getSetting($this);
-    $rules   = [
+    $resource = config('stone.auth.resource');
+    $rules    = [
       'password' => 'string|min:6',
       'name'     => 'string|min:1|max:40',
     ];
@@ -228,7 +228,7 @@ class AuthController extends Controller
       $user->tel = $request->tel;
     }
     $user->save();
-    return (new $setting->resource($user));
+    return (new $resource($user));
   }
 
   /**
@@ -250,8 +250,8 @@ class AuthController extends Controller
    */
   public function get_avatar_upload_url($filename)
   {
-    $setting = AuthHelper::getSetting($this);
-    $user    = Auth::user();
-    return StorageHelper::getGoogleUploadSignedUrlByNameAndPath($filename, "{$setting->name}/{$user->id}", 'image/png');
+    $model_name = config('stone.auth.model_name');
+    $user       = Auth::user();
+    return StorageHelper::getGoogleUploadSignedUrlByNameAndPath($filename, "{$model_name}/{$user->id}", 'image/png');
   }
 }

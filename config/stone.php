@@ -2,7 +2,9 @@
 
 return [
   'signed_url'      => true,
-  'storage_service' => 'gcs',
+  'storage'         => [
+    'service' => 'gcs', // gcs, app, s3
+  ],
   // User
   'auth'            => [
     'model_name'     => 'user',
@@ -16,12 +18,12 @@ return [
   ],
   // Admin
   // 'auth'            => [
-  //   'model_name'     => 'admin',
-  //   'model'          => '\Wasateam\Laravelapistone\Models\Admin',
-  //   'resource'       => '\Wasateam\Laravelapistone\Resources\Admin',
-  //   'auth_scope'     => 'admin',
+  //   'model_name'     => 'user',
+  //   'model'          => '\Wasateam\Laravelapistone\Models\User',
+  //   'resource'       => '\Wasateam\Laravelapistone\Resources\User',
+  //   'auth_scope'     => 'user',
   //   'default_scopes' => [
-  //     'admin',
+  //     'user',
   //   ],
   //   'active_check'   => false,
   // ],

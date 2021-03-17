@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFilesTable extends Migration
+class CreatePocketImagesTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,7 +13,7 @@ class CreateFilesTable extends Migration
    */
   public function up()
   {
-    Schema::create('files', function (Blueprint $table) {
+    Schema::create('pocket_images', function (Blueprint $table) {
       $table->id();
       $table->timestamps();
       $table->softDeletes();
@@ -21,6 +21,7 @@ class CreateFilesTable extends Migration
       $table->string('created_admin_id')->nullable();
       $table->string('created_user_id')->nullable();
       $table->boolean('signed')->default(0);
+      $table->text('signed_url')->nullable();
       $table->text('url')->nullable();
       $table->string('name');
       $table->text('tags')->nullable();
@@ -34,6 +35,6 @@ class CreateFilesTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('files');
+    Schema::dropIfExists('pocket_images');
   }
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Wasateam\Laravelapistone\Models\Admin;
 use Wasateam\Laravelapistone\Models\User;
 
-class File extends Model
+class PocketImage extends Model
 {
   use HasFactory;
   use \Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,4 +26,9 @@ class File extends Model
   {
     return $this->belongsTo(User::class, 'created_user_id');
   }
+
+  protected $casts = [
+    'signed_url' => \Wasateam\Laravelapistone\Casts\PocketImageSignedUrlCast::class,
+    'tags'       => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+  ];
 }

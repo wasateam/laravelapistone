@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Casts;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Wasateam\Laravelapistone\Helpers\GcsHelper;
 
-class ImageUrlCast implements CastsAttributes
+class PocketImageSignedUrlCast implements CastsAttributes
 {
   /**
    * Cast the given value.

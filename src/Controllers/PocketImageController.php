@@ -9,18 +9,18 @@ use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group Image
+ * @group PocketImage
  *
  * @authenticated
  *
- * APIs for Image
+ * APIs for PocketImage
  */
-class ImageController extends Controller
+class PocketImageController extends Controller
 {
-  public $model                   = 'Wasateam\Laravelapistone\Models\Image';
-  public $name                    = 'image';
-  public $resource                = 'Wasateam\Laravelapistone\Resources\Image';
-  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\ImageCollection';
+  public $model                   = 'Wasateam\Laravelapistone\Models\PocketImage';
+  public $name                    = 'pocket_image';
+  public $resource                = 'Wasateam\Laravelapistone\Resources\PocketImage';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\PocketImageCollection';
   public $input_fields            = [
     'url',
     'signed_url',
@@ -67,7 +67,7 @@ class ImageController extends Controller
   /**
    * Show
    *
-   * @urlParam  image required The ID of image. Example: 1
+   * @urlParam  pocket_image required The ID of pocket_image. Example: 1
    */
   public function show(Request $request, $id = null)
   {
@@ -77,7 +77,7 @@ class ImageController extends Controller
   /**
    * Update
    *
-   * @urlParam  image required The ID of image. Example: 1
+   * @urlParam  pocket_image required The ID of pocket_image. Example: 1
    * @bodyParam signed_url string Example: signed_url_of_image
    * @bodyParam url string Example: url_of_image
    * @bodyParam name string Example: my_image
@@ -94,7 +94,7 @@ class ImageController extends Controller
   /**
    * Delete
    *
-   * @urlParam  image required The ID of image. Example: 2
+   * @urlParam  pocket_image required The ID of pocket_image. Example: 2
    */
   public function destroy($id)
   {

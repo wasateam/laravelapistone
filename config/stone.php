@@ -1,15 +1,15 @@
 <?php
 
 return [
-  'signed_url' => true,
-  'storage'    => [
-    'service' => 'gcs', // gcs, app, s3
-    'gcs'     => [
+  'storage' => [
+    'signed_url' => false,
+    'service'    => 'gcs', // gcs, app, s3
+    'gcs'        => [
       'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', null),
     ],
   ],
   // User
-  'auth'       => [
+  'auth'    => [
     'model_name'     => 'user',
     'model'          => '\Wasateam\Laravelapistone\Models\User',
     'resource'       => '\Wasateam\Laravelapistone\Resources\User',

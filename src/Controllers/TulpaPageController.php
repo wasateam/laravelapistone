@@ -51,7 +51,7 @@ class TulpaPageController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    if (config('stone.mode' == 'cms')) {
+    if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_IndexHandler($this, $request, $id);
     } else if (config('stone.mode' == 'webapi')) {
       return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
@@ -89,7 +89,7 @@ class TulpaPageController extends Controller
    */
   public function show(Request $request, $id = null)
   {
-    if (config('stone.mode' == 'cms')) {
+    if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_ShowHandler($this, $request, $id);
     } else if (config('stone.mode' == 'webapi')) {
       return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) {

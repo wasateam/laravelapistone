@@ -15,10 +15,11 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  */
 class TulpaPageController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Models\TulpaPage';
-  public $name         = 'tulpa_page';
-  public $resource     = 'Wasateam\Laravelapistone\Resources\TulpaPage';
-  public $input_fields = [
+  public $model                   = 'Wasateam\Laravelapistone\Models\TulpaPage';
+  public $name                    = 'tulpa_page';
+  public $resource                = 'Wasateam\Laravelapistone\Resources\TulpaPage';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\TulpaPageCollection';
+  public $input_fields            = [
     'name',
     'route',
     'title',

@@ -5,6 +5,7 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Models\TulpaPage;
 
 /**
  * @group TulpaPage
@@ -93,10 +94,10 @@ class TulpaPageController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_ShowHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) {
-        $snap = $snap->where('is_active', 1)->where('status', 1);
-        return $snap;
-      });
+      $tulpa_page = TulpaPage::where('route', $id)->where('is_active', 1)->where('status', 1)->first();
+      return response()->json([
+        'data' => new \Wasateam\Laravelapistone\Resources\TulpaPage($tulpa_page),
+      ], 200);
     };
   }
 

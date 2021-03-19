@@ -51,7 +51,14 @@ class TulpaPageController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    if (config('stone.mode' == 'cms')) {
+      return ModelHelper::ws_IndexHandler($this, $request, $id);
+    } else if (config('stone.mode' == 'webapi')) {
+      return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) {
+        $snap = $snap->where('is_active', 1)->where('status', 1);
+        return $snap;
+      });
+    }
   }
 
   /**

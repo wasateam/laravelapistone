@@ -53,17 +53,16 @@ class RoutesHelper
     });
   }
 
-  public static function tulpa_routes()
-  {
-    Route::resource('tulpa_page', TulpaPageController::class)->only([
-      'index', 'show', 'store', 'update', 'destroy',
-    ])->shallow();
-    Route::resource('tulpa_section', TulpaSectionController::class)->only([
-      'index', 'show', 'store', 'update', 'destroy',
-    ])->shallow();
-    Route::resource('tulpa_section_template', TulpaSectionTemplateController::class)->only([
-      'index', 'show', 'store', 'update', 'destroy',
-    ])->shallow();
+  public static function tulpa_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('tulpa_page', TulpaPageController::class)->only($routes)->shallow();
+    Route::resource('tulpa_section', TulpaSectionController::class)->only($routes)->shallow();
+    Route::resource('tulpa_section_template', TulpaSectionTemplateController::class)->only($routes)->shallow();
   }
 
   public static function pocket_image_routes()

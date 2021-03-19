@@ -14,13 +14,22 @@ class PocketImageCollection extends JsonResource
    */
   public function toArray($request)
   {
-    return [
-      'id'         => $this->id,
-      'signed'     => $this->signed,
-      'url'        => $this->url,
-      'signed_url' => $this->signed_url,
-      'name'       => $this->name,
-      'tags'       => $this->tags,
-    ];
+    if (config('stone.mode' == 'cms')) {
+      return [
+        'id'         => $this->id,
+        'signed'     => $this->signed,
+        'url'        => $this->url,
+        'signed_url' => $this->signed_url,
+        'name'       => $this->name,
+        'tags'       => $this->tags,
+      ];
+    } else if (config('stone.mode' == 'webapi')) {
+      return [
+        'id'         => $this->id,
+        'signed'     => $this->signed,
+        'url'        => $this->url,
+        'signed_url' => $this->signed_url,
+      ];
+    }
   }
 }

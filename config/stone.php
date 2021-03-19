@@ -1,6 +1,7 @@
 <?php
 
 return [
+  'mode'    => 'cms', // cms, webapi
   'storage' => [
     'signed_url' => false,
     'service'    => 'gcs', // gcs, app, s3

@@ -29,7 +29,7 @@ class TulpaPage extends JsonResource
       'remark'         => $this->remark,
       'status'         => $this->status,
       'content'        => $this->content,
-      'tulpa_sections' => $this->tulpa_sections,
+      'tulpa_sections' => TulpaSection_R1::collection($this->tulpa_sections),
     ];
   }
 }

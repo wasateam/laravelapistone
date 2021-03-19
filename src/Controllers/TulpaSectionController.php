@@ -24,6 +24,10 @@ class TulpaSectionController extends Controller
     'tags',
     'remark',
   ];
+  public $search_fields = [
+    'name',
+    'tags',
+  ];
   public $belongs_to = [
     'tulpa_section_template',
   ];

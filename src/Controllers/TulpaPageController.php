@@ -31,6 +31,14 @@ class TulpaPageController extends Controller
     'content',
     // 'section_sequence',
   ];
+  public $search_fields = [
+    'name',
+    'title',
+    'tags',
+  ];
+  public $validation_rules = [
+    'route' => 'unique:tulpa_pages',
+  ];
   public $belongs_to_many = [
     'tulpa_sections',
   ];

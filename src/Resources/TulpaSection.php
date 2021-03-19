@@ -14,7 +14,7 @@ class TulpaSection extends JsonResource
    */
   public function toArray($request)
   {
-    if (config('stone.mode' == 'cms')) {
+    if (config('stone.mode') == 'cms') {
       return [
         'id'                     => $this->id,
         'updated_admin'          => new Admin_R1($this->updated_admin),
@@ -26,7 +26,7 @@ class TulpaSection extends JsonResource
         'remark'                 => $this->remark,
         'tulpa_section_template' => new TulpaSectionTemplate_R1($this->tulpa_section_template),
       ];
-    } else if (config('stone.mode' == 'webapi')) {
+    } else if (config('stone.mode') == 'webapi') {
       return [
         'id'                     => $this->id,
         'name'                   => $this->name,

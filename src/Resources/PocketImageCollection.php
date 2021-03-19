@@ -14,7 +14,7 @@ class PocketImageCollection extends JsonResource
    */
   public function toArray($request)
   {
-    if (config('stone.mode' == 'cms')) {
+    if (config('stone.mode') == 'cms') {
       return [
         'id'         => $this->id,
         'signed'     => $this->signed,
@@ -23,7 +23,7 @@ class PocketImageCollection extends JsonResource
         'name'       => $this->name,
         'tags'       => $this->tags,
       ];
-    } else if (config('stone.mode' == 'webapi')) {
+    } else if (config('stone.mode') == 'webapi') {
       return [
         'id'         => $this->id,
         'signed'     => $this->signed,

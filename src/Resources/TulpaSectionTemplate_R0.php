@@ -14,11 +14,11 @@ class TulpaSectionTemplate_R0 extends JsonResource
    */
   public function toArray($request)
   {
-    if (config('stone.mode' == 'cms')) {
+    if (config('stone.mode') == 'cms') {
       return [
         'id' => $this->id,
       ];
-    } else if (config('stone.mode' == 'webapi')) {
+    } else if (config('stone.mode') == 'webapi') {
       return [
         'id' => $this->id,
       ];

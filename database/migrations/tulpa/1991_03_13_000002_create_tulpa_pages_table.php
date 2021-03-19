@@ -18,7 +18,8 @@ class CreateTulpaPagesTable extends Migration
       $table->timestamps();
       $table->softDeletes();
       $table->string('updated_admin_id')->nullable();
-      $table->string('route')->nullable();
+      $table->string('name')->nullable();
+      $table->string('route')->nullable()->unique();
       $table->string('title')->nullable();
       $table->text('description')->nullable();
       $table->text('og_image')->nullable();
@@ -26,7 +27,8 @@ class CreateTulpaPagesTable extends Migration
       $table->text('tags')->nullable();
       $table->text('remark')->nullable();
       $table->integer('status')->default(0);
-      $table->text('tulpa_sections')->nullable();
+      $table->text('section_sequence')->nullable();
+      $table->text('content')->nullable();
     });
   }
 

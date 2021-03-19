@@ -19,6 +19,7 @@ class TulpaPage extends JsonResource
       'updated_admin'  => new Admin_R1($this->updated_admin),
       'created_at'     => $this->created_at,
       'updated_at'     => $this->updated_at,
+      'name'           => $this->name,
       'route'          => $this->route,
       'title'          => $this->title,
       'description'    => $this->description,
@@ -27,6 +28,7 @@ class TulpaPage extends JsonResource
       'tags'           => $this->tags,
       'remark'         => $this->remark,
       'status'         => $this->status,
+      'content'        => $this->content,
       'tulpa_sections' => $this->tulpa_sections,
     ];
   }

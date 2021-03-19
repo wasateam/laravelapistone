@@ -19,6 +19,7 @@ class TulpaPageController extends Controller
   public $name         = 'tulpa_page';
   public $resource     = 'Wasateam\Laravelapistone\Resources\TulpaPage';
   public $input_fields = [
+    'name',
     'route',
     'title',
     'description',
@@ -27,6 +28,10 @@ class TulpaPageController extends Controller
     'tags',
     'remark',
     'status',
+    'content',
+    // 'section_sequence',
+  ];
+  public $belongs_to_many = [
     'tulpa_sections',
   ];
   public $user_record_field = 'updated_admin_id';
@@ -44,6 +49,7 @@ class TulpaPageController extends Controller
   /**
    * Store
    *
+   * @bodyParam name string Example: My Page 1
    * @bodyParam route string Example: page1
    * @bodyParam title string Example: Title for SEO
    * @bodyParam description string Example: Description for SEO
@@ -52,6 +58,8 @@ class TulpaPageController extends Controller
    * @bodyParam tags object Example: ["tag 1","tag 2"]
    * @bodyParam remark string Example: Remark for admins
    * @bodyParam status int No-example
+   * @bodyParam content object No-example
+   * @bodyParam section_sequence object No-example
    * @bodyParam tulpa_sections object No-example
    */
   public function store(Request $request, $id = null)
@@ -73,6 +81,7 @@ class TulpaPageController extends Controller
    * Update
    *
    * @urlParam  tulpa_page required The ID of tulpa_page. Example: 1
+   * @bodyParam name string Example: My Page 1
    * @bodyParam route string Example: page1
    * @bodyParam title string Example: Title for SEO
    * @bodyParam description string Example: Description for SEO
@@ -81,6 +90,8 @@ class TulpaPageController extends Controller
    * @bodyParam tags object Example: ["tag 1","tag 2"]
    * @bodyParam remark string Example: Remark for admins
    * @bodyParam status int No-example
+   * @bodyParam content object No-example
+   * @bodyParam section_sequence object No-example
    * @bodyParam tulpa_sections object No-example
    */
   public function update(Request $request, $id)

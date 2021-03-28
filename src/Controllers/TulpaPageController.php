@@ -29,7 +29,6 @@ class TulpaPageController extends Controller
     'is_active',
     'tags',
     'remark',
-    'status',
     'content',
     // 'section_sequence',
   ];
@@ -57,7 +56,7 @@ class TulpaPageController extends Controller
       return ModelHelper::ws_IndexHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
       return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
-        $snap = $snap->where('is_active', 1)->where('status', 1);
+        $snap = $snap->where('is_active', 1);
         return $snap;
       });
     }
@@ -74,7 +73,6 @@ class TulpaPageController extends Controller
    * @bodyParam is_active boolean Example: 1
    * @bodyParam tags object Example: ["tag 1","tag 2"]
    * @bodyParam remark string Example: Remark for admins
-   * @bodyParam status int No-example
    * @bodyParam content object No-example
    * @bodyParam section_sequence object No-example
    * @bodyParam tulpa_sections object No-example
@@ -94,7 +92,7 @@ class TulpaPageController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_ShowHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      $tulpa_page = TulpaPage::where('route', $id)->where('is_active', 1)->where('status', 1)->first();
+      $tulpa_page = TulpaPage::where('route', $id)->where('is_active', 1)->first();
       return response()->json([
         'data' => new \Wasateam\Laravelapistone\Resources\TulpaPage($tulpa_page),
       ], 200);
@@ -113,7 +111,6 @@ class TulpaPageController extends Controller
    * @bodyParam is_active boolean Example: 1
    * @bodyParam tags object Example: ["tag 1","tag 2"]
    * @bodyParam remark string Example: Remark for admins
-   * @bodyParam status int No-example
    * @bodyParam content object No-example
    * @bodyParam section_sequence object No-example
    * @bodyParam tulpa_sections object No-example

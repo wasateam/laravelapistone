@@ -43,6 +43,11 @@ class TulpaPageController extends Controller
   public $belongs_to_many = [
     'tulpa_sections',
   ];
+  public $order_fields = [
+    'updated_at',
+    'created_at',
+    'route',
+  ];
   public $user_record_field = 'updated_admin_id';
 
   /**

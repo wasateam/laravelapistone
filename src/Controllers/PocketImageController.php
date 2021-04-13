@@ -32,6 +32,10 @@ class PocketImageController extends Controller
     // 'created_user',
     // 'created_admin',
   ];
+  public $order_fields = [
+    'updated_at',
+    'created_at',
+  ];
   public $user_record_field = 'updated_admin_id';
 
   /**

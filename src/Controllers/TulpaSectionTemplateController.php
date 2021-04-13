@@ -28,6 +28,10 @@ class TulpaSectionTemplateController extends Controller
     'name',
     'component_name',
   ];
+  public $order_fields = [
+    'updated_at',
+    'created_at',
+  ];
   public $user_record_field = 'updated_admin_id';
 
   /**

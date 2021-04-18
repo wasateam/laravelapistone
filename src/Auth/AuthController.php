@@ -22,16 +22,6 @@ class AuthController extends Controller
    * @bodyParam  password_confirmation string required Check Password match  Example: 123123
    * @bodyParam  name string User Name  Example: wasa
    * @bodyParam  tel string
-   * @response
-   * {
-   * "data": {
-   * "id": 2,
-   * "name": "wasa",
-   * "email": "wasa@wasateam.com",
-   * "created_at": "2020-07-11T15:06:43.000000Z",
-   * "updated_at": "2020-07-11T15:06:43.000000Z"
-   * }
-   * }
    *
    */
   public function signup(Request $request)
@@ -73,26 +63,8 @@ class AuthController extends Controller
   /**
    * Signin
    *
-   * posting
-   * const response = pm.response.json();pm.collectionVariables.set("token", response.access_token);
-   * in tests
-   *
    * @bodyParam  email mail required Admin Email Account Example: wasa@wasateam.com
    * @bodyParam  password string required Example: 123123
-   * @response
-   * {
-   * "access_token": "{{token here}}",
-   * "expires_at": "2021-07-11 15:10:13",
-   * "admin": {
-   * "id": 2,
-   * "created_at": "2020-07-11T15:06:43.000000Z",
-   * "updated_at": "2020-07-11T15:06:43.000000Z",
-   * "deleted_at": null,
-   * "name": "wasa",
-   * "email": "wasa@wasateam.com",
-   * "email_verified_at": null
-   * }
-   * }
    *
    */
   public function signin(Request $request)
@@ -140,17 +112,6 @@ class AuthController extends Controller
    *
    * @authenticated
    *
-   * @response
-   * {
-   * "data": {
-   * "id": 2,
-   * "name": "wasa",
-   * "email": "wasa@wasateam.com",
-   * "created_at": "2020-07-11T15:06:43.000000Z",
-   * "updated_at": "2020-07-11T15:06:43.000000Z"
-   * }
-   * }
-   *
    */
   public function user()
   {
@@ -171,11 +132,6 @@ class AuthController extends Controller
    * Signout
    *
    * @authenticated
-   *
-   * @response
-   * {
-   * "message": "signout successed."
-   * }
    *
    */
   public function signout(Request $request)

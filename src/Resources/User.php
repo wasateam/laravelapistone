@@ -25,6 +25,7 @@ class User extends JsonResource
       'firestore_id' => $this->firestore_id,
       'scopes'       => $this->scopes,
       'settings'     => $this->settings,
+      'description'  => $this->description,
     ];
   }
 }

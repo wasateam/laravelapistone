@@ -36,6 +36,7 @@ class TulpaPageController extends Controller
     'name',
     'title',
     'tags',
+    'route',
   ];
   public $validation_rules = [
     'route' => 'unique:tulpa_pages',

@@ -24,7 +24,7 @@ class AuthController extends Controller
   /**
    * Signup
    *
-   * @bodyParam  email mail required Auth Email Account Example: admin@wasateam.com
+   * @bodyParam  email mail required Auth Email Account Example: wasa@wasateam.com
    * @bodyParam  password string required Example: 123123
    * @bodyParam  password_confirmation string required Check Password match  Example: 123123
    * @bodyParam  name string User Name  Example: wasa

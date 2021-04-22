@@ -17,10 +17,11 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  */
 class WsBlogController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Models\WsBlog';
-  public $name         = 'ws_blog';
-  public $resource     = 'Wasateam\Laravelapistone\Resources\WsBlog';
-  public $input_fields = [
+  public $model                   = 'Wasateam\Laravelapistone\Models\WsBlog';
+  public $name                    = 'ws_blog';
+  public $resource                = 'Wasateam\Laravelapistone\Resources\WsBlog';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\WsBlogCollection';
+  public $input_fields            = [
     'title',
     'description',
     'publish_at',

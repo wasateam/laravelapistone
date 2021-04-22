@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Wasateam\Laravelapistone\Controllers\AuthController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
+use Wasateam\Laravelapistone\Controllers\SocialiteController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionTemplateController;
@@ -52,6 +53,28 @@ class RoutesHelper
           }
         }
       });
+    });
+  }
+
+  public static function socialite_routes($routes = [
+    "google",
+    "facebook",
+    "line",
+  ]) {
+
+    Route::group([
+      'prefix' => 'auth',
+    ], function () use ($routes) {
+
+      if (in_array('google', $routes)) {
+        Route::get('signin/google', [SocialiteController::class, 'googleCallback']);
+      }
+      if (in_array('facebook', $routes)) {
+        Route::get('signin/facebook', [SocialiteController::class, 'facebookCallback']);
+      }
+      if (in_array('line', $routes)) {
+        Route::get('signin/line', [SocialiteController::class, 'lineCallback']);
+      }
     });
   }
 

@@ -8,18 +8,18 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group PocketImageVersion
+ * @group PocketFileVersion
  *
  * @authenticated
  *
- * APIs for PocketImageVersion
+ * APIs for PocketFileVersion
  */
-class PocketImageVersionController extends Controller
+class PocketFileVersionController extends Controller
 {
-  public $model                   = 'Wasateam\Laravelapistone\Models\PocketImageVersion';
-  public $name                    = 'pocket_image_version';
-  public $resource                = 'Wasateam\Laravelapistone\Resources\PocketImageVersion';
-  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\PocketImageVersionCollection';
+  public $model                   = 'Wasateam\Laravelapistone\Models\PocketFileVersion';
+  public $name                    = 'pocket_file_version';
+  public $resource                = 'Wasateam\Laravelapistone\Resources\PocketFileVersion';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\PocketFileVersionCollection';
   public $input_fields            = [
     'url',
     'signed_url',
@@ -38,8 +38,8 @@ class PocketImageVersionController extends Controller
     'created_at',
   ];
   public $user_record_field = 'updated_admin_id';
-  public $parent_model      = 'Wasateam\Laravelapistone\Models\PocketImage';
-  public $parent_id_field   = 'pocket_image_id';
+  public $parent_model      = 'Wasateam\Laravelapistone\Models\PocketFile';
+  public $parent_id_field   = 'pocket_file_id';
 
   /**
    * Index
@@ -54,9 +54,9 @@ class PocketImageVersionController extends Controller
   /**
    * Store
    *
-   * @bodyParam url string Example: url_of_image
-   * @bodyParam signed_url string Example: signed_url_of_image
-   * @bodyParam name string Example: my_image
+   * @bodyParam url string Example: url_of_file
+   * @bodyParam signed_url string Example: signed_url_of_file
+   * @bodyParam name string Example: my_file
    * @bodyParam tags object Example: ["tagA","tagB"]
    * @bodyParam signed boolean Example: 0
    * @bodyParam size integer Example: 10
@@ -76,7 +76,7 @@ class PocketImageVersionController extends Controller
   /**
    * Show
    *
-   * @urlParam  pocket_image_version required The ID of pocket_image_version. Example: 1
+   * @urlParam  pocket_file_version required The ID of pocket_file_version. Example: 1
    */
   public function show(Request $request, $id = null)
   {
@@ -86,10 +86,10 @@ class PocketImageVersionController extends Controller
   /**
    * Update
    *
-   * @urlParam  pocket_image_version required The ID of pocket_image_version. Example: 1
-   * @bodyParam signed_url string Example: signed_url_of_image
-   * @bodyParam url string Example: url_of_image
-   * @bodyParam name string Example: my_image
+   * @urlParam  pocket_file_version required The ID of pocket_file_version. Example: 1
+   * @bodyParam signed_url string Example: signed_url_of_file
+   * @bodyParam url string Example: url_of_file
+   * @bodyParam name string Example: my_file
    * @bodyParam tags object Example: ["tagA","tagB"]
    * @bodyParam signed boolean Example: 0
    * @bodyParam size integer Example: 10
@@ -105,7 +105,7 @@ class PocketImageVersionController extends Controller
   /**
    * Delete
    *
-   * @urlParam  pocket_image_version required The ID of pocket_image_version. Example: 2
+   * @urlParam  pocket_file_version required The ID of pocket_file_version. Example: 2
    */
   public function destroy($id)
   {

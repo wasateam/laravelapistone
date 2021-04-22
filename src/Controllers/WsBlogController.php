@@ -142,13 +142,5 @@ class WsBlogController extends Controller
     return response()->json([
       'message' => 'ok.',
     ]);
-
-    // $path = GcsHelper::getStoreValue($url);
-    // error_log($path);
-    // $name            = $request->name;
-    // $storage_service = config('stone.storage.service');
-    // if ($storage_service == 'gcs') {
-    //   return GcsHelper::getUploadSignedUrlByNameAndPath($name, 'blog');
-    // }
   }
 }

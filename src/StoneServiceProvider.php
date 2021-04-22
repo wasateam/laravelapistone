@@ -33,6 +33,10 @@ class StoneServiceProvider extends ServiceProvider
     ], 'migrations-pocket-image');
 
     $this->publishes([
+      __DIR__ . '/../database/migrations/pocket_file' => database_path('migrations'),
+    ], 'migrations-pocket-file');
+
+    $this->publishes([
       __DIR__ . '/../database/seeders/auth' => database_path('seeders'),
     ], 'seeder-auth');
 

@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
 use Wasateam\Laravelapistone\Controllers\AuthController;
+use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
@@ -87,12 +88,15 @@ class RoutesHelper
   public static function pocket_image_routes()
   {
     $storage_service = config('stone.storage.service');
-    if ($storage_service == 'gcs') {
-      Route::get('pocket_image/upload_url', [PocketImageController::class, 'get_upload_url']);
-    } else if ($storage_service == 'laravel') {
-
-    }
     Route::resource('pocket_image', PocketImageController::class)->only([
+      'index', 'store', 'destroy',
+    ])->shallow();
+  }
+
+  public static function pocket_file_routes()
+  {
+    $storage_service = config('stone.storage.service');
+    Route::resource('pocket_file', PocketFileController::class)->only([
       'index', 'store', 'destroy',
     ])->shallow();
   }

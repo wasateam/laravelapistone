@@ -122,7 +122,7 @@ class WsBlogController extends Controller
    * Pocket Image Get Upload Url
    *
    */
-  public function pocket_image_get_upload_url(Request $request)
+  public function image_get_upload_url(Request $request)
   {
     $name            = $request->name;
     $storage_service = config('stone.storage.service');
@@ -135,7 +135,7 @@ class WsBlogController extends Controller
    * Pocket Image Upload Complete
    *
    */
-  public function pocket_image_upload_complete(Request $request)
+  public function image_upload_complete(Request $request)
   {
     $url = $request->url;
     GcsHelper::makeUrlPublic($url);

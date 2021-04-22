@@ -73,15 +73,15 @@ class RoutesHelper
     'store',
     'update',
     'destroy',
-    'pocket_image_get_upload_url',
-    'pocket_image_upload_complete',
+    'image_get_upload_url',
+    'image_upload_complete',
   ]) {
     Route::resource('ws_blog', WsBlogController::class)->only($routes)->shallow();
-    if (in_array('pocket_image_get_upload_url', $routes)) {
-      Route::get('/ws_blog/pocket_image/upload_url', [WsBlogController::class, 'pocket_image_get_upload_url']);
+    if (in_array('image_get_upload_url', $routes)) {
+      Route::get('/ws_blog/pocket_image/upload_url', [WsBlogController::class, 'image_get_upload_url']);
     }
-    if (in_array('pocket_image_upload_complete', $routes)) {
-      Route::post('/ws_blog/pocket_image/upload_complete', [WsBlogController::class, 'pocket_image_upload_complete']);
+    if (in_array('image_upload_complete', $routes)) {
+      Route::post('/ws_blog/pocket_image/upload_complete', [WsBlogController::class, 'image_upload_complete']);
     }
   }
 

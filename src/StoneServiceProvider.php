@@ -44,5 +44,9 @@ class StoneServiceProvider extends ServiceProvider
       __DIR__ . '/../database/migrations/tulpa' => database_path('migrations'),
     ], 'migrations-tulpa');
 
+    $this->publishes([
+      __DIR__ . '/../database/migrations/ws_blog' => database_path('migrations'),
+    ], 'migrations-ws_blog');
+
   }
 }

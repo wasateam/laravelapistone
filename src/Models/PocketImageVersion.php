@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Wasateam\Laravelapistone\Models\Admin;
 use Wasateam\Laravelapistone\Models\User;
 
-class PocketImage extends Model
+class PocketImageVersion extends Model
 {
   use HasFactory;
   use \Illuminate\Database\Eloquent\SoftDeletes;
@@ -27,11 +27,8 @@ class PocketImage extends Model
     return $this->belongsTo(User::class, 'created_user_id');
   }
 
-  public function last_version()
-  {
-    return $this->hasOne('Wasateam\Laravelapistone\Models\PocketImageVersion')->latest('created_at');
-  }
-
   protected $casts = [
+    'signed_url' => \Wasateam\Laravelapistone\Casts\PocketImageSignedUrlCast::class,
+    'tags'       => \Wasateam\Laravelapistone\Casts\JsonCast::class,
   ];
 }

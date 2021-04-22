@@ -5,39 +5,41 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
-use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group PocketImage
+ * @group PocketImageVersion
  *
  * @authenticated
  *
- * APIs for PocketImage
+ * APIs for PocketImageVersion
  */
-class PocketImageController extends Controller
+class PocketImageVersionController extends Controller
 {
-  public $model                   = 'Wasateam\Laravelapistone\Models\PocketImage';
+  public $model                   = 'Wasateam\Laravelapistone\Models\PocketImageVersion';
   public $name                    = 'pocket_image';
-  public $resource                = 'Wasateam\Laravelapistone\Resources\PocketImage';
-  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\PocketImageCollection';
-  public $version_controller      = "Wasateam\Laravelapistone\Controllers\PocketImageVersionController";
+  public $resource                = 'Wasateam\Laravelapistone\Resources\PocketImageVersion';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\PocketImageVersionCollection';
   public $input_fields            = [
-    // 'url',
-    // 'signed_url',
-    // 'name',
-    // 'tags',
-    // 'signed',
+    'url',
+    'signed_url',
+    'name',
+    'tags',
+    'signed',
+    'size',
+    'is_eternal',
   ];
   public $belongs_to = [
-    // 'created_user',
-    // 'created_admin',
+    'created_user',
+    'created_admin',
   ];
   public $order_fields = [
     'updated_at',
     'created_at',
   ];
   public $user_record_field = 'updated_admin_id';
+  public $parent_model      = 'Wasateam\Laravelapistone\Models\PocketImage';
+  public $parent_id_field   = 'pocket_image_id';
 
   /**
    * Index
@@ -57,6 +59,8 @@ class PocketImageController extends Controller
    * @bodyParam name string Example: my_image
    * @bodyParam tags object Example: ["tagA","tagB"]
    * @bodyParam signed boolean Example: 0
+   * @bodyParam size integer Example: 10
+   * @bodyParam is_eternal boolean Example: 0
    * @bodyParam created_user int Example: 1
    * @bodyParam created_admin int Example: 1
    */
@@ -66,7 +70,7 @@ class PocketImageController extends Controller
       $admin                   = Auth::user();
       $model->created_admin_id = $admin->id;
       $model->save();
-    }, null, true, $this->version_controller);
+    });
   }
 
   /**
@@ -88,6 +92,8 @@ class PocketImageController extends Controller
    * @bodyParam name string Example: my_image
    * @bodyParam tags object Example: ["tagA","tagB"]
    * @bodyParam signed boolean Example: 0
+   * @bodyParam size integer Example: 10
+   * @bodyParam is_eternal boolean Example: 0
    * @bodyParam created_user int Example: 1
    * @bodyParam created_admin int Example: 1
    */
@@ -104,19 +110,5 @@ class PocketImageController extends Controller
   public function destroy($id)
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
-  }
-
-  /**
-   * Get Upload Url
-   *
-   */
-  public function get_upload_url(Request $request)
-  {
-    $name = $request->name;
-    // $path            = $request->path ? $request->path : 'pocket_image';
-    $storage_service = config('stone.storage.service');
-    if ($storage_service == 'gcs') {
-      return GcsHelper::getUploadSignedUrlByNameAndPath($name, 'pocket_image');
-    }
   }
 }

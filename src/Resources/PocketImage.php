@@ -14,6 +14,7 @@ class PocketImage extends JsonResource
    */
   public function toArray($request)
   {
+    $last_version = isset($this->last_version) ? $this->last_version : null;
     if (config('stone.mode') == 'cms') {
       return [
         'id'            => $this->id,
@@ -21,18 +22,18 @@ class PocketImage extends JsonResource
         'created_admin' => new Admin_R1($this->created_admin),
         'created_at'    => $this->created_at,
         'updated_at'    => $this->updated_at,
-        'signed'        => $this->signed,
-        'url'           => $this->url,
-        'signed_url'    => $this->signed_url,
-        'name'          => $this->name,
-        'tags'          => $this->tags,
+        'signed'        => $last_version->signed,
+        'url'           => $last_version->url,
+        'signed_url'    => $last_version->signed_url,
+        'name'          => $last_version->name,
+        'tags'          => $last_version->tags,
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
         'id'         => $this->id,
-        'signed'     => $this->signed,
-        'url'        => $this->url,
-        'signed_url' => $this->signed_url,
+        'signed'     => $last_version->signed,
+        'url'        => $last_version->url,
+        'signed_url' => $last_version->signed_url,
       ];
     }
   }

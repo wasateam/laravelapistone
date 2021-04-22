@@ -7,7 +7,7 @@ use Storage;
 
 class GcsHelper
 {
-  public static function getUploadSignedUrlByNameAndPath($file_name, $file_path, $contentType = 'image/svg+xml')
+  public static function getUploadSignedUrlByNameAndPath($file_name, $file_path, $contentType = '*')
   {
     $type = strtolower(explode('.', $file_name)[count(explode('.', $file_name)) - 1]);
     if ($type == 'svg') {
@@ -21,7 +21,8 @@ class GcsHelper
     $disk        = Storage::disk('gcs');
     $random_path = self::getRandomPath();
     $path        = "{$file_path}/{$random_path}/{$file_name}";
-    $url         = Storage::disk('gcs')->getAdapter()->getBucket()->object($path)->beginSignedUploadSession([
+    $object      = Storage::disk('gcs')->getAdapter()->getBucket()->object($path);
+    $url         = $object->beginSignedUploadSession([
       'contentType' => $contentType,
     ]);
     return response()->json($url, 200);
@@ -49,5 +50,13 @@ class GcsHelper
     $url = Storage::disk('gcs')->getAdapter()->getBucket()->object($file_path)
       ->signedUrl(now()->addMinutes(15));
     return $url;
+  }
+
+  public static function makeUrlPublic($url)
+  {
+    $path   = self::getStoreValue($url);
+    $object = Storage::disk('gcs')->getAdapter()->getBucket()->object($path);
+    $object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);
+    return;
   }
 }

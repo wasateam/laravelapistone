@@ -8,6 +8,7 @@ use Wasateam\Laravelapistone\Controllers\PocketImageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionTemplateController;
+use Wasateam\Laravelapistone\Controllers\WsBlogController;
 
 class RoutesHelper
 {
@@ -65,14 +66,34 @@ class RoutesHelper
     Route::resource('tulpa_section_template', TulpaSectionTemplateController::class)->only($routes)->shallow();
   }
 
+  public static function ws_blog_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+    'pocket_image_get_upload_url',
+    'pocket_image_upload_complete',
+  ]) {
+    Route::resource('ws_blog', WsBlogController::class)->only($routes)->shallow();
+    if (in_array('pocket_image_get_upload_url', $routes)) {
+      Route::get('/ws_blog/pocket_image/upload_url', [WsBlogController::class, 'pocket_image_get_upload_url']);
+    }
+    if (in_array('pocket_image_upload_complete', $routes)) {
+      Route::post('/ws_blog/pocket_image/upload_complete', [WsBlogController::class, 'pocket_image_upload_complete']);
+    }
+  }
+
   public static function pocket_image_routes()
   {
     $storage_service = config('stone.storage.service');
     if ($storage_service == 'gcs') {
       Route::get('pocket_image/upload_url', [PocketImageController::class, 'get_upload_url']);
+    } else if ($storage_service == 'laravel') {
+
     }
     Route::resource('pocket_image', PocketImageController::class)->only([
-      'index', 'show', 'store', 'update', 'destroy',
+      'index', 'store', 'destroy',
     ])->shallow();
   }
 }

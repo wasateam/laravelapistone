@@ -20,7 +20,7 @@ class GcsHelper
 
     $disk        = Storage::disk('gcs');
     $random_path = self::getRandomPath();
-    $path        = "{$file_path}/{$random_path}/{$file_name}";
+    $path        = "{$file_path}/{$random_path}";
     $object      = Storage::disk('gcs')->getAdapter()->getBucket()->object($path);
     $url         = $object->beginSignedUploadSession([
       'contentType' => $contentType,
@@ -55,6 +55,7 @@ class GcsHelper
   public static function makeUrlPublic($url)
   {
     $path   = self::getStoreValue($url);
+    error_log($path);
     $object = Storage::disk('gcs')->getAdapter()->getBucket()->object($path);
     $object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);
     return;

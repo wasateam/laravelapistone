@@ -78,10 +78,10 @@ class RoutesHelper
   ]) {
     Route::resource('ws_blog', WsBlogController::class)->only($routes)->shallow();
     if (in_array('image_get_upload_url', $routes)) {
-      Route::get('/ws_blog/pocket_image/upload_url', [WsBlogController::class, 'image_get_upload_url']);
+      Route::get('/ws_blog/image/upload_url', [WsBlogController::class, 'image_get_upload_url']);
     }
     if (in_array('image_upload_complete', $routes)) {
-      Route::post('/ws_blog/pocket_image/upload_complete', [WsBlogController::class, 'image_upload_complete']);
+      Route::post('/ws_blog/image/upload_complete', [WsBlogController::class, 'image_upload_complete']);
     }
   }
 

@@ -12,7 +12,7 @@ class GcsHelper
     $type = strtolower(explode('.', $file_name)[count(explode('.', $file_name)) - 1]);
     if ($type == 'svg') {
       $contentType = 'image/svg+xml';
-    } else if ($type == 'ico' || $type == 'jpg' || $type == 'jpeg' || $type == 'png') {
+    } else if ($type == 'ico' || $type == 'jpg' || $type == 'jpeg' || $type == 'png' || $type == 'gif') {
       $contentType = 'image/*';
     } else {
       $contentType = '*';
@@ -20,7 +20,7 @@ class GcsHelper
 
     $disk        = Storage::disk('gcs');
     $random_path = self::getRandomPath();
-    $path        = "{$file_path}/{$random_path}";
+    $path        = "{$file_path}/{$random_path}/{$file_name}";
     $object      = Storage::disk('gcs')->getAdapter()->getBucket()->object($path);
     $url         = $object->beginSignedUploadSession([
       'contentType' => $contentType,
@@ -41,7 +41,8 @@ class GcsHelper
       $parse  = parse_url($url);
       $stone  = config('stone');
       $bucket = config('stone.storage.gcs.bucket');
-      return str_replace("/{$bucket}/", "", $parse['path']);
+      $store = str_replace("/{$bucket}/", "", $parse['path']);
+      return urldecode($store);
     }
   }
 
@@ -54,8 +55,7 @@ class GcsHelper
 
   public static function makeUrlPublic($url)
   {
-    $path   = self::getStoreValue($url);
-    error_log($path);
+    $path = self::getStoreValue($url);
     $object = Storage::disk('gcs')->getAdapter()->getBucket()->object($path);
     $object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);
     return;

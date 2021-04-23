@@ -26,6 +26,8 @@ class User extends JsonResource
       'scopes'       => $this->scopes,
       'settings'     => $this->settings,
       'description'  => $this->description,
+      'tel'          => $this->tel,
+      'payload'      => $this->payload,
     ];
   }
 }

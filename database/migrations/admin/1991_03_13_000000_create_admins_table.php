@@ -27,6 +27,8 @@ class CreateAdminsTable extends Migration
       $table->text('settings')->nullable();
       $table->text('scopes')->nullable(['wasa']);
       $table->string('firestore_id')->nullable();
+      $table->string('tel')->nullable();
+      $table->text('payload')->nullable();
       $table->rememberToken();
     });
   }

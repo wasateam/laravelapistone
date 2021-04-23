@@ -25,6 +25,8 @@ class Admin extends JsonResource
       'firestore_id'  => $this->firestore_id,
       'scopes'        => $this->scopes,
       'settings'      => $this->settings,
+      'tel'           => $this->tel,
+      'payload'       => $this->payload,
       'updated_admin' => new Admin_R1($this->updated_admin),
     ];
   }

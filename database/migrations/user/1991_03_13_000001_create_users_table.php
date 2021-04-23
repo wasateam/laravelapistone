@@ -27,6 +27,8 @@ class CreateUsersTable extends Migration
       $table->text('settings')->nullable();
       $table->text('description')->nullable();
       $table->text('scopes')->nullable(['wasa']);
+      $table->string('tel')->nullable();
+      $table->text('payload')->nullable();
       $table->rememberToken();
     });
   }

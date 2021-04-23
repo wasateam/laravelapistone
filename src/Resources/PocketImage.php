@@ -34,6 +34,7 @@ class PocketImage extends JsonResource
         'signed'     => $last_version->signed,
         'url'        => $last_version->url,
         'signed_url' => $last_version->signed_url,
+        'name'       => $last_version->name,
       ];
     }
   }

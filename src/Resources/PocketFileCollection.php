@@ -30,6 +30,7 @@ class PocketFileCollection extends JsonResource
         'signed'     => $last_version ? $last_version->signed : null,
         'url'        => $last_version ? $last_version->url : null,
         'signed_url' => $last_version ? $last_version->signed_url : null,
+        'name'       => $last_version ? $last_version->name : null,
       ];
     }
   }

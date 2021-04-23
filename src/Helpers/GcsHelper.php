@@ -7,6 +7,16 @@ use Storage;
 
 class GcsHelper
 {
+  public static function copyObject($oriPath, $newPath)
+  {
+    $bucket = Storage::disk('gcs')->getAdapter()->getBucket();
+    $object = Storage::disk('gcs')->getAdapter()->getBucket()->object($oriPath);
+    $object->copy($bucket, [
+      'name' => $newPath,
+    ]);
+    return;
+  }
+
   public static function getUploadSignedUrlByNameAndPath($file_name, $file_path, $contentType = '*')
   {
     $type = strtolower(explode('.', $file_name)[count(explode('.', $file_name)) - 1]);
@@ -41,7 +51,7 @@ class GcsHelper
       $parse  = parse_url($url);
       $stone  = config('stone');
       $bucket = config('stone.storage.gcs.bucket');
-      $store = str_replace("/{$bucket}/", "", $parse['path']);
+      $store  = str_replace("/{$bucket}/", "", $parse['path']);
       return urldecode($store);
     }
   }
@@ -55,7 +65,7 @@ class GcsHelper
 
   public static function makeUrlPublic($url)
   {
-    $path = self::getStoreValue($url);
+    $path   = self::getStoreValue($url);
     $object = Storage::disk('gcs')->getAdapter()->getBucket()->object($path);
     $object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);
     return;

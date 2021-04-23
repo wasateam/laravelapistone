@@ -15,7 +15,7 @@ class GcsHelper
     } else if ($type == 'ico' || $type == 'jpg' || $type == 'jpeg' || $type == 'png' || $type == 'gif') {
       $contentType = 'image/*';
     } else {
-      $contentType = '*';
+      $contentType = '*/*';
     }
 
     $disk        = Storage::disk('gcs');

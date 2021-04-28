@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
 use Wasateam\Laravelapistone\Controllers\AuthController;
+use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
@@ -122,5 +123,15 @@ class RoutesHelper
     Route::resource('pocket_file', PocketFileController::class)->only([
       'index', 'store', 'destroy',
     ])->shallow();
+  }
+
+  public static function locale_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('locale', LocaleController::class)->only($routes)->shallow();
   }
 }

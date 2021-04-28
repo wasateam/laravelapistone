@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Storage;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
+use Wasateam\Laravelapistone\Models\Locale;
 
 class ModelHelper
 {
@@ -424,7 +425,7 @@ class ModelHelper
       $layers = $setting->order_layers_fields[$order_by];
       if ($layers == 'locale') {
         $locale_code = \App::getLocale();
-        $locale      = \App\Locale::where('code', $locale_code)->first();
+        $locale      = Locale::where('code', $locale_code)->first();
         if (!$locale) {
           return null;
         }
@@ -446,7 +447,7 @@ class ModelHelper
           ->orderByRaw("ISNULL({$order_by}), {$order_by} {$order_way}");
       } else if ($layers == 'version.locale') {
         $locale_code = \App::getLocale();
-        $locale      = \App\Locale::where('code', $locale_code)->first();
+        $locale      = Locale::where('code', $locale_code)->first();
         if (!$locale) {
           return null;
         }
@@ -710,7 +711,7 @@ class ModelHelper
       return;
     }
     $locale_model = $setting->model . "Locale";
-    $locales      = \App\Locale::get();
+    $locales      = Locale::get();
     foreach ($locales as $locale) {
       if (isset($request->locales[$locale->code])) {
         $model_locale = $locale_model::where('locale_id', $locale->id)->where("{$setting->name}_id", $model->id)->first();
@@ -756,7 +757,7 @@ class ModelHelper
 
   public static function getLocaleList()
   {
-    return \App\Locale::all();
+    return Locale::all();
   }
 
   public static function storeParentId($model, $setting, $parent_id)
@@ -791,7 +792,7 @@ class ModelHelper
   public static function getMainLocale($data_locales, $attribute_name)
   {
     $main_locale_code = App::getLocale();
-    $main_locale      = App\Locale::where('code', $main_locale_code)->first();
+    $main_locale      = Locale::where('code', $main_locale_code)->first();
     if (!$main_locale) {
       return '';
     }

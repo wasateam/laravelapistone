@@ -77,4 +77,10 @@ class GcsHelper
     $object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);
     return;
   }
+
+  public static function getFileNameByStoreValue($store_value)
+  {
+    $arr = explode('/', $store_value);
+    return $arr[count($arr) - 1];
+  }
 }

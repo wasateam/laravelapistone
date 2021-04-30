@@ -41,10 +41,12 @@ class UserController extends Controller
     'payload',
   ];
   public $search_fields = [
+    'id',
     'name',
     'email',
   ];
   public $order_fields = [
+    'id',
     'updated_at',
     'created_at',
   ];

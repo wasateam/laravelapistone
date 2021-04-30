@@ -27,6 +27,7 @@ class Admin extends JsonResource
       'settings'      => $this->settings,
       'tel'           => $this->tel,
       'payload'       => $this->payload,
+      'pocket_avatar' => new PocketImage_R1($this->pocket_avatar),
       'updated_admin' => new Admin_R1($this->updated_admin),
     ];
   }

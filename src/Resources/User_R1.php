@@ -15,8 +15,9 @@ class User_R1 extends JsonResource
   public function toArray($request)
   {
     return [
-      'id'   => $this->id,
-      'name' => $this->name,
+      'id'            => $this->id,
+      'name'          => $this->name,
+      'pocket_avatar' => new PocketImage_R1($this->pocket_avatar),
     ];
   }
 }

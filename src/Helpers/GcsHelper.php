@@ -7,11 +7,18 @@ use Storage;
 
 class GcsHelper
 {
-  public static function copyObject($oriPath, $newPath)
+  public static function copyObject($oriPath, $newPath, $oriBucket = null, $newBucket = null)
   {
-    $bucket = Storage::disk('gcs')->getAdapter()->getBucket();
-    $object = Storage::disk('gcs')->getAdapter()->getBucket()->object($oriPath);
-    $object->copy($bucket, [
+    if (!$oriBucket) {
+      $oriBucket = Storage::disk('gcs')->getAdapter()->getBucket();
+    }
+    if (!$newBucket) {
+      $newBucket = Storage::disk('gcs')->getAdapter()->getBucket();
+    }
+
+    $oriObject = $oriBucket->object($oriPath);
+
+    $oriObject->copy($newBucket, [
       'name' => $newPath,
     ]);
     return;

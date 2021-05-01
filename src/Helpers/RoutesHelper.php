@@ -7,6 +7,7 @@ use Wasateam\Laravelapistone\Controllers\AuthController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
+use Wasateam\Laravelapistone\Controllers\TagController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionTemplateController;
@@ -107,6 +108,16 @@ class RoutesHelper
     if (in_array('image_upload_complete', $routes)) {
       Route::post('/ws_blog/image/upload_complete', [WsBlogController::class, 'image_upload_complete']);
     }
+  }
+
+  public static function tag_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('ws_blog', TagController::class)->only($routes)->shallow();
   }
 
   public static function pocket_image_routes()

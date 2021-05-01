@@ -50,15 +50,17 @@ class GcsHelper
     return time() . Str::random(5);
   }
 
-  public static function getStoreValue($url)
+  public static function getStoreValue($url, $bucketName = null)
   {
     if (!$url) {
       return null;
     } else {
-      $parse  = parse_url($url);
-      $stone  = config('stone');
-      $bucket = config('stone.storage.gcs.bucket');
-      $store  = str_replace("/{$bucket}/", "", $parse['path']);
+      $parse = parse_url($url);
+      $stone = config('stone');
+      if (!$bucketName) {
+        $bucketName = config('filesystems.disks.gcs.bucket');
+      }
+      $store = str_replace("/{$bucketName}/", "", $parse['path']);
       return urldecode($store);
     }
   }

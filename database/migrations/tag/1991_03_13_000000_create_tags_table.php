@@ -18,7 +18,7 @@ class CreateTagsTable extends Migration
       $table->timestamps();
       $table->softDeletes();
       $table->string('updated_admin_id')->nullable();
-      $table->string('name');
+      $table->string('name')->unique();
     });
   }
 

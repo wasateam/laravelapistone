@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
 use Wasateam\Laravelapistone\Controllers\AuthController;
+use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
@@ -152,5 +153,15 @@ class RoutesHelper
     if (in_array('avatar_upload_complete', $routes)) {
       Route::post('/ws_blog/avatar/upload_complete', [UserController::class, 'avatar_upload_complete']);
     }
+  }
+
+  public static function locale_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('locale', LocaleController::class)->only($routes)->shallow();
   }
 }

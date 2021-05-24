@@ -183,6 +183,9 @@ class AuthController extends Controller
     if ($request->has('tel')) {
       $user->tel = $request->tel;
     }
+    if ($request->has('payload')) {
+      $user->payload = $request->payload;
+    }
     $user->save();
     return (new $resource($user));
   }

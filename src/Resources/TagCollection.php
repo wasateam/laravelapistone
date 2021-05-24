@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class User_R1 extends JsonResource
+class TagCollection extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -15,9 +15,8 @@ class User_R1 extends JsonResource
   public function toArray($request)
   {
     return [
-      'id'            => $this->id,
-      'name'          => $this->name,
-      'pocket_avatar' => new PocketImage_R1($this->pocket_avatar),
+      'id'   => $this->id,
+      'name' => $this->name,
     ];
   }
 }

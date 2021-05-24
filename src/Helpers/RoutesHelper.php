@@ -8,9 +8,11 @@ use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
+use Wasateam\Laravelapistone\Controllers\TagController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionTemplateController;
+use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
 
 class RoutesHelper
@@ -109,6 +111,16 @@ class RoutesHelper
     }
   }
 
+  public static function tag_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('ws_blog', TagController::class)->only($routes)->shallow();
+  }
+
   public static function pocket_image_routes()
   {
     $storage_service = config('stone.storage.service');
@@ -123,6 +135,24 @@ class RoutesHelper
     Route::resource('pocket_file', PocketFileController::class)->only([
       'index', 'store', 'destroy',
     ])->shallow();
+  }
+
+  public static function user_crud_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+    'image_get_upload_url',
+    'image_upload_complete',
+  ]) {
+    Route::resource('user', UserController::class)->only($routes)->shallow();
+    if (in_array('avatar_get_upload_url', $routes)) {
+      Route::get('/ws_blog/avatar/upload_url', [UserController::class, 'avatar_get_upload_url']);
+    }
+    if (in_array('avatar_upload_complete', $routes)) {
+      Route::post('/ws_blog/avatar/upload_complete', [UserController::class, 'avatar_upload_complete']);
+    }
   }
 
   public static function locale_routes($routes = [

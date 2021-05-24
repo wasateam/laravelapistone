@@ -15,12 +15,14 @@ class AdminMy extends JsonResource
   public function toArray($request)
   {
     return [
-      'id'         => $this->id,
-      'name'       => $this->name,
-      'email'      => $this->email,
-      'locale'     => $this->locale,
-      'created_at' => $this->created_at,
-      'updated_at' => $this->updated_at,
+      'id'                => $this->id,
+      'name'              => $this->name,
+      'email'             => $this->email,
+      'locale'            => $this->locale,
+      'created_at'        => $this->created_at,
+      'updated_at'        => $this->updated_at,
+      'email_verified_at' => $this->email_verified_at,
+      'pocket_avatar'     => new PocketImage_R1($this->pocket_avatar),
     ];
   }
 }

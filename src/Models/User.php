@@ -12,6 +12,16 @@ class User extends Authenticatable
   use HasFactory, Notifiable, HasApiTokens;
   use \Illuminate\Database\Eloquent\SoftDeletes;
 
+  public function updated_admin()
+  {
+    return $this->belongsTo(Admin::class, 'updated_admin_id');
+  }
+
+  public function pocket_avatar()
+  {
+    return $this->belongsTo(PocketImage::class, 'pocket_avatar_id');
+  }
+
   /**
    * The attributes that are mass assignable.
    *
@@ -43,5 +53,6 @@ class User extends Authenticatable
     'password'          => \Wasateam\Laravelapistone\Casts\PasswordCast::class,
     'scopes'            => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     // 'avatar'            => \Wasateam\Laravelapistone\Casts\SignedUrlAuthCast::class,
+    ''
   ];
 }

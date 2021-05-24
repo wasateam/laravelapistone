@@ -14,8 +14,7 @@ class ChangePasswordNullableInUsersTable extends Migration
   public function up()
   {
     Schema::table('users', function (Blueprint $table) {
-      $table->string('password')->nullable()->change();
-      $table->string('email')->nullable()->change();
+      $table->integer('pocket_avatar_id')->nullable();
     });
   }
 
@@ -27,8 +26,7 @@ class ChangePasswordNullableInUsersTable extends Migration
   public function down()
   {
     Schema::table('users', function (Blueprint $table) {
-      $table->string('password')->change();
-      $table->string('email')->change();
+      $table->dropColumn('pocket_avatar_id');
     });
   }
 }

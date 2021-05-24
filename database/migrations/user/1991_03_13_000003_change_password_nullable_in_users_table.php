@@ -14,7 +14,8 @@ class AddPocketAvatarInUsersTable extends Migration
   public function up()
   {
     Schema::table('users', function (Blueprint $table) {
-      $table->integer('pocket_avatar_id')->nullable();
+      $table->string('password')->nullable()->change();
+      $table->string('email')->nullable()->change();
     });
   }
 
@@ -26,7 +27,8 @@ class AddPocketAvatarInUsersTable extends Migration
   public function down()
   {
     Schema::table('users', function (Blueprint $table) {
-      $table->dropColumn('pocket_avatar_id');
+      $table->string('password')->change();
+      $table->string('email')->change();
     });
   }
 }

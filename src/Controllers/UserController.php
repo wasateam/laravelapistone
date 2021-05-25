@@ -39,6 +39,10 @@ class UserController extends Controller
     'scopes',
     'tel',
     'payload',
+    'is_active',
+    'sequence',
+    'updated_admin_at',
+    'verified_at',
   ];
   public $search_fields = [
     'id',
@@ -49,6 +53,9 @@ class UserController extends Controller
     'id',
     'updated_at',
     'created_at',
+  ];
+  public $belongs_to = [
+    'locale',
   ];
   public $user_record_field = 'updated_admin_id';
 

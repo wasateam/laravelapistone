@@ -23,6 +23,7 @@ class RoutesHelper
     "signout",
     "userget",
     "userpatch",
+    "passwordpatch",
     "avatarpatch",
   ]) {
     $model_name = config('stone.auth.model_name');
@@ -47,6 +48,9 @@ class RoutesHelper
         }
         if (in_array('userpatch', $routes)) {
           Route::patch('/user', [AuthController::class, 'update']);
+        }
+        if (in_array('passwordpatch', $routes)) {
+          Route::patch('/user', [AuthController::class, 'password_update']);
         }
         if (in_array('avatarpatch', $routes)) {
           if (env('SIGNED_URL_MODE') == 'gcs') {

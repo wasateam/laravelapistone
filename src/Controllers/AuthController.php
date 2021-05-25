@@ -262,4 +262,46 @@ class AuthController extends Controller
     $user       = Auth::user();
     return StorageHelper::getGoogleUploadSignedUrlByNameAndPath($filename, "{$model_name}/{$user->id}", 'image/png');
   }
+
+  /**
+   * Password Update
+   *
+   * @authenticated
+   *
+   * @bodyParam password password
+   * @bodyParam new_password password
+   * @bodyParam new_password_confirmation password
+   *
+   */
+  public function password_update(Request $request)
+  {
+    $resource = config('stone.auth.resource');
+    $messages = [
+      'password.min' => 'password too short.',
+    ];
+    $rules = [
+      'password'     => 'required|string|min:6',
+      'new_password' => 'required|string|confirmed|min:6',
+    ];
+    $validator = Validator::make($request->all(), $rules, $messages);
+    if ($validator->fails()) {
+      return response()->json([
+        'message' => $validator->messages(),
+      ], 400);
+    }
+    $user = Auth::user();
+    if (!Hash::check($request->password, $user->password)) {
+      return response()->json([
+        'message' => 'password not correct.',
+      ], 401);
+    }
+    if ($request->new_password !== $request->new_password_confirmation) {
+      return response()->json([
+        'message' => 'confirmation not match.',
+      ], 401);
+    }
+    $user->password = $request->new_password;
+    $user->save();
+    return (new $resource($user));
+  }
 }

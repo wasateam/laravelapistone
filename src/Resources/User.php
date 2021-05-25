@@ -30,6 +30,7 @@ class User extends JsonResource
       'payload'           => $this->payload,
       'email_verified_at' => $this->email_verified_at,
       'pocket_avatar'     => new PocketImage_R1($this->pocket_avatar),
+      'locale'            => new Locale_R1($this->locale),
     ];
   }
 }

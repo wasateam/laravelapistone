@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 class AuthRoutesHelper
 {
-  public static function userAuthRoutes($controller_name = 'UserController', $name = "user", $guard = "api", $routes = ['signup', 'signin', 'signout', 'show', 'update', 'avatar_upload'], $user_scope = null)
+  public static function userAuthRoutes($controller_name = 'UserController', $name = "user", $guard = "api", $routes = ['signup', 'signin', 'signout', 'show', 'update', 'password_update', 'avatar_upload'], $user_scope = null)
   {
     if (!$user_scope) {
       $user_scope = $name;
@@ -31,6 +31,9 @@ class AuthRoutesHelper
         }
         if (in_array('update', $routes)) {
           Route::patch("user", "{$controller_name}@update");
+        }
+        if (in_array('password_update', $routes)) {
+          Route::patch("user", "{$controller_name}@password_update");
         }
         if (in_array('avatar_upload', $routes)) {
           if (env('SIGNED_URL_MODE') == 'gcs') {

@@ -21,13 +21,13 @@ return [
     'active_check'   => false,
   ],
   // Admin
-  // 'auth'            => [
-  //   'model_name'     => 'user',
-  //   'model'          => '\Wasateam\Laravelapistone\Models\User',
-  //   'resource'       => '\Wasateam\Laravelapistone\Resources\User',
-  //   'auth_scope'     => 'user',
+  // 'auth'    => [
+  //   'model_name'     => 'admin',
+  //   'model'          => '\Wasateam\Laravelapistone\Models\Admin',
+  //   'resource'       => '\Wasateam\Laravelapistone\Resources\Admin',
+  //   'auth_scope'     => 'admin',
   //   'default_scopes' => [
-  //     'user',
+  //     'admin',
   //   ],
   //   'active_check'   => false,
   // ],

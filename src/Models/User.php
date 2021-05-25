@@ -22,6 +22,11 @@ class User extends Authenticatable
     return $this->belongsTo(PocketImage::class, 'pocket_avatar_id');
   }
 
+  public function locale()
+  {
+    return $this->belongsTo(Locale::class, 'locale_id');
+  }
+
   /**
    * The attributes that are mass assignable.
    *
@@ -53,6 +58,6 @@ class User extends Authenticatable
     'password'          => \Wasateam\Laravelapistone\Casts\PasswordCast::class,
     'scopes'            => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     // 'avatar'            => \Wasateam\Laravelapistone\Casts\SignedUrlAuthCast::class,
-    ''
+    '',
   ];
 }

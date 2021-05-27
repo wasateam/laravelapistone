@@ -512,7 +512,9 @@ class ModelHelper
           } else if ($request->{$filter_field} == 'not_null') {
             $snap = $snap->whereNotNull($filter_field);
           } else {
-            $snap = $snap->where($filter_field, $request->{$filter_field});
+            $item_arr = array_map(null, explode(',', $request->{$filter_field}));
+            error_log(json_encode($item_arr));
+            $snap = $snap->whereIn($filter_field, $item_arr);
           }
         }
       }

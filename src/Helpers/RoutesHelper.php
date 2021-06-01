@@ -50,7 +50,7 @@ class RoutesHelper
           Route::patch('/user', [AuthController::class, 'update']);
         }
         if (in_array('passwordpatch', $routes)) {
-          Route::patch('/user', [AuthController::class, 'password_update']);
+          Route::patch('/user/password', [AuthController::class, 'password_update']);
         }
         if (in_array('avatarpatch', $routes)) {
           if (env('SIGNED_URL_MODE') == 'gcs') {

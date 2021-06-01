@@ -248,6 +248,10 @@ class AuthController extends Controller
    */
   public function avatar_upload(Request $request, $filename)
   {
+    $this->model      = config('stone.auth.model');
+    $this->model_name = config('stone.auth.model_name');
+    $this->name       = config('stone.auth.model_name');
+    $this->resource   = config('stone.auth.resource');
     return ModelHelper::ws_Upload($this, $request, $filename, 'avatar', 'general');
   }
 

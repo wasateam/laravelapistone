@@ -6,6 +6,11 @@ use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
 class SignedUrlIdmatchArrayCast implements CastsAttributes
 {
+  public function __construct($signed_time = 15)
+  {
+    $this->signed_time = $signed_time;
+  }
+
   /**
    * Cast the given value.
    *
@@ -34,7 +39,7 @@ class SignedUrlIdmatchArrayCast implements CastsAttributes
       if (!$options || $model->id != $options['model_id']) {
         continue;
       } else {
-        $_display_value = StorageHelper::getSignedUrlByStoreValue($value_item, 'idmatch');
+        $_display_value = StorageHelper::getSignedUrlByStoreValue($value_item, 'idmatch', $this->signed_time);
         if ($_display_value) {
           $_value[$value_key] = $_display_value;
         }

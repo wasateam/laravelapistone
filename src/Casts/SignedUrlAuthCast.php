@@ -7,6 +7,12 @@ use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
 class SignedUrlAuthCast implements CastsAttributes
 {
+
+  public function __construct($signed_time = 15)
+  {
+    $this->signed_time = $signed_time;
+  }
+
   /**
    * Cast the given value.
    *
@@ -24,7 +30,7 @@ class SignedUrlAuthCast implements CastsAttributes
     if (env('SIGNED_URL_MODE') == 'gcs') {
       return StorageHelper::getGcsSignedUrl($value);
     } else {
-      return StorageHelper::getSignedUrlByStoreValue($value, 'idmatch');
+      return StorageHelper::getSignedUrlByStoreValue($value, 'idmatch', $this->signed_time);
     }
   }
 

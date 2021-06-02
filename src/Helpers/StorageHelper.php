@@ -38,10 +38,10 @@ class StorageHelper
     }
   }
 
-  public static function getGcsSignedUrl($file_path)
+  public static function getGcsSignedUrl($file_path, $signed_time = 15)
   {
     $url = Storage::disk('gcs')->getAdapter()->getBucket()->object($file_path)
-      ->signedUrl(now()->addMinutes(15));
+      ->signedUrl(now()->addMinutes($signed_time));
     return $url;
   }
 
@@ -96,7 +96,7 @@ class StorageHelper
     }
   }
 
-  public static function getSignedUrlByStoreValue($store_value, $signed_type = "general")
+  public static function getSignedUrlByStoreValue($store_value, $signed_type = "general", $signed_time = 15)
   {
     if (!$store_value) {
       return null;
@@ -106,7 +106,7 @@ class StorageHelper
       return null;
     } else {
       return URL::temporarySignedRoute(
-        "file_{$signed_type}", now()->addMinutes(15), $options);
+        "file_{$signed_type}", now()->addMinutes($signed_time), $options);
     }
   }
 

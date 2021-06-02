@@ -6,6 +6,12 @@ use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
 class SignedUrlGeneralArrayCast implements CastsAttributes
 {
+
+  public function __construct($signed_time = 15)
+  {
+    $this->signed_time = $signed_time;
+  }
+
   /**
    * Cast the given value.
    *
@@ -30,7 +36,7 @@ class SignedUrlGeneralArrayCast implements CastsAttributes
       }
     }
     foreach ($value as $value_key => $value_item) {
-      $_display_value = StorageHelper::getSignedUrlByStoreValue($value_item, 'general');
+      $_display_value = StorageHelper::getSignedUrlByStoreValue($value_item, 'general', $this->signed_time);
       if ($_display_value) {
         $_value[$value_key] = $_display_value;
       }

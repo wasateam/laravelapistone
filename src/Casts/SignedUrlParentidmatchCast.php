@@ -6,6 +6,12 @@ use Wasateam\Laravelapistone\Helpers\StorageHelper;
 
 class SignedUrlParentidmatchCast implements CastsAttributes
 {
+
+  public function __construct($signed_time = 15)
+  {
+    $this->signed_time = $signed_time;
+  }
+
   /**
    * Cast the given value.
    *
@@ -20,7 +26,7 @@ class SignedUrlParentidmatchCast implements CastsAttributes
     if (!$value) {
       return null;
     }
-    return StorageHelper::getSignedUrlByStoreValue($value, 'parentidmatch');
+    return StorageHelper::getSignedUrlByStoreValue($value, 'parentidmatch', $this->signed_time);
   }
 
   /**

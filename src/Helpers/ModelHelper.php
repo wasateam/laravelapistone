@@ -315,7 +315,7 @@ class ModelHelper
     }
   }
 
-  public static function ws_Upload($controller, $request, $filename, $type, $signed_type = 'general', $id = null, $parent = null, $parent_id = null)
+  public static function ws_Upload($controller, $request, $filename, $type, $signed_type = 'general', $id = null, $parent = null, $parent_id = null, $signed_time = 15)
   {
     $setting = self::getSetting($controller);
     $content = $request->getContent();
@@ -336,7 +336,7 @@ class ModelHelper
       ], 400);
     }
     return response()->json([
-      'signed_url' => StorageHelper::getSignedUrlByStoreValue($store_value, $signed_type),
+      'signed_url' => StorageHelper::getSignedUrlByStoreValue($store_value, $signed_type, $signed_time),
     ]);
   }
 

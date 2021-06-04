@@ -68,6 +68,9 @@ class ModelHelper
     // User Updated Record
     $model = self::setUserRecord($model, $setting);
 
+    // User Create Record
+    $model = self::setUserCreate($model, $setting);
+
     // Parent
     try {
       $model = self::storeParentId($model, $setting, $id);
@@ -377,6 +380,7 @@ class ModelHelper
     $setting->input_fields                    = isset($controller->input_fields) ? $controller->input_fields : [];
     $setting->locale_fields                   = isset($controller->locale_fields) ? $controller->locale_fields : [];
     $setting->user_record_field               = isset($controller->user_record_field) ? $controller->user_record_field : null;
+    $setting->user_create_field               = isset($controller->user_create_field) ? $controller->user_create_field : null;
     $setting->parent_name                     = isset($controller->parent_name) ? $controller->parent_name : null;
     $setting->parent_model                    = isset($controller->parent_model) ? $controller->parent_model : null;
     $setting->parent_id_field                 = isset($controller->parent_id_field) ? $controller->parent_id_field : null;
@@ -704,6 +708,16 @@ class ModelHelper
     }
     $user                                 = Auth::user();
     $model->{$setting->user_record_field} = $user->id;
+    return $model;
+  }
+
+  public static function setUserCreate($model, $setting)
+  {
+    if (!$setting->user_create_field) {
+      return $model;
+    }
+    $user                                 = Auth::user();
+    $model->{$setting->user_create_field} = $user->id;
     return $model;
   }
 

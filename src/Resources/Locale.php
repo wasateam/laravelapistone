@@ -18,6 +18,7 @@ class Locale extends JsonResource
       return [
         'id'            => $this->id,
         'updated_admin' => new Admin($this->updated_admin),
+        'created_admin' => new Admin($this->created_admin),
         'sequence'      => $this->sequence,
         'updated_at'    => $this->updated_at,
         'created_at'    => $this->created_at,

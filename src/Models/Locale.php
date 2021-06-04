@@ -16,6 +16,11 @@ class Locale extends Model
     return $this->belongsTo(Admin::class, 'updated_admin_id');
   }
 
+  public function created_admin()
+  {
+    return $this->belongsTo(Admin::class, 'created_admin_id');
+  }
+
   public function backup_locale()
   {
     return $this->belongsTo(self::class, 'backup_locale_id');

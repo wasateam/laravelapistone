@@ -367,7 +367,6 @@ class ModelHelper
     $setting->filter_belongs_to_many          = isset($controller->filter_belongs_to_many) ? $controller->filter_belongs_to_many : [];
     $setting->filter_relationship_fields      = isset($controller->filter_relationship_fields) ? $controller->filter_relationship_fields : [];
     $setting->filter_user_fields              = isset($controller->filter_user_fields) ? $controller->filter_user_fields : [];
-    $setting->user_create_field               = isset($controller->user_create_field) ? $controller->user_create_field : null;
     $setting->filter_user_disable_scopes      = isset($controller->filter_user_disable_scopes) ? $controller->filter_user_disable_scopes : ['boss'];
     $setting->filter_relationship_user_fields = isset($controller->filter_relationship_user_fields) ? $controller->filter_relationship_user_fields : [];
     $setting->search_fields                   = isset($controller->search_fields) ? $controller->search_fields : [];
@@ -381,6 +380,7 @@ class ModelHelper
     $setting->input_fields                    = isset($controller->input_fields) ? $controller->input_fields : [];
     $setting->locale_fields                   = isset($controller->locale_fields) ? $controller->locale_fields : [];
     $setting->user_record_field               = isset($controller->user_record_field) ? $controller->user_record_field : null;
+    $setting->user_create_field               = isset($controller->user_create_field) ? $controller->user_create_field : null;
     $setting->parent_name                     = isset($controller->parent_name) ? $controller->parent_name : null;
     $setting->parent_model                    = isset($controller->parent_model) ? $controller->parent_model : null;
     $setting->parent_id_field                 = isset($controller->parent_id_field) ? $controller->parent_id_field : null;

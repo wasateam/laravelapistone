@@ -68,6 +68,9 @@ class ModelHelper
     // User Updated Record
     $model = self::setUserRecord($model, $setting);
 
+    // User Create Record
+    $model = self::setUserCreate($model, $setting);
+
     // Parent
     try {
       $model = self::storeParentId($model, $setting, $id);
@@ -364,6 +367,7 @@ class ModelHelper
     $setting->filter_belongs_to_many          = isset($controller->filter_belongs_to_many) ? $controller->filter_belongs_to_many : [];
     $setting->filter_relationship_fields      = isset($controller->filter_relationship_fields) ? $controller->filter_relationship_fields : [];
     $setting->filter_user_fields              = isset($controller->filter_user_fields) ? $controller->filter_user_fields : [];
+    $setting->user_create_field               = isset($controller->user_create_field) ? $controller->user_create_field : null;
     $setting->filter_user_disable_scopes      = isset($controller->filter_user_disable_scopes) ? $controller->filter_user_disable_scopes : ['boss'];
     $setting->filter_relationship_user_fields = isset($controller->filter_relationship_user_fields) ? $controller->filter_relationship_user_fields : [];
     $setting->search_fields                   = isset($controller->search_fields) ? $controller->search_fields : [];
@@ -704,6 +708,16 @@ class ModelHelper
     }
     $user                                 = Auth::user();
     $model->{$setting->user_record_field} = $user->id;
+    return $model;
+  }
+
+  public static function setUserCreate($model, $setting)
+  {
+    if (!$setting->user_create_field) {
+      return $model;
+    }
+    $user                                 = Auth::user();
+    $model->{$setting->user_create_field} = $user->id;
     return $model;
   }
 

@@ -15,9 +15,11 @@ class CmsLog extends JsonResource
   public function toArray($request)
   {
     return [
-      'id'      => $this->id,
-      'type'    => $this->type,
-      'payload' => $this->payload,
+      'id'         => $this->id,
+      'created_at' => $this->created_at,
+      'updated_at' => $this->updated_at,
+      'type'       => $this->type,
+      'payload'    => $this->payload,
     ];
   }
 }

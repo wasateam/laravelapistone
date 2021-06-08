@@ -128,9 +128,32 @@ class ModelHelper
       self::ws_StoreHandler(new $version_controller, $request, $model->id, null, null, false, null, false);
     }
 
+    Self::ws_Log($model, $controller, 'create');
+
     if ($return_resource) {
       return new $setting->resource($model);
     }
+
+  }
+
+  public static function ws_Log($model, $controller, $action)
+  {
+
+    if (!config('stone.log.is_active')) {
+      return;
+    }
+
+    $log_model    = config('stone.log.model');
+    $log          = new $log_model;
+    $log->payload = [
+      'userModelName' => Auth::user()->name,
+      'user_id'       => Auth::user()->id,
+      'action'        => $action,
+      'target'        => $controller->name,
+      'target_id'     => $action === 'signin' || $action === 'signout' ? null : $model->id,
+      'ip'            => \Request::ip(),
+    ];
+    $log->save();
 
   }
 
@@ -278,6 +301,9 @@ class ModelHelper
     if ($complete_action) {
       $complete_action($model);
     }
+
+    Self::ws_Log($model, $controller, 'update');
+
     return new $setting->resource($model);
   }
 
@@ -298,6 +324,8 @@ class ModelHelper
         'message' => 'no data.',
       ], 400);
     }
+
+    Self::ws_Log($model, $controller, 'delete');
 
     // Delete
     try {

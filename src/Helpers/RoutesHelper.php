@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
 use Wasateam\Laravelapistone\Controllers\AuthController;
+use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
@@ -13,6 +14,7 @@ use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionTemplateController;
 use Wasateam\Laravelapistone\Controllers\UserController;
+use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
 
 class RoutesHelper
@@ -167,5 +169,19 @@ class RoutesHelper
     'destroy',
   ]) {
     Route::resource('locale', LocaleController::class)->only($routes)->shallow();
+  }
+
+  public static function cms_log_routes($routes = [
+    'index',
+    'show',
+  ]) {
+    Route::resource('cms_log', CmsLogController::class)->only($routes)->shallow();
+  }
+
+  public static function web_log_routes($routes = [
+    'index',
+    'show',
+  ]) {
+    Route::resource('web_log', WebLogController::class)->only($routes)->shallow();
   }
 }

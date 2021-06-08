@@ -60,5 +60,13 @@ class StoneServiceProvider extends ServiceProvider
       __DIR__ . '/../database/migrations/locale' => database_path('migrations'),
     ], 'migrations-locale');
 
+    $this->publishes([
+      __DIR__ . '/../database/migrations/web_log' => database_path('migrations'),
+    ], 'migrations-web_log');
+
+    $this->publishes([
+      __DIR__ . '/../database/migrations/cms_log' => database_path('migrations'),
+    ], 'migrations-cms_log');
+
   }
 }

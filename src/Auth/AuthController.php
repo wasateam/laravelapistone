@@ -1,9 +1,8 @@
 <?php
 
-namespace Wasateam\Laravelapistone\Auth;
+namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\User;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -11,28 +10,44 @@ use Illuminate\Support\Facades\Hash;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
+use Wasateam\Laravelapistone\Models\Admin;
 
+/**
+ * @group Auth
+ *
+ * @authenticated
+ *
+ * APIs for auth
+ */
 class AuthController extends Controller
 {
   /**
    * Signup
    *
-   * @bodyParam  email mail required Admin Email Account Example: wasa@wasateam.com
+   * @bodyParam  email mail required Auth Email Account Example: wasa@wasateam.com
    * @bodyParam  password string required Example: 123123
    * @bodyParam  password_confirmation string required Check Password match  Example: 123123
    * @bodyParam  name string User Name  Example: wasa
    * @bodyParam  tel string
+   * @response
+   * {
+   * "data": {
+   * "id": 2,
+   * "name": "wasa",
+   * "email": "admin@wasateam.com",
+   * "created_at": "2020-07-11T15:06:43.000000Z",
+   * "updated_at": "2020-07-11T15:06:43.000000Z"
+   * }
+   * }
    *
    */
   public function signup(Request $request)
   {
-    $model_name     = config('stone.auth.model_name');
     $model          = config('stone.auth.model');
+    $model_name     = config('stone.auth.model_name');
     $resource       = config('stone.auth.resource');
-    $auth_scope     = config('stone.auth.auth_scope');
     $default_scopes = config('stone.auth.default_scopes');
-
-    $messages = [
+    $messages       = [
       'password.min' => 'password too short.',
       'email.unique' => 'email has been token.',
     ];
@@ -45,7 +60,7 @@ class AuthController extends Controller
     if ($validator->fails()) {
       return response()->json([
         'message' => $validator->messages(),
-      ], 400);
+      ], 401);
     }
     $user = new $model([
       'email'    => $request->email,
@@ -57,21 +72,39 @@ class AuthController extends Controller
     }
     $user->scopes = $default_scopes;
     $user->save();
-    return (new $resource($user));
+    return new $resource($user);
   }
 
   /**
    * Signin
    *
+   * posting
+   * const response = pm.response.json();pm.collectionVariables.set("token", response.access_token);
+   * in tests
+   *
    * @bodyParam  email mail required Admin Email Account Example: wasa@wasateam.com
    * @bodyParam  password string required Example: 123123
+   * @response
+   * {
+   * "access_token": "{{token here}}",
+   * "expires_at": "2021-07-11 15:10:13",
+   * "admin": {
+   * "id": 2,
+   * "created_at": "2020-07-11T15:06:43.000000Z",
+   * "updated_at": "2020-07-11T15:06:43.000000Z",
+   * "deleted_at": null,
+   * "name": "wasa",
+   * "email": "admin@wasateam.com",
+   * "email_verified_at": null
+   * }
+   * }
    *
    */
   public function signin(Request $request)
   {
     $model        = config('stone.auth.model');
-    $active_check = config('stone.auth.active_check');
     $model_name   = config('stone.auth.model_name');
+    $active_check = config('stone.auth.active_check');
     $request->validate([
       'email'       => 'required|email',
       'password'    => 'required|string',
@@ -98,6 +131,7 @@ class AuthController extends Controller
       $token->expires_at = Carbon::now()->addWeeks(60);
     }
     $token->save();
+    ModelHelper::ws_Log($model, $request, 'signin');
     return response()->json([
       'access_token'  => $tokenResult->accessToken,
       'expires_at'    => Carbon::parse(
@@ -111,6 +145,17 @@ class AuthController extends Controller
    * Get User
    *
    * @authenticated
+   *
+   * @response
+   * {
+   * "data": {
+   * "id": 2,
+   * "name": "wasa",
+   * "email": "wasa@wasateam.com",
+   * "created_at": "2020-07-11T15:06:43.000000Z",
+   * "updated_at": "2020-07-11T15:06:43.000000Z"
+   * }
+   * }
    *
    */
   public function user()
@@ -133,9 +178,15 @@ class AuthController extends Controller
    *
    * @authenticated
    *
+   * @response
+   * {
+   * "message": "signout successed."
+   * }
+   *
    */
   public function signout(Request $request)
   {
+    ModelHelper::ws_Log(config('stone.auth.model'), $request, 'signout');
     try {
       $request->user()->token()->revoke();
     } catch (\Throwable $th) {
@@ -187,7 +238,35 @@ class AuthController extends Controller
       $user->payload = $request->payload;
     }
     $user->save();
-    return (new $resource($user));
+    return new $resource($user);
+  }
+
+  /**
+   * Upload Avatar
+   *
+   * put binary data in request body
+   *
+   * @urlParam  filename string required
+   */
+  public function avatar_upload(Request $request, $filename)
+  {
+    $this->model      = config('stone.auth.model');
+    $this->model_name = config('stone.auth.model_name');
+    $this->name       = config('stone.auth.model_name');
+    $this->resource   = config('stone.auth.resource');
+    return ModelHelper::ws_Upload($this, $request, $filename, 'avatar', 'general');
+  }
+
+  /**
+   * Get Avatar Upload Url
+   *
+   * @urlParam  filename string required Example: avatar.png
+   */
+  public function get_avatar_upload_url($filename)
+  {
+    $model_name = config('stone.auth.model_name');
+    $user       = Auth::user();
+    return StorageHelper::getGoogleUploadSignedUrlByNameAndPath($filename, "{$model_name}/{$user->id}", 'image/png');
   }
 
   /**
@@ -230,29 +309,5 @@ class AuthController extends Controller
     $user->password = $request->new_password;
     $user->save();
     return (new $resource($user));
-  }
-
-  /**
-   * Upload Avatar
-   *
-   * put binary data in request body
-   *
-   * @urlParam  filename string required
-   */
-  public function avatar_upload(Request $request, $filename)
-  {
-    return ModelHelper::ws_Upload($this, $request, $filename, 'avatar', 'general');
-  }
-
-  /**
-   * Get Avatar Upload Url
-   *
-   * @urlParam  filename string required Example: avatar.png
-   */
-  public function get_avatar_upload_url($filename)
-  {
-    $model_name = config('stone.auth.model_name');
-    $user       = Auth::user();
-    return StorageHelper::getGoogleUploadSignedUrlByNameAndPath($filename, "{$model_name}/{$user->id}", 'image/png');
   }
 }

@@ -9,6 +9,11 @@ return [
       'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', null),
     ],
   ],
+  'log'     => [
+    'is_active' => true,
+    'model'     => '\Wasateam\Laravelapistone\Models\CmsLog',
+    // 'model'     => '\Wasateam\Laravelapistone\Models\WebLog',
+  ],
   // User
   'auth'    => [
     'model_name'     => 'user',

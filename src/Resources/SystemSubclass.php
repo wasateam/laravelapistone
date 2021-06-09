@@ -17,7 +17,7 @@ class SystemSubclass extends JsonResource
     if (config('stone.mode') == 'cms') {
       return [
         'id'            => $this->id,
-        'updated_admin' => new Admin($this->updated_admin),
+        'updated_admin' => new Admin_R1($this->updated_admin),
         'sequence'      => $this->sequence,
         'updated_at'    => $this->updated_at,
         'name'          => $this->name,

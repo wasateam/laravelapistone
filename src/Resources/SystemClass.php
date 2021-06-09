@@ -21,13 +21,13 @@ class SystemClass extends JsonResource
         'sequence'          => $this->sequence,
         'updated_at'        => $this->updated_at,
         'name'              => $this->name,
-        // 'system_subclasses' => SystemSubclass_R1::collection($this->system_subclasses),
+        'system_subclasses' => SystemSubclass_R1::collection($this->system_subclasses),
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
         'id'                => $this->id,
         'name'              => $this->name,
-        // 'system_subclasses' => SystemSubclass_R1::collection($this->system_subclasses),
+        'system_subclasses' => SystemSubclass_R1::collection($this->system_subclasses),
       ];
     }
   }

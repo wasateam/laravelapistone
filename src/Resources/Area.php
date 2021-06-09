@@ -21,7 +21,7 @@ class Area extends JsonResource
         'sequence'      => $this->sequence,
         'updated_at'    => $this->updated_at,
         'name'          => $this->name,
-        // 'area_sections' => AreaSection_R1::collection($this->area_sections),
+        'area_sections' => AreaSection_R1::collection($this->area_sections),
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
@@ -29,7 +29,7 @@ class Area extends JsonResource
         'sequence'      => $this->sequence,
         'updated_at'    => $this->updated_at,
         'name'          => $this->name,
-        // 'area_sections' => AreaSection_R1::collection($this->area_sections),
+        'area_sections' => AreaSection_R1::collection($this->area_sections),
       ];
     }
   }

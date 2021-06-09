@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Wasateam\Laravelapistone\Models\Admin;
 use Wasateam\Laravelapistone\Models\Area;
+use Wasateam\Laravelapistone\Models\SystemSubclass;
 
 class SystemClass extends Model
 {
@@ -20,5 +21,10 @@ class SystemClass extends Model
   public function area()
   {
     return $this->belongsTo(Area::class);
+  }
+
+  public function system_subclasses()
+  {
+    return $this->hasMany(SystemSubclass::class);
   }
 }

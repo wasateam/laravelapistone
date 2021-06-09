@@ -48,7 +48,7 @@ class SystemClassController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    return ModelHelper::ws_IndexHandler($this, $request, $id, true);
   }
 
   /**

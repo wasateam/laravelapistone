@@ -3,12 +3,16 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
+use Wasateam\Laravelapistone\Controllers\AreaController;
+use Wasateam\Laravelapistone\Controllers\AreaSectionController;
 use Wasateam\Laravelapistone\Controllers\AuthController;
 use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
+use Wasateam\Laravelapistone\Controllers\SystemClassController;
+use Wasateam\Laravelapistone\Controllers\SystemSubclassController;
 use Wasateam\Laravelapistone\Controllers\TagController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
@@ -183,5 +187,33 @@ class RoutesHelper
     'show',
   ]) {
     Route::resource('web_log', WebLogController::class)->only($routes)->shallow();
+  }
+
+  public static function area_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('area', AreaController::class)->only($routes)->shallow();
+    Route::resource('area.area_section', AreaSectionController::class)->only($routes)->shallow();
+  }
+
+  public static function system_class_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      Route::resource('system_class', SystemClassController::class)->only($routes)->shallow();
+    } else {
+      Route::resource('area.system_class', SystemClassController::class)->only($routes)->shallow();
+      Route::get('area/{area}/system_class', [SystemClassController::class, 'index_with_area']);
+    }
+    Route::resource('system_class.system_subclass', SystemSubclassController::class)->only($routes)->shallow();
   }
 }

@@ -98,7 +98,6 @@ class AuthController extends Controller
       $token->expires_at = Carbon::now()->addWeeks(60);
     }
     $token->save();
-    ModelHelper::ws_Log($model, $request, 'signin');
     return response()->json([
       'access_token'  => $tokenResult->accessToken,
       'expires_at'    => Carbon::parse(
@@ -137,7 +136,6 @@ class AuthController extends Controller
    */
   public function signout(Request $request)
   {
-    ModelHelper::ws_Log(config('stone.auth.model'), $request, 'signout');
     try {
       $request->user()->token()->revoke();
     } catch (\Throwable $th) {

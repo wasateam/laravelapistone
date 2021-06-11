@@ -45,9 +45,9 @@ class AreaSectionController extends Controller
    * @urlParam area int Example:1
    *
    */
-  public function index(Request $request, $id = null, true)
+  public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    return ModelHelper::ws_IndexHandler($this, $request, $id, true);
   }
 
   /**

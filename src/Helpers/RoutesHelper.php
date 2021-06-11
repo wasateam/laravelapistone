@@ -97,10 +97,14 @@ class RoutesHelper
     'store',
     'update',
     'destroy',
+    'image_get_upload_url',
   ]) {
     Route::resource('tulpa_page', TulpaPageController::class)->only($routes)->shallow();
     Route::resource('tulpa_section', TulpaSectionController::class)->only($routes)->shallow();
     Route::resource('tulpa_section_template', TulpaSectionTemplateController::class)->only($routes)->shallow();
+    if (in_array('image_get_upload_url', $routes)) {
+      Route::get('/tulpa_page/image/upload_url', [TulpaPageController::class, 'image_get_upload_url']);
+    }
   }
 
   public static function ws_blog_routes($routes = [
@@ -110,14 +114,10 @@ class RoutesHelper
     'update',
     'destroy',
     'image_get_upload_url',
-    'image_upload_complete',
   ]) {
     Route::resource('ws_blog', WsBlogController::class)->only($routes)->shallow();
     if (in_array('image_get_upload_url', $routes)) {
       Route::get('/ws_blog/image/upload_url', [WsBlogController::class, 'image_get_upload_url']);
-    }
-    if (in_array('image_upload_complete', $routes)) {
-      Route::post('/ws_blog/image/upload_complete', [WsBlogController::class, 'image_upload_complete']);
     }
   }
 
@@ -134,17 +134,25 @@ class RoutesHelper
   public static function pocket_image_routes()
   {
     $storage_service = config('stone.storage.service');
+    if ($storage_service == 'gcs') {
+      Route::get('pocket_image/upload_url', [PocketImageController::class, 'get_upload_url']);
+    }
     Route::resource('pocket_image', PocketImageController::class)->only([
       'index', 'store', 'destroy',
     ])->shallow();
+    Route::patch('pocket_image/public_url/{id}', [PocketImageController::class, 'public_url']);
   }
 
   public static function pocket_file_routes()
   {
     $storage_service = config('stone.storage.service');
+    if ($storage_service == 'gcs') {
+      Route::get('pocket_file/upload_url', [PocketFileController::class, 'get_upload_url']);
+    }
     Route::resource('pocket_file', PocketFileController::class)->only([
       'index', 'store', 'destroy',
     ])->shallow();
+    Route::patch('pocket_file/public_url/{id}', [PocketFileController::class, 'public_url']);
   }
 
   public static function user_crud_routes($routes = [
@@ -158,10 +166,7 @@ class RoutesHelper
   ]) {
     Route::resource('user', UserController::class)->only($routes)->shallow();
     if (in_array('avatar_get_upload_url', $routes)) {
-      Route::get('/ws_blog/avatar/upload_url', [UserController::class, 'avatar_get_upload_url']);
-    }
-    if (in_array('avatar_upload_complete', $routes)) {
-      Route::post('/ws_blog/avatar/upload_complete', [UserController::class, 'avatar_upload_complete']);
+      Route::get('/user/avatar/upload_url', [UserController::class, 'avatar_get_upload_url']);
     }
   }
 

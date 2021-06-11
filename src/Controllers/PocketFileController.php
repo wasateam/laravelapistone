@@ -113,10 +113,30 @@ class PocketFileController extends Controller
   public function get_upload_url(Request $request)
   {
     $name = $request->name;
-    // $path            = $request->path ? $request->path : 'pocket_file';
     $storage_service = config('stone.storage.service');
     if ($storage_service == 'gcs') {
       return GcsHelper::getUploadSignedUrlByNameAndPath($name, 'pocket_file');
+    }
+  }
+
+  /**
+   * Public
+   * @urlParam id string Example: 1
+   *
+   */
+  public function public_url($id)
+  {
+    $admin = Auth::user();
+    $model = $this->model::find($id);
+    if ($model->last_version->signed) {
+      return response()->json([
+        'message' => ':(',
+      ], 400);
+    } else {
+      GcsHelper::makeUrlPublic($model->last_version->url);
+      return response()->json([
+        'message' => ':)',
+      ], 200);
     }
   }
 }

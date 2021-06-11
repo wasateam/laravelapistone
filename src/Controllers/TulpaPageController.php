@@ -5,6 +5,7 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Models\TulpaPage;
 
 /**
@@ -135,4 +136,31 @@ class TulpaPageController extends Controller
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
   }
+
+  /**
+   * Get Upload Url
+   * @queryParam name string Example: wasa.png
+   *
+   */
+  public function image_get_upload_url(Request $request)
+  {
+    $name            = $request->name;
+    $storage_service = config('stone.storage.service');
+    if ($storage_service == 'gcs') {
+      return GcsHelper::getUploadSignedUrlByNameAndPath($name, 'tulpa', '*');
+    }
+  }
+
+  // /**
+  //  * Pocket Image Upload Complete
+  //  *
+  //  */
+  // public function image_upload_complete(Request $request)
+  // {
+  //   $url = $request->url;
+  //   GcsHelper::makeUrlPublic($url);
+  //   return response()->json([
+  //     'message' => 'ok.',
+  //   ]);
+  // }
 }

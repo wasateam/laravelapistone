@@ -30,6 +30,7 @@ class TulpaPage extends JsonResource
         'remark'         => $this->remark,
         'status'         => $this->status,
         'content'        => $this->content,
+        'is_canonical'   => $this->is_canonical,
         'tulpa_sections' => TulpaSection_R1::collection($this->tulpa_sections),
       ];
     } else if (config('stone.mode') == 'webapi') {
@@ -40,6 +41,7 @@ class TulpaPage extends JsonResource
         'description'    => $this->description,
         'og_image'       => $this->og_image,
         'content'        => $this->content,
+        'is_canonical'   => $this->is_canonical,
         'tulpa_sections' => TulpaSection_R1::collection($this->tulpa_sections),
       ];
     }

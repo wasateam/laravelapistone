@@ -7,6 +7,7 @@ use Wasateam\Laravelapistone\Controllers\AreaController;
 use Wasateam\Laravelapistone\Controllers\AreaSectionController;
 use Wasateam\Laravelapistone\Controllers\AuthController;
 use Wasateam\Laravelapistone\Controllers\CmsLogController;
+use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
@@ -220,5 +221,15 @@ class RoutesHelper
       Route::get('area/{area}/system_class', [SystemClassController::class, 'index_with_area']);
     }
     Route::resource('system_class.system_subclass', SystemSubclassController::class)->only($routes)->shallow();
+  }
+
+  public static function contact_request_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('contact_request', ContactRequestController::class)->only($routes)->shallow();
   }
 }

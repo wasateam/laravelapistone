@@ -76,5 +76,9 @@ class StoneServiceProvider extends ServiceProvider
       __DIR__ . '/../database/migrations/system_class' => database_path('migrations'),
     ], 'migrations-system_class');
 
+    $this->publishes([
+      __DIR__ . '/../database/migrations/contact_request' => database_path('migrations'),
+    ], 'migrations-contact_request');
+
   }
 }

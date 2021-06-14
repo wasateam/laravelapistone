@@ -32,6 +32,7 @@ class RoutesHelper
     "userpatch",
     "passwordpatch",
     "avatarpatch",
+    "forgetpassword",
   ]) {
     $model_name = config('stone.auth.model_name');
     $auth_scope = config('stone.auth.auth_scope');
@@ -67,6 +68,15 @@ class RoutesHelper
           }
         }
       });
+
+      if (in_array('forgetpassword', $routes)) {
+        Route::post("/forgetpassword/request", [AuthController::class, 'forget_password_request']);
+        Route::group([
+          "middleware" => ["signed"],
+        ], function () {
+          Route::post('/forgetpassword/patch/{user_id}', [AuthController::class, 'forget_password_patch'])->name('forget_password_patch');
+        });
+      }
     });
   }
 
@@ -217,10 +227,15 @@ class RoutesHelper
     if ($mode == 'cms') {
       Route::resource('system_class', SystemClassController::class)->only($routes)->shallow();
     } else {
-      Route::resource('area.system_class', SystemClassController::class)->only($routes)->shallow();
+      Route::resource('area.system_class', SystemClassController::class)->only([
+        'show'
+      ])->shallow();
       Route::get('area/{area}/system_class', [SystemClassController::class, 'index_with_area']);
     }
-    Route::resource('system_class.system_subclass', SystemSubclassController::class)->only($routes)->shallow();
+    Route::resource('system_class.system_subclass', SystemSubclassController::class)->only($routes)->shallow([
+      'index',
+      'show',
+    ]);
   }
 
   public static function contact_request_routes($routes = [

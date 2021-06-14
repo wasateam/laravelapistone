@@ -14,6 +14,8 @@ return [
     'model'     => '\Wasateam\Laravelapistone\Models\CmsLog',
     // 'model'     => '\Wasateam\Laravelapistone\Models\WebLog',
   ],
+  'app_url' => env('APP_URL'),
+  'web_url' => env('WEB_URL'),
   // User
   'auth'    => [
     'model_name'     => 'user',

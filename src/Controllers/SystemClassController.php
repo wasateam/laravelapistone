@@ -58,9 +58,12 @@ class SystemClassController extends Controller
    * @urlParam area int Example:1
    *
    */
-  public function index_with_area(Request $request, $id = null)
+  public function index_with_area(Request $request, $area = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    return ModelHelper::ws_IndexHandler($this, $request, null, false, function ($snap) {
+      $snap = $snap->where('area_id', $area);
+      return $snap;
+    });
   }
 
   /**

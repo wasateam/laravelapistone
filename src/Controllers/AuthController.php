@@ -341,6 +341,9 @@ class AuthController extends Controller
       'forget_password_patch', now()->addMinutes(60), ['user_id' => $user->id]
     );
     Mail::to($user->email)->send(new PasswordResetRequest($url));
+    return response()->json([
+      'message' => 'mail sent.',
+    ], 200);
   }
 
   /**

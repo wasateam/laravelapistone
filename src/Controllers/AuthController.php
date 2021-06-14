@@ -3,7 +3,7 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Mail\PasswordResetRequest;
+use Wasateam\Laravelapistone\Mail\PasswordResetRequest;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

@@ -236,7 +236,10 @@ class AuthController extends Controller
       $user->payload = $request->payload;
     }
     $user->save();
-    return new $resource($user);
+    return response()->json([
+      'user'   => new $resource($user),
+      'scopes' => $user->scopes,
+    ], 200);
   }
 
   /**

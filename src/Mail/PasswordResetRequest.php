@@ -27,7 +27,7 @@ class PasswordResetRequest extends Mailable
    */
   public function build()
   {
-    $format_url = \Str::replace(config('stone.app_url') . '/api', config('stone.web_url'), $this->url);
+    $format_url = str_replace(config('stone.app_url') . '/api', config('stone.web_url'), $this->url);
     return $this->subject('密碼重置請求')->view('wasa.mail.reset_password_request')->with([
       'url' => $format_url,
     ]);

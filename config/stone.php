@@ -9,6 +9,11 @@ return [
       'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', null),
     ],
   ],
+  'mail'    => [
+    'service'    => 'surenotify', // gmail, surenotify
+    'api_key'    => env('MAIL_API_KEY'),
+    'api_domain' => env('MAIL_API_DOMAIN'),
+  ],
   'log'     => [
     'is_active' => true,
     'model'     => '\Wasateam\Laravelapistone\Models\CmsLog',

@@ -159,6 +159,12 @@ class ModelHelper
 
   }
 
+  public static function ws_findByIds($controller, $request)
+  {
+    $ids = array_map('intval', explode(',', $request->ids));
+    return $controller->model::findMany($ids);
+  }
+
   public static function ws_BatchStoreHandler($controller, $request, $id = null)
   {
     $result_data = [];

@@ -5,6 +5,7 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Models\TulpaPage;
 
 /**
@@ -30,6 +31,7 @@ class TulpaPageController extends Controller
     'tags',
     'remark',
     'content',
+    'is_canonical',
     // 'section_sequence',
   ];
   public $search_fields = [
@@ -80,6 +82,7 @@ class TulpaPageController extends Controller
    * @bodyParam tags object Example: ["tag 1","tag 2"]
    * @bodyParam remark string Example: Remark for admins
    * @bodyParam content object No-example
+   * @bodyParam is_canonical boolean Example:0
    * @bodyParam section_sequence object No-example
    * @bodyParam tulpa_sections object No-example
    */
@@ -118,6 +121,7 @@ class TulpaPageController extends Controller
    * @bodyParam tags object Example: ["tag 1","tag 2"]
    * @bodyParam remark string Example: Remark for admins
    * @bodyParam content object No-example
+   * @bodyParam is_canonical boolean Example:0
    * @bodyParam section_sequence object No-example
    * @bodyParam tulpa_sections object No-example
    */
@@ -135,4 +139,31 @@ class TulpaPageController extends Controller
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
   }
+
+  /**
+   * Get Upload Url
+   * @queryParam name string Example: wasa.png
+   *
+   */
+  public function image_get_upload_url(Request $request)
+  {
+    $name            = $request->name;
+    $storage_service = config('stone.storage.service');
+    if ($storage_service == 'gcs') {
+      return GcsHelper::getUploadSignedUrlByNameAndPath($name, 'tulpa', '*');
+    }
+  }
+
+  // /**
+  //  * Pocket Image Upload Complete
+  //  *
+  //  */
+  // public function image_upload_complete(Request $request)
+  // {
+  //   $url = $request->url;
+  //   GcsHelper::makeUrlPublic($url);
+  //   return response()->json([
+  //     'message' => 'ok.',
+  //   ]);
+  // }
 }

@@ -3,10 +3,13 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Wasateam\Laravelapistone\Mail\PasswordResetRequest;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
@@ -240,7 +243,10 @@ class AuthController extends Controller
       $user->payload = $request->payload;
     }
     $user->save();
-    return new $resource($user);
+    return response()->json([
+      'user'   => new $resource($user),
+      'scopes' => $user->scopes,
+    ], 200);
   }
 
   /**
@@ -311,5 +317,67 @@ class AuthController extends Controller
     $user->password = $request->new_password;
     $user->save();
     return (new $resource($user));
+  }
+
+  /**
+   * Forget Password Request
+   *
+   * @authenticated
+   *
+   * @bodyParam email string Example: wasalearn@gmail.com
+   *
+   */
+  public function forget_password_request(Request $request)
+  {
+    $model          = config('stone.auth.model');
+    $model_name     = config('stone.auth.model_name');
+    $resource       = config('stone.auth.resource');
+    $default_scopes = config('stone.auth.default_scopes');
+
+    $user = $model::where('email', $request->email)->first();
+    if (!$user) {
+      return response()->json([
+        'message' => 'find no user.',
+      ], 400);
+    }
+
+    $url = URL::temporarySignedRoute(
+      'forget_password_patch', now()->addMinutes(60), ['user_id' => $user->id]
+    );
+    Mail::to($user->email)->send(new PasswordResetRequest($url));
+    return response()->json([
+      'message' => 'mail sent.',
+    ], 200);
+  }
+
+  /**
+   * Forget Password Patch
+   *
+   * @authenticated
+   *
+   * @bodyParam password Example:123123
+   *
+   */
+  public function forget_password_patch($user_id, Request $request)
+  {
+    $model    = config('stone.auth.model');
+    $messages = [
+      'password.min' => 'password too short.',
+    ];
+    $rules = [
+      'password' => 'required|string|confirmed|min:6',
+    ];
+    $validator = Validator::make($request->all(), $rules, $messages);
+    if ($validator->fails()) {
+      return response()->json([
+        'message' => $validator->messages(),
+      ], 400);
+    }
+    $user           = $model::find($user_id);
+    $user->password = $request->password;
+    $user->save();
+    return response()->json([
+      'message' => 'password reset.',
+    ], 200);
   }
 }

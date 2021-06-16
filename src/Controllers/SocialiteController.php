@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 use Socialite;
 use Wasateam\Laravelapistone\Services\SocialiteAccountService;
 
+/**
+ * @group Socialite
+ *
+ * APIs for socialite
+ */
 class SocialiteController extends Controller
 {
   public function googleCallback(SocialiteAccountService $service, Request $request)

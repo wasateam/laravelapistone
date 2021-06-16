@@ -60,7 +60,7 @@ class SystemClassController extends Controller
    */
   public function index_with_area(Request $request, $area = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, null, false, function ($snap) {
+    return ModelHelper::ws_IndexHandler($this, $request, null, false, function ($snap) use ($area) {
       $snap = $snap->where('area_id', $area);
       return $snap;
     });

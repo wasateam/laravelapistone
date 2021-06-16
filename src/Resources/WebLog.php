@@ -20,6 +20,7 @@ class WebLog extends JsonResource
       'updated_at' => $this->updated_at,
       'type'       => $this->type,
       'payload'    => $this->payload,
+      'user'       => new User_R1($this->user),
     ];
   }
 }

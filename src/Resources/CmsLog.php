@@ -20,6 +20,7 @@ class CmsLog extends JsonResource
       'updated_at' => $this->updated_at,
       'type'       => $this->type,
       'payload'    => $this->payload,
+      'admin'      => new Admin_R1($this->admin),
     ];
   }
 }

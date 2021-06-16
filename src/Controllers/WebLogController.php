@@ -22,10 +22,25 @@ class WebLogController extends Controller
     "payload",
     "type",
   ];
+  public $belongs_to = [
+    'user',
+  ];
+  public $filter_belongs_to = [
+    'user',
+  ];
+  public $order_fields = [
+    'updated_at',
+    'created_at',
+  ];
+  public $search_fields = [
+    'payload',
+  ];
 
   /**
    * Index
    *
+   * @queryParam admin int No-Example 1
+   * @queryParam search string No-Example name
    */
   public function index(Request $request, $id = null)
   {

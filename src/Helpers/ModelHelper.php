@@ -136,18 +136,20 @@ class ModelHelper
 
   }
 
-  public static function ws_Log($model, $controller, $action)
+  public static function ws_Log($model, $controller, $action, $user = null)
   {
 
     if (!config('stone.log.is_active')) {
       return;
     }
 
-    $log_model    = config('stone.log.model');
-    $log          = new $log_model;
-    $log->payload = [
-      'userModelName' => Auth::user()->name,
-      'user_id'       => Auth::user()->id,
+    $log_model                                    = config('stone.log.model');
+    $log                                          = new $log_model;
+    $user_id                                      = $user ? $user->id : Auth::user()->id;
+    $log[config('stone.auth.model_name') . '_id'] = $user_id;
+    $log->payload                                 = [
+      'userModelName' => config('stone.auth.model_name'),
+      'user_id'       => $user_id,
       'action'        => $action,
       'target'        => $controller->name,
       'target_id'     => $action === 'signin' || $action === 'signout' ? null : $model->id,

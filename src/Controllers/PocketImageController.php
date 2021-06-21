@@ -62,9 +62,14 @@ class PocketImageController extends Controller
    */
   public function store(Request $request, $id = null)
   {
-    return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
-      $admin                   = Auth::user();
-      $model->created_admin_id = $admin->id;
+    $mode = config('stone.mode');
+    return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($mode) {
+      $user = Auth::user();
+      if ($mode == 'cms') {
+        $model->created_admin_id = $user->id;
+      } else {
+        $model->created_user_id = $user->id;
+      }
       $model->save();
     }, null, true, $this->version_controller);
   }
@@ -127,8 +132,18 @@ class PocketImageController extends Controller
    */
   public function public_url($id)
   {
-    $admin = Auth::user();
+    $user  = Auth::user();
     $model = $this->model::find($id);
+    $mode  = config('stone.mode');
+    if ($mode == 'cms' && $model->created_admin_id != $user->id) {
+      return response()->json([
+        'message' => ':(',
+      ], 400);
+    } else if ($model->created_user_id != $user->id) {
+      return response()->json([
+        'message' => ':(',
+      ], 400);
+    }
     if ($model->last_version->signed) {
       return response()->json([
         'message' => ':(',

@@ -5,7 +5,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
-class PlatformHelper
+class WsPlatformHelper
 {
 
   public static function index($url, $id = null, $params = [], $request = null)

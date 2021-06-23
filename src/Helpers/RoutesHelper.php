@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
+use Wasateam\Laravelapistone\Controllers\AdminScopeController;
 use Wasateam\Laravelapistone\Controllers\AreaController;
 use Wasateam\Laravelapistone\Controllers\AreaSectionController;
 use Wasateam\Laravelapistone\Controllers\AuthController;
@@ -78,6 +79,26 @@ class RoutesHelper
         });
       }
     });
+  }
+
+  public static function admin_scope_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('admin_scope', AdminScopeController::class)->only($routes)->shallow();
+  }
+
+  public static function role_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    // Route::resource('admin_scope', TulpaPageController::class)->only($routes)->shallow();
   }
 
   public static function socialite_routes($routes = [

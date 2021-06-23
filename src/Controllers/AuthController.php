@@ -3,7 +3,6 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
-use Wasateam\Laravelapistone\Mail\PasswordResetRequest;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -11,8 +10,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Validator;
+use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
+use Wasateam\Laravelapistone\Mail\PasswordResetRequest;
 use Wasateam\Laravelapistone\Models\Admin;
 
 /**
@@ -108,7 +109,7 @@ class AuthController extends Controller
     $model        = config('stone.auth.model');
     $model_name   = config('stone.auth.model_name');
     $active_check = config('stone.auth.active_check');
-    $this->name = 'auth';
+    $this->name   = 'auth';
     $request->validate([
       'email'       => 'required|email',
       'password'    => 'required|string',
@@ -129,7 +130,7 @@ class AuthController extends Controller
         'message' => 'password not correct.',
       ], 401);
     }
-    $tokenResult = $user->createToken('Personal Access Token', $user->scopes);
+    $tokenResult = $user->createToken('Personal Access Token', AuthHelper::getUserScopes($user));
     $token       = $tokenResult->token;
     if ($request->remember_me) {
       $token->expires_at = Carbon::now()->addWeeks(60);
@@ -164,8 +165,9 @@ class AuthController extends Controller
    */
   public function user()
   {
-    $resource = config('stone.auth.resource');
-    $user     = Auth::user();
+    $resource   = config('stone.auth.resource');
+    $model_name = config('stone.auth.model_name');
+    $user       = Auth::user();
     if (!$user) {
       return response()->json([
         'message' => 'cannot find user.',
@@ -173,7 +175,7 @@ class AuthController extends Controller
     }
     return response()->json([
       'user'   => new $resource($user),
-      'scopes' => $user->scopes,
+      'scopes' => AuthHelper::getUserScopes($user),
     ], 200);
   }
 
@@ -245,7 +247,6 @@ class AuthController extends Controller
     $user->save();
     return response()->json([
       'user'   => new $resource($user),
-      'scopes' => $user->scopes,
     ], 200);
   }
 
@@ -329,10 +330,9 @@ class AuthController extends Controller
    */
   public function forget_password_request(Request $request)
   {
-    $model          = config('stone.auth.model');
-    $model_name     = config('stone.auth.model_name');
-    $resource       = config('stone.auth.resource');
-    $default_scopes = config('stone.auth.default_scopes');
+    $model      = config('stone.auth.model');
+    $model_name = config('stone.auth.model_name');
+    $resource   = config('stone.auth.resource');
 
     $user = $model::where('email', $request->email)->first();
     if (!$user) {

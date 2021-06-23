@@ -83,5 +83,9 @@ class StoneServiceProvider extends ServiceProvider
     $this->publishes([
       __DIR__ . '/../resources/views/wasa/mail' => resource_path('views/wasa/mail'),
     ], 'views-mail');
+
+    $this->publishes([
+      __DIR__ . '/../database/migrations/admin_scope' => database_path('migrations'),
+    ], 'admin_scope');
   }
 }

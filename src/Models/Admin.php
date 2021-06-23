@@ -21,7 +21,12 @@ class Admin extends Authenticatable
   {
     return $this->belongsTo(PocketImage::class, 'pocket_avatar_id');
   }
-  
+
+  public function roles()
+  {
+    return $this->belongsToMany(AdminRole::class, 'admin_role_admin', 'admin_id', 'admin_role_id');
+  }
+
   /**
    * The attributes that are mass assignable.
    *

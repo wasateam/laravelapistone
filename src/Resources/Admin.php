@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Wasateam\Laravelapistone\Helpers\AuthHelper;
 
 class Admin extends JsonResource
 {
@@ -23,7 +24,7 @@ class Admin extends JsonResource
       'created_at'        => $this->created_at,
       'updated_at'        => $this->updated_at,
       'firestore_id'      => $this->firestore_id,
-      'scopes'            => $this->scopes,
+      'scopes'            => AuthHelper::getUserScopes($this, 'admin'),
       'settings'          => $this->settings,
       'tel'               => $this->tel,
       'payload'           => $this->payload,

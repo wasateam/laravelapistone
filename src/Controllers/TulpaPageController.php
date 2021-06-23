@@ -31,7 +31,7 @@ class TulpaPageController extends Controller
     'tags',
     'remark',
     'content',
-    'is_canonical',
+    'canonical_url',
     // 'section_sequence',
   ];
   public $search_fields = [
@@ -82,7 +82,7 @@ class TulpaPageController extends Controller
    * @bodyParam tags object Example: ["tag 1","tag 2"]
    * @bodyParam remark string Example: Remark for admins
    * @bodyParam content object No-example
-   * @bodyParam is_canonical boolean Example:0
+   * @bodyParam canonical_url string Example: https://wasateam.com
    * @bodyParam section_sequence object No-example
    * @bodyParam tulpa_sections object No-example
    */
@@ -121,7 +121,7 @@ class TulpaPageController extends Controller
    * @bodyParam tags object Example: ["tag 1","tag 2"]
    * @bodyParam remark string Example: Remark for admins
    * @bodyParam content object No-example
-   * @bodyParam is_canonical boolean Example:0
+   * @bodyParam canonical_url string Example: https://wasateam.com
    * @bodyParam section_sequence object No-example
    * @bodyParam tulpa_sections object No-example
    */

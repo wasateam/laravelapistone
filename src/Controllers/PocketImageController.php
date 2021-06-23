@@ -7,6 +7,7 @@ use Auth;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\S3Helper;
 
 /**
  * @group PocketImage
@@ -122,6 +123,8 @@ class PocketImageController extends Controller
     $storage_service = config('stone.storage.service');
     if ($storage_service == 'gcs') {
       return GcsHelper::getUploadSignedUrlByNameAndPath($name, 'pocket_image', '*');
+    } else if ($storage_service == 's3') {
+      return S3Helper::getUploadSignedUrlByNameAndPath($name, 'pocket_image', '*', true);
     }
   }
 
@@ -139,7 +142,8 @@ class PocketImageController extends Controller
       return response()->json([
         'message' => ':(',
       ], 400);
-    } else if ($model->created_user_id != $user->id) {
+    }
+    if ($mode == 'webapi' && $model->created_user_id != $user->id) {
       return response()->json([
         'message' => ':(',
       ], 400);

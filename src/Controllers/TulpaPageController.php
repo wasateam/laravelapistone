@@ -4,8 +4,9 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\GcsHelper;
+use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\S3Helper;
 use Wasateam\Laravelapistone\Models\TulpaPage;
 
 /**
@@ -151,6 +152,8 @@ class TulpaPageController extends Controller
     $storage_service = config('stone.storage.service');
     if ($storage_service == 'gcs') {
       return GcsHelper::getUploadSignedUrlByNameAndPath($name, 'tulpa', '*');
+    } else if ($storage_service == 's3') {
+      return S3Helper::getUploadSignedUrlByNameAndPath($name, 'tulpa', '*', true);
     }
   }
 

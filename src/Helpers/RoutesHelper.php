@@ -145,9 +145,7 @@ class RoutesHelper
   public static function pocket_image_routes()
   {
     $storage_service = config('stone.storage.service');
-    if ($storage_service == 'gcs') {
-      Route::get('pocket_image/upload_url', [PocketImageController::class, 'get_upload_url']);
-    }
+    Route::get('pocket_image/upload_url', [PocketImageController::class, 'get_upload_url']);
     Route::resource('pocket_image', PocketImageController::class)->only([
       'index', 'store', 'destroy',
     ])->shallow();
@@ -228,7 +226,7 @@ class RoutesHelper
       Route::resource('system_class', SystemClassController::class)->only($routes)->shallow();
     } else {
       Route::resource('area.system_class', SystemClassController::class)->only([
-        'show'
+        'show',
       ])->shallow();
       Route::get('area/{area}/system_class', [SystemClassController::class, 'index_with_area']);
     }

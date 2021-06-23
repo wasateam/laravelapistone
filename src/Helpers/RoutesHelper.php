@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
 use Wasateam\Laravelapistone\Controllers\AdminController;
+use Wasateam\Laravelapistone\Controllers\AdminRoleController;
 use Wasateam\Laravelapistone\Controllers\AdminScopeController;
 use Wasateam\Laravelapistone\Controllers\AreaController;
 use Wasateam\Laravelapistone\Controllers\AreaSectionController;
@@ -100,6 +101,16 @@ class RoutesHelper
     'destroy',
   ]) {
     Route::resource('admin_scope', AdminScopeController::class)->only($routes)->shallow();
+  }
+
+  public static function admin_role_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('admin_role', AdminRoleController::class)->only($routes)->shallow();
   }
 
   public static function role_routes($routes = [

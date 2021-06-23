@@ -87,5 +87,9 @@ class StoneServiceProvider extends ServiceProvider
     $this->publishes([
       __DIR__ . '/../database/migrations/admin_scope' => database_path('migrations'),
     ], 'admin_scope');
+
+    $this->publishes([
+      __DIR__ . '/../database/migrations/admin_role' => database_path('migrations'),
+    ], 'admin_role');
   }
 }

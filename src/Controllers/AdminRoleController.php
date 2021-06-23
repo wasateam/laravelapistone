@@ -5,27 +5,28 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
-use Wasateam\Laravelapistone\Models\AdminScope;
+use Wasateam\Laravelapistone\Models\AdminRole;
 
 /**
- * @group AdminScope
+ * @group AdminRole
  *
  * @authenticated
  *
- * APIs for admin_scope
+ * APIs for admin_role
  */
-class AdminScopeController extends Controller
+class AdminRoleController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Models\AdminScope';
-  public $name         = 'admin_scope';
-  public $resource     = 'Wasateam\Laravelapistone\Resources\AdminScope';
-  public $input_fields = [
+  public $model                   = 'Wasateam\Laravelapistone\Models\AdminRole';
+  public $name                    = 'admin_role';
+  public $resource                = 'Wasateam\Laravelapistone\Resources\AdminRole';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\AdminRoleCollection';
+  public $input_fields            = [
     'name',
-    'text',
+    'is_default',
+    'scopes',
   ];
   public $search_fields = [
     'name',
-    'text',
   ];
   public $order_fields = [
     'updated_at',
@@ -48,7 +49,8 @@ class AdminScopeController extends Controller
    * Store
    *
    * @bodyParam name string Example: admin
-   * @bodyParam text string Example: Admin
+   * @bodyParam is_default string Example: false
+   * @bodyParam scopes string No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -58,7 +60,7 @@ class AdminScopeController extends Controller
   /**
    * Show
    *
-   * @urlParam  admin_scope required The ID of admin_scope. Example: 1
+   * @urlParam  admin_role required The ID of admin_role. Example: 1
    */
   public function show(Request $request, $id = null)
   {
@@ -68,9 +70,10 @@ class AdminScopeController extends Controller
   /**
    * Update
    *
-   * @urlParam  admin_scope required The ID of admin_scope. Example: 1
+   * @urlParam  admin_role required The ID of admin_role. Example: 1
    * @bodyParam name string Example: admin
-   * @bodyParam text string Example: Admin
+   * @bodyParam is_default string Example: false
+   * @bodyParam scopes string No-example
    */
   public function update(Request $request, $id)
   {
@@ -80,7 +83,7 @@ class AdminScopeController extends Controller
   /**
    * Delete
    *
-   * @urlParam  admin_scope required The ID of admin_scope. Example: 2
+   * @urlParam  admin_role required The ID of admin_role. Example: 2
    */
   public function destroy($id)
   {

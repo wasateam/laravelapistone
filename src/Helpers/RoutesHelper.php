@@ -3,7 +3,7 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
-use Wasateam\Laravelapistone\Controllers\AdminController;
+use Wasateam\Laravelapistone\Controllers\CMSAdminController;
 use Wasateam\Laravelapistone\Controllers\AdminRoleController;
 use Wasateam\Laravelapistone\Controllers\AdminScopeController;
 use Wasateam\Laravelapistone\Controllers\AreaController;

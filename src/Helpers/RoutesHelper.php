@@ -90,7 +90,7 @@ class RoutesHelper
     'update',
     'destroy',
   ]) {
-    Route::resource('admin', AdminController::class)->only($routes)->shallow();
+    Route::resource('admin', CMSAdminController::class)->only($routes)->shallow();
   }
 
   public static function admin_scope_routes($routes = [

@@ -31,6 +31,7 @@ return [
       'user',
     ],
     'active_check'   => false,
+    'has_role'   => false,
   ],
   // Admin
   // 'auth'    => [
@@ -42,5 +43,6 @@ return [
   //     'admin',
   //   ],
   //   'active_check'   => false,
+  //   'has_role'   => false,
   // ],
 ];

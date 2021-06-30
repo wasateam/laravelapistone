@@ -24,7 +24,7 @@ class CMSAdminController extends Controller
   ];
   public $validation_rules = [
     'email'    => "required|string|email|unique:admins",
-    'password' => 'required|string|confirmed|min:6',
+    'password' => 'required|string|min:6',
     'name'     => 'required|string|min:1|max:40',
   ];
   public $input_fields = [

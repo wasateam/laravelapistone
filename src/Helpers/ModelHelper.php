@@ -258,7 +258,7 @@ class ModelHelper
       $model->save();
     } catch (\Throwable $th) {
       return response()->json([
-        'message' => 'data store fail.',
+        'message' => 'data update fail.',
       ], 400);
     }
 
@@ -270,7 +270,7 @@ class ModelHelper
       ModelHelper::setLocale($model, $setting, $request);
     } catch (\Throwable $th) {
       return response()->json([
-        'message' => 'locales data store fail.',
+        'message' => 'locales data update fail.',
       ], 400);
     }
 

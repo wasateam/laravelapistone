@@ -17,7 +17,7 @@ use Wasateam\Laravelapistone\Mail\PasswordResetRequest;
 use Wasateam\Laravelapistone\Models\Admin;
 
 /**
- * @group Auth
+ * @group @Auth
  *
  * @authenticated
  *

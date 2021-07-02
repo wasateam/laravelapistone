@@ -3,12 +3,12 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
-use Wasateam\Laravelapistone\Controllers\CMSAdminController;
 use Wasateam\Laravelapistone\Controllers\AdminRoleController;
 use Wasateam\Laravelapistone\Controllers\AdminScopeController;
 use Wasateam\Laravelapistone\Controllers\AreaController;
 use Wasateam\Laravelapistone\Controllers\AreaSectionController;
 use Wasateam\Laravelapistone\Controllers\AuthController;
+use Wasateam\Laravelapistone\Controllers\CMSAdminController;
 use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
@@ -169,9 +169,17 @@ class RoutesHelper
     'destroy',
     'image_get_upload_url',
   ]) {
-    Route::resource('ws_blog', WsBlogController::class)->only($routes)->shallow();
-    if (in_array('image_get_upload_url', $routes)) {
-      Route::get('/ws_blog/image/upload_url', [WsBlogController::class, 'image_get_upload_url']);
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      Route::resource('ws_blog', WsBlogController::class)->only($routes)->shallow();
+      if (in_array('image_get_upload_url', $routes)) {
+        Route::get('/ws_blog/image/upload_url', [WsBlogController::class, 'image_get_upload_url']);
+      }
+    } else {
+      Route::resource('ws_blog', WsBlogController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
     }
   }
 

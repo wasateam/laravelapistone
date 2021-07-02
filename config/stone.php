@@ -32,6 +32,7 @@ return [
     ],
     'active_check'   => false,
     'has_role'   => false,
+    // 'has_system_class' => true,
   ],
   // Admin
   // 'auth'    => [

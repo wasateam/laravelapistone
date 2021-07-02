@@ -2,8 +2,11 @@
 
 namespace Wasateam\Laravelapistone\Helpers;
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Wasateam\Laravelapistone\Mail\ContactRequestCreated;
 use Wasateam\Laravelapistone\Mail\PasswordResetRequest;
+use Wasateam\Laravelapistone\Mail\Test;
 
 class EmailHelper
 {
@@ -30,6 +33,40 @@ class EmailHelper
       self::mail_send_surenotify('wasa.mail.reset_password_request', [
         'url' => $url,
       ], '密碼重置請求', config('mail.from.name'), config('mail.from.address'), [
+        "address" => $email,
+      ]);
+    }
+  }
+
+  public static function notify_contact_request($contact_request)
+  {
+
+    error_log('notify_contact_request');
+
+    $email = config('stone.contact_request.notify_mail');
+    error_log($email);
+
+    if (config('stone.mail.service') == 'stmp') {
+      error_log('stmp');
+      Mail::to($email)->send(new ContactRequestCreated($contact_request));
+    } else if (config('stone.mail.service') == 'surenotify') {
+      error_log('surenotify');
+      self::mail_send_surenotify('wasa.mail.contact_request', [
+        'contact_request' => $contact_request,
+      ], '新的聯絡請求', config('mail.from.name'), config('mail.from.address'), [
+        "address" => $email,
+      ]);
+    }
+  }
+
+  public static function sending_test($email)
+  {
+    if (config('stone.mail.service') == 'stmp') {
+      Mail::to($email)->send(new Test());
+    } else if (config('stone.mail.service') == 'surenotify') {
+      self::mail_send_surenotify('wasa.mail.test', [
+        'aa' => 'aa',
+      ], '測試測試', config('mail.from.name'), config('mail.from.address'), [
         "address" => $email,
       ]);
     }

@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Wasateam\Laravelapistone\Helpers\EmailHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
@@ -45,13 +46,13 @@ class ContactRequestController extends Controller
   /**
    * Store
    *
-   * @bodyParam type string Example: Subject 1
-   * @bodyParam name string Example: wasa
-   * @bodyParam email string Example: wasa@wasateam.com
-   * @bodyParam tel string Example: 0999123123
+   * @bodyParam type string Example: a
+   * @bodyParam name string Example: davidturtle
+   * @bodyParam email string Example: davidturtle0313@gmail.com
+   * @bodyParam tel string Example: 0987462600
    * @bodyParam remark string Example: Remark here
    * @bodyParam company_name string Example: Wasateam.co
-   * @bodyParam budget string Example: 123123
+   * @bodyParam budget string Example: nolimit
    * @bodyParam payload object No-example
    */
   public function store(Request $request, $id = null)
@@ -62,6 +63,7 @@ class ContactRequestController extends Controller
       return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
         $model->ip = \Request::ip();
         $model->save();
+        EmailHelper::notify_contact_request($model);
       });
     }
   }
@@ -80,13 +82,13 @@ class ContactRequestController extends Controller
    * Update
    *
    * @urlParam contact_request Example: 1
-   * @bodyParam type string Example: Subject 1
-   * @bodyParam name string Example: wasa
-   * @bodyParam email string Example: wasa@wasateam.com
-   * @bodyParam tel string Example: 0999123123
+   * @bodyParam type string Example: a
+   * @bodyParam name string Example: davidturtle
+   * @bodyParam email string Example: davidturtle0313@gmail.com
+   * @bodyParam tel string Example: 0987462600
    * @bodyParam remark string Example: Remark here
    * @bodyParam company_name string Example: Wasateam.co
-   * @bodyParam budget string Example: 123123
+   * @bodyParam budget string Example: nolimit
    * @bodyParam payload object No-example
    */
   public function update(Request $request, $id)

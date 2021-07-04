@@ -85,11 +85,11 @@ class StoneServiceProvider extends ServiceProvider
     ], 'views-mail');
 
     $this->publishes([
-      __DIR__ . '/../database/migrations/admin_scope' => database_path('migrations'),
-    ], 'admin_scope');
+      __DIR__ . '/../database/migrations/admin_role' => database_path('migrations'),
+    ], 'migrations-admin-role');
 
     $this->publishes([
-      __DIR__ . '/../database/migrations/admin_role' => database_path('migrations'),
-    ], 'admin_role');
+      __DIR__ . '/../database/migrations/admin_system_class' => database_path('migrations'),
+    ], 'migrations-admin-system-class');
   }
 }

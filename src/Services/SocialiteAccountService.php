@@ -2,7 +2,7 @@
 
 namespace Wasateam\Laravelapistone\Services;
 
-use App\Models\User;
+use Wasateam\Laravelapistone\Models\User;
 use Carbon\Carbon;
 use Laravel\Socialite\Contracts\User as ProviderUser;
 

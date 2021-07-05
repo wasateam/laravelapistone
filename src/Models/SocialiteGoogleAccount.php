@@ -2,7 +2,7 @@
 
 namespace Wasateam\Laravelapistone\Models;
 
-use App\Models\User;
+use Wasateam\Laravelapistone\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class SocialiteGoogleAccount extends Model

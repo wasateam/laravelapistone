@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Wasateam\Laravelapistone\Helpers\PocketHelper;
 
 class WsBlogCollection extends JsonResource
 {
@@ -22,7 +23,7 @@ class WsBlogCollection extends JsonResource
       'read_count'    => $this->read_count,
       'rough_content' => $this->rough_content,
       'tags'          => $this->tags,
-      'cover_image'   => new PocketImage_R1($this->cover_image),
+      'cover_image'   => PocketHelper::get_pocket_url($this->cover_image),
     ];
   }
 }

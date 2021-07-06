@@ -51,11 +51,11 @@ class WsBlogController extends Controller
   /**
    * Store
    *
-   * @bodyParam title string No-example
+   * @bodyParam title string Example: AAAAA
    * @bodyParam description string No-example
    * @bodyParam publish_at datetime No-example
    * @bodyParam read_count int No-example
-   * @bodyParam content string No-example
+   * @bodyParam content string Example: <p>gasdfasdfasdf</p><p></p><p>asdvkjsadv</p><p></p><p>asdvkasdvlasdv哈哈好哈</p><p>ㄏ嗨ㄎㄢ</p><p></p><h2>ㄇk;aksdfasdfasdf</h2><p></p><p></p><ul><li><p>111</p></li><li><p>222</p></li><li><p>333</p></li></ul><p></p><p></p><p></p><blockquote><p>asdfasdfasdfasdfasdf</p></blockquote><p></p><p><a href="wasateam.com" rel="noopener noreferrer nofollow">advasdvasdv</a></p><p></p><p>asdfadsfasdf<img src="https://ws-showroom.s3.ap-northeast-1.amazonaws.com/pocket_image/1624495965Ql9WD/download.jpeg"></p><p></p><p></p><p><code>codecodecode</code></p><p></p><p>f</p><p>aaaffd</p><p></p><p>fsdfasdfasdfffffsd</p>
    * @bodyParam tags object No-example
    * @bodyParam cover_image id No-example
    */

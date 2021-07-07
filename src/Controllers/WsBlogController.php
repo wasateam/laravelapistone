@@ -144,4 +144,18 @@ class WsBlogController extends Controller
       'message' => 'ok.',
     ]);
   }
+
+  /**
+   * Read
+   *
+   */
+  public function read($id)
+  {
+    $blog = $this->model::find($id);
+    $blog->read_count++;
+    $blog->save();
+    return response()->json([
+      'message' => 'ok.',
+    ]);
+  }
 }

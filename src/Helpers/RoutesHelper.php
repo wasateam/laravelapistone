@@ -180,6 +180,7 @@ class RoutesHelper
         'index',
         'show',
       ])->shallow();
+      Route::get('ws_blog/{id}/read', [WsBlogController::class, 'read']);
     }
   }
 

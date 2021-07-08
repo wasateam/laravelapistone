@@ -129,6 +129,7 @@ class PocketFileController extends Controller
     $admin = Auth::user();
     $model = $this->model::find($id);
     $mode  = config('stone.mode');
+    $acl   = config('stone.storage.acl');
     if ($mode == 'cms' && $model->created_admin_id != $user->id) {
       return response()->json([
         'message' => ':(',

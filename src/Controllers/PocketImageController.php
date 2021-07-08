@@ -138,6 +138,12 @@ class PocketImageController extends Controller
     $user  = Auth::user();
     $model = $this->model::find($id);
     $mode  = config('stone.mode');
+    $acl   = config('stone.storage.acl');
+    if (!$acl) {
+      return response()->json([
+        'message' => ':)',
+      ], 200);
+    }
     if ($mode == 'cms' && $model->created_admin_id != $user->id) {
       return response()->json([
         'message' => ':(',

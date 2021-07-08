@@ -128,6 +128,17 @@ class PocketFileController extends Controller
   {
     $admin = Auth::user();
     $model = $this->model::find($id);
+    $mode  = config('stone.mode');
+    if ($mode == 'cms' && $model->created_admin_id != $user->id) {
+      return response()->json([
+        'message' => ':(',
+      ], 400);
+    }
+    if ($mode == 'webapi' && $model->created_user_id != $user->id) {
+      return response()->json([
+        'message' => ':(',
+      ], 400);
+    }
     if ($model->last_version->signed) {
       return response()->json([
         'message' => ':(',

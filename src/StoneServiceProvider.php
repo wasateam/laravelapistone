@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone;
 
 use Illuminate\Support\ServiceProvider;
+use Wasateam\Laravelapistone\Commands\CommandStoneTest;
 
 class StoneServiceProvider extends ServiceProvider
 {
@@ -91,5 +92,11 @@ class StoneServiceProvider extends ServiceProvider
     $this->publishes([
       __DIR__ . '/../database/migrations/admin_system_class' => database_path('migrations'),
     ], 'migrations-admin-system-class');
+
+    if ($this->app->runningInConsole()) {
+      $this->commands([
+        CommandStoneTest::class,
+      ]);
+    }
   }
 }

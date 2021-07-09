@@ -41,16 +41,10 @@ class EmailHelper
   public static function notify_contact_request($contact_request)
   {
 
-    error_log('notify_contact_request');
-
     $email = config('stone.contact_request.notify_mail');
-    error_log($email);
-
     if (config('stone.mail.service') == 'stmp') {
-      error_log('stmp');
       Mail::to($email)->send(new ContactRequestCreated($contact_request));
     } else if (config('stone.mail.service') == 'surenotify') {
-      error_log('surenotify');
       self::mail_send_surenotify('wasa.mail.contact_request', [
         'contact_request' => $contact_request,
       ], '新的聯絡請求', config('mail.from.name'), config('mail.from.address'), [

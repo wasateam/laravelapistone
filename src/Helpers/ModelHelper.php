@@ -319,7 +319,7 @@ class ModelHelper
     return new $setting->resource($model);
   }
 
-  public static function ws_DestroyHandler($controller, $id)
+  public static function ws_DestroyHandler($controller, $id, $complete_action = null)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -343,6 +343,9 @@ class ModelHelper
     try {
       $destroy = $model->delete();
       if ($destroy) {
+        if ($complete_action) {
+          $complete_action($model);
+        }
         return response()->json([
           "message" => 'data deleted.',
         ], 200);

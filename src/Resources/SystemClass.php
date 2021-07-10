@@ -21,12 +21,14 @@ class SystemClass extends JsonResource
         'sequence'          => $this->sequence,
         'updated_at'        => $this->updated_at,
         'name'              => $this->name,
+        'area'              => new Area_R1($this->area),
         'system_subclasses' => SystemSubclass_R1::collection($this->system_subclasses),
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
         'id'                => $this->id,
         'name'              => $this->name,
+        'area'              => new Area_R1($this->area),
         'system_subclasses' => SystemSubclass_R1::collection($this->system_subclasses),
       ];
     }

@@ -43,6 +43,12 @@ class UserController extends Controller
     'sequence',
     'updated_admin_at',
     'verified_at',
+    "byebye_at",
+    "mama_language",
+  ];
+  public $filter_fields = [
+    'byebye_at',
+    'is_active',
   ];
   public $search_fields = [
     'id',

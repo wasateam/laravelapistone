@@ -36,6 +36,11 @@ class CMSAdminController extends Controller
     'avatar',
     'settings',
     'scopes',
+    'is_active',
+    'sequence',
+  ];
+  public $filter_fields = [
+    'is_active',
   ];
   public $search_fields = [
     'id',
@@ -45,10 +50,14 @@ class CMSAdminController extends Controller
   public $belongs_to_many = [
     'roles',
   ];
+  public $filter_belongs_to_many = [
+    'roles',
+  ];
   public $order_fields = [
     'id',
     'updated_at',
     'created_at',
+    'sequence',
   ];
   public $user_record_field = 'updated_admin_id';
   public $user_create_field = 'created_admin_id';
@@ -66,14 +75,16 @@ class CMSAdminController extends Controller
   /**
    * Store
    *
-   * @bodyParam name string No-example
-   * @bodyParam email string No-example
-   * @bodyParam email_verified_at datetime No-example
-   * @bodyParam password string No-example
-   * @bodyParam status integer No-example
-   * @bodyParam avatar string No-example
-   * @bodyParam settings string No-example
-   * @bodyParam scopes object No-example
+   * @bodyParam sequence string Example:1
+   * @bodyParam name string Example:name
+   * @bodyParam email string Example:123@wasateam.com
+   * @bodyParam email_verified_at datetime Example:2020-10-10
+   * @bodyParam password string Example:123123
+   * @bodyParam status integer Example:0
+   * @bodyParam is_active integer Example:0
+   * @bodyParam avatar string
+   * @bodyParam settings string
+   * @bodyParam scopes object Example:[]
    */
   public function store(Request $request, $id = null)
   {
@@ -94,14 +105,16 @@ class CMSAdminController extends Controller
    * Update
    *
    * @urlParam  admin required The ID of admin. Example: 1
-   * @bodyParam name string No-example
-   * @bodyParam email string No-example
-   * @bodyParam email_verified_at datetime No-example
-   * @bodyParam password string No-example
-   * @bodyParam status integer No-example
-   * @bodyParam avatar string No-example
-   * @bodyParam settings string No-example
-   * @bodyParam scopes object No-example
+   * @bodyParam sequence string Example:1
+   * @bodyParam name string Example:name
+   * @bodyParam email string Example:123@wasateam.com
+   * @bodyParam email_verified_at datetime Example:2020-10-10
+   * @bodyParam password string Example:123123
+   * @bodyParam status integer Example:0
+   * @bodyParam is_active integer Example:0
+   * @bodyParam avatar string
+   * @bodyParam settings string
+   * @bodyParam scopes object Example:[]
    */
   public function update(Request $request, $id)
   {

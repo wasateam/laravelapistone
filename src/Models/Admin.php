@@ -17,6 +17,11 @@ class Admin extends Authenticatable
     return $this->belongsTo(Admin::class, 'updated_admin_id');
   }
 
+  public function created_admin()
+  {
+    return $this->belongsTo(Admin::class, 'created_admin_id');
+  }
+
   public function pocket_avatar()
   {
     return $this->belongsTo(PocketImage::class, 'pocket_avatar_id');

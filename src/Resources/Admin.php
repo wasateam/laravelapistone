@@ -16,15 +16,18 @@ class Admin extends JsonResource
   {
     $value = [
       'id'                => $this->id,
+      'sequence'          => $this->sequence,
       'name'              => $this->name,
       'email'             => $this->email,
       'status'            => $this->status,
+      'is_active'         => $this->is_active,
       'created_at'        => $this->created_at,
       'updated_at'        => $this->updated_at,
       'scopes'            => $this->scopes,
       'settings'          => $this->settings,
       'email_verified_at' => $this->email_verified_at,
       'updated_admin'     => new Admin_R1($this->updated_admin),
+      'created_admin'     => new Admin_R1($this->updated_admin),
     ];
 
     if (config('stone.auth.has_role')) {

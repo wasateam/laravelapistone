@@ -5,32 +5,33 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
-use Wasateam\Laravelapistone\Models\TulpaSection;
+use Wasateam\Laravelapistone\Models\TulpaPageTemplate;
 
 /**
- * @group TulpaSection
+ * @group TulpaPageTemplate
  *
  * @authenticated
  *
- * APIs for tulpa_section
+ * APIs for tulpa_page_template
  */
-class TulpaSectionController extends Controller
+class TulpaPageTemplateController extends Controller
 {
-  public $model                   = 'Wasateam\Laravelapistone\Models\TulpaSection';
-  public $name                    = 'tulpa_section';
-  public $resource                = 'Wasateam\Laravelapistone\Resources\TulpaSection';
-  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\TulpaSectionCollection';
+  public $model                   = 'Wasateam\Laravelapistone\Models\TulpaPageTemplate';
+  public $name                    = 'tulpa_page_template';
+  public $resource                = 'Wasateam\Laravelapistone\Resources\TulpaPageTemplate';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\TulpaPageTemplateCollection';
   public $input_fields            = [
     'name',
-    'component_name',
-    'remark',
-    'fields',
-    'content',
     'tags',
+    'remark',
+    'content',
   ];
   public $search_fields = [
     'name',
     'tags',
+  ];
+  public $belongs_to_many = [
+    'tulpa_sections',
   ];
   public $order_fields = [
     'updated_at',
@@ -55,11 +56,10 @@ class TulpaSectionController extends Controller
    * Store
    *
    * @bodyParam name string Example: My Page 1
-   * @bodyParam component_name string Example: MyPage001
    * @bodyParam tags object Example: ["tag 1","tag 2"]
    * @bodyParam remark string Example: Remark for admins
    * @bodyParam content object No-example
-   * @bodyParam fields object No-example
+   * @bodyParam tulpa_sections object No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -69,7 +69,7 @@ class TulpaSectionController extends Controller
   /**
    * Show
    *
-   * @urlParam  tulpa_section required The ID of tulpa_section. Example: 1
+   * @urlParam  tulpa_page_template required The ID of tulpa_page_template. Example: 1
    */
   public function show(Request $request, $id = null)
   {
@@ -79,13 +79,12 @@ class TulpaSectionController extends Controller
   /**
    * Update
    *
-   * @urlParam  tulpa_section required The ID of tulpa_section. Example: 1
+   * @urlParam  tulpa_page_template required The ID of tulpa_page_template. Example: 1
    * @bodyParam name string Example: My Page 1
-   * @bodyParam component_name string Example: MyPage001
    * @bodyParam tags object Example: ["tag 1","tag 2"]
    * @bodyParam remark string Example: Remark for admins
    * @bodyParam content object No-example
-   * @bodyParam fields object No-example
+   * @bodyParam tulpa_sections object No-example
    */
   public function update(Request $request, $id)
   {
@@ -95,7 +94,7 @@ class TulpaSectionController extends Controller
   /**
    * Delete
    *
-   * @urlParam  tulpa_section required The ID of tulpa_section. Example: 2
+   * @urlParam  tulpa_page_template required The ID of tulpa_page_template. Example: 2
    */
   public function destroy($id)
   {

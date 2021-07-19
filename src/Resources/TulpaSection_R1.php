@@ -16,17 +16,25 @@ class TulpaSection_R1 extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       return [
-        'id'                     => $this->id,
-        'name'                   => $this->name,
-        'content'                => $this->content,
-        'tulpa_section_template' => new TulpaSectionTemplate_R1($this->tulpa_section_template),
+        'id'             => $this->id,
+        'created_at'     => $this->created_at,
+        'updated_at'     => $this->updated_at,
+        'name'           => $this->name,
+        'component_name' => $this->component_name,
+        'remark'         => $this->remark,
+        'fields'         => $this->fields,
+        'content'        => $this->content,
+        'tags'           => $this->tags,
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
-        'id'                     => $this->id,
-        'name'                   => $this->name,
-        'content'                => $this->content,
-        'tulpa_section_template' => new TulpaSectionTemplate_R1($this->tulpa_section_template),
+        'id'             => $this->id,
+        'name'           => $this->name,
+        'component_name' => $this->component_name,
+        'remark'         => $this->remark,
+        'fields'         => $this->fields,
+        'content'        => $this->content,
+        'tags'           => $this->tags,
       ];
     }
   }

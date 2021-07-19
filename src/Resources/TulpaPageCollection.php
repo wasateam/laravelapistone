@@ -28,6 +28,7 @@ class TulpaPageCollection extends JsonResource
         'tags'          => $this->tags,
         'remark'        => $this->remark,
         'status'        => $this->status,
+        'content'       => $this->content,
         'canonical_url' => $this->canonical_url,
       ];
     } else if (config('stone.mode') == 'webapi') {
@@ -37,6 +38,7 @@ class TulpaPageCollection extends JsonResource
         'title'         => $this->title,
         'description'   => $this->description,
         'og_image'      => $this->og_image,
+        'content'       => $this->content,
         'canonical_url' => $this->canonical_url,
       ];
     }

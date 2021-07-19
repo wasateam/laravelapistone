@@ -20,7 +20,6 @@ use Wasateam\Laravelapistone\Controllers\SystemSubclassController;
 use Wasateam\Laravelapistone\Controllers\TagController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
-use Wasateam\Laravelapistone\Controllers\TulpaSectionTemplateController;
 use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
@@ -145,20 +144,27 @@ class RoutesHelper
     });
   }
 
-  public static function tulpa_routes($routes = [
-    'index',
-    'show',
-    'store',
-    'update',
-    'destroy',
-    'image_get_upload_url',
-  ]) {
-    Route::resource('tulpa_page', TulpaPageController::class)->only($routes)->shallow();
-    Route::resource('tulpa_section', TulpaSectionController::class)->only($routes)->shallow();
-    Route::resource('tulpa_section_template', TulpaSectionTemplateController::class)->only($routes)->shallow();
-    if (in_array('image_get_upload_url', $routes)) {
+  public static function tulpa_routes()
+  {
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      $routes = [
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ];
       Route::get('/tulpa_page/image/upload_url', [TulpaPageController::class, 'image_get_upload_url']);
+    } else {
+      $routes = [
+        'index',
+        'show',
+      ];
     }
+    Route::resource('tulpa_page', TulpaPageController::class)->only($routes)->shallow();
+    Route::resource('tulpa_page_template', TulpaPageTemplateController::class)->only($routes)->shallow();
+    Route::resource('tulpa_section', TulpaSectionController::class)->only($routes)->shallow();
   }
 
   public static function ws_blog_routes($routes = [

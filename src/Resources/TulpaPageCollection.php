@@ -16,30 +16,32 @@ class TulpaPageCollection extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       return [
-        'id'            => $this->id,
-        'created_at'    => $this->created_at,
-        'updated_at'    => $this->updated_at,
-        'name'          => $this->name,
-        'route'         => $this->route,
-        'title'         => $this->title,
-        'description'   => $this->description,
-        'og_image'      => $this->og_image,
-        'is_active'     => $this->is_active,
-        'tags'          => $this->tags,
-        'remark'        => $this->remark,
-        'status'        => $this->status,
-        'content'       => $this->content,
-        'canonical_url' => $this->canonical_url,
+        'id'             => $this->id,
+        'created_at'     => $this->created_at,
+        'updated_at'     => $this->updated_at,
+        'name'           => $this->name,
+        'route'          => $this->route,
+        'title'          => $this->title,
+        'description'    => $this->description,
+        'og_image'       => $this->og_image,
+        'is_active'      => $this->is_active,
+        'tags'           => $this->tags,
+        'remark'         => $this->remark,
+        'status'         => $this->status,
+        'content'        => $this->content,
+        'canonical_url'  => $this->canonical_url,
+        'tulpa_sections' => TulpaSection_R1::collection($this->tulpa_sections),
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
-        'id'            => $this->id,
-        'route'         => $this->route,
-        'title'         => $this->title,
-        'description'   => $this->description,
-        'og_image'      => $this->og_image,
-        'content'       => $this->content,
-        'canonical_url' => $this->canonical_url,
+        'id'             => $this->id,
+        'route'          => $this->route,
+        'title'          => $this->title,
+        'description'    => $this->description,
+        'og_image'       => $this->og_image,
+        'content'        => $this->content,
+        'canonical_url'  => $this->canonical_url,
+        'tulpa_sections' => TulpaSection_R1::collection($this->tulpa_sections),
       ];
     }
   }

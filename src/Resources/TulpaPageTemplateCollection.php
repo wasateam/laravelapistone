@@ -16,21 +16,23 @@ class TulpaPageTemplateCollection extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       return [
-        'id'         => $this->id,
-        'created_at' => $this->created_at,
-        'updated_at' => $this->updated_at,
-        'name'       => $this->name,
-        'tags'       => $this->tags,
-        'remark'     => $this->remark,
-        'content'    => $this->content,
+        'id'             => $this->id,
+        'created_at'     => $this->created_at,
+        'updated_at'     => $this->updated_at,
+        'name'           => $this->name,
+        'tags'           => $this->tags,
+        'remark'         => $this->remark,
+        'content'        => $this->content,
+        'tulpa_sections' => TulpaSection_R1::collection($this->tulpa_sections),
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
-        'id'      => $this->id,
-        'name'    => $this->name,
-        'tags'    => $this->tags,
-        'remark'  => $this->remark,
-        'content' => $this->content,
+        'id'             => $this->id,
+        'name'           => $this->name,
+        'tags'           => $this->tags,
+        'remark'         => $this->remark,
+        'content'        => $this->content,
+        'tulpa_sections' => TulpaSection_R1::collection($this->tulpa_sections),
       ];
     }
   }

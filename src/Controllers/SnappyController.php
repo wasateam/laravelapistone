@@ -1,7 +1,8 @@
 <?php
 
 namespace Wasateam\Laravelapistone\Controllers;
-namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
 
 class SnappyController extends Controller
 {

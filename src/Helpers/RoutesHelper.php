@@ -24,6 +24,7 @@ use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
 use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
+use Wasateam\Laravelapistone\Controllers\SnappyController;
 
 class RoutesHelper
 {
@@ -303,5 +304,11 @@ class RoutesHelper
     'destroy',
   ]) {
     Route::resource('contact_request', ContactRequestController::class)->only($routes)->shallow();
+  }
+
+  public static function snappy_routes()
+  {
+    Route::get('snappy/test', [SnappyController::class, 'test']);
+
   }
 }

@@ -9,7 +9,7 @@ class FileController extends Controller
 {
   public function file_idmatch($model, $model_id, $type, $repo, $name)
   {
-    $disk         = Storage::disk('gcs');
+    $disk         = Storage::disk(config('stone.storage.service'));
     $storage_path = "{$model}/{$model_id}/{$type}/{$repo}/{$name}";
     try {
       $mimeType = $disk->mimeType($storage_path);
@@ -30,7 +30,7 @@ class FileController extends Controller
 
   public function file_general($model, $type, $repo, $name)
   {
-    $disk         = Storage::disk('gcs');
+    $disk         = Storage::disk(config('stone.storage.service'));
     $storage_path = "{$model}/{$type}/{$repo}/{$name}";
     try {
       $mimeType = $disk->mimeType($storage_path);
@@ -51,7 +51,7 @@ class FileController extends Controller
 
   public function file_parentidmatch($parent, $parent_id, $model, $type, $repo, $name)
   {
-    $disk         = Storage::disk('gcs');
+    $disk         = Storage::disk(config('stone.storage.service'));
     $storage_path = "{$parent}/{$parent_id}/{$model}/{$type}/{$repo}/{$name}";
     try {
       $mimeType = $disk->mimeType($storage_path);
@@ -72,7 +72,7 @@ class FileController extends Controller
 
   // public function show($type, $model, $repo, $name)
   // {
-  //   $disk         = Storage::disk('gcs');
+  //    $disk = Storage::disk(config('stone.storage.service'));
   //   $storage_path = "@{$type}/{$model}/{$repo}/{$name}";
   //   try {
   //     $mimeType = $disk->mimeType($storage_path);
@@ -93,7 +93,7 @@ class FileController extends Controller
 
   // public function show_with_parent($parent, $parent_id, $type, $model, $repo, $name)
   // {
-  //   $disk         = Storage::disk('gcs');
+  //    $disk = Storage::disk(config('stone.storage.service'));
   //   $storage_path = "{$parent}/{$parent_id}/@{$type}/{$model}/{$repo}/{$name}";
   //   try {
   //     $mimeType = $disk->mimeType($storage_path);

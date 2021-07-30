@@ -4,7 +4,7 @@ return [
   'mode'    => env('STONE_MODE', 'cms'), // cms, webapi
   'storage' => [
     'signed_url' => env('STONE_STORAGE_SIGNED_URL', false),
-    'service'    => env('STONE_STORAGE_SERVICE', 'gcs'), // gcs, app, s3
+    'service'    => env('STONE_STORAGE_SERVICE', 'gcs'), // gcs, local, s3
     'gcs'        => [
       'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', null),
     ],

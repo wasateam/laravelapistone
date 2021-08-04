@@ -365,7 +365,7 @@ class ModelHelper
   {
     $setting = self::getSetting($controller);
     $content = $request->getContent();
-    $disk    = Storage::disk('gcs');
+    $disk    = Storage::disk(config('stone.storage.service'));
     $repo    = StorageHelper::getRandomPath();
     if ($signed_type == 'idmatch') {
       $store_value = "{$setting->name}/{$id}/{$type}/{$repo}/{$filename}";

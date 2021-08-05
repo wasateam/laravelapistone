@@ -14,6 +14,7 @@ use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
+use Wasateam\Laravelapistone\Controllers\SnappyController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
 use Wasateam\Laravelapistone\Controllers\SystemClassController;
 use Wasateam\Laravelapistone\Controllers\SystemSubclassController;
@@ -24,7 +25,7 @@ use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
 use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
-use Wasateam\Laravelapistone\Controllers\SnappyController;
+use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 
 class RoutesHelper
 {
@@ -230,13 +231,13 @@ class RoutesHelper
     'store',
     'update',
     'destroy',
-    'image_get_upload_url',
-    'image_upload_complete',
+    // 'image_get_upload_url',
+    // 'image_upload_complete',
   ]) {
     Route::resource('user', UserController::class)->only($routes)->shallow();
-    if (in_array('avatar_get_upload_url', $routes)) {
-      Route::get('/user/avatar/upload_url', [UserController::class, 'avatar_get_upload_url']);
-    }
+    // if (in_array('avatar_get_upload_url', $routes)) {
+    //   Route::get('/user/avatar/upload_url', [UserController::class, 'avatar_get_upload_url']);
+    // }
   }
 
   public static function locale_routes($routes = [
@@ -310,5 +311,23 @@ class RoutesHelper
   {
     Route::get('snappy/test', [SnappyController::class, 'test']);
 
+  }
+
+  public static function user_device_token_routes()
+  {
+
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      Route::resource('user_device_token', UserDeviceTokenController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+    } else {
+      Route::post('device_token', [UserDeviceTokenController::class, 'active']);
+      Route::delete('device_token', [UserDeviceTokenController::class, 'deactive']);
+    }
   }
 }

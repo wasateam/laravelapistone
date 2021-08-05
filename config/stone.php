@@ -2,17 +2,18 @@
 
 return [
   'mode'    => env('STONE_MODE', 'cms'), // cms, webapi
+  'user_device_token' => env('USER_DEVICE_TOKEN', false),
   'storage' => [
     'signed_url' => env('STONE_STORAGE_SIGNED_URL', false),
     'service'    => env('STONE_STORAGE_SERVICE', 'gcs'), // gcs, local, s3
-    'gcs'        => [
+    'gcs' => [
       'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', null),
     ],
     'acl'        => env('STONE_STORAGE_ACL', true),
   ],
   'mail'    => [
     'service'    => env('gmail'), // gmail, surenotify
-    'api_key'    => env('MAIL_API_KEY'),
+    'api_key' => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
   ],
   'log'     => [

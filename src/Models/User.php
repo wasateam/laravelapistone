@@ -27,6 +27,11 @@ class User extends Authenticatable
     return $this->belongsTo(Locale::class, 'locale_id');
   }
 
+  public function user_device_tokens()
+  {
+    return $this->hasMany(UserDeviceToken::class, 'user_id');
+  }
+
   /**
    * The attributes that are mass assignable.
    *

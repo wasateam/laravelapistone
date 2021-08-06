@@ -1,9 +1,9 @@
 <?php
 
 return [
-  'mode'    => env('STONE_MODE', 'cms'), // cms, webapi
+  'mode'         => env('STONE_MODE', 'cms'), // cms, webapi
   'user_device_token' => env('USER_DEVICE_TOKEN', false),
-  'storage' => [
+  'storage'      => [
     'signed_url' => env('STONE_STORAGE_SIGNED_URL', false),
     'service'    => env('STONE_STORAGE_SERVICE', 'gcs'), // gcs, local, s3
     'gcs' => [
@@ -11,20 +11,20 @@ return [
     ],
     'acl'        => env('STONE_STORAGE_ACL', true),
   ],
-  'mail'    => [
+  'mail'         => [
     'service'    => env('gmail'), // gmail, surenotify
     'api_key' => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
   ],
-  'log'     => [
+  'log'          => [
     'is_active' => env('STONE_LOG_ACTIVE', true),
     'model'     => '\Wasateam\Laravelapistone\Models\CmsLog',
     // 'model'     => '\Wasateam\Laravelapistone\Models\WebLog',
   ],
-  'app_url' => env('APP_URL'),
-  'web_url' => env('WEB_URL'),
+  'app_url'      => env('APP_URL'),
+  'web_url'      => env('WEB_URL'),
   // User
-  'auth'    => [
+  'auth'         => [
     'model_name'       => 'user',
     'model'            => '\Wasateam\Laravelapistone\Models\User',
     'resource'         => '\Wasateam\Laravelapistone\Resources\User',
@@ -36,6 +36,14 @@ return [
     'has_role'         => false,
     'has_system_class' => true,
   ],
+  'notification' => [
+    'notifiable_type_user' => 'Wasateam\Laravelapistone\Models\User',
+  ],
+  // 'user'    => [
+  //   'model_name' => 'user',
+  //   'model'      => '\Wasateam\Laravelapistone\Models\User',
+  //   'resource'   => '\Wasateam\Laravelapistone\Resources\User',
+  // ],
   // Admin
   // 'auth'    => [
   //   'model_name'     => 'admin',

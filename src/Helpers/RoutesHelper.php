@@ -334,7 +334,6 @@ class RoutesHelper
 
   public static function notification_routes()
   {
-
     $mode = config('stone.mode');
     if ($mode == 'cms') {
       Route::resource('notification', NotificationController::class)->only([

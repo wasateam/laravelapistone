@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
+use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
  * @group Notification
@@ -43,7 +44,11 @@ class NotificationController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) {
+      $notificable_type = config('stone.notification.notifiable_type_user');
+      $snap             = $snap->where('notifiable_type', $notificable_type);
+      return $snap;
+    });
   }
 
   /**

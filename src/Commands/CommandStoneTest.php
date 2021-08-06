@@ -52,7 +52,7 @@ class CommandStoneTest extends Command
       FcmHelper::sendMesssage('Test', '我是測試，安安', [
         "type"    => "FcmTset",
         "message" => "A data message",
-      ]);
+      ],["cH8wqgZbnEvpn_pOrCD5rU:APA91bHeCVqRnJTMXscqvDZL5YNs3XNzzb7mtaVifqpuJeBHSm1uIcDXqcYrIMxagEyGQGh9Q6lsKi_rA-fvaAEbHcSL1Xuj__VqLhTN-MnXmvpGFZvttuWrKIpf12OQ6wLhs_MnJK0R"]);
     }
     return 0;
   }

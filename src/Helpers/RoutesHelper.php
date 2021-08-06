@@ -26,6 +26,7 @@ use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
+use Wasateam\Laravelapistone\Controllers\NotificationController;
 
 class RoutesHelper
 {

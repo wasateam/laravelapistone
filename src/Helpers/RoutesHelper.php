@@ -23,9 +23,9 @@ use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
 use Wasateam\Laravelapistone\Controllers\UserController;
+use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
-use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 
 class RoutesHelper
 {
@@ -328,6 +328,24 @@ class RoutesHelper
     } else {
       Route::post('device_token', [UserDeviceTokenController::class, 'active']);
       Route::delete('device_token', [UserDeviceTokenController::class, 'deactive']);
+    }
+  }
+
+  public static function notification_routes()
+  {
+
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      Route::resource('notification', NotificationController::class)->only([
+        'index',
+        'show',
+        'destroy',
+      ])->shallow();
+    } else {
+      Route::get('notification', [NotificationController::class, 'user_index']);
+      Route::get('notification/unread', [NotificationController::class, 'user_index_unread']);
+      Route::post('notification/{id}/read', [NotificationController::class, 'user_read']);
+      Route::post('notification/readall', [NotificationController::class, 'user_readall']);
     }
   }
 }

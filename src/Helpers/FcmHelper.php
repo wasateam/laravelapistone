@@ -8,6 +8,9 @@ class FcmHelper
 {
   public static function sendMesssage($title, $body, $data, $tokens)
   {
+    if (!$tokens || !count($tokens)) {
+      return;
+    }
     $messaging    = app('firebase.messaging');
     $notification = \Kreait\Firebase\Messaging\Notification::fromArray([
       'title' => $title,

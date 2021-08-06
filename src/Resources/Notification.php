@@ -14,7 +14,7 @@ class Notification extends JsonResource
    */
   public function toArray($request)
   {
-    $res = [
+    return [
       'id'              => $this->id,
       'created_at'      => $this->created_at,
       'updated_at'      => $this->updated_at,
@@ -22,14 +22,7 @@ class Notification extends JsonResource
       'notifiable_id'   => $this->notifiable_id,
       'data'            => $this->data,
       'read_at'         => $this->read_at,
+      'user'            => new User_R1($this->user),
     ];
-
-    if (config('stone.mode') == 'cms') {
-      $res['admin'] = new Admin_R1($this->admin);
-    } else if (config('stone.mode') == 'webapi') {
-      $res['user'] = new User_R1($this->user);
-    }
-
-    return $res;
   }
 }

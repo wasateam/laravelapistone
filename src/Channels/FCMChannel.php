@@ -17,6 +17,6 @@ class FCMChannel
   public function send($notifiable, Notification $notification)
   {
     $noti = $notification->toFCM($notifiable);
-    FcmHelper::sendMesssage($noti['title'], $noti['body'], $noti['data'], $notifiable->device_tokens);
+    FcmHelper::sendMesssage($noti['title'], $noti['body'], $noti['data'], json_decode($notifiable->device_tokens));
   }
 }

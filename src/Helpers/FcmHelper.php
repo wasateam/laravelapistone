@@ -15,10 +15,5 @@ class FcmHelper
     ]);
     $message = CloudMessage::new ()->withNotification($notification)->withData($data);
     $report  = $messaging->sendMulticast($message, $tokens);
-    // if ($report->hasFailures()) {
-    //   foreach ($report->failures()->getItems() as $failure) {
-    //     echo $failure->error()->getMessage() . PHP_EOL;
-    //   }
-    // }
   }
 }

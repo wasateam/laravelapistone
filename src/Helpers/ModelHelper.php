@@ -22,6 +22,9 @@ class ModelHelper
     // Snap
     $snap = self::indexGetSnap($setting, $request, $id, $limit);
 
+    // ScopeFilter
+    $scope_filter_check = self::scopeFilterCheck($request, $setting);
+
     if ($custom_snap_handler) {
       $snap = $custom_snap_handler($snap);
     }
@@ -32,7 +35,7 @@ class ModelHelper
     // Collection
     $collection = self::indexGetPaginate($setting, $snap, $request, $getall);
     try {
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'get index error.',
       ]);
@@ -74,7 +77,7 @@ class ModelHelper
     // Parent
     try {
       $model = self::storeParentId($model, $setting, $id);
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'store parent id fail.',
       ], 400);
@@ -91,7 +94,7 @@ class ModelHelper
     // Save
     $model->save();
     try {
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'data store fail.',
       ], 400);
@@ -103,7 +106,7 @@ class ModelHelper
     // Locale Set
     try {
       self::setLocale($model, $setting, $request);
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'locales data store fail.',
       ], 400);
@@ -152,7 +155,7 @@ class ModelHelper
     }
     $log[config('stone.auth.model_name') . '_id'] = $user_id;
     $log->payload                                 = [
-      'userModelName' => $user_id?config('stone.auth.model_name'):null,
+      'userModelName' => $user_id ? config('stone.auth.model_name') : null,
       'user_id'       => $user_id,
       'action'        => $action,
       'target'        => $controller->name,
@@ -182,7 +185,7 @@ class ModelHelper
       //   'message' => 'batch store complete.',
       //   'data'    => $result_data,
       // ], 200);
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'batch store fail. but some have been created.',
       ], 400);
@@ -206,7 +209,7 @@ class ModelHelper
     // Get
     try {
       $model = $snap->first();
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'no data.',
       ], 400);
@@ -260,7 +263,7 @@ class ModelHelper
     // Save
     try {
       $model->save();
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'data update fail.',
       ], 400);
@@ -272,7 +275,7 @@ class ModelHelper
     // Locale Set
     try {
       ModelHelper::setLocale($model, $setting, $request);
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'locales data update fail.',
       ], 400);
@@ -354,7 +357,7 @@ class ModelHelper
           "message" => 'delete error.',
         ], 400);
       }
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         "message" => 'delete error.',
       ], 400);
@@ -376,7 +379,7 @@ class ModelHelper
     }
     try {
       $disk->put($store_value, $content);
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'store file dail.',
       ], 400);
@@ -432,6 +435,7 @@ class ModelHelper
     $setting->order_fields                    = isset($controller->order_fields) ? $controller->order_fields : [];
     $setting->order_belongs_to                = isset($controller->order_belongs_to) ? $controller->order_belongs_to : [];
     $setting->order_layers_fields             = isset($controller->order_layers_fields) ? $controller->order_layers_fields : [];
+    $setting->scope_filter                    = isset($controller->scope_filter) ? $controller->scope_filter : null;
     return $setting;
   }
 
@@ -791,7 +795,7 @@ class ModelHelper
           try {
             //code...
             $model_locale->save();
-          } catch (\Throwable $th) {
+          } catch (\Throwable$th) {
             throw $th;
           }
         }
@@ -826,7 +830,7 @@ class ModelHelper
       // Check Parent exist
       try {
         $parent_model = $setting->parent_model::find($parent_id);
-      } catch (\Throwable $th) {
+      } catch (\Throwable$th) {
         throw $th;
       }
       if (!$parent_model) {
@@ -913,5 +917,10 @@ class ModelHelper
       }
     }
     return $snap;
+  }
+
+  public static function scopeFilterCheck($request, $setting)
+  {
+    
   }
 }

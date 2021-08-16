@@ -5,6 +5,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 use Illuminate\Support\Facades\Route;
 use Wasateam\Laravelapistone\Controllers\AdminRoleController;
 use Wasateam\Laravelapistone\Controllers\AdminScopeController;
+use Wasateam\Laravelapistone\Controllers\AppController;
 use Wasateam\Laravelapistone\Controllers\AreaController;
 use Wasateam\Laravelapistone\Controllers\AreaSectionController;
 use Wasateam\Laravelapistone\Controllers\AuthController;
@@ -12,6 +13,7 @@ use Wasateam\Laravelapistone\Controllers\CMSAdminController;
 use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
+use Wasateam\Laravelapistone\Controllers\NotificationController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
 use Wasateam\Laravelapistone\Controllers\SnappyController;
@@ -26,7 +28,6 @@ use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
-use Wasateam\Laravelapistone\Controllers\NotificationController;
 
 class RoutesHelper
 {
@@ -347,5 +348,15 @@ class RoutesHelper
       Route::post('notification/{id}/read', [NotificationController::class, 'user_read']);
       Route::post('notification/readall', [NotificationController::class, 'user_readall']);
     }
+  }
+
+  public static function app_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('app', AppController::class)->only($routes)->shallow();
   }
 }

@@ -14,7 +14,7 @@ class Admin extends JsonResource
    */
   public function toArray($request)
   {
-    $value = [
+    $res = [
       'id'                => $this->id,
       'sequence'          => $this->sequence,
       'name'              => $this->name,
@@ -27,13 +27,17 @@ class Admin extends JsonResource
       'settings'          => $this->settings,
       'email_verified_at' => $this->email_verified_at,
       'updated_admin'     => new Admin_R1($this->updated_admin),
-      'created_admin'     => new Admin_R1($this->updated_admin),
+      'created_admin'     => new Admin_R1($this->created_admin),
     ];
 
     if (config('stone.auth.has_role')) {
-      $value['roles'] = AdminRole_R1::collection($this->roles);
+      $res['roles'] = AdminRole_R1::collection($this->roles);
     }
+    // if (config('stone.app_mode')) {
+    //   $res['app_scopes'] = AdminAppScope_R1::collection($this->app_scopes);
+    //   $res['app_roles']  = AppRole_R1::collection($this->app_roles);
+    // }
 
-    return $value;
+    return $res;
   }
 }

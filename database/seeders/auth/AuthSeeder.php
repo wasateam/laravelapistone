@@ -13,14 +13,15 @@ class AuthSeeder extends Seeder
    */
   public function run()
   {
-    $model          = config('stone.auth.model');
-    $model_name     = config('stone.auth.model_name');
-    $default_scopes = config('stone.auth.default_scopes');
-    $user           = new $model;
-    $user->email    = "wasa@wasateam.com";
-    $user->name     = 'wasa';
-    $user->password = '123123';
-    $user->scopes   = $default_scopes;
+    $model           = config('stone.auth.model');
+    $model_name      = config('stone.auth.model_name');
+    $default_scopes  = config('stone.auth.default_scopes');
+    $user            = new $model;
+    $user->email     = "wasa@wasateam.com";
+    $user->name      = 'wasa';
+    $user->password  = '123123';
+    $user->is_active = 1;
+    $user->scopes    = $default_scopes;
     $user->save();
   }
 }

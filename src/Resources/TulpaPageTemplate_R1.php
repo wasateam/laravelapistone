@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TulpaSection extends JsonResource
+class TulpaPageTemplate_R1 extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -17,25 +17,22 @@ class TulpaSection extends JsonResource
     if (config('stone.mode') == 'cms') {
       return [
         'id'             => $this->id,
-        'updated_admin'  => new Admin_R1($this->updated_admin),
         'created_at'     => $this->created_at,
         'updated_at'     => $this->updated_at,
         'name'           => $this->name,
-        'component_name' => $this->component_name,
-        'remark'         => $this->remark,
-        'fields'         => $this->fields,
-        'content'        => $this->content,
         'tags'           => $this->tags,
+        'remark'         => $this->remark,
+        'content'        => $this->content,
+        'tulpa_sections' => TulpaSection_R1::collection($this->tulpa_sections),
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
         'id'             => $this->id,
         'name'           => $this->name,
-        'component_name' => $this->component_name,
-        'remark'         => $this->remark,
-        'fields'         => $this->fields,
-        'content'        => $this->content,
         'tags'           => $this->tags,
+        'remark'         => $this->remark,
+        'content'        => $this->content,
+        'tulpa_sections' => TulpaSection_R1::collection($this->tulpa_sections),
       ];
     }
   }

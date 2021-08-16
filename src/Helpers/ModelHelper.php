@@ -22,6 +22,9 @@ class ModelHelper
     // Snap
     $snap = self::indexGetSnap($setting, $request, $id, $limit);
 
+    // ScopeFilter
+    $scope_filter_check = self::scopeFilterCheck($request, $setting);
+
     if ($custom_snap_handler) {
       $snap = $custom_snap_handler($snap);
     }
@@ -432,6 +435,7 @@ class ModelHelper
     $setting->order_fields                    = isset($controller->order_fields) ? $controller->order_fields : [];
     $setting->order_belongs_to                = isset($controller->order_belongs_to) ? $controller->order_belongs_to : [];
     $setting->order_layers_fields             = isset($controller->order_layers_fields) ? $controller->order_layers_fields : [];
+    $setting->scope_filter                    = isset($controller->scope_filter) ? $controller->scope_filter : null;
     return $setting;
   }
 
@@ -929,5 +933,10 @@ class ModelHelper
       $last_version = count($last_version) ? $last_version[0] : null;
     }
     return $last_version;
+  }
+
+  public static function scopeFilterCheck($request, $setting)
+  {
+
   }
 }

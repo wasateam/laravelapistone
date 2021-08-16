@@ -5,6 +5,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 use Illuminate\Support\Facades\Route;
 use Wasateam\Laravelapistone\Controllers\AdminRoleController;
 use Wasateam\Laravelapistone\Controllers\AdminScopeController;
+use Wasateam\Laravelapistone\Controllers\AppController;
 use Wasateam\Laravelapistone\Controllers\AreaController;
 use Wasateam\Laravelapistone\Controllers\AreaSectionController;
 use Wasateam\Laravelapistone\Controllers\AuthController;
@@ -12,16 +13,19 @@ use Wasateam\Laravelapistone\Controllers\CMSAdminController;
 use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
+use Wasateam\Laravelapistone\Controllers\NotificationController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
+use Wasateam\Laravelapistone\Controllers\SnappyController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
 use Wasateam\Laravelapistone\Controllers\SystemClassController;
 use Wasateam\Laravelapistone\Controllers\SystemSubclassController;
 use Wasateam\Laravelapistone\Controllers\TagController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
+use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
-use Wasateam\Laravelapistone\Controllers\TulpaSectionTemplateController;
 use Wasateam\Laravelapistone\Controllers\UserController;
+use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
 
@@ -145,20 +149,27 @@ class RoutesHelper
     });
   }
 
-  public static function tulpa_routes($routes = [
-    'index',
-    'show',
-    'store',
-    'update',
-    'destroy',
-    'image_get_upload_url',
-  ]) {
-    Route::resource('tulpa_page', TulpaPageController::class)->only($routes)->shallow();
-    Route::resource('tulpa_section', TulpaSectionController::class)->only($routes)->shallow();
-    Route::resource('tulpa_section_template', TulpaSectionTemplateController::class)->only($routes)->shallow();
-    if (in_array('image_get_upload_url', $routes)) {
+  public static function tulpa_routes()
+  {
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      $routes = [
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ];
       Route::get('/tulpa_page/image/upload_url', [TulpaPageController::class, 'image_get_upload_url']);
+    } else {
+      $routes = [
+        'index',
+        'show',
+      ];
     }
+    Route::resource('tulpa_page', TulpaPageController::class)->only($routes)->shallow();
+    Route::resource('tulpa_page_template', TulpaPageTemplateController::class)->only($routes)->shallow();
+    Route::resource('tulpa_section', TulpaSectionController::class)->only($routes)->shallow();
   }
 
   public static function ws_blog_routes($routes = [
@@ -222,13 +233,13 @@ class RoutesHelper
     'store',
     'update',
     'destroy',
-    'image_get_upload_url',
-    'image_upload_complete',
+    // 'image_get_upload_url',
+    // 'image_upload_complete',
   ]) {
     Route::resource('user', UserController::class)->only($routes)->shallow();
-    if (in_array('avatar_get_upload_url', $routes)) {
-      Route::get('/user/avatar/upload_url', [UserController::class, 'avatar_get_upload_url']);
-    }
+    // if (in_array('avatar_get_upload_url', $routes)) {
+    //   Route::get('/user/avatar/upload_url', [UserController::class, 'avatar_get_upload_url']);
+    // }
   }
 
   public static function locale_routes($routes = [
@@ -296,5 +307,56 @@ class RoutesHelper
     'destroy',
   ]) {
     Route::resource('contact_request', ContactRequestController::class)->only($routes)->shallow();
+  }
+
+  public static function snappy_routes()
+  {
+    Route::get('snappy/test', [SnappyController::class, 'test']);
+
+  }
+
+  public static function user_device_token_routes()
+  {
+
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      Route::resource('user_device_token', UserDeviceTokenController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+    } else {
+      Route::post('device_token', [UserDeviceTokenController::class, 'active']);
+      Route::delete('device_token', [UserDeviceTokenController::class, 'deactive']);
+    }
+  }
+
+  public static function notification_routes()
+  {
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      Route::resource('notification', NotificationController::class)->only([
+        'index',
+        'show',
+        'destroy',
+      ])->shallow();
+    } else {
+      Route::get('notification', [NotificationController::class, 'user_index']);
+      Route::get('notification/unread', [NotificationController::class, 'user_index_unread']);
+      Route::post('notification/{id}/read', [NotificationController::class, 'user_read']);
+      Route::post('notification/readall', [NotificationController::class, 'user_readall']);
+    }
+  }
+
+  public static function app_routes($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('app', AppController::class)->only($routes)->shallow();
   }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCanonicalUrlInTulpaPagesTable extends Migration
+class CreateTulpaSectionTulpaPageTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,8 +13,9 @@ class AddCanonicalUrlInTulpaPagesTable extends Migration
    */
   public function up()
   {
-    Schema::table('tulpa_pages', function (Blueprint $table) {
-      $table->text('canonical_url')->nullable();
+    Schema::create('tulpa_section_tulpa_page', function (Blueprint $table) {
+      $table->integer('tulpa_section_id');
+      $table->integer('tulpa_page_id');
     });
   }
 
@@ -25,8 +26,6 @@ class AddCanonicalUrlInTulpaPagesTable extends Migration
    */
   public function down()
   {
-    Schema::table('tulpa_pages', function (Blueprint $table) {
-      $table->dropColumn('canonical_url');
-    });
+    Schema::dropIfExists('tulpa_section_tulpa_page');
   }
 }

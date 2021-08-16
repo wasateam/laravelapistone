@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TulpaSection extends JsonResource
+class TulpaSectionCollection extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -17,7 +17,6 @@ class TulpaSection extends JsonResource
     if (config('stone.mode') == 'cms') {
       return [
         'id'             => $this->id,
-        'updated_admin'  => new Admin_R1($this->updated_admin),
         'created_at'     => $this->created_at,
         'updated_at'     => $this->updated_at,
         'name'           => $this->name,

@@ -93,6 +93,18 @@ class StoneServiceProvider extends ServiceProvider
       __DIR__ . '/../database/migrations/admin_system_class' => database_path('migrations'),
     ], 'migrations-admin-system-class');
 
+    $this->publishes([
+      __DIR__ . '/../database/migrations/user_device_token' => database_path('migrations'),
+    ], 'migrations-user_device_token');
+
+    $this->publishes([
+      __DIR__ . '/../database/migrations/app' => database_path('migrations'),
+    ], 'migrations-app');
+
+    $this->publishes([
+      __DIR__ . '/../database/migrations/group' => database_path('migrations'),
+    ], 'migrations-group');
+
     if ($this->app->runningInConsole()) {
       $this->commands([
         CommandStoneTest::class,

@@ -33,7 +33,6 @@ class TulpaPageController extends Controller
     'remark',
     'content',
     'canonical_url',
-    // 'section_sequence',
   ];
   public $search_fields = [
     'name',
@@ -44,6 +43,9 @@ class TulpaPageController extends Controller
   public $validation_rules = [
     'route' => 'unique:tulpa_pages',
   ];
+  public $belongs_to = [
+    'tulpa_page_template',
+  ];
   public $belongs_to_many = [
     'tulpa_sections',
   ];
@@ -53,6 +55,7 @@ class TulpaPageController extends Controller
     'route',
   ];
   public $user_record_field = 'updated_admin_id';
+  public $user_create_field = 'created_admin_id';
 
   /**
    * Index
@@ -84,7 +87,7 @@ class TulpaPageController extends Controller
    * @bodyParam remark string Example: Remark for admins
    * @bodyParam content object No-example
    * @bodyParam canonical_url string Example: https://wasateam.com
-   * @bodyParam section_sequence object No-example
+   * @bodyParam tulpa_page_template id Example: 1
    * @bodyParam tulpa_sections object No-example
    */
   public function store(Request $request, $id = null)
@@ -123,7 +126,7 @@ class TulpaPageController extends Controller
    * @bodyParam remark string Example: Remark for admins
    * @bodyParam content object No-example
    * @bodyParam canonical_url string Example: https://wasateam.com
-   * @bodyParam section_sequence object No-example
+   * @bodyParam tulpa_page_template id Example: 1
    * @bodyParam tulpa_sections object No-example
    */
   public function update(Request $request, $id)
@@ -156,17 +159,4 @@ class TulpaPageController extends Controller
       return S3Helper::getUploadSignedUrlByNameAndPath($name, 'tulpa', '*', true);
     }
   }
-
-  // /**
-  //  * Pocket Image Upload Complete
-  //  *
-  //  */
-  // public function image_upload_complete(Request $request)
-  // {
-  //   $url = $request->url;
-  //   GcsHelper::makeUrlPublic($url);
-  //   return response()->json([
-  //     'message' => 'ok.',
-  //   ]);
-  // }
 }

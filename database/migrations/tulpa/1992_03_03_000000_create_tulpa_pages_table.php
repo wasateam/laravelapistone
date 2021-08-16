@@ -18,16 +18,17 @@ class CreateTulpaPagesTable extends Migration
       $table->timestamps();
       $table->softDeletes();
       $table->string('updated_admin_id')->nullable();
+      $table->integer('created_admin_id')->nullable();
+      $table->integer('tulpa_page_template_id')->nullable();
       $table->string('name')->nullable();
       $table->string('route')->nullable()->unique();
+      $table->text('canonical_url')->nullable();
       $table->string('title')->nullable();
       $table->text('description')->nullable();
       $table->text('og_image')->nullable();
       $table->boolean('is_active')->default(0);
       $table->text('tags')->nullable();
       $table->text('remark')->nullable();
-      $table->integer('status')->default(0);
-      $table->text('section_sequence')->nullable();
       $table->text('content')->nullable();
     });
   }

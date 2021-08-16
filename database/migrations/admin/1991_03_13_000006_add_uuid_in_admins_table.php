@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTulpaPageTulpaSectionTable extends Migration
+class AddUuidInAdminsTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,9 +13,8 @@ class CreateTulpaPageTulpaSectionTable extends Migration
    */
   public function up()
   {
-    Schema::create('tulpa_page_tulpa_section', function (Blueprint $table) {
-      $table->integer('tulpa_page_id');
-      $table->integer('tulpa_section_id');
+    Schema::table('admins', function (Blueprint $table) {
+      $table->uuid('uuid')->nullable();
     });
   }
 
@@ -26,6 +25,8 @@ class CreateTulpaPageTulpaSectionTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('tulpa_page_tulpa_section');
+    Schema::table('admins', function (Blueprint $table) {
+      $table->dropColumn('uuid');
+    });
   }
 }

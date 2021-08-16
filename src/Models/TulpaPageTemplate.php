@@ -5,8 +5,9 @@ namespace Wasateam\Laravelapistone\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Wasateam\Laravelapistone\Models\Admin;
+use Wasateam\Laravelapistone\Models\TulpaSection;
 
-class TulpaSection extends Model
+class TulpaPageTemplate extends Model
 {
   use HasFactory;
   use \Illuminate\Database\Eloquent\SoftDeletes;
@@ -21,8 +22,12 @@ class TulpaSection extends Model
     return $this->belongsTo(Admin::class, 'created_admin_id');
   }
 
+  public function tulpa_sections()
+  {
+    return $this->belongsToMany(TulpaSection::class, 'tulpa_section_tulpa_page_template', 'tulpa_page_template_id', 'tulpa_section_id');
+  }
+
   protected $casts = [
-    'fields'  => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'tags'    => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'content' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
   ];

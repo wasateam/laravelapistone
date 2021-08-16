@@ -2,23 +2,11 @@
 
 namespace Wasateam\Laravelapistone\Helpers;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+
 class AuthHelper
 {
-  // public static function getSetting($controller)
-  // {
-  //   $setting                       = collect();
-  //   $setting->model                = isset($controller->model) ? $controller->model : 'App\User';
-  //   $setting->name                 = isset($controller->name) ? $controller->name : 'user';
-  //   $setting->table                = isset($controller->table) ? $controller->table : 'users';
-  //   $setting->guard                = isset($controller->guard) ? $controller->guard : 'api';
-  //   $setting->scopes_from_database = isset($controller->scopes_from_database) ? $controller->scopes_from_database : 0;
-  //   $setting->is_active_check      = isset($controller->is_active_check) ? $controller->is_active_check : 0;
-  //   $setting->scopes               = isset($controller->scopes) ? $controller->scopes : [];
-  //   $setting->default_scopes       = isset($controller->default_scopes) ? $controller->default_scopes : [];
-  //   $setting->resource             = isset($controller->resource) ? $controller->resource : [];
-  //   return $setting;
-  // }
-
   public static function getUserScopes($user)
   {
     $scopes = $user->scopes ? $user->scopes : [];
@@ -28,5 +16,69 @@ class AuthHelper
       }
     }
     return $scopes;
+  }
+
+  public static function getAppIdFromRequest($request, $app_name = 'app')
+  {
+    $app_id;
+    if ($request->{$app_name}) {
+      $app_id = $request->{$app_name};
+    } else if ($request->{"{$app_name}_id"}) {
+      $app_id = $request->{"{$app_name}_id"};
+    }
+    return $app_id;
+  }
+
+  public static function checkUserInApp($user, $app_id, $app_name, $app_field_name)
+  {
+
+    $user_apps    = $user->{$app_field_name};
+    $user_app_ids = $user_apps->map(function ($user_app) {
+      return $user_app->id;
+    });
+
+    $in_app = $user_app_ids->some(function ($user_app_id) use ($app_id) {
+      return $user_app_id == $app_id;
+    });
+
+    return $in_app;
+  }
+
+  public static function getScopesInApp($user, $app_id, $app_name)
+  {
+    $all_scopes = [];
+    $user_roles = $user->{"{$app_name}_roles"}->filter(function ($item) use ($app_id) {
+      if (!$item->{"{$app_name}_id"} && $item->is_default) {
+        return true;
+      } else {
+        return $item->{"{$app_name}_id"} == $app_id;
+      }
+    });
+    $app_scopes = $user->{"{$app_name}_scopes"}->filter(function ($item) use ($app_id) {
+      if (!$item->{"{$app_name}_id"} && $item->is_default) {
+        return true;
+      } else {
+        return $item->{"{$app_name}_id"} == $app_id;
+      }
+    });
+    foreach ($user_roles as $user_role) {
+      if ($user_role->scopes) {
+        $all_scopes = array_merge($all_scopes, $user_role->scopes);
+      }
+    }
+    foreach ($app_scopes as $app_scope) {
+      if ($app_scope->scopes) {
+        $all_scopes = array_merge($all_scopes, $app_scope->scopes);
+      }
+    }
+    return $all_scopes;
+  }
+
+  public static function checkHasScope($scopes, $target)
+  {
+
+    return Arr::where($scopes, function ($value) use ($target) {
+      return Str::contains($target, $value);
+    });
   }
 }

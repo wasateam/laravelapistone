@@ -9,12 +9,13 @@ use Exception;
 use Illuminate\Http\Request;
 use Storage;
 use Validator;
+use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
 use Wasateam\Laravelapistone\Models\Locale;
 
 class ModelHelper
 {
-  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null, $limit = true)
+  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null, $limit = true, $custom_scope_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -23,10 +24,19 @@ class ModelHelper
     $snap = self::indexGetSnap($setting, $request, $id, $limit);
 
     // ScopeFilter
-    $scope_filter_check = self::scopeFilterCheck($request, $setting);
+    $scope_filter_check = self::scopeFilterCheck($request, $setting, );
 
     if ($custom_snap_handler) {
       $snap = $custom_snap_handler($snap);
+    }
+
+    // Scope
+    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
+
+    if (!$check) {
+      return response()->json([
+        'message' => ':(',
+      ], 403);
     }
 
     // Filter User
@@ -45,7 +55,7 @@ class ModelHelper
     return self::indexGetResourceCollection($collection, $setting);
   }
 
-  public static function ws_StoreHandler($controller, $request, $id = null, $complete_action = null, $before_save_action = null, $create_with_new_version = false, $version_controller = null, $return_resource = true)
+  public static function ws_StoreHandler($controller, $request, $id = null, $complete_action = null, $before_save_action = null, $create_with_new_version = false, $version_controller = null, $return_resource = true, $custom_scope_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -73,6 +83,15 @@ class ModelHelper
 
     // User Create Record
     $model = self::setUserCreate($model, $setting);
+
+    // Scope
+    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
+
+    if (!$check) {
+      return response()->json([
+        'message' => ':(',
+      ], 403);
+    }
 
     // Parent
     try {
@@ -192,10 +211,19 @@ class ModelHelper
     }
   }
 
-  public static function ws_ShowHandler($controller, $request, $id = null, $custom_snap_handler = null)
+  public static function ws_ShowHandler($controller, $request, $id = null, $custom_snap_handler = null, $custom_scope_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
+
+    // Scope
+    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
+
+    if (!$check) {
+      return response()->json([
+        'message' => ':(',
+      ], 403);
+    }
 
     // Snap
     $snap = $setting->model::where('id', $id)->where($setting->custom_get_conditions);
@@ -224,10 +252,19 @@ class ModelHelper
     return new $setting->resource($model);
   }
 
-  public static function ws_UpdateHandler($controller, $request, $id, $rules = [], $complete_action = null)
+  public static function ws_UpdateHandler($controller, $request, $id, $rules = [], $complete_action = null, $custom_scope_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
+
+    // Scope
+    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
+
+    if (!$check) {
+      return response()->json([
+        'message' => ':(',
+      ], 403);
+    }
 
     // Validation
     $validator = Validator::make($request->all(), $rules, $setting->validation_messages);
@@ -322,10 +359,19 @@ class ModelHelper
     return new $setting->resource($model);
   }
 
-  public static function ws_DestroyHandler($controller, $id, $complete_action = null)
+  public static function ws_DestroyHandler($controller, $id, $complete_action = null, $request = null, $custom_scope_handler)
   {
     // Setting
     $setting = self::getSetting($controller);
+
+    // Scope
+    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
+
+    if (!$check) {
+      return response()->json([
+        'message' => ':(',
+      ], 403);
+    }
 
     // Find Model
     $snap = $setting->model::where('id', $id);
@@ -436,6 +482,7 @@ class ModelHelper
     $setting->order_belongs_to                = isset($controller->order_belongs_to) ? $controller->order_belongs_to : [];
     $setting->order_layers_fields             = isset($controller->order_layers_fields) ? $controller->order_layers_fields : [];
     $setting->scope_filter                    = isset($controller->scope_filter) ? $controller->scope_filter : null;
+    $setting->mocu_filters                    = isset($controller->mocu_filters) ? $controller->mocu_filters : [];
     return $setting;
   }
 
@@ -917,22 +964,6 @@ class ModelHelper
       }
     }
     return $snap;
-  }
-
-  public static function getVersion($request, $version_name = null, $model_name = null, $resource = null, $order_by = null, $model = null)
-  {
-    $last_version = [];
-    if ($request[$version_name . 's']) {
-      $item_arr     = array_map('intval', explode(',', $request[$version_name . 's']));
-      $last_version = $model::whereHas($version_name . 's', function ($query) use ($item_arr) {
-        return $query->whereIn('id', $item_arr);
-      })->where($model_name . '_id', $resource->id)->latest($order_by)->get();
-      $last_version = count($last_version) ? $last_version[0] : null;
-    } else {
-      $last_version = $model::where($model_name . '_id', $resource->id)->latest($order_by)->get();
-      $last_version = count($last_version) ? $last_version[0] : null;
-    }
-    return $last_version;
   }
 
   public static function scopeFilterCheck($request, $setting)

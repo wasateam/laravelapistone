@@ -11,11 +11,6 @@ class MocuScope extends Model
   use HasFactory;
   use SoftDeletes;
 
-  public function auth()
-  {
-    return $this->belongsTo('Wasateam\Laravelapistone\Models\Admin', 'auth_id');
-  }
-
   protected $casts = [
     'scopes' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
   ];

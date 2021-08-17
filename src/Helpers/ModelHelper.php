@@ -359,7 +359,7 @@ class ModelHelper
     return new $setting->resource($model);
   }
 
-  public static function ws_DestroyHandler($controller, $id, $complete_action = null, $request = null, $custom_scope_handler)
+  public static function ws_DestroyHandler($controller, $id, $complete_action = null, $request = null, $custom_scope_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);

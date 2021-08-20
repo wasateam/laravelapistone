@@ -31,6 +31,16 @@ use Wasateam\Laravelapistone\Controllers\WsBlogController;
 
 class RoutesHelper
 {
+  public static function get_all_routes_name()
+  {
+    $routeCollection = Route::getRoutes();
+    $routes          = [];
+    foreach ($routeCollection as $key => $route) {
+      $routes[] = $route->getAction();
+    }
+    return $routes;
+  }
+
   public static function auth_routes($routes = [
     "signin",
     "signup",

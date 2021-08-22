@@ -56,8 +56,14 @@ class TulpaPageController extends Controller
     'created_at',
     'route',
   ];
+  public $scope_filter_belongs_to_many = [
+    'admin_groups' => [
+      'boss',
+    ],
+  ];
   public $user_record_field = 'updated_admin_id';
   public $user_create_field = 'created_admin_id';
+  public $admin_group       = true;
 
   /**
    * Index
@@ -67,18 +73,7 @@ class TulpaPageController extends Controller
   public function index(Request $request, $id = null)
   {
     if (config('stone.mode') == 'cms') {
-      if (config('stone.admin_group')) {
-        $admin           = Auth::user();
-        $admin_group_ids = ModelHelper::getIdsFromModels($admin->admin_groups);
-        return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) use ($admin_group_ids) {
-          $snap = $snap->whereHas('admin_groups', function ($query) use ($admin_group_ids) {
-            return $query->whereIn('id', $admin_group_ids);
-          });
-          return $snap;
-        });
-      } else {
-        return ModelHelper::ws_IndexHandler($this, $request, $id);
-      }
+      return ModelHelper::ws_IndexHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
       return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
         $snap = $snap->where('is_active', 1);
@@ -106,15 +101,7 @@ class TulpaPageController extends Controller
    */
   public function store(Request $request, $id = null)
   {
-    if (config('stone.admin_group')) {
-      $admin           = Auth::user();
-      $admin_group_ids = ModelHelper::getIdsFromModels($admin->admin_groups);
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($admin_group_ids) {
-        $model->admin_groups()->sync($admin_group_ids);
-      });
-    } else {
-      return ModelHelper::ws_StoreHandler($this, $request, $id);
-    }
+    return ModelHelper::ws_StoreHandler($this, $request, $id);
   }
 
   /**
@@ -125,19 +112,7 @@ class TulpaPageController extends Controller
   public function show(Request $request, $id = null)
   {
     if (config('stone.mode') == 'cms') {
-      if (config('stone.admin_group')) {
-        $admin           = Auth::user();
-        $admin_group_ids = ModelHelper::getIdsFromModels($admin->admin_groups);
-        return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) use ($admin_group_ids) {
-          $snap = $snap->whereHas('admin_groups', function ($query) use ($admin_group_ids) {
-            return $query->whereIn('id', $admin_group_ids);
-          });
-          return $snap;
-        });
-      } else {
-        return ModelHelper::ws_ShowHandler($this, $request, $id);
-      }
-
+      return ModelHelper::ws_ShowHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
       $tulpa_page = TulpaPage::where('route', $id)->where('is_active', 1)->first();
       return response()->json([

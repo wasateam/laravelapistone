@@ -32,6 +32,9 @@ class ModelHelper
     // Filter User
     $snap = self::userFilterSnap($snap, $setting);
 
+    // Filter Admin Group
+    $snap = self::adminGroupFilterSnap($snap, $setting);
+
     // Collection
     $collection = self::indexGetPaginate($setting, $snap, $request, $getall);
     try {
@@ -102,6 +105,9 @@ class ModelHelper
 
     // Belongs To Many Value
     $model = self::setBelongsToMany($model, $setting, $request);
+
+    // Admin Group
+    self::adminGroupStoreHandler($model, $setting);
 
     // Locale Set
     try {
@@ -206,6 +212,9 @@ class ModelHelper
     // Filter User
     $snap = self::userFilterSnap($snap, $setting);
 
+    // Filter Admin Group
+    $snap = self::adminGroupFilterSnap($snap, $setting);
+
     // Get
     try {
       $model = $snap->first();
@@ -243,6 +252,9 @@ class ModelHelper
 
     // Filter User
     $snap = self::userFilterSnap($snap, $setting);
+
+    // Filter Admin Group
+    $snap = self::adminGroupFilterSnap($snap, $setting);
 
     $model = $snap->first();
     if (!$model) {
@@ -332,6 +344,9 @@ class ModelHelper
 
     // Filter User
     $snap = self::userFilterSnap($snap, $setting);
+
+    // Filter Admin Group
+    $snap = self::adminGroupFilterSnap($snap, $setting);
 
     $model = $snap->first();
     if (!$model) {
@@ -436,6 +451,9 @@ class ModelHelper
     $setting->order_belongs_to                = isset($controller->order_belongs_to) ? $controller->order_belongs_to : [];
     $setting->order_layers_fields             = isset($controller->order_layers_fields) ? $controller->order_layers_fields : [];
     $setting->scope_filter                    = isset($controller->scope_filter) ? $controller->scope_filter : null;
+    $setting->admin_group                     = isset($controller->admin_group) ? $controller->admin_group : false;
+    $setting->admin_scope_boss                = isset($controller->admin_scope_boss) ? $controller->admin_scope_boss : 'boss';
+    $setting->scope_filter_belongs_to_many    = isset($controller->scope_filter_belongs_to_many) ? $controller->scope_filter_belongs_to_many : [];
     return $setting;
   }
 
@@ -725,6 +743,20 @@ class ModelHelper
       if (!$request->has($key)) {
         continue;
       }
+      if (count($setting->scope_filter_belongs_to_many)) {
+        $scope_check = false;
+        foreach ($setting->scope_filter_belongs_to_many as $scope_filter_belongs_to_many_key => $scope_filter_belongs_to_many_value) {
+          $admin = Auth::user();
+          foreach ($admin->scopes as $scope) {
+            if (in_array($scope, $scope_filter_belongs_to_many_value)) {
+              $scope_check = true;
+            }
+          }
+        }
+        if (!$scope_check) {
+          continue;
+        }
+      }
       if (is_string($request->{$key})) {
         $to_json = json_decode($request->{$key});
         if (json_last_error() === 0) {
@@ -931,5 +963,30 @@ class ModelHelper
       $ids[] = $model->{$id_key};
     }
     return $ids;
+  }
+
+  public static function adminGroupFilterSnap($snap, $setting)
+  {
+    if (config('stone.admin_group') && $setting->admin_group) {
+      $admin = Auth::user();
+      if (!in_array($setting->admin_scope_boss, $admin->scopes)) {
+        $admin_group_ids = self::getIdsFromModels($admin->admin_groups);
+        $snap            = $snap->whereHas('admin_groups', function ($query) use ($admin_group_ids) {
+          return $query->whereIn('id', $admin_group_ids);
+        });
+      }
+    }
+    return $snap;
+  }
+
+  public static function adminGroupStoreHandler($model, $setting)
+  {
+    if (config('stone.admin_group') && $setting->admin_group) {
+      $admin = Auth::user();
+      if (!in_array($setting->admin_scope_boss, $admin->scopes)) {
+        $admin_group_ids = self::getIdsFromModels($admin->admin_groups);
+        $model->admin_groups()->sync($admin_group_ids);
+      }
+    }
   }
 }

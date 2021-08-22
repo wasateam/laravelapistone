@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
@@ -48,6 +49,7 @@ class TulpaPageController extends Controller
   ];
   public $belongs_to_many = [
     'tulpa_sections',
+    'admin_groups',
   ];
   public $order_fields = [
     'updated_at',
@@ -65,7 +67,18 @@ class TulpaPageController extends Controller
   public function index(Request $request, $id = null)
   {
     if (config('stone.mode') == 'cms') {
-      return ModelHelper::ws_IndexHandler($this, $request, $id);
+      if (config('stone.admin_group')) {
+        $admin           = Auth::user();
+        $admin_group_ids = ModelHelper::getIdsFromModels($admin->admin_groups);
+        return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) use ($admin_group_ids) {
+          $snap = $snap->whereHas('admin_groups', function ($query) use ($admin_group_ids) {
+            return $query->whereIn('id', $admin_group_ids);
+          });
+          return $snap;
+        });
+      } else {
+        return ModelHelper::ws_IndexHandler($this, $request, $id);
+      }
     } else if (config('stone.mode') == 'webapi') {
       return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
         $snap = $snap->where('is_active', 1);
@@ -89,10 +102,19 @@ class TulpaPageController extends Controller
    * @bodyParam canonical_url string Example: https://wasateam.com
    * @bodyParam tulpa_page_template id Example: 1
    * @bodyParam tulpa_sections object No-example
+   * @bodyParam admin_groups object No-example
    */
   public function store(Request $request, $id = null)
   {
-    return ModelHelper::ws_StoreHandler($this, $request, $id);
+    if (config('stone.admin_group')) {
+      $admin           = Auth::user();
+      $admin_group_ids = ModelHelper::getIdsFromModels($admin->admin_groups);
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($admin_group_ids) {
+        $model->admin_groups()->sync($admin_group_ids);
+      });
+    } else {
+      return ModelHelper::ws_StoreHandler($this, $request, $id);
+    }
   }
 
   /**
@@ -103,7 +125,19 @@ class TulpaPageController extends Controller
   public function show(Request $request, $id = null)
   {
     if (config('stone.mode') == 'cms') {
-      return ModelHelper::ws_ShowHandler($this, $request, $id);
+      if (config('stone.admin_group')) {
+        $admin           = Auth::user();
+        $admin_group_ids = ModelHelper::getIdsFromModels($admin->admin_groups);
+        return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) use ($admin_group_ids) {
+          $snap = $snap->whereHas('admin_groups', function ($query) use ($admin_group_ids) {
+            return $query->whereIn('id', $admin_group_ids);
+          });
+          return $snap;
+        });
+      } else {
+        return ModelHelper::ws_ShowHandler($this, $request, $id);
+      }
+
     } else if (config('stone.mode') == 'webapi') {
       $tulpa_page = TulpaPage::where('route', $id)->where('is_active', 1)->first();
       return response()->json([
@@ -128,6 +162,7 @@ class TulpaPageController extends Controller
    * @bodyParam canonical_url string Example: https://wasateam.com
    * @bodyParam tulpa_page_template id Example: 1
    * @bodyParam tulpa_sections object No-example
+   * @bodyParam admin_groups object No-example
    */
   public function update(Request $request, $id)
   {

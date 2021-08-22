@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
+use Wasateam\Laravelapistone\Controllers\AdminGroupController;
 use Wasateam\Laravelapistone\Controllers\AdminRoleController;
 use Wasateam\Laravelapistone\Controllers\AdminScopeController;
 use Wasateam\Laravelapistone\Controllers\AppController;
@@ -105,6 +106,16 @@ class RoutesHelper
     'destroy',
   ]) {
     Route::resource('admin', CMSAdminController::class)->only($routes)->shallow();
+  }
+
+  public static function admin_groups($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('admin_group', AdminGroupController::class)->only($routes)->shallow();
   }
 
   public static function admin_scope_routes($routes = [

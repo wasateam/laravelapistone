@@ -33,6 +33,11 @@ class TulpaPage extends Model
     return $this->belongsToMany(TulpaSection::class, 'tulpa_section_tulpa_page', 'tulpa_page_id', 'tulpa_section_id');
   }
 
+  public function admin_groups()
+  {
+    return $this->belongsToMany(AdminGroup::class, 'admin_group_tulpa_page', 'tulpa_page_id', 'admin_group_id');
+  }
+
   protected $casts = [
     'tags'    => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'content' => \Wasateam\Laravelapistone\Casts\JsonCast::class,

@@ -921,6 +921,15 @@ class ModelHelper
 
   public static function scopeFilterCheck($request, $setting)
   {
-    
+
+  }
+
+  public static function getIdsFromModels($models, $id_key = 'id')
+  {
+    $ids = [];
+    foreach ($models as $model) {
+      $ids[] = $model->{$id_key};
+    }
+    return $ids;
   }
 }

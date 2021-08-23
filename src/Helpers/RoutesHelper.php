@@ -182,13 +182,15 @@ class RoutesHelper
         'destroy',
       ];
       Route::get('/tulpa_page/image/upload_url', [TulpaPageController::class, 'image_get_upload_url']);
+      Route::resource('tulpa_page', TulpaPageController::class)->only($routes)->shallow();
     } else {
       $routes = [
         'index',
         'show',
       ];
+      Route::get('tulpa_page', [TulpaPageController::class, 'index']);
+      Route::get('tulpa_page/page', [TulpaPageController::class, 'show']);
     }
-    Route::resource('tulpa_page', TulpaPageController::class)->only($routes)->shallow();
     Route::resource('tulpa_page_template', TulpaPageTemplateController::class)->only($routes)->shallow();
     Route::resource('tulpa_section', TulpaSectionController::class)->only($routes)->shallow();
   }

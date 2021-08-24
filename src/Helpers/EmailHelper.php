@@ -32,9 +32,13 @@ class EmailHelper
     } else if (config('stone.mail.service') == 'surenotify') {
       self::mail_send_surenotify('wasa.mail.reset_password_request', [
         'url' => $url,
-      ], '密碼重置請求', config('mail.from.name'), config('mail.from.address'), [
-        "address" => $email,
-      ]);
+      ], '密碼重置請求', config('mail.from.name'), config('mail.from.address'),
+        [
+          [
+            "address" => $email,
+          ],
+        ]
+      );
     }
   }
 
@@ -47,9 +51,13 @@ class EmailHelper
     } else if (config('stone.mail.service') == 'surenotify') {
       self::mail_send_surenotify('wasa.mail.contact_request', [
         'contact_request' => $contact_request,
-      ], '新的聯絡請求', config('mail.from.name'), config('mail.from.address'), [
-        "address" => $email,
-      ]);
+      ], '新的聯絡請求', config('mail.from.name'), config('mail.from.address'),
+        [
+          [
+            "address" => $email,
+          ],
+        ]
+      );
     }
   }
 
@@ -60,9 +68,13 @@ class EmailHelper
     } else if (config('stone.mail.service') == 'surenotify') {
       self::mail_send_surenotify('wasa.mail.test', [
         'aa' => 'aa',
-      ], '測試測試', config('mail.from.name'), config('mail.from.address'), [
-        "address" => $email,
-      ]);
+      ], '測試測試', config('mail.from.name'), config('mail.from.address'),
+        [
+          [
+            "address" => $email,
+          ],
+        ]
+      );
     }
   }
 }

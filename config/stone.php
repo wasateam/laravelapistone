@@ -50,6 +50,9 @@ return [
     'notifiable_type_user' => 'Wasateam\Laravelapistone\Models\User',
   ],
   'admin_group'       => env('ADMIN_GROUP', false),
+  'contact_request'   => [
+    'notify_mail' => env('CONTACT_REQUEST_NOTIFY_MAIL'),
+  ],
   // Member
   // 'user'    => [
   //   'model_name' => 'user',

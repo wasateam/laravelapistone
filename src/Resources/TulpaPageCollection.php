@@ -31,6 +31,7 @@ class TulpaPageCollection extends JsonResource
         'content'             => $this->content,
         'canonical_url'       => $this->canonical_url,
         'tulpa_page_template' => new TulpaPageTemplate_R1($this->tulpa_page_template),
+        'tulpa_cross_items'   => TulpaCrossItem_R1::collection($this->tulpa_cross_items),
       ];
       if (config('stone.admin_group')) {
         $res['admin_groups'] = AdminGroup_R1::collection($this->admin_groups);

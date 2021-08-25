@@ -22,6 +22,7 @@ use Wasateam\Laravelapistone\Controllers\SocialiteController;
 use Wasateam\Laravelapistone\Controllers\SystemClassController;
 use Wasateam\Laravelapistone\Controllers\SystemSubclassController;
 use Wasateam\Laravelapistone\Controllers\TagController;
+use Wasateam\Laravelapistone\Controllers\TulpaCrossItemController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
@@ -183,6 +184,7 @@ class RoutesHelper
       ];
       Route::get('/tulpa_page/image/upload_url', [TulpaPageController::class, 'image_get_upload_url']);
       Route::resource('tulpa_page', TulpaPageController::class)->only($routes)->shallow();
+      Route::resource('tulpa_cross_item', TulpaCrossItemController::class)->only($routes)->shallow();
     } else {
       $routes = [
         'index',

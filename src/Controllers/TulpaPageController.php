@@ -50,6 +50,7 @@ class TulpaPageController extends Controller
   public $belongs_to_many = [
     'tulpa_sections',
     'admin_groups',
+    'tulpa_cross_items',
   ];
   public $order_fields = [
     'updated_at',
@@ -98,6 +99,7 @@ class TulpaPageController extends Controller
    * @bodyParam tulpa_page_template id Example: 1
    * @bodyParam tulpa_sections object No-example
    * @bodyParam admin_groups object No-example
+   * @bodyParam tulpa_cross_items object No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -139,6 +141,7 @@ class TulpaPageController extends Controller
    * @bodyParam tulpa_page_template id Example: 1
    * @bodyParam tulpa_sections object No-example
    * @bodyParam admin_groups object No-example
+   * @bodyParam tulpa_cross_items object No-example
    */
   public function update(Request $request, $id)
   {

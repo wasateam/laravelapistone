@@ -38,6 +38,11 @@ class TulpaPage extends Model
     return $this->belongsToMany(AdminGroup::class, 'admin_group_tulpa_page', 'tulpa_page_id', 'admin_group_id');
   }
 
+  public function tulpa_cross_items()
+  {
+    return $this->belongsToMany(TulpaCrossItem::class, 'tulpa_page_tulpa_cross_item', 'tulpa_page_id', 'tulpa_cross_item_id');
+  }
+
   protected $casts = [
     'tags'    => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'content' => \Wasateam\Laravelapistone\Casts\JsonCast::class,

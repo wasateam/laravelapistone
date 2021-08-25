@@ -23,22 +23,6 @@ class ModelHelper
     // Snap
     $snap = self::indexGetSnap($setting, $request, $id, $limit);
 
-    // ScopeFilter
-    $scope_filter_check = self::scopeFilterCheck($request, $setting, );
-
-    if ($custom_snap_handler) {
-      $snap = $custom_snap_handler($snap);
-    }
-
-    // Scope
-    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
-
-    if (!$check) {
-      return response()->json([
-        'message' => ':(',
-      ], 403);
-    }
-
     // Filter User
     $snap = self::userFilterSnap($snap, $setting);
 
@@ -86,15 +70,6 @@ class ModelHelper
 
     // User Create Record
     $model = self::setUserCreate($model, $setting);
-
-    // Scope
-    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
-
-    if (!$check) {
-      return response()->json([
-        'message' => ':(',
-      ], 403);
-    }
 
     // Parent
     try {
@@ -222,15 +197,6 @@ class ModelHelper
     // Setting
     $setting = self::getSetting($controller);
 
-    // Scope
-    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
-
-    if (!$check) {
-      return response()->json([
-        'message' => ':(',
-      ], 403);
-    }
-
     // Snap
     $snap = $setting->model::where('id', $id)->where($setting->custom_get_conditions);
     if ($custom_snap_handler) {
@@ -266,14 +232,6 @@ class ModelHelper
     // Setting
     $setting = self::getSetting($controller);
 
-    // Scope
-    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
-
-    if (!$check) {
-      return response()->json([
-        'message' => ':(',
-      ], 403);
-    }
 
     // Validation
     $validator = Validator::make($request->all(), $rules, $setting->validation_messages);
@@ -375,15 +333,6 @@ class ModelHelper
   {
     // Setting
     $setting = self::getSetting($controller);
-
-    // Scope
-    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
-
-    if (!$check) {
-      return response()->json([
-        'message' => ':(',
-      ], 403);
-    }
 
     // Find Model
     $snap = $setting->model::where('id', $id);

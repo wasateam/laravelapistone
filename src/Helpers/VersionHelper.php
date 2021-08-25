@@ -2,7 +2,7 @@
 
 namespace Wasateam\Laravelapistone\Helpers;
 
-class WsVersionHelper
+class VersionHelper
 {
   //version_name=>所在version ex.audit_version
   //model_name=>本身model_name ex.audit_question

@@ -38,7 +38,7 @@ class ModelHelper
     // Collection
     $collection = self::indexGetPaginate($setting, $snap, $request, $getall);
     try {
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'get index error.',
       ]);
@@ -48,7 +48,7 @@ class ModelHelper
     return self::indexGetResourceCollection($collection, $setting);
   }
 
-  public static function ws_StoreHandler($controller, $request, $id = null, $complete_action = null, $before_save_action = null, $create_with_new_version = false, $version_controller = null, $return_resource = true)
+  public static function ws_StoreHandler($controller, $request, $id = null, $complete_action = null, $before_save_action = null, $create_with_new_version = false, $version_controller = null, $return_resource = true, $custom_scope_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -80,7 +80,7 @@ class ModelHelper
     // Parent
     try {
       $model = self::storeParentId($model, $setting, $id);
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'store parent id fail.',
       ], 400);
@@ -97,7 +97,7 @@ class ModelHelper
     // Save
     $model->save();
     try {
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'data store fail.',
       ], 400);
@@ -112,7 +112,7 @@ class ModelHelper
     // Locale Set
     try {
       self::setLocale($model, $setting, $request);
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'locales data store fail.',
       ], 400);
@@ -191,14 +191,14 @@ class ModelHelper
       //   'message' => 'batch store complete.',
       //   'data'    => $result_data,
       // ], 200);
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'batch store fail. but some have been created.',
       ], 400);
     }
   }
 
-  public static function ws_ShowHandler($controller, $request, $id = null, $custom_snap_handler = null)
+  public static function ws_ShowHandler($controller, $request, $id = null, $custom_snap_handler = null, $custom_scope_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -218,7 +218,7 @@ class ModelHelper
     // Get
     try {
       $model = $snap->first();
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'no data.',
       ], 400);
@@ -233,7 +233,7 @@ class ModelHelper
     return new $setting->resource($model);
   }
 
-  public static function ws_UpdateHandler($controller, $request, $id, $rules = [], $complete_action = null)
+  public static function ws_UpdateHandler($controller, $request, $id, $rules = [], $complete_action = null, $custom_scope_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -275,7 +275,7 @@ class ModelHelper
     // Save
     try {
       $model->save();
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'data update fail.',
       ], 400);
@@ -287,7 +287,7 @@ class ModelHelper
     // Locale Set
     try {
       ModelHelper::setLocale($model, $setting, $request);
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'locales data update fail.',
       ], 400);
@@ -334,7 +334,7 @@ class ModelHelper
     return new $setting->resource($model);
   }
 
-  public static function ws_DestroyHandler($controller, $id, $complete_action = null)
+  public static function ws_DestroyHandler($controller, $id, $complete_action = null, $request = null, $custom_scope_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -372,7 +372,7 @@ class ModelHelper
           "message" => 'delete error.',
         ], 400);
       }
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         "message" => 'delete error.',
       ], 400);
@@ -394,7 +394,7 @@ class ModelHelper
     }
     try {
       $disk->put($store_value, $content);
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'store file dail.',
       ], 400);
@@ -827,7 +827,7 @@ class ModelHelper
           try {
             //code...
             $model_locale->save();
-          } catch (\Throwable$th) {
+          } catch (\Throwable $th) {
             throw $th;
           }
         }
@@ -862,7 +862,7 @@ class ModelHelper
       // Check Parent exist
       try {
         $parent_model = $setting->parent_model::find($parent_id);
-      } catch (\Throwable$th) {
+      } catch (\Throwable $th) {
         throw $th;
       }
       if (!$parent_model) {
@@ -988,5 +988,24 @@ class ModelHelper
         $model->admin_groups()->sync($admin_group_ids);
       }
     }
+  }
+
+  //version_name=>所在version ex.audit_version
+  //model_name=>本身model_name ex.audit_question
+  //$model => 版本model ex.AuditQuestionVersion
+  public static function getVersion($request, $version_name = null, $model_name = null, $resource = null, $order_by = null, $model = null)
+  {
+    $last_version = [];
+    if ($request[$version_name . 's']) {
+      $item_arr     = array_map('intval', explode(',', $request[$version_name . 's']));
+      $last_version = $model::whereHas($version_name . 's', function ($query) use ($item_arr) {
+        return $query->whereIn('id', $item_arr);
+      })->where($model_name . '_id', $resource->id)->latest($order_by)->get();
+      $last_version = count($last_version) ? $last_version[0] : null;
+    } else {
+      $last_version = $model::where($model_name . '_id', $resource->id)->latest($order_by)->get();
+      $last_version = count($last_version) ? $last_version[0] : null;
+    }
+    return $last_version;
   }
 }

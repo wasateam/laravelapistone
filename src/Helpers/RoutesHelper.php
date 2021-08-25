@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
+use Wasateam\Laravelapistone\Controllers\AdminGroupController;
 use Wasateam\Laravelapistone\Controllers\AdminRoleController;
 use Wasateam\Laravelapistone\Controllers\AdminScopeController;
 use Wasateam\Laravelapistone\Controllers\AppController;
@@ -31,6 +32,16 @@ use Wasateam\Laravelapistone\Controllers\WsBlogController;
 
 class RoutesHelper
 {
+  public static function get_all_routes_name()
+  {
+    $routeCollection = Route::getRoutes();
+    $routes          = [];
+    foreach ($routeCollection as $key => $route) {
+      $routes[] = $route->getAction();
+    }
+    return $routes;
+  }
+
   public static function auth_routes($routes = [
     "signin",
     "signup",
@@ -97,6 +108,16 @@ class RoutesHelper
     Route::resource('admin', CMSAdminController::class)->only($routes)->shallow();
   }
 
+  public static function admin_groups($routes = [
+    'index',
+    'show',
+    'store',
+    'update',
+    'destroy',
+  ]) {
+    Route::resource('admin_group', AdminGroupController::class)->only($routes)->shallow();
+  }
+
   public static function admin_scope_routes($routes = [
     'index',
     'show',
@@ -161,13 +182,15 @@ class RoutesHelper
         'destroy',
       ];
       Route::get('/tulpa_page/image/upload_url', [TulpaPageController::class, 'image_get_upload_url']);
+      Route::resource('tulpa_page', TulpaPageController::class)->only($routes)->shallow();
     } else {
       $routes = [
         'index',
         'show',
       ];
+      Route::get('tulpa_page', [TulpaPageController::class, 'index']);
+      Route::get('tulpa_page/page', [TulpaPageController::class, 'show']);
     }
-    Route::resource('tulpa_page', TulpaPageController::class)->only($routes)->shallow();
     Route::resource('tulpa_page_template', TulpaPageTemplateController::class)->only($routes)->shallow();
     Route::resource('tulpa_section', TulpaSectionController::class)->only($routes)->shallow();
   }

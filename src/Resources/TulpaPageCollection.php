@@ -15,7 +15,7 @@ class TulpaPageCollection extends JsonResource
   public function toArray($request)
   {
     if (config('stone.mode') == 'cms') {
-      return [
+      $res = [
         'id'                  => $this->id,
         'created_at'          => $this->created_at,
         'updated_at'          => $this->updated_at,
@@ -32,8 +32,12 @@ class TulpaPageCollection extends JsonResource
         'canonical_url'       => $this->canonical_url,
         'tulpa_page_template' => new TulpaPageTemplate_R1($this->tulpa_page_template),
       ];
+      if (config('stone.admin_group')) {
+        $res['admin_groups'] = AdminGroup_R1::collection($this->admin_groups);
+      }
+      return $res;
     } else if (config('stone.mode') == 'webapi') {
-      return [
+      $res = [
         'id'            => $this->id,
         'route'         => $this->route,
         'title'         => $this->title,
@@ -42,6 +46,7 @@ class TulpaPageCollection extends JsonResource
         'content'       => $this->content,
         'canonical_url' => $this->canonical_url,
       ];
+      return $res;
     }
   }
 }

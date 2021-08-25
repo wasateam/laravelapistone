@@ -14,7 +14,8 @@ class AdminMy extends JsonResource
    */
   public function toArray($request)
   {
-    return [
+
+    $res = [
       'id'                => $this->id,
       'name'              => $this->name,
       'email'             => $this->email,
@@ -25,5 +26,11 @@ class AdminMy extends JsonResource
       'email_verified_at' => $this->email_verified_at,
       'pocket_avatar'     => new PocketImage_R1($this->pocket_avatar),
     ];
+
+    if (config('stone.admin_group')) {
+      $res['admin_groups'] = AdminGroup_R1::collection($this->admin_groups);
+    }
+
+    return $res;
   }
 }

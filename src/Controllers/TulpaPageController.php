@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
@@ -48,14 +49,21 @@ class TulpaPageController extends Controller
   ];
   public $belongs_to_many = [
     'tulpa_sections',
+    'admin_groups',
   ];
   public $order_fields = [
     'updated_at',
     'created_at',
     'route',
   ];
+  public $scope_filter_belongs_to_many = [
+    'admin_groups' => [
+      'boss',
+    ],
+  ];
   public $user_record_field = 'updated_admin_id';
   public $user_create_field = 'created_admin_id';
+  public $admin_group       = true;
 
   /**
    * Index
@@ -89,6 +97,7 @@ class TulpaPageController extends Controller
    * @bodyParam canonical_url string Example: https://wasateam.com
    * @bodyParam tulpa_page_template id Example: 1
    * @bodyParam tulpa_sections object No-example
+   * @bodyParam admin_groups object No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -105,7 +114,8 @@ class TulpaPageController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_ShowHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      $tulpa_page = TulpaPage::where('route', $id)->where('is_active', 1)->first();
+      $tulpa_page = TulpaPage::where('route', $request->route_name)->where('is_active', 1)->first();
+      // $tulpa_page = TulpaPage::where('route', $id)->where('is_active', 1)->first();
       return response()->json([
         'data' => new \Wasateam\Laravelapistone\Resources\TulpaPage($tulpa_page),
       ], 200);
@@ -128,6 +138,7 @@ class TulpaPageController extends Controller
    * @bodyParam canonical_url string Example: https://wasateam.com
    * @bodyParam tulpa_page_template id Example: 1
    * @bodyParam tulpa_sections object No-example
+   * @bodyParam admin_groups object No-example
    */
   public function update(Request $request, $id)
   {

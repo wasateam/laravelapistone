@@ -33,6 +33,10 @@ class Admin extends JsonResource
     if (config('stone.auth.has_role')) {
       $res['roles'] = AdminRole_R1::collection($this->roles);
     }
+
+    if (config('stone.admin_group')) {
+      $res['admin_groups'] = AdminGroup_R1::collection($this->admin_groups);
+    }
     // if (config('stone.app_mode')) {
     //   $res['app_scopes'] = AdminAppScope_R1::collection($this->app_scopes);
     //   $res['app_roles']  = AppRole_R1::collection($this->app_roles);

@@ -49,6 +49,7 @@ class CMSAdminController extends Controller
   ];
   public $belongs_to_many = [
     'roles',
+    'admin_groups',
   ];
   public $filter_belongs_to_many = [
     'roles',
@@ -84,6 +85,7 @@ class CMSAdminController extends Controller
    * @bodyParam is_active integer Example:0
    * @bodyParam avatar string
    * @bodyParam settings string
+   * @bodyParam admin_groups object Example:1
    * @bodyParam scopes object Example:[]
    */
   public function store(Request $request, $id = null)
@@ -114,6 +116,7 @@ class CMSAdminController extends Controller
    * @bodyParam is_active integer Example:0
    * @bodyParam avatar string
    * @bodyParam settings string
+   * @bodyParam admin_groups object Example:1
    * @bodyParam scopes object Example:[]
    */
   public function update(Request $request, $id)

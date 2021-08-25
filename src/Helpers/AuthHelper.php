@@ -2,7 +2,9 @@
 
 namespace Wasateam\Laravelapistone\Helpers;
 
+use Auth;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 class AuthHelper
@@ -20,7 +22,7 @@ class AuthHelper
 
   public static function getAppIdFromRequest($request, $app_name = 'app')
   {
-    $app_id;
+    $app_id = "";
     if ($request->{$app_name}) {
       $app_id = $request->{$app_name};
     } else if ($request->{"{$app_name}_id"}) {
@@ -44,23 +46,45 @@ class AuthHelper
     return $in_app;
   }
 
-  public static function getScopesInApp($user, $app_id, $app_name)
+  public static function getScopesInApp($user, $app_id, $app_name = "app", $auth_name = "admin", $id_name = "model")
   {
     $all_scopes = [];
-    $user_roles = $user->{"{$app_name}_roles"}->filter(function ($item) use ($app_id) {
-      if (!$item->{"{$app_name}_id"} && $item->is_default) {
-        return true;
-      } else {
-        return $item->{"{$app_name}_id"} == $app_id;
-      }
-    });
-    $app_scopes = $user->{"{$app_name}_scopes"}->filter(function ($item) use ($app_id) {
-      if (!$item->{"{$app_name}_id"} && $item->is_default) {
-        return true;
-      } else {
-        return $item->{"{$app_name}_id"} == $app_id;
-      }
-    });
+    $user_roles = [];
+    if ($user->{"{$auth_name}_{$app_name}_roles"}) {
+      $user_roles = $user->{"{$auth_name}_{$app_name}_roles"}->filter(function ($item) use ($app_id, $id_name) {
+        if (!$item->{"{$id_name}_id"} && $item->is_default) {
+          return true;
+        } else {
+          return $item->{"{$id_name}_id"} == $app_id;
+        }
+      });
+    } else {
+      $user_roles = $user->{"{$auth_name}_roles"}->filter(function ($item) use ($app_id, $id_name) {
+        if (!$item->{"{$id_name}_id"} && $item->is_default) {
+          return true;
+        } else {
+          return $item->{"{$id_name}_id"} == $app_id;
+        }
+      });
+    }
+    $all_scopes = [];
+    if ($app_scopes = $user->{"{$auth_name}_{$app_name}_scopes"}) {
+      $app_scopes = $user->{"{$auth_name}_{$app_name}_scopes"}->filter(function ($item) use ($app_id, $id_name) {
+        if (!$item->{"{$id_name}_id"} && $item->is_default) {
+          return true;
+        } else {
+          return $item->{"{$id_name}_id"} == $app_id;
+        }
+      });
+    } else {
+      $app_scopes = $user->{"{$auth_name}_scopes"}->filter(function ($item) use ($app_id, $id_name) {
+        if (!$item->{"{$id_name}_id"} && $item->is_default) {
+          return true;
+        } else {
+          return $item->{"{$id_name}_id"} == $app_id;
+        }
+      });
+    }
     foreach ($user_roles as $user_role) {
       if ($user_role->scopes) {
         $all_scopes = array_merge($all_scopes, $user_role->scopes);
@@ -80,5 +104,52 @@ class AuthHelper
     return Arr::where($scopes, function ($value) use ($target) {
       return Str::contains($target, $value);
     });
+  }
+
+  public static function getAuthScope($request, $app_name = "app", $app_field_name = "admin_apps", $auth_name = "auth", $model_id_name = "model")
+  {
+    $user = Auth::user();
+    if (!$user) {
+      return false;
+    }
+
+    // App Id
+    $app_id = Self::getAppIdFromRequest($request, $app_name);
+
+    // In App Check
+    $in_app = Self::checkUserInApp($user, $app_id, $app_name, $app_field_name);
+    if (!$in_app) {
+      return false;
+    }
+
+    // All Scopes
+    $all_scopes = Self::getScopesInApp($user, $app_id, $app_name, $auth_name, $model_id_name);
+
+    // Has Scope
+    $api_name  = Route::currentRouteName();
+    $has_scope = Self::checkHasScope($all_scopes, $api_name);
+    if (in_array('wall-passer', $all_scopes)) {
+      return true;
+    } else if (!$has_scope) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public static function checkAuthScope($request, $filters = [], $custom_scope_handler = null)
+  {
+    $has_scope = true;
+    if (count($filters) && $request) {
+      foreach ($filters as $filter) {
+        if ($request->$filter || $request->{"{$filter}_id"}) {
+          $has_scope = Self::getAuthScope($request, $filter, config('stone.auth.model_name') . "_" . $filter . "s", config('stone.auth.model_name'), "model");
+        }
+      }
+    }
+    if ($custom_scope_handler) {
+      $has_scope = $custom_scope_handler($has_scope);
+    }
+    return $has_scope;
   }
 }

@@ -12,7 +12,7 @@ class TulpaCrossItem extends Model
 
   public function admin_groups()
   {
-    return $this->belongsToMany(AdminGroup::class, 'admin_group_tulpa_page', 'tulpa_page_id', 'admin_group_id');
+    return $this->belongsToMany(AdminGroup::class, 'admin_group_tulpa_cross_item', 'tulpa_cross_item_id', 'admin_group_id');
   }
 
   public function tulpa_section()

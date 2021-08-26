@@ -110,6 +110,7 @@ class TulpaPageController extends Controller
    * Show
    *
    * @urlParam  tulpa_page required The ID of tulpa_page. Example: 1
+   * @queryParam route_name string No-Example
    */
   public function show(Request $request, $id = null)
   {

@@ -38,7 +38,7 @@ class ModelHelper
     // Collection
     $collection = self::indexGetPaginate($setting, $snap, $request, $getall);
     try {
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'get index error.',
       ]);
@@ -80,7 +80,7 @@ class ModelHelper
     // Parent
     try {
       $model = self::storeParentId($model, $setting, $id);
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'store parent id fail.',
       ], 400);
@@ -97,7 +97,7 @@ class ModelHelper
     // Save
     $model->save();
     try {
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'data store fail.',
       ], 400);
@@ -112,7 +112,7 @@ class ModelHelper
     // Locale Set
     try {
       self::setLocale($model, $setting, $request);
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'locales data store fail.',
       ], 400);
@@ -191,7 +191,7 @@ class ModelHelper
       //   'message' => 'batch store complete.',
       //   'data'    => $result_data,
       // ], 200);
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'batch store fail. but some have been created.',
       ], 400);
@@ -218,7 +218,7 @@ class ModelHelper
     // Get
     try {
       $model = $snap->first();
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'no data.',
       ], 400);
@@ -241,7 +241,6 @@ class ModelHelper
     // Validation
     $validator = Validator::make($request->all(), $rules, $setting->validation_messages);
     if ($validator->fails()) {
-      error_log('aa');
       return response()->json([
         'message' => $validator->messages(),
       ], 400);
@@ -275,7 +274,7 @@ class ModelHelper
     // Save
     try {
       $model->save();
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'data update fail.',
       ], 400);
@@ -287,7 +286,7 @@ class ModelHelper
     // Locale Set
     try {
       ModelHelper::setLocale($model, $setting, $request);
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'locales data update fail.',
       ], 400);
@@ -295,7 +294,6 @@ class ModelHelper
 
     if (count($setting->child_models)) {
       foreach ($setting->child_models as $child_model_key => $child_model) {
-        error_log(json_encode($model->{$child_model_key}));
         if ($request->filled($child_model_key) && is_array($request->$child_model_key)) {
           // Remove Unbind
           foreach ($model->{$child_model_key} as $child_check) {
@@ -316,8 +314,6 @@ class ModelHelper
             if ($child_model_request->id) {
               ModelHelper::ws_UpdateHandler(new $child_model, $child_model_request, $child_model_request->id);
             } else {
-              error_log('ok');
-              error_log($child_model);
               ModelHelper::ws_StoreHandler(new $child_model, $child_model_request, $model->id);
             }
           }
@@ -372,7 +368,7 @@ class ModelHelper
           "message" => 'delete error.',
         ], 400);
       }
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         "message" => 'delete error.',
       ], 400);
@@ -394,7 +390,7 @@ class ModelHelper
     }
     try {
       $disk->put($store_value, $content);
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'store file dail.',
       ], 400);
@@ -582,7 +578,6 @@ class ModelHelper
             $snap = $snap->whereNotNull($filter_field);
           } else {
             $item_arr = array_map(null, explode(',', $request->{$filter_field}));
-            error_log(json_encode($item_arr));
             $snap = $snap->whereIn($filter_field, $item_arr);
           }
         }
@@ -743,7 +738,7 @@ class ModelHelper
       if (!$request->has($key)) {
         continue;
       }
-      if (count($setting->scope_filter_belongs_to_many)) {
+      if (count($setting->scope_filter_belongs_to_many) && array_key_exists($key, $setting->scope_filter_belongs_to_many)) {
         $scope_check = false;
         foreach ($setting->scope_filter_belongs_to_many as $scope_filter_belongs_to_many_key => $scope_filter_belongs_to_many_value) {
           $admin = Auth::user();
@@ -827,7 +822,7 @@ class ModelHelper
           try {
             //code...
             $model_locale->save();
-          } catch (\Throwable $th) {
+          } catch (\Throwable$th) {
             throw $th;
           }
         }
@@ -862,7 +857,7 @@ class ModelHelper
       // Check Parent exist
       try {
         $parent_model = $setting->parent_model::find($parent_id);
-      } catch (\Throwable $th) {
+      } catch (\Throwable$th) {
         throw $th;
       }
       if (!$parent_model) {

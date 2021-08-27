@@ -17,6 +17,9 @@ use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NotificationController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
+use Wasateam\Laravelapistone\Controllers\ServiceStoreCloseController;
+use Wasateam\Laravelapistone\Controllers\ServiceStoreController;
+use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
 use Wasateam\Laravelapistone\Controllers\SnappyController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
 use Wasateam\Laravelapistone\Controllers\SystemClassController;
@@ -383,5 +386,33 @@ class RoutesHelper
     'destroy',
   ]) {
     Route::resource('app', AppController::class)->only($routes)->shallow();
+  }
+
+  public static function service_store_routes()
+  {
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      $routes = [
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ];
+      Route::resource('service_store', ServiceStoreController::class)->only($routes)->shallow();
+      Route::resource('service_store_noti', ServiceStoreNotiController::class)->only($routes)->shallow();
+      Route::resource('service_store_close', ServiceStoreCloseController::class)->only($routes)->shallow();
+      Route::resource('pocket_image', PocketImageController::class)->only([
+        'index', 'store', 'destroy',
+      ])->shallow();
+    } else {
+      $routes = [
+        'index',
+        'show',
+      ];
+      Route::resource('service_store', ServiceStoreController::class)->only($routes)->shallow();
+      Route::resource('service_store_noti', ServiceStoreNotiController::class)->only($routes)->shallow();
+      Route::resource('service_store_close', ServiceStoreCloseController::class)->only($routes)->shallow();
+    }
   }
 }

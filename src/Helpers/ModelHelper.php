@@ -7,6 +7,7 @@ use Auth;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Storage;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
@@ -93,6 +94,8 @@ class ModelHelper
     if ($before_save_action) {
       $model = $before_save_action($model);
     }
+
+    $model = self::setUUID($model, $setting);
 
     // Save
     $model->save();
@@ -450,6 +453,8 @@ class ModelHelper
     $setting->admin_group                     = isset($controller->admin_group) ? $controller->admin_group : false;
     $setting->admin_scope_boss                = isset($controller->admin_scope_boss) ? $controller->admin_scope_boss : 'boss';
     $setting->scope_filter_belongs_to_many    = isset($controller->scope_filter_belongs_to_many) ? $controller->scope_filter_belongs_to_many : [];
+    $setting->uuid                            = isset($controller->uuid) ? $controller->uuid : false;
+    $setting->uuid_key                        = isset($controller->uuid_key) ? $controller->uuid_key : 'uuid';
     return $setting;
   }
 
@@ -578,7 +583,7 @@ class ModelHelper
             $snap = $snap->whereNotNull($filter_field);
           } else {
             $item_arr = array_map(null, explode(',', $request->{$filter_field}));
-            $snap = $snap->whereIn($filter_field, $item_arr);
+            $snap     = $snap->whereIn($filter_field, $item_arr);
           }
         }
       }
@@ -1002,5 +1007,11 @@ class ModelHelper
       $last_version = count($last_version) ? $last_version[0] : null;
     }
     return $last_version;
+  }
+
+  public static function setUUID($model, $setting)
+  {
+    $model->{$setting->uuid_key} = Str::uuid();
+    return $model;
   }
 }

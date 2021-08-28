@@ -12,12 +12,12 @@ class ServiceStore extends Model
 
   public function service_store_closes()
   {
-    return $this->belongsToMany(ServiceStoreClose::class);
+    return $this->belongsToMany(ServiceStoreClose::class, 'service_store_close_service_store', 'service_store_id', 'service_store_close_id');
   }
 
   public function service_store_notis()
   {
-    return $this->belongsToMany(ServiceStoreNoti::class);
+    return $this->belongsToMany(ServiceStoreNoti::class, 'service_store_noti_service_store', 'service_store_id', 'service_store_noti_id');
   }
 
   public function updated_admin()
@@ -29,4 +29,9 @@ class ServiceStore extends Model
   {
     return $this->belongsTo(Admin::class, 'created_admin_id');
   }
+
+  protected $casts = [
+    'business_hours' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'payload'        => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+  ];
 }

@@ -12,7 +12,7 @@ class ServiceStoreClose extends Model
 
   public function service_stores()
   {
-    return $this->belongsToMany(ServiceStore::class);
+    return $this->belongsToMany(ServiceStore::class, 'service_store_close_service_store', 'service_store_close_id', 'service_store_id');
   }
 
   public function updated_admin()

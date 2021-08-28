@@ -77,14 +77,7 @@ class ServiceStoreController extends Controller
    */
   public function store(Request $request, $id = null)
   {
-    if (config('stone.mode') == 'cms') {
-      return ModelHelper::ws_ShowHandler($this, $request, $id);
-    } else if (config('stone.mode') == 'webapi') {
-      return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) {
-        $snap = $snap->where('is_active', 1);
-        return $snap;
-      });
-    };
+    return ModelHelper::ws_StoreHandler($this, $request, $id);
   }
 
   /**
@@ -94,7 +87,14 @@ class ServiceStoreController extends Controller
    */
   public function show(Request $request, $id = null)
   {
-    return ModelHelper::ws_ShowHandler($this, $request, $id);
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_ShowHandler($this, $request, $id);
+    } else if (config('stone.mode') == 'webapi') {
+      return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) {
+        $snap = $snap->where('is_active', 1);
+        return $snap;
+      });
+    };
   }
 
   /**

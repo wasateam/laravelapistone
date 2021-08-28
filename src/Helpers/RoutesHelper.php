@@ -402,9 +402,6 @@ class RoutesHelper
       Route::resource('service_store', ServiceStoreController::class)->only($routes)->shallow();
       Route::resource('service_store_noti', ServiceStoreNotiController::class)->only($routes)->shallow();
       Route::resource('service_store_close', ServiceStoreCloseController::class)->only($routes)->shallow();
-      Route::resource('pocket_image', PocketImageController::class)->only([
-        'index', 'store', 'destroy',
-      ])->shallow();
     } else {
       $routes = [
         'index',

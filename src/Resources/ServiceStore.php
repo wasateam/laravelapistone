@@ -31,6 +31,8 @@ class ServiceStore extends JsonResource
         'lng'                  => $this->lng,
         'is_active'            => $this->is_active,
         'payload'              => $this->payload,
+        'parking_info'         => $this->parking_info,
+        'transportation_info'  => $this->transportation_info,
         'service_store_closes' => ServiceStoreClose_R1::collection($this->service_store_closes),
         'service_store_notis'  => ServiceStoreNoti_R1::collection($this->service_store_notis),
       ];
@@ -47,6 +49,8 @@ class ServiceStore extends JsonResource
         'lat'                  => $this->lat,
         'lng'                  => $this->lng,
         'payload'              => $this->payload,
+        'parking_info'         => $this->parking_info,
+        'transportation_info'  => $this->transportation_info,
         'service_store_closes' => ServiceStoreClose_R1::collection($this->service_store_closes),
         'service_store_notis'  => ServiceStoreNoti_R1::collection($this->service_store_notis),
       ];

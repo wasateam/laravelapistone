@@ -31,6 +31,8 @@ class ServiceStoreController extends Controller
     'lng',
     'is_active',
     'payload',
+    'parking_info',
+    'transportation_info',
   ];
   public $search_fields = [
     'name',
@@ -74,6 +76,8 @@ class ServiceStoreController extends Controller
    * @bodyParam lng string Example: 25.03746
    * @bodyParam is_active int Example: 1
    * @bodyParam payload object No-example
+   * @bodyParam parking_info string No-example
+   * @bodyParam transportation_info string No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -112,6 +116,8 @@ class ServiceStoreController extends Controller
    * @bodyParam lng string Example: 25.03746
    * @bodyParam is_active int Example: 1
    * @bodyParam payload object No-example
+   * @bodyParam parking_info string No-example
+   * @bodyParam transportation_info string No-example
    */
   public function update(Request $request, $id)
   {

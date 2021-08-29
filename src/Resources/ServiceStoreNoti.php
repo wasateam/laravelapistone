@@ -21,12 +21,16 @@ class ServiceStoreNoti extends JsonResource
         'created_admin'  => new Admin_R1($this->created_admin),
         'updated_at'     => $this->updated_at,
         'content'        => $this->content,
+        'start'          => $this->start,
+        'end'            => $this->end,
         'service_stores' => ServiceStore_R1::collection($this->service_stores),
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
         'id'             => $this->id,
         'content'        => $this->content,
+        'start'          => $this->start,
+        'end'            => $this->end,
         'service_stores' => ServiceStore_R1::collection($this->service_stores),
       ];
     }

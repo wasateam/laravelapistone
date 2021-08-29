@@ -21,8 +21,12 @@ class ServiceStoreNotiController extends Controller
   public $resource     = 'Wasateam\Laravelapistone\Resources\ServiceStoreNoti';
   public $input_fields = [
     'content',
+    'start',
+    'end',
   ];
   public $order_fields = [
+    'start',
+    'end',
     'updated_at',
     'created_at',
   ];

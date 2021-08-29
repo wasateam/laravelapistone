@@ -17,6 +17,8 @@ class ServiceStoreNoti_R1 extends JsonResource
     return [
       'id'      => $this->id,
       'content' => $this->content,
+      'start'   => $this->start,
+      'end'     => $this->end,
     ];
   }
 }

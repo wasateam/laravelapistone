@@ -1011,7 +1011,9 @@ class ModelHelper
 
   public static function setUUID($model, $setting)
   {
-    $model->{$setting->uuid_key} = Str::uuid();
+    if ($setting->uuid) {
+      $model->{$setting->uuid_key} = Str::uuid();
+    }
     return $model;
   }
 }

@@ -24,4 +24,9 @@ class ServiceStoreClose extends Model
   {
     return $this->belongsTo(Admin::class, 'created_admin_id');
   }
+
+  public function admin_groups()
+  {
+    return $this->belongsToMany(AdminGroup::class, 'admin_group_service_store', 'service_store_id', 'admin_group_id');
+  }
 }

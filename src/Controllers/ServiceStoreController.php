@@ -34,12 +34,20 @@ class ServiceStoreController extends Controller
     'parking_info',
     'transportation_info',
   ];
+  public $belongs_to_many = [
+    'admin_groups',
+  ];
   public $search_fields = [
     'name',
   ];
   public $order_fields = [
     'updated_at',
     'created_at',
+  ];
+  public $scope_filter_belongs_to_many = [
+    'admin_groups' => [
+      'boss',
+    ],
   ];
   public $user_record_field = 'updated_admin_id';
   public $user_create_field = 'created_admin_id';

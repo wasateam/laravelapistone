@@ -32,9 +32,16 @@ class ServiceStoreNotiController extends Controller
   ];
   public $belongs_to_many = [
     'service_stores',
+    'admin_groups',
+  ];
+  public $scope_filter_belongs_to_many = [
+    'admin_groups' => [
+      'boss',
+    ],
   ];
   public $user_record_field = 'updated_admin_id';
   public $user_create_field = 'created_admin_id';
+  public $admin_group       = true;
 
   /**
    * Index

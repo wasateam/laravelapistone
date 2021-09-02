@@ -2,6 +2,8 @@
 
 namespace Wasateam\Laravelapistone\Helpers;
 
+use ReCaptcha\ReCaptcha;
+
 class RecaptchaHelper
 {
   public static function verify($token)

@@ -42,6 +42,10 @@ class StoneServiceProvider extends ServiceProvider
     ], 'seeder-auth');
 
     $this->publishes([
+      __DIR__ . '/../database/seeders/admin' => database_path('seeders'),
+    ], 'seeder-admin');
+
+    $this->publishes([
       __DIR__ . '/../database/migrations/socialite' => database_path('migrations'),
     ], 'migrations-socialite');
 

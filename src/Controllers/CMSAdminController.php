@@ -49,7 +49,6 @@ class CMSAdminController extends Controller
   ];
   public $belongs_to_many = [
     'roles',
-    'admin_groups',
   ];
   public $filter_belongs_to_many = [
     'roles',
@@ -62,6 +61,16 @@ class CMSAdminController extends Controller
   ];
   public $user_record_field = 'updated_admin_id';
   public $user_create_field = 'created_admin_id';
+
+  public function __construct()
+  {
+    if (config('stone.admin_group')) {
+      $this->belongs_to_many = [
+        'roles',
+        'admin_groups',
+      ];
+    }
+  }
 
   /**
    * Index

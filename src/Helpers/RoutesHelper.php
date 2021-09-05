@@ -7,6 +7,8 @@ use Wasateam\Laravelapistone\Controllers\AdminGroupController;
 use Wasateam\Laravelapistone\Controllers\AdminRoleController;
 use Wasateam\Laravelapistone\Controllers\AdminScopeController;
 use Wasateam\Laravelapistone\Controllers\AppController;
+use Wasateam\Laravelapistone\Controllers\AppointmentAvailableController;
+use Wasateam\Laravelapistone\Controllers\AppointmentController;
 use Wasateam\Laravelapistone\Controllers\AreaController;
 use Wasateam\Laravelapistone\Controllers\AreaSectionController;
 use Wasateam\Laravelapistone\Controllers\AuthController;
@@ -15,8 +17,10 @@ use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NotificationController;
+use Wasateam\Laravelapistone\Controllers\PinCardController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
+use Wasateam\Laravelapistone\Controllers\ServicePlanController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreCloseController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
@@ -410,6 +414,76 @@ class RoutesHelper
       Route::resource('service_store', ServiceStoreController::class)->only($routes)->shallow();
       Route::resource('service_store_noti', ServiceStoreNotiController::class)->only($routes)->shallow();
       Route::resource('service_store_close', ServiceStoreCloseController::class)->only($routes)->shallow();
+    }
+  }
+
+  public static function service_plan_routes()
+  {
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      $routes = [
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ];
+      Route::resource('service_plan', ServicePlanController::class)->only($routes)->shallow();
+    } else {
+      $routes = [
+        'index',
+        'show',
+      ];
+      Route::resource('service_plan', ServicePlanController::class)->only($routes)->shallow();
+    }
+  }
+
+  public static function pin_card_routes()
+  {
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      $routes = [
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ];
+      Route::resource('pin_card', PinCardController::class)->only($routes)->shallow();
+    } else {
+      $routes = [
+        'index',
+        'show',
+      ];
+      Route::resource('pin_card', PinCardController::class)->only($routes)->shallow();
+    }
+  }
+
+  public static function appointment_routes()
+  {
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      $routes = [
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ];
+      Route::resource('pin_card', AppointmentController::class)->only($routes)->shallow();
+      Route::resource('pin_card', AppointmentAvailableController::class)->only($routes)->shallow();
+    } else {
+      Route::resource('pin_card', AppointmentController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+      Route::resource('pin_card', AppointmentAvailableController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
     }
   }
 }

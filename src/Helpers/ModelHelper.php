@@ -265,6 +265,15 @@ class ModelHelper
       ], 400);
     }
 
+    if ($custom_scope_handler) {
+      $check = $custom_scope_handler($model);
+      if (!$check) {
+        return response()->json([
+          'message' => 'Invalid Scope(s).',
+        ], 400);
+      }
+    }
+
     // Input Value
     $model = self::setInputFields($model, $setting, $request);
 
@@ -352,6 +361,15 @@ class ModelHelper
       return response()->json([
         'message' => 'no data.',
       ], 400);
+    }
+
+    if ($custom_scope_handler) {
+      $check = $custom_scope_handler($model);
+      if (!$check) {
+        return response()->json([
+          'message' => 'Invalid Scope(s).',
+        ], 400);
+      }
     }
 
     Self::ws_Log($model, $controller, 'delete');

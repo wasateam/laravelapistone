@@ -116,6 +116,18 @@ class StoneServiceProvider extends ServiceProvider
     $this->publishes([
       __DIR__ . '/../database/migrations/service_store' => database_path('migrations'),
     ], 'migrations-service-store');
+    
+    $this->publishes([
+      __DIR__ . '/../database/migrations/pin_card' => database_path('migrations'),
+    ], 'migrations-pin_card');
+    
+    $this->publishes([
+      __DIR__ . '/../database/migrations/service_plan' => database_path('migrations'),
+    ], 'migrations-service_plan');
+
+    $this->publishes([
+      __DIR__ . '/../database/migrations/appointment' => database_path('migrations'),
+    ], 'migrations-appointment');
 
     if ($this->app->runningInConsole()) {
       $this->commands([

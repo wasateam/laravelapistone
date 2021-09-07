@@ -19,6 +19,8 @@ class PinCard extends JsonResource
       'created_at'   => $this->created_at,
       'updated_at'   => $this->updated_at,
       'pin'          => $this->pin,
+      'status'       => $this->status,
+      'user'         => new User_R1($this->user),
       'service_plan' => new ServicePlan_R1($this->service_plan),
     ];
   }

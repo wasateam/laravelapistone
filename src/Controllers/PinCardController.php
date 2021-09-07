@@ -20,7 +20,7 @@ class PinCardController extends Controller
   public $name         = 'pin_card';
   public $resource     = 'Wasateam\Laravelapistone\Resources\PinCard';
   public $input_fields = [
-    'pin',
+    // 'pin',
   ];
   public $belongs_to_many = [
     'service_plan',

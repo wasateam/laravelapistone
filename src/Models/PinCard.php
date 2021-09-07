@@ -19,4 +19,9 @@ class PinCard extends Model
   {
     return $this->belongsTo(ServicePlan::class, 'service_plan_id');
   }
+
+  public function user()
+  {
+    return $this->belongsTo(User::class, 'user_id');
+  }
 }

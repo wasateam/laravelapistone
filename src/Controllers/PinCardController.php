@@ -3,7 +3,9 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\PinCard;
 
@@ -20,7 +22,7 @@ class PinCardController extends Controller
   public $name         = 'pin_card';
   public $resource     = 'Wasateam\Laravelapistone\Resources\PinCard';
   public $input_fields = [
-    // 'pin',
+    'pin',
   ];
   public $belongs_to_many = [
     'service_plan',
@@ -86,5 +88,38 @@ class PinCardController extends Controller
   public function destroy($id)
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
+  }
+
+  /**
+   * Generate
+   *
+   * @bodyParam service_plan string Example: 1
+   * @bodyParam count string Example: 100
+   */
+  public function generate(Request $request)
+  {
+    $request->validate([
+      'count' => 'required|numeric',
+    ]);
+    $user  = Auth::user();
+    $count = $request->count;
+
+    for ($i = 0; $i < $count; $i++) {
+      $try_count = 0;
+      while ($try_count < 3) {
+        try {
+          $model                   = new $model;
+          $model->pin              = Str::random(20);
+          $model->created_admin_id = $user->id;
+          $model->save();
+          break;
+        } catch (\Throwable$th) {
+        }
+        $try_count++;
+      }
+    }
+    return response()->json([
+      'message' => 'ok',
+    ]);
   }
 }

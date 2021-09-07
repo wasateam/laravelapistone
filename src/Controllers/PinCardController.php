@@ -23,9 +23,11 @@ class PinCardController extends Controller
   public $resource     = 'Wasateam\Laravelapistone\Resources\PinCard';
   public $input_fields = [
     'pin',
+    'status',
   ];
   public $belongs_to_many = [
     'service_plan',
+    'user',
   ];
   public $search_fields = [
     'pin',
@@ -91,10 +93,9 @@ class PinCardController extends Controller
   }
 
   /**
-   * Generate
+   * Register
    *
    * @bodyParam service_plan string Example: 1
-   * @bodyParam count string Example: 100
    */
   public function generate(Request $request)
   {
@@ -108,7 +109,7 @@ class PinCardController extends Controller
       $try_count = 0;
       while ($try_count < 3) {
         try {
-          $model                   = new $model;
+          $model                   = new $this->model;
           $model->pin              = Str::random(20);
           $model->created_admin_id = $user->id;
           $model->save();
@@ -120,6 +121,30 @@ class PinCardController extends Controller
     }
     return response()->json([
       'message' => 'ok',
+    ]);
+  }
+
+  /**
+   * Register
+   *
+   */
+  public function register(Request $request)
+  {
+    $request->validate([
+      'pin' => 'required|string',
+    ]);
+    $user  = Auth::user();
+    $model = $this->model::where('pin', $request->pin)->first();
+    if (!$model) {
+      return response()->json([
+        'message' => 'no card.',
+      ], 400);
+    }
+    $model->status  = 1;
+    $model->user_id = $user->id;
+    $model->save();
+    return response()->json([
+      'message' => 'successful registed.',
     ]);
   }
 }

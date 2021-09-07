@@ -450,12 +450,9 @@ class RoutesHelper
         'destroy',
       ];
       Route::resource('pin_card', PinCardController::class)->only($routes)->shallow();
+      Route::post('pin_card/generate', [PinCardController::class, 'generate']);
     } else {
-      $routes = [
-        'index',
-        'show',
-      ];
-      Route::resource('pin_card', PinCardController::class)->only($routes)->shallow();
+      Route::post('pin_card/register', [PinCardController::class, 'register'])->only($routes)->shallow();
     }
   }
 

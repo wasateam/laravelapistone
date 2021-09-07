@@ -25,6 +25,7 @@ return [
   ],
   'app_url'           => env('APP_URL'),
   'web_url'           => env('WEB_URL'),
+  'locale'            => env('LOCALE', false),
   // Auth
   'auth'              => [
     'model_name'       => 'user',

@@ -35,7 +35,6 @@ class ServiceStoreController extends Controller
     'transportation_info',
   ];
   public $belongs_to_many = [
-    'admin_groups',
   ];
   public $search_fields = [
     'name',
@@ -53,6 +52,15 @@ class ServiceStoreController extends Controller
   public $user_create_field = 'created_admin_id';
   public $uuid              = true;
   public $admin_group       = true;
+
+  public function __construct()
+  {
+    if (config('stone.admin_group')) {
+      $this->belongs_to_many = [
+        'admin_groups',
+      ];
+    }
+  }
 
   /**
    * Index

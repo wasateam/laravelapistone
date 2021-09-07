@@ -24,9 +24,6 @@ class ServicePlanController extends Controller
     'remark',
     'payload',
   ];
-  public $belongs_to_many = [
-    'service_plan',
-  ];
   public $search_fields = [
     'name',
   ];

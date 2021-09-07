@@ -25,7 +25,7 @@ class PinCardController extends Controller
     'pin',
     'status',
   ];
-  public $belongs_to_many = [
+  public $belongs_to = [
     'service_plan',
     'user',
   ];

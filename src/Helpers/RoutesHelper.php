@@ -467,17 +467,17 @@ class RoutesHelper
         'update',
         'destroy',
       ];
-      Route::resource('pin_card', AppointmentController::class)->only($routes)->shallow();
-      Route::resource('pin_card', AppointmentAvailableController::class)->only($routes)->shallow();
+      Route::resource('appointment', AppointmentController::class)->only($routes)->shallow();
+      Route::resource('appointment_available', AppointmentAvailableController::class)->only($routes)->shallow();
     } else {
-      Route::resource('pin_card', AppointmentController::class)->only([
+      Route::resource('appointment', AppointmentController::class)->only([
         'index',
         'show',
         'store',
         'update',
         'destroy',
       ])->shallow();
-      Route::resource('pin_card', AppointmentAvailableController::class)->only([
+      Route::resource('appointment_available', AppointmentAvailableController::class)->only([
         'index',
         'show',
       ])->shallow();

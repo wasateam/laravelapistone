@@ -34,7 +34,6 @@ class ServicePlanController extends Controller
     'updated_at',
     'created_at',
   ];
-  public $user_create_field = 'created_admin_id';
   public $uuid              = true;
 
   /**

@@ -19,7 +19,6 @@ class UserController extends Controller
   public $name                = 'user';
   public $resource            = 'Wasateam\Laravelapistone\Resources\User';
   public $validation_messages = [
-    'password.min' => 'password too short.',
     'email.unique' => 'email has been token.',
   ];
   public $validation_rules = [

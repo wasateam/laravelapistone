@@ -33,7 +33,7 @@ class User extends JsonResource
       'email_verified_at' => $this->email_verified_at,
       'pocket_avatar'     => new PocketImage_R1($this->pocket_avatar),
     ];
-    if (config('locale')) {
+    if (config('stone.locale')) {
       $res['locale'] = new Locale_R1($this->locale);
     }
     if (config('stone.user_device_token')) {

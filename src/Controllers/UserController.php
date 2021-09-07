@@ -60,10 +60,18 @@ class UserController extends Controller
     'created_at',
   ];
   public $belongs_to = [
-    'locale',
   ];
   public $user_record_field = 'updated_admin_id';
   public $user_create_field = 'created_admin_id';
+
+  public function __construct()
+  {
+    if (config('stone.locale')) {
+      $this->belongs_to = [
+        'locale',
+      ];
+    }
+  }
 
   /**
    * Index

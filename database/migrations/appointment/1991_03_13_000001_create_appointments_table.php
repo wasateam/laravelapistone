@@ -19,8 +19,8 @@ class CreateAppointmentsTable extends Migration
       $table->softDeletes();
       $table->string('user_id');
       $table->string('service_store_id')->nullable();
-      $table->timestamp('start_time')->nullable();
-      $table->timestamp('end_time')->nullable();
+      $table->string('start_time')->nullable();
+      $table->string('end_time')->nullable();
       $table->date('date');
     });
   }

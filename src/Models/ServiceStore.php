@@ -36,7 +36,8 @@ class ServiceStore extends Model
   }
 
   protected $casts = [
-    'business_hours' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
-    'payload'        => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'business_hours'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'appointment_availables' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'payload'                => \Wasateam\Laravelapistone\Casts\JsonCast::class,
   ];
 }

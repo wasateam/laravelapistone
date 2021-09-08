@@ -19,4 +19,9 @@ class Appointment extends Model
   {
     return $this->belongsTo(User::class, 'user_id');
   }
+
+  public function service_store()
+  {
+    return $this->belongsTo(ServiceStore_R1::class, 'service_store_id');
+  }
 }

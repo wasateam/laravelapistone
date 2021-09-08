@@ -468,7 +468,7 @@ class RoutesHelper
         'destroy',
       ];
       Route::resource('appointment', AppointmentController::class)->only($routes)->shallow();
-      Route::resource('appointment_available', AppointmentAvailableController::class)->only($routes)->shallow();
+      // Route::resource('appointment_available', AppointmentAvailableController::class)->only($routes)->shallow();
     } else {
       Route::resource('appointment', AppointmentController::class)->only([
         'index',
@@ -477,10 +477,10 @@ class RoutesHelper
         'update',
         'destroy',
       ])->shallow();
-      Route::resource('appointment_available', AppointmentAvailableController::class)->only([
-        'index',
-        'show',
-      ])->shallow();
+      // Route::resource('appointment_available', AppointmentAvailableController::class)->only([
+      //   'index',
+      //   'show',
+      // ])->shallow();
     }
   }
 }

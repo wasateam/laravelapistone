@@ -26,7 +26,7 @@ class AppointmentController extends Controller
   ];
   public $belongs_to = [
     'user',
-    'appointment_available',
+    'service_store',
   ];
   public $order_fields = [
     'updated_at',
@@ -59,7 +59,7 @@ class AppointmentController extends Controller
    * @bodyParam end_time string Example: 1200
    * @bodyParam date date Example: 2021-03-13
    * @bodyParam user string Example :1
-   * @bodyParam appointment_available Example :1
+   * @bodyParam service_store Example :1
    */
   public function store(Request $request, $id = null)
   {
@@ -101,7 +101,7 @@ class AppointmentController extends Controller
    * @bodyParam end_time string Example: 1200
    * @bodyParam date date Example: 2021-03-13
    * @bodyParam user string Example :1
-   * @bodyParam appointment_available Example :1
+   * @bodyParam service_store Example :1
    */
   public function update(Request $request, $id)
   {

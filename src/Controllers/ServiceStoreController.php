@@ -27,6 +27,7 @@ class ServiceStoreController extends Controller
     'address',
     'des',
     'business_hours',
+    'appointment_availables',
     'lat',
     'lng',
     'is_active',
@@ -89,6 +90,7 @@ class ServiceStoreController extends Controller
    * @bodyParam address string Example: 台北市中山區松江路333號33樓
    * @bodyParam des string Example: 說明說明
    * @bodyParam business_hours object Example: ["0900","2000","0900","2000","0900","2000","0900","2000","0900","2000","1000","1800",null,null]
+   * @bodyParam appointment_availables object No-example
    * @bodyParam lat string Example: 121.564558
    * @bodyParam lng string Example: 25.03746
    * @bodyParam is_active int Example: 1
@@ -129,6 +131,7 @@ class ServiceStoreController extends Controller
    * @bodyParam address string Example: 台北市中山區松江路333號33樓
    * @bodyParam des string Example: 說明說明
    * @bodyParam business_hours object Example: ["0900","2000","0900","2000","0900","2000","0900","2000","0900","2000","1000","1800",null,null]
+   * @bodyParam appointment_availables object No-example
    * @bodyParam lat string Example: 121.564558
    * @bodyParam lng string Example: 25.03746
    * @bodyParam is_active int Example: 1

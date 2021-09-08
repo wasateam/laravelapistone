@@ -15,12 +15,9 @@ class AppointmentAvailable_R1 extends JsonResource
   public function toArray($request)
   {
     return [
-      'id'            => $this->id,
-      'created_at'    => $this->created_at,
-      'updated_at'    => $this->updated_at,
-      'start_time'    => $this->start_time,
-      'end_time'      => $this->end_time,
-      'service_store' => new ServiceStore_R1($this->service_store),
+      'id'         => $this->id,
+      'start_time' => $this->start_time,
+      'end_time'   => $this->end_time,
     ];
   }
 }

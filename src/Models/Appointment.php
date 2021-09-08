@@ -10,11 +10,6 @@ class Appointment extends Model
   use HasFactory;
   use \Illuminate\Database\Eloquent\SoftDeletes;
 
-  public function appointmemnt_available()
-  {
-    return $this->belongsTo(AppointmentAvailable::class, 'appointmemnt_available_id');
-  }
-
   public function user()
   {
     return $this->belongsTo(User::class, 'user_id');
@@ -22,6 +17,6 @@ class Appointment extends Model
 
   public function service_store()
   {
-    return $this->belongsTo(ServiceStore_R1::class, 'service_store_id');
+    return $this->belongsTo(ServiceStore::class, 'service_store_id');
   }
 }

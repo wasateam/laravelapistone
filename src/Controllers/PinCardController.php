@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use Wasateam\Laravelapistone\Exports\PinCardExport;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\PinCard;
 
@@ -145,5 +147,14 @@ class PinCardController extends Controller
     return response()->json([
       'message' => 'successful registed.',
     ]);
+  }
+
+  /**
+   * Export Excel
+   *
+   */
+  public function export_excel()
+  {
+    return Excel::download(new PinCardExport, 'pin_card.xlsx');
   }
 }

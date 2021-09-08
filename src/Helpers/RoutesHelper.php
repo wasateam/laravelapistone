@@ -7,7 +7,6 @@ use Wasateam\Laravelapistone\Controllers\AdminGroupController;
 use Wasateam\Laravelapistone\Controllers\AdminRoleController;
 use Wasateam\Laravelapistone\Controllers\AdminScopeController;
 use Wasateam\Laravelapistone\Controllers\AppController;
-use Wasateam\Laravelapistone\Controllers\AppointmentAvailableController;
 use Wasateam\Laravelapistone\Controllers\AppointmentController;
 use Wasateam\Laravelapistone\Controllers\AreaController;
 use Wasateam\Laravelapistone\Controllers\AreaSectionController;
@@ -451,6 +450,7 @@ class RoutesHelper
       ];
       Route::resource('pin_card', PinCardController::class)->only($routes)->shallow();
       Route::post('pin_card/generate', [PinCardController::class, 'generate']);
+      Route::get('pin_card/export/excel', [PinCardController::class, 'export_excel']);
     } else {
       Route::post('pin_card/register', [PinCardController::class, 'register'])->only($routes)->shallow();
     }

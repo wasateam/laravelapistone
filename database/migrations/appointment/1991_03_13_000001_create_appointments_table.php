@@ -17,7 +17,7 @@ class CreateAppointmentsTable extends Migration
       $table->id();
       $table->timestamps();
       $table->string('user_id');
-      $table->string('appointment_available_id')->nullable();
+      $table->string('service_store_id')->nullable();
       $table->timestamp('start_time')->nullable();
       $table->timestamp('end_time')->nullable();
       $table->date('date');

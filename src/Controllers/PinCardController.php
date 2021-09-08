@@ -5,6 +5,7 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Exports\PinCardExport;
@@ -147,6 +148,15 @@ class PinCardController extends Controller
     return response()->json([
       'message' => 'successful registed.',
     ]);
+  }
+
+  /**
+   * Export Excel Signedurl
+   *
+   */
+  public function export_excel_signedurl()
+  {
+    return URL::signedRoute('export_excel_signedurl', []);
   }
 
   /**

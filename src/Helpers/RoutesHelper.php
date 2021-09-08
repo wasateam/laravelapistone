@@ -450,10 +450,19 @@ class RoutesHelper
       ];
       Route::resource('pin_card', PinCardController::class)->only($routes)->shallow();
       Route::post('pin_card/generate', [PinCardController::class, 'generate']);
-      Route::get('pin_card/export/excel', [PinCardController::class, 'export_excel']);
+      Route::get('pin_card/export/excel/signedurl', [PinCardController::class, 'export_excel_signedurl']);
     } else {
       Route::post('pin_card/register', [PinCardController::class, 'register'])->only($routes)->shallow();
     }
+  }
+
+  public static function pin_card_excel_routes()
+  {
+    Route::group([
+      "middleware" => ["signed"],
+    ], function () {
+      Route::get('pin_card/export/excel', [PinCardController::class, 'export_excel'])->name('pin_card_export_excel');
+    });
   }
 
   public static function appointment_routes()

@@ -24,7 +24,7 @@ class AppointmentController extends Controller
     'end_time',
     'date',
   ];
-  public $belongs_to_many = [
+  public $belongs_to = [
     'user',
     'appointment_available',
   ];

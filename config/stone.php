@@ -55,6 +55,7 @@ return [
     'notify_mail' => env('CONTACT_REQUEST_NOTIFY_MAIL'),
   ],
   'appointment'       => env('APPOINTMENT', true),
+  'service_plan'      => env('SERVICE_PLAN', true),
   // Member
   // 'user'    => [
   //   'model_name' => 'user',

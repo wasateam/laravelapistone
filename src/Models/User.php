@@ -29,12 +29,17 @@ class User extends Authenticatable
 
   public function user_device_tokens()
   {
-    return $this->hasMany(UserDeviceToken::class, 'user_id')->where('is_active',1);
+    return $this->hasMany(UserDeviceToken::class, 'user_id')->where('is_active', 1);
   }
 
   public function getDeviceTokensAttribute()
   {
     return $this->user_device_tokens->pluck(['device_token']);
+  }
+
+  public function service_plans()
+  {
+    return $this->belongsToMany(ServicePlan::class, 'user_service_plans', 'user_id', 'service_plan_id');
   }
 
   /**

@@ -34,6 +34,7 @@ use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
 use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
+use Wasateam\Laravelapistone\Controllers\UserServicePlanController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
 
@@ -428,12 +429,14 @@ class RoutesHelper
         'destroy',
       ];
       Route::resource('service_plan', ServicePlanController::class)->only($routes)->shallow();
+      Route::resource('user_service_plan', UserServicePlanController::class)->only($routes)->shallow();
     } else {
       $routes = [
         'index',
         'show',
       ];
       Route::resource('service_plan', ServicePlanController::class)->only($routes)->shallow();
+      Route::resource('user_service_plan', UserServicePlanController::class)->only($routes)->shallow();
     }
   }
 

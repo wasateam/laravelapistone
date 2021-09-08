@@ -15,8 +15,8 @@ class UserServicePlan extends Model
     return $this->belongsTo(User::class, 'user_id');
   }
 
-  public function user_service_plan()
+  public function service_plan()
   {
-    return $this->belongsTo(UserServicePlan::class, 'user_service_plan_id');
+    return $this->belongsTo(ServicePlan::class, 'service_plan_id');
   }
 }

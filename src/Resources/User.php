@@ -36,8 +36,8 @@ class User extends JsonResource
     if (config('stone.locale')) {
       $res['locale'] = new Locale_R1($this->locale);
     }
-    if (config('stone.user_device_token')) {
-      $res['user_device_tokens'] = UserDeviceToken_R1::collection($this->user_device_tokens);
+    if (config('stone.service_plan')) {
+      $res['service_plan'] = ServicePlan_R1::collection($this->service_plan);
     }
     return $res;
   }

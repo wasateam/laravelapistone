@@ -156,7 +156,7 @@ class PinCardController extends Controller
    */
   public function export_excel_signedurl()
   {
-    return URL::signedRoute('export_excel_signedurl', []);
+    return URL::signedRoute('pin_card_export_excel', []);
   }
 
   /**

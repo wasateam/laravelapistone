@@ -35,6 +35,11 @@ class ServiceStore extends Model
     return $this->belongsToMany(AdminGroup::class, 'admin_group_service_store', 'service_store_id', 'admin_group_id');
   }
 
+  public function appointments()
+  {
+    return $this->hasMany(Appointment::class, 'service_store_id');
+  }
+
   protected $casts = [
     'business_hours'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'appointment_availables' => \Wasateam\Laravelapistone\Casts\JsonCast::class,

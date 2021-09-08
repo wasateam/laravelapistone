@@ -40,9 +40,12 @@ class ServiceStore extends JsonResource
       if (config('stone.admin_group')) {
         $res['admin_groups'] = AdminGroup_R1::collection($this->admin_groups);
       }
+      if (config('stone.appointment')) {
+        $res['appointments'] = Appointment_R1::collection($this->appointments);
+      }
       return $res;
     } else if (config('stone.mode') == 'webapi') {
-      return [
+      $res = [
         'id'                     => $this->id,
         'name'                   => $this->name,
         'type'                   => $this->type,
@@ -60,6 +63,10 @@ class ServiceStore extends JsonResource
         'service_store_closes'   => ServiceStoreClose_R1::collection($this->service_store_closes),
         'service_store_notis'    => ServiceStoreNoti_R1::collection($this->service_store_notis),
       ];
+      if (config('stone.appointment')) {
+        $res['appointment'] = Appointment_R0::collection($this->appointments);
+      }
+      return $res;
     }
   }
 }

@@ -104,8 +104,9 @@ class PinCardController extends Controller
     $request->validate([
       'count' => 'required|numeric',
     ]);
-    $user  = Auth::user();
-    $count = $request->count;
+    $user         = Auth::user();
+    $count        = $request->count;
+    $service_plan = $request->service_plan;
 
     for ($i = 0; $i < $count; $i++) {
       $try_count = 0;
@@ -114,6 +115,7 @@ class PinCardController extends Controller
           $model                   = new $this->model;
           $model->pin              = Str::random(20);
           $model->created_admin_id = $user->id;
+          $model->service_plan_id  = $service_plan;
           $model->save();
           break;
         } catch (\Throwable$th) {

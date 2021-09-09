@@ -74,7 +74,7 @@ class AppointmentController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_StoreHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
+      return ModelHelper::ws_StoreHandler($this, $request, $id, null, function ($model) {
         $user           = Auth::user();
         $model->user_id = $user->id;
         $model->save();

@@ -23,6 +23,10 @@ class AppointmentController extends Controller
     'start_time',
     'end_time',
     'date',
+    'tel',
+    'email',
+    'type',
+    'remark',
   ];
   public $belongs_to = [
     'user',
@@ -60,6 +64,10 @@ class AppointmentController extends Controller
    * @bodyParam date date Example: 2021-03-13
    * @bodyParam user string Example :1
    * @bodyParam service_store Example :1
+   * @bodyParam tel String Example: 02-2222-2222
+   * @bodyParam email String Example: aa@aa.aa
+   * @bodyParam type String No-example
+   * @bodyParam remark String No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -102,6 +110,10 @@ class AppointmentController extends Controller
    * @bodyParam date date Example: 2021-03-13
    * @bodyParam user string Example :1
    * @bodyParam service_store Example :1
+   * @bodyParam tel String Example: 02-2222-2222
+   * @bodyParam email String Example: aa@aa.aa
+   * @bodyParam type String No-example
+   * @bodyParam remark String No-example
    */
   public function update(Request $request, $id)
   {

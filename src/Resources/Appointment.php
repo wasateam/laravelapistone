@@ -21,6 +21,10 @@ class Appointment extends JsonResource
       'start_time'    => $this->start_time,
       'end_time'      => $this->end_time,
       'date'          => $this->date,
+      'tel'           => $this->tel,
+      'email'         => $this->email,
+      'type'          => $this->type,
+      'remark'        => $this->remark,
       'user'          => new User_R1($this->user),
       'service_store' => new ServiceStore_R1($this->service_store),
     ];

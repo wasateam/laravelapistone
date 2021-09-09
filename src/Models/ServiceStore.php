@@ -2,6 +2,7 @@
 
 namespace Wasateam\Laravelapistone\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,7 +38,9 @@ class ServiceStore extends Model
 
   public function appointments()
   {
-    return $this->hasMany(Appointment::class, 'service_store_id');
+    $target_day = Carbon::now();
+    $target_day->addDays(-2);
+    return $this->hasMany(Appointment::class, 'service_store_id')->where('date', '>', $target_day->format('Y-m-d'));
   }
 
   protected $casts = [

@@ -150,7 +150,7 @@ class ModelHelper
 
   public static function ws_Log($model, $controller, $action, $user = null)
   {
-    if (!config('stone.log.is_active')) {
+    if (!config('stone.log')) {
       return;
     }
 

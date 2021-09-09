@@ -136,7 +136,7 @@ class PinCardController extends Controller
       'pin' => 'required|string',
     ]);
     $user  = Auth::user();
-    $model = $this->model::where('pin', $request->pin)->first();
+    $model = $this->model::where('pin', $request->pin)->where('status', 0)->first();
     if (!$model) {
       return response()->json([
         'message' => 'no card.',

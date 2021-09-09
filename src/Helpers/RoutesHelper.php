@@ -455,7 +455,7 @@ class RoutesHelper
       Route::post('pin_card/generate', [PinCardController::class, 'generate']);
       Route::get('pin_card/export/excel/signedurl', [PinCardController::class, 'export_excel_signedurl']);
     } else {
-      Route::post('pin_card/register', [PinCardController::class, 'register'])->only($routes)->shallow();
+      Route::post('pin_card/register', [PinCardController::class, 'register']);
     }
   }
 

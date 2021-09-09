@@ -64,7 +64,7 @@ class ServiceStore extends JsonResource
         'service_store_notis'    => ServiceStoreNoti_R1::collection($this->service_store_notis),
       ];
       if (config('stone.appointment')) {
-        $res['appointment'] = Appointment_R0::collection($this->appointments);
+        $res['appointments'] = Appointment_R0::collection($this->appointments);
       }
       return $res;
     }

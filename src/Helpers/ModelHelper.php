@@ -10,12 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Storage;
 use Validator;
+use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
 use Wasateam\Laravelapistone\Models\Locale;
 
 class ModelHelper
 {
-  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null, $limit = true)
+  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null, $limit = true, $custom_scope_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -23,11 +24,17 @@ class ModelHelper
     // Snap
     $snap = self::indexGetSnap($setting, $request, $id, $limit);
 
-    // ScopeFilter
-    $scope_filter_check = self::scopeFilterCheck($request, $setting);
-
     if ($custom_snap_handler) {
       $snap = $custom_snap_handler($snap);
+    }
+
+    // ScopeFilter
+    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
+
+    if (!$check) {
+      return response()->json([
+        'message' => 'Invalid Scope(s)',
+      ], 403);
     }
 
     // Filter User
@@ -77,6 +84,15 @@ class ModelHelper
 
     // User Create Record
     $model = self::setUserCreate($model, $setting);
+
+    // Scope
+    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
+
+    if (!$check) {
+      return response()->json([
+        'message' => 'Invalid Scope(s)',
+      ], 403);
+    }
 
     // Parent
     try {
@@ -212,6 +228,15 @@ class ModelHelper
       $snap = $custom_snap_handler($snap);
     }
 
+    // Scope
+    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
+
+    if (!$check) {
+      return response()->json([
+        'message' => 'Invalid Scope(s)',
+      ], 403);
+    }
+
     // Filter User
     $snap = self::userFilterSnap($snap, $setting);
 
@@ -252,6 +277,15 @@ class ModelHelper
     // Find Model
     $snap = $setting->model::where('id', $id);
 
+    // Scope
+    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
+
+    if (!$check) {
+      return response()->json([
+        'message' => 'Invalid Scope(s)',
+      ], 403);
+    }
+
     // Filter User
     $snap = self::userFilterSnap($snap, $setting);
 
@@ -263,15 +297,6 @@ class ModelHelper
       return response()->json([
         'message' => 'no data.',
       ], 400);
-    }
-
-    if ($custom_scope_handler) {
-      $check = $custom_scope_handler($model);
-      if (!$check) {
-        return response()->json([
-          'message' => 'Invalid Scope(s).',
-        ], 400);
-      }
     }
 
     // Input Value
@@ -350,6 +375,15 @@ class ModelHelper
     // Find Model
     $snap = $setting->model::where('id', $id);
 
+    // Scope
+    $check = AuthHelper::checkAuthScope($request, $setting->mocu_filters, $custom_scope_handler);
+
+    if (!$check) {
+      return response()->json([
+        'message' => 'Invalid Scope(s)',
+      ], 403);
+    }
+
     // Filter User
     $snap = self::userFilterSnap($snap, $setting);
 
@@ -361,15 +395,6 @@ class ModelHelper
       return response()->json([
         'message' => 'no data.',
       ], 400);
-    }
-
-    if ($custom_scope_handler) {
-      $check = $custom_scope_handler($model);
-      if (!$check) {
-        return response()->json([
-          'message' => 'Invalid Scope(s).',
-        ], 400);
-      }
     }
 
     Self::ws_Log($model, $controller, 'delete');
@@ -473,6 +498,7 @@ class ModelHelper
     $setting->scope_filter_belongs_to_many    = isset($controller->scope_filter_belongs_to_many) ? $controller->scope_filter_belongs_to_many : [];
     $setting->uuid                            = isset($controller->uuid) ? $controller->uuid : false;
     $setting->uuid_key                        = isset($controller->uuid_key) ? $controller->uuid_key : 'uuid';
+    $setting->mocu_filters                    = isset($controller->mocu_filters) ? $controller->mocu_filters : [];
     return $setting;
   }
 

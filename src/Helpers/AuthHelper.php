@@ -46,53 +46,24 @@ class AuthHelper
     return $in_app;
   }
 
-  public static function getScopesInApp($user, $app_id, $app_name = "app", $auth_name = "admin", $id_name = "model")
+  public static function getScopesInApp($user, $app_id, $app_name = "app", $auth_name = "user", $id_name = "app")
   {
-    $all_scopes = [];
     $user_roles = [];
-    if ($user->{"{$auth_name}_{$app_name}_roles"}) {
-      $user_roles = $user->{"{$auth_name}_{$app_name}_roles"}->filter(function ($item) use ($app_id, $id_name) {
-        if (!$item->{"{$id_name}_id"} && $item->is_default) {
-          return true;
-        } else {
-          return $item->{"{$id_name}_id"} == $app_id;
-        }
-      });
-    } else {
-      $user_roles = $user->{"{$auth_name}_roles"}->filter(function ($item) use ($app_id, $id_name) {
-        if (!$item->{"{$id_name}_id"} && $item->is_default) {
-          return true;
-        } else {
-          return $item->{"{$id_name}_id"} == $app_id;
-        }
-      });
-    }
+    $user_roles = $user->{"{$app_name}_roles"}->filter(function ($item) use ($app_id, $id_name) {
+      return $item->{"{$id_name}_id"} == $app_id;
+    });
+    $app_infos = $user->{"{$auth_name}_{$app_name}_infos"}->filter(function ($item) use ($app_id, $id_name) {
+      return $item->{"{$id_name}_id"} == $app_id;
+    });
     $all_scopes = [];
-    if ($app_scopes = $user->{"{$auth_name}_{$app_name}_scopes"}) {
-      $app_scopes = $user->{"{$auth_name}_{$app_name}_scopes"}->filter(function ($item) use ($app_id, $id_name) {
-        if (!$item->{"{$id_name}_id"} && $item->is_default) {
-          return true;
-        } else {
-          return $item->{"{$id_name}_id"} == $app_id;
-        }
-      });
-    } else {
-      $app_scopes = $user->{"{$auth_name}_scopes"}->filter(function ($item) use ($app_id, $id_name) {
-        if (!$item->{"{$id_name}_id"} && $item->is_default) {
-          return true;
-        } else {
-          return $item->{"{$id_name}_id"} == $app_id;
-        }
-      });
-    }
     foreach ($user_roles as $user_role) {
       if ($user_role->scopes) {
         $all_scopes = array_merge($all_scopes, $user_role->scopes);
       }
     }
-    foreach ($app_scopes as $app_scope) {
-      if ($app_scope->scopes) {
-        $all_scopes = array_merge($all_scopes, $app_scope->scopes);
+    foreach ($app_infos as $app_info) {
+      if ($app_info->scopes) {
+        $all_scopes = array_merge($all_scopes, $app_info->scopes);
       }
     }
     return $all_scopes;
@@ -106,7 +77,7 @@ class AuthHelper
     });
   }
 
-  public static function getAuthScope($request, $app_name = "app", $app_field_name = "admin_apps", $auth_name = "auth", $model_id_name = "model")
+  public static function getAuthScope($request, $app_name = "app", $app_field_name = "apps", $auth_name = "user", $model_id_name = "model")
   {
     $user = Auth::user();
     if (!$user) {
@@ -124,15 +95,16 @@ class AuthHelper
 
     // All Scopes
     $all_scopes = Self::getScopesInApp($user, $app_id, $app_name, $auth_name, $model_id_name);
-
-    // Has Scope
-    $api_name  = Route::currentRouteName();
-    $has_scope = Self::checkHasScope($all_scopes, $api_name);
+    
     if (in_array('wall-passer', $all_scopes)) {
       return true;
     } else if (!$has_scope) {
       return false;
     }
+
+    // Has Scope
+    $api_name  = Route::currentRouteName();
+    $has_scope = Self::checkHasScope($all_scopes, $api_name);
 
     return true;
   }
@@ -143,7 +115,7 @@ class AuthHelper
     if (count($filters) && $request) {
       foreach ($filters as $filter) {
         if ($request->$filter || $request->{"{$filter}_id"}) {
-          $has_scope = Self::getAuthScope($request, $filter, config('stone.auth.model_name') . "_" . $filter . "s", config('stone.auth.model_name'), "model");
+          $has_scope = Self::getAuthScope($request, $filter, $filter . "s", config('stone.auth.model_name'), "app");
         }
       }
     }

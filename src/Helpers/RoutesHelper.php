@@ -8,6 +8,7 @@ use Wasateam\Laravelapistone\Controllers\AdminRoleController;
 use Wasateam\Laravelapistone\Controllers\AdminScopeController;
 use Wasateam\Laravelapistone\Controllers\AppController;
 use Wasateam\Laravelapistone\Controllers\AppointmentController;
+use Wasateam\Laravelapistone\Controllers\AppRoleController;
 use Wasateam\Laravelapistone\Controllers\AreaController;
 use Wasateam\Laravelapistone\Controllers\AreaSectionController;
 use Wasateam\Laravelapistone\Controllers\AuthController;
@@ -32,6 +33,7 @@ use Wasateam\Laravelapistone\Controllers\TulpaCrossItemController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
+use Wasateam\Laravelapistone\Controllers\UserAppInfoController;
 use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanController;
@@ -268,10 +270,9 @@ class RoutesHelper
     // 'image_get_upload_url',
     // 'image_upload_complete',
   ]) {
-    Route::resource('user', UserController::class)->only($routes)->shallow();
-    // if (in_array('avatar_get_upload_url', $routes)) {
-    //   Route::get('/user/avatar/upload_url', [UserController::class, 'avatar_get_upload_url']);
-    // }
+    if (config('stone.mode') == 'cms') {
+      Route::resource('user', UserController::class)->only($routes)->shallow();
+    }
   }
 
   public static function locale_routes($routes = [
@@ -389,7 +390,11 @@ class RoutesHelper
     'update',
     'destroy',
   ]) {
-    Route::resource('app', AppController::class)->only($routes)->shallow();
+    if (config('stone.mode') == 'cms') {
+      Route::resource('app', AppController::class)->only($routes)->shallow();
+      Route::resource('user_app_info', UserAppInfoController::class)->only($routes)->shallow();
+      Route::resource('app_role', AppRoleController::class)->only($routes)->shallow();
+    }
   }
 
   public static function service_store_routes()

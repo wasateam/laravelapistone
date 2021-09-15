@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class App_R1 extends JsonResource
+class AppRole extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -19,22 +19,18 @@ class App_R1 extends JsonResource
         'id'         => $this->id,
         'created_at' => $this->created_at,
         'updated_at' => $this->updated_at,
-        'uuid'       => $this->uuid,
-        'key'        => $this->key,
-        'name'       => $this->name,
-        'url'        => $this->url,
-        'avatar'     => $this->avatar,
-        'is_public'  => $this->is_public,
+        "name"       => $this->name,
+        "scopes"     => $this->scopes,
+        "app"        => new App_R1($this->app),
       ];
     } else {
       $res = [
-        'uuid'       => $this->uuid,
+        'id'         => $this->id,
         'created_at' => $this->created_at,
-        'key'        => $this->key,
-        'name'       => $this->name,
-        'url'        => $this->url,
-        'avatar'     => $this->avatar,
-        'is_public'  => $this->is_public,
+        'updated_at' => $this->updated_at,
+        "name"       => $this->name,
+        "scopes"     => $this->scopes,
+        "app_id"     => $this->app_id,
       ];
     }
     return $res;

@@ -15,4 +15,9 @@ class App extends Model
   {
     return $this->belongsTo(Admin::class, 'updated_admin_id');
   }
+
+  public function app_roles()
+  {
+    return $this->hasMany(AppRole::class, 'app_id');
+  }
 }

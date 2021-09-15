@@ -37,9 +37,19 @@ class User extends Authenticatable
     return $this->user_device_tokens->pluck(['device_token']);
   }
 
-  public function service_plans()
+  public function app_roles()
   {
-    return $this->belongsToMany(ServicePlan::class, 'user_service_plans', 'user_id', 'service_plan_id');
+    return $this->belongsToMany(UserAppRole::class, 'user_app_role', 'user_id', 'app_role_id');
+  }
+
+  public function apps()
+  {
+    return $this->belongsToMany(App::class, 'user_app_info', 'user_id', 'app_id');
+  }
+
+  public function user_app_infos()
+  {
+    return $this->hasMany(UserAppInfo::class, 'user_id');
   }
 
   /**

@@ -12,6 +12,7 @@ use Wasateam\Laravelapistone\Controllers\AppRoleController;
 use Wasateam\Laravelapistone\Controllers\AreaController;
 use Wasateam\Laravelapistone\Controllers\AreaSectionController;
 use Wasateam\Laravelapistone\Controllers\AuthController;
+use Wasateam\Laravelapistone\Controllers\CalendarHighlightController;
 use Wasateam\Laravelapistone\Controllers\CMSAdminController;
 use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
@@ -461,6 +462,30 @@ class RoutesHelper
       Route::get('pin_card/export/excel/signedurl', [PinCardController::class, 'export_excel_signedurl']);
     } else {
       Route::post('pin_card/register', [PinCardController::class, 'register']);
+    }
+  }
+
+  public static function calendar_highlight_routes()
+  {
+    $mode = config('stone.mode');
+    if ($mode == 'cms') {
+      $routes = [
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ];
+      Route::resource('calendar_highlight', CalendarHighlightController::class)->only($routes)->shallow();
+    } else {
+      $routes = [
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ];
+      Route::resource('calendar_highlight', CalendarHighlightController::class)->only($routes)->shallow();
     }
   }
 

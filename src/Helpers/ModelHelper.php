@@ -164,6 +164,37 @@ class ModelHelper
 
   }
 
+  public static function log_save($log_model, $record_model, $user, $user_id_name, $user_uuid = true, $model_uuid = false)
+  {
+    if ($user_uuid) {
+      $user_id_key = 'uuid';
+    } else {
+      $user_id_key = 'id';
+    }
+    if ($model_uuid) {
+      $model_id_key = 'uuid';
+    } else {
+      $model_id_key = 'id';
+    }
+    $log = new $log_model;
+    if ($user) {
+      $user_id = $user->{$user_id_key};
+    } else if (Auth::user()) {
+      $user_id = Auth::user()->{$user_id_key};
+    } else {
+      $user_id = null;
+    }
+    $log->{$user_id_name} = $user_id;
+    $log->payload         = [
+      'user_id'   => $user_id,
+      'action'    => $action,
+      'target'    => $controller->name,
+      'target_id' => $record_model ? $record_model->{$model_id_key} : null,
+      'ip'        => \Request::ip(),
+    ];
+    $log->save();
+  }
+
   public static function ws_Log($model, $controller, $action, $user = null)
   {
     if (!config('stone.log.is_active')) {

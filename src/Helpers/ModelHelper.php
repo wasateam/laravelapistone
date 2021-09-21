@@ -164,7 +164,7 @@ class ModelHelper
 
   }
 
-  public static function log_save($log_model, $record_model, $user, $user_id_name, $user_uuid = true, $model_uuid = false)
+  public static function log_save($log_model, $record_model, $user, $user_id_name, $action, $controller, $user_uuid = true, $model_uuid = false)
   {
     if ($user_uuid) {
       $user_id_key = 'uuid';

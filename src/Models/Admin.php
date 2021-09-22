@@ -32,12 +32,7 @@ class Admin extends Authenticatable
     return $this->belongsToMany(AdminRole::class, 'admin_role_admin', 'admin_id', 'admin_role_id');
   }
 
-  // public function admin_groups()
-  // // {
-  // //   return $this->belongsToMany(AdminGroup::class, 'admin_group_admin', 'admin_id', 'admin_group_id');
-  // // }
-
-  public function cmser_groups()
+  public function admin_groups()
   {
     return $this->belongsToMany(AdminGroup::class, 'admin_group_admin', 'admin_id', 'admin_group_id');
   }

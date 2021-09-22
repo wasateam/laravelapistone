@@ -116,7 +116,8 @@ class RoutesHelper
     'update',
     'destroy',
   ]) {
-    Route::resource('admin', CMSAdminController::class)->only($routes)->shallow();
+    // Route::resource('admin', CMSAdminController::class)->only($routes)->shallow();
+    Route::resource('cmser', CMSAdminController::class)->only($routes)->shallow();
   }
 
   public static function admin_groups($routes = [
@@ -126,7 +127,8 @@ class RoutesHelper
     'update',
     'destroy',
   ]) {
-    Route::resource('admin_group', AdminGroupController::class)->only($routes)->shallow();
+    // Route::resource('admin_group', AdminGroupController::class)->only($routes)->shallow();
+    Route::resource('cmser_group', AdminGroupController::class)->only($routes)->shallow();
   }
 
   public static function admin_scope_routes($routes = [
@@ -146,7 +148,8 @@ class RoutesHelper
     'update',
     'destroy',
   ]) {
-    Route::resource('admin_role', AdminRoleController::class)->only($routes)->shallow();
+    // Route::resource('admin_role', AdminRoleController::class)->only($routes)->shallow();
+    Route::resource('cmser_role', AdminRoleController::class)->only($routes)->shallow();
   }
 
   public static function role_routes($routes = [

@@ -34,7 +34,11 @@ class TulpaPageCollection extends JsonResource
         'tulpa_cross_items'   => TulpaCrossItem_R1::collection($this->tulpa_cross_items),
       ];
       if (config('stone.admin_group')) {
-        $res['admin_groups'] = AdminGroup_R1::collection($this->admin_groups);
+        if (config('stone.admin_blur')) {
+          $res['cmser_groups'] = AdminGroup_R1::collection($this->cmser_groups);
+        } else {
+          $res['admin_groups'] = AdminGroup_R1::collection($this->admin_groups);
+        }
       }
       return $res;
     } else if (config('stone.mode') == 'webapi') {

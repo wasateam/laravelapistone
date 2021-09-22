@@ -38,7 +38,11 @@ class ServiceStore extends JsonResource
         'service_store_notis'    => ServiceStoreNoti_R1::collection($this->service_store_notis),
       ];
       if (config('stone.admin_group')) {
-        $res['admin_groups'] = AdminGroup_R1::collection($this->admin_groups);
+        if (config('stone.admin_blur')) {
+          $res['cmser_groups'] = AdminGroup_R1::collection($this->cmser_groups);
+        } else {
+          $res['admin_groups'] = AdminGroup_R1::collection($this->admin_groups);
+        }
       }
       if (config('stone.appointment')) {
         $res['appointments'] = Appointment_R1::collection($this->appointments);

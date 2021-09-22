@@ -1044,9 +1044,14 @@ class ModelHelper
   {
     if (config('stone.admin_group') && $setting->admin_group) {
       $admin = Auth::user();
+      if (config('stone.admin_blur')) {
+        $admin_groups_key = 'cmser_groups';
+      } else {
+        $admin_groups_key = 'admin_groups';
+      }
       if (!in_array($setting->admin_scope_boss, $admin->scopes)) {
-        $admin_group_ids = self::getIdsFromModels($admin->admin_groups);
-        $snap            = $snap->whereHas('admin_groups', function ($query) use ($admin_group_ids) {
+        $admin_group_ids = self::getIdsFromModels($admin->{$admin_groups_key});
+        $snap            = $snap->whereHas($admin_groups_key, function ($query) use ($admin_group_ids) {
           return $query->whereIn('id', $admin_group_ids);
         });
       }
@@ -1058,9 +1063,14 @@ class ModelHelper
   {
     if (config('stone.admin_group') && $setting->admin_group) {
       $admin = Auth::user();
+      if (config('stone.admin_blur')) {
+        $admin_groups_key = 'cmser_groups';
+      } else {
+        $admin_groups_key = 'admin_groups';
+      }
       if (!in_array($setting->admin_scope_boss, $admin->scopes)) {
-        $admin_group_ids = self::getIdsFromModels($admin->admin_groups);
-        $model->admin_groups()->sync($admin_group_ids);
+        $admin_group_ids = self::getIdsFromModels($admin->{$admin_groups_key});
+        $model->{$admin_groups_key}()->sync($admin_group_ids);
       }
     }
   }

@@ -37,6 +37,11 @@ class Admin extends Authenticatable
     return $this->belongsToMany(AdminGroup::class, 'admin_group_admin', 'admin_id', 'admin_group_id');
   }
 
+  public function cmser_groups()
+  {
+    return $this->belongsToMany(AdminGroup::class, 'admin_group_admin', 'admin_id', 'admin_group_id');
+  }
+
   /**
    * The attributes that are mass assignable.
    *

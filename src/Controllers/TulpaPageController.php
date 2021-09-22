@@ -47,24 +47,45 @@ class TulpaPageController extends Controller
   public $belongs_to = [
     'tulpa_page_template',
   ];
-  public $belongs_to_many = [
-    'tulpa_sections',
-    'admin_groups',
-    'tulpa_cross_items',
-  ];
-  public $order_fields = [
+  public $belongs_to_many = [];
+  public $order_fields    = [
     'updated_at',
     'created_at',
     'route',
   ];
-  public $scope_filter_belongs_to_many = [
-    'admin_groups' => [
-      'boss',
-    ],
-  ];
-  public $user_record_field = 'updated_admin_id';
-  public $user_create_field = 'created_admin_id';
-  public $admin_group       = true;
+  public $scope_filter_belongs_to_many = [];
+  public $user_record_field            = 'updated_admin_id';
+  public $user_create_field            = 'created_admin_id';
+  public $admin_group                  = true;
+
+  public function __construct()
+  {
+    if (config('stone.admin_group')) {
+      if (config('stone.admin_blur')) {
+        $this->belongs_to_many = [
+          'tulpa_sections',
+          'cmser_groups',
+          'tulpa_cross_items',
+        ];
+        $this->scope_filter_belongs_to_many = [
+          'cmser_groups' => [
+            'boss',
+          ],
+        ];
+      } else {
+        $this->belongs_to_many = [
+          'tulpa_sections',
+          'admin_groups',
+          'tulpa_cross_items',
+        ];
+        $this->scope_filter_belongs_to_many = [
+          'admin_groups' => [
+            'boss',
+          ],
+        ];
+      }
+    }
+  }
 
   /**
    * Index

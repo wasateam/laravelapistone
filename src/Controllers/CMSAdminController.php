@@ -65,10 +65,17 @@ class CMSAdminController extends Controller
   public function __construct()
   {
     if (config('stone.admin_group')) {
-      $this->belongs_to_many = [
-        'roles',
-        'admin_groups',
-      ];
+      if (config('stone.admin_blur')) {
+        $this->belongs_to_many = [
+          'roles',
+          'cmser_groups',
+        ];
+      } else {
+        $this->belongs_to_many = [
+          'roles',
+          'admin_groups',
+        ];
+      }
     }
   }
 
@@ -95,6 +102,7 @@ class CMSAdminController extends Controller
    * @bodyParam avatar string
    * @bodyParam settings string
    * @bodyParam admin_groups object Example:1
+   * @bodyParam cmser_groups object Example:1
    * @bodyParam scopes object Example:[]
    */
   public function store(Request $request, $id = null)
@@ -126,6 +134,7 @@ class CMSAdminController extends Controller
    * @bodyParam avatar string
    * @bodyParam settings string
    * @bodyParam admin_groups object Example:1
+   * @bodyParam cmser_groups object Example:1
    * @bodyParam scopes object Example:[]
    */
   public function update(Request $request, $id)

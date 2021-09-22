@@ -29,4 +29,9 @@ class ServiceStoreClose extends Model
   {
     return $this->belongsToMany(AdminGroup::class, 'admin_group_service_store_close', 'service_store_close_id', 'admin_group_id');
   }
+
+  public function cmser_groups()
+  {
+    return $this->belongsToMany(AdminGroup::class, 'admin_group_service_store_close', 'service_store_close_id', 'admin_group_id');
+  }
 }

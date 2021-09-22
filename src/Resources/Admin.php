@@ -35,7 +35,11 @@ class Admin extends JsonResource
     }
 
     if (config('stone.admin_group')) {
-      $res['admin_groups'] = AdminGroup_R1::collection($this->admin_groups);
+      if (config('stone.admin_blur')) {
+        $res['cmser_groups'] = AdminGroup_R1::collection($this->cmser_groups);
+      } else {
+        $res['admin_groups'] = AdminGroup_R1::collection($this->admin_groups);
+      }
     }
     // if (config('stone.app_mode')) {
     //   $res['app_scopes'] = AdminAppScope_R1::collection($this->app_scopes);

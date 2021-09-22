@@ -29,4 +29,9 @@ class ServiceStoreNoti extends Model
   {
     return $this->belongsToMany(AdminGroup::class, 'admin_group_service_store_noti', 'service_store_noti_id', 'admin_group_id');
   }
+
+  public function cmser_groups()
+  {
+    return $this->belongsToMany(AdminGroup::class, 'admin_group_service_store_noti', 'service_store_noti_id', 'admin_group_id');
+  }
 }

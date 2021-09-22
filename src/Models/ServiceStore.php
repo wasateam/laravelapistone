@@ -36,6 +36,11 @@ class ServiceStore extends Model
     return $this->belongsToMany(AdminGroup::class, 'admin_group_service_store', 'service_store_id', 'admin_group_id');
   }
 
+  public function cmser_groups()
+  {
+    return $this->belongsToMany(AdminGroup::class, 'admin_group_service_store', 'service_store_id', 'admin_group_id');
+  }
+
   public function appointments()
   {
     $target_day = Carbon::now();

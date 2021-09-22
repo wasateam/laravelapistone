@@ -27,6 +27,7 @@ return [
   'web_url'            => env('WEB_URL'),
   'locale'             => env('LOCALE', false),
   // Auth
+  'admin_blur'         => true,
   'auth'               => [
     'model_name'       => 'user',
     'model'            => '\Wasateam\Laravelapistone\Models\User',

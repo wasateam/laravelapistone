@@ -31,16 +31,38 @@ class ServiceStoreCloseController extends Controller
   ];
   public $belongs_to_many = [
     'service_stores',
-    'admin_groups',
   ];
-  public $scope_filter_belongs_to_many = [
-    'admin_groups' => [
-      'boss',
-    ],
-  ];
-  public $user_record_field = 'updated_admin_id';
-  public $user_create_field = 'created_admin_id';
-  public $admin_group       = true;
+  public $scope_filter_belongs_to_many = [];
+  public $user_record_field            = 'updated_admin_id';
+  public $user_create_field            = 'created_admin_id';
+  public $admin_group                  = true;
+
+  public function __construct()
+  {
+    if (config('stone.admin_group')) {
+      if (config('stone.admin_blur')) {
+        $this->belongs_to_many = [
+          'service_stores',
+          'cmser_groups',
+        ];
+        $this->scope_filter_belongs_to_many = [
+          'cmser_groups' => [
+            'boss',
+          ],
+        ];
+      } else {
+        $this->belongs_to_many = [
+          'service_stores',
+          'admin_groups',
+        ];
+        $this->scope_filter_belongs_to_many = [
+          'admin_groups' => [
+            'boss',
+          ],
+        ];
+      }
+    }
+  }
 
   /**
    * Index

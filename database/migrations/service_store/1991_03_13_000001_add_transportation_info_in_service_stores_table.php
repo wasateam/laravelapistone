@@ -14,7 +14,7 @@ class AddTransportationInfoInServiceStoresTable extends Migration
   public function up()
   {
     Schema::table('service_stores', function (Blueprint $table) {
-      $table->text('transportation_Info')->nullable();
+      $table->text('transportation_info')->nullable();
     });
   }
 
@@ -26,7 +26,7 @@ class AddTransportationInfoInServiceStoresTable extends Migration
   public function down()
   {
     Schema::table('service_stores', function (Blueprint $table) {
-      $table->dropColumn('transportation_Info');
+      $table->dropColumn('transportation_info');
     });
   }
 }

@@ -30,6 +30,6 @@ class Base64SaveCast implements CastsAttributes
    */
   public function set($model, $key, $value, $attributes)
   {
-    return base_decode($value);
+    return base64_decode($value);
   }
 }

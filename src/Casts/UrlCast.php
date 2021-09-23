@@ -3,7 +3,7 @@ namespace Wasateam\Laravelapistone\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
-class Base64SaveCast implements CastsAttributes
+class UrlCast implements CastsAttributes
 {
   /**
    * Cast the given value.
@@ -30,7 +30,11 @@ class Base64SaveCast implements CastsAttributes
    */
   public function set($model, $key, $value, $attributes)
   {
-    $_value = base64_decode($value);
-    return $_value;
+    if (config('stone.post_url_encode')) {
+      $_value = base64_decode($value);
+      return $_value;
+    } else {
+      return $value;
+    }
   }
 }

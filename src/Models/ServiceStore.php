@@ -49,7 +49,7 @@ class ServiceStore extends Model
   }
 
   protected $casts = [
-    'cover_image'            => \Wasateam\Laravelapistone\Casts\Base64SaveCast::class,
+    'cover_image'            => \Wasateam\Laravelapistone\Casts\UrlCast::class,
     'business_hours'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'appointment_availables' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'payload'                => \Wasateam\Laravelapistone\Casts\JsonCast::class,

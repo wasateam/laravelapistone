@@ -67,4 +67,5 @@ return [
   //   'model'      => '\Wasateam\Laravelapistone\Models\User',
   //   'resource'   => '\Wasateam\Laravelapistone\Resources\User',
   // ],
+  'post_url_encode'    => false,
 ];

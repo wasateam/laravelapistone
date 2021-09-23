@@ -31,7 +31,4 @@ class PocketImage extends Model
   {
     return $this->hasOne('Wasateam\Laravelapistone\Models\PocketImageVersion')->latest('created_at');
   }
-
-  protected $casts = [
-  ];
 }

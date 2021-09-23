@@ -28,6 +28,7 @@ class PocketImageVersion extends Model
   }
 
   protected $casts = [
+    'url'        => \Wasateam\Laravelapistone\Casts\UrlCast::class,
     'signed_url' => \Wasateam\Laravelapistone\Casts\PocketImageSignedUrlCast::class,
     'tags'       => \Wasateam\Laravelapistone\Casts\JsonCast::class,
   ];

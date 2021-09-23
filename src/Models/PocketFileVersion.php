@@ -29,7 +29,7 @@ class PocketFileVersion extends Model
 
   protected $casts = [
     'signed_url' => \Wasateam\Laravelapistone\Casts\PocketFileSignedUrlCast::class,
-    'url'        => \Wasateam\Laravelapistone\Casts\UrlCast::class,
+    'url'        => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
     'tags'       => \Wasateam\Laravelapistone\Casts\JsonCast::class,
   ];
 }

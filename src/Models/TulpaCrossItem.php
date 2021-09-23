@@ -26,6 +26,6 @@ class TulpaCrossItem extends Model
   }
 
   protected $casts = [
-    'content' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'content' => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
   ];
 }

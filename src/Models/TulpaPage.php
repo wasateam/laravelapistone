@@ -50,6 +50,6 @@ class TulpaPage extends Model
 
   protected $casts = [
     'tags'    => \Wasateam\Laravelapistone\Casts\JsonCast::class,
-    'content' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'content' => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
   ];
 }

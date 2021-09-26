@@ -111,6 +111,187 @@ class RoutesHelper
     });
   }
 
+  public static function cms_boss_routes()
+  {
+
+    # Admin
+    if (config('stone.admin_blur')) {
+      Route::resource('cmser', CMSAdminController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+    } else {
+      Route::resource('admin', CMSAdminController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+    }
+
+    # AdminRole
+    if (config('stone.admin_role')) {
+      if (config('stone.admin_blur')) {
+        Route::resource('cmser_role', AdminRoleController::class)->only([
+          'index',
+          'show',
+          'store',
+          'update',
+          'destroy',
+        ])->shallow();
+      } else {
+        Route::resource('admin_role', AdminRoleController::class)->only([
+          'index',
+          'show',
+          'store',
+          'update',
+          'destroy',
+        ])->shallow();
+      }
+    }
+
+    # AdminGroup
+    if (config('stone.admin_group')) {
+      if (config('stone.admin_blur')) {
+        Route::resource('cmser_group', AdminGroupController::class)->only([
+          'index',
+          'show',
+          'store',
+          'update',
+          'destroy',
+        ])->shallow();
+      } else {
+        Route::resource('admin_group', AdminGroupController::class)->only([
+          'index',
+          'show',
+          'store',
+          'update',
+          'destroy',
+        ])->shallow();
+      }
+    }
+
+    # CMS Log
+    Route::resource('cms_log', CmsLogController::class)->only([
+      'index',
+      'show',
+    ])->shallow();
+  }
+
+  public static function cms_admin_routes()
+  {
+    # Pocket
+    if (config('stone.pocket')) {
+
+      Route::get('pocket_image/upload_url', [PocketImageController::class, 'get_upload_url']);
+      Route::resource('pocket_image', PocketImageController::class)->only([
+        'index', 'store', 'destroy',
+      ])->shallow();
+      Route::patch('pocket_image/public_url/{id}', [PocketImageController::class, 'public_url']);
+      Route::get('pocket_file/upload_url', [PocketFileController::class, 'get_upload_url']);
+      Route::resource('pocket_file', PocketFileController::class)->only([
+        'index', 'store', 'destroy',
+      ])->shallow();
+      Route::patch('pocket_file/public_url/{id}', [PocketFileController::class, 'public_url']);
+    }
+
+    # User
+    if (config('stone.user')) {
+      Route::resource('user', UserController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+    }
+
+    # Blog
+    if (config('stone.ws_blog')) {
+      Route::resource('ws_blog', WsBlogController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+      Route::get('/ws_blog/image/upload_url', [WsBlogController::class, 'image_get_upload_url']);
+    }
+
+    # Tag
+    if (config('stone.tag')) {
+      Route::resource('tag', TagController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+    }
+
+    # Area
+    if (config('stone.area')) {
+      Route::resource('area', AreaController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+      Route::resource('area_section', AreaSectionController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+    }
+
+    # SystemClass
+    if (config('stone.system_class')) {
+      Route::resource('system_class', SystemClassController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+      Route::resource('system_subclass', SystemSubclassController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+    }
+
+    # ContactRequest
+    if (config('stone.contact_request')) {
+      Route::resource('contact_request', ContactRequestController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+    }
+
+    # UserDeviceToken
+    if (config('stone.user_device_token')) {
+      Route::resource('user_device_token', UserDeviceTokenController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+        'destroy',
+      ])->shallow();
+    }
+  }
+
   public static function admin_routes($routes = [
     'index',
     'show',
@@ -118,6 +299,7 @@ class RoutesHelper
     'update',
     'destroy',
   ]) {
+    // Admin
     if (config('stone.admin_blur')) {
       Route::resource('cmser', CMSAdminController::class)->only($routes)->shallow();
     } else {
@@ -255,7 +437,7 @@ class RoutesHelper
     'update',
     'destroy',
   ]) {
-    Route::resource('ws_blog', TagController::class)->only($routes)->shallow();
+    Route::resource('tag', TagController::class)->only($routes)->shallow();
   }
 
   public static function pocket_image_routes()

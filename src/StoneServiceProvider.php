@@ -11,27 +11,96 @@ class StoneServiceProvider extends ServiceProvider
   public function boot()
   {
 
-    // Routes
-    Route::middleware('api')->prefix('api')->group(function () {
-      $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
-    });
-
-    // Publishes
-    // CMS
+    # Publishes
+    # CMS
     $this->publishes([
-      __DIR__ . '/../config/stone.php' => $this->app->configPath('stone-cms.php'),
+      __DIR__ . '/../config/stone-cms.php' => $this->app->configPath('stone.php'),
     ], 'stone-config-cms');
 
-    // Admin
-    $this->publishes([
-      __DIR__ . '/../database/migrations/admin'              => database_path('migrations'),
-      __DIR__ . '/../config/auth_admin.php'                  => $this->app->configPath('auth.php'),
-      __DIR__ . '/../database/seeders/admin'                 => database_path('seeders'),
-      __DIR__ . '/../database/migrations/admin_role'         => database_path('migrations'),
-      __DIR__ . '/../database/migrations/admin_system_class' => database_path('migrations'),
-      __DIR__ . '/../database/migrations/admin_group'        => database_path('migrations'),
-      __DIR__ . '/../database/migrations/cms_log'            => database_path('migrations'),
-    ], 'migrations-admin');
+    if (config('stone.mode') == 'cms') {
+
+      # Routes
+      Route::middleware('api')->prefix('api')->group(function () {
+        $this->loadRoutesFrom(__DIR__ . '/../routes/api-cms.php');
+      });
+
+      $publishes = [];
+
+      # Admin
+      $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin');
+      $publishes[__DIR__ . '/../config/auth_admin.php']  = $this->app->configPath('auth.php');
+      $publishes[__DIR__ . '/../database/seeders/admin'] = database_path('seeders');
+
+      # AdminRole
+      if (config('stone.admin_role')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_role');
+      }
+      # AdminGroup
+      if (config('stone.admin_group')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_group');
+      }
+      # AdminSystemClass
+      if (config('stone.admin_system_class')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_system_class');
+      }
+      # CMSLog
+      if (config('stone.log')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/cms_log');
+      }
+
+      # Pocket
+      if (config('stone.pocket')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/pocket_image');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/pocket_file');
+      }
+
+      # Tulpa
+      if (config('stone.tulpa')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/tulpa');
+      }
+
+      # User
+      if (config('stone.user')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user');
+      }
+
+      # Socialite
+      if (config('stone.socialite')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/socialite');
+      }
+
+      # WsBlog
+      if (config('stone.ws_blog')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/ws_blog');
+      }
+
+      # Tag
+      if (config('stone.tag')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/tag');
+      }
+
+      # Area
+      if (config('stone.area')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/area');
+      }
+
+      # SystemClass
+      if (config('stone.system_class')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/system_class');
+      }
+
+      # ContactRequest
+      if (config('stone.contact_request')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/contact_request');
+      }
+
+      # UserDeviceToken
+      if (config('stone.user_device_token')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user_device_token');
+      }
+
+      $this->publishes($publishes, 'stone-setup-cms');
+    }
 
     // OLD 2021-10
     $this->publishes([

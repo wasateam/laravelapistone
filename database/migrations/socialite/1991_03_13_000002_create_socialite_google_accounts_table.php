@@ -29,6 +29,6 @@ class CreateSocialiteGoogleAccountsTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('social_google_accounts');
+    Schema::dropIfExists('socialite_google_accounts');
   }
 }

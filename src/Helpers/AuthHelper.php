@@ -12,7 +12,7 @@ class AuthHelper
   public static function getUserScopes($user)
   {
     $scopes = $user->scopes ? $user->scopes : [];
-    if (config('stone.auth.has_role')) {
+    if (config('stone.admin_role')) {
       foreach ($user->roles as $role) {
         $scopes = array_merge($scopes, $role->scopes);
       }

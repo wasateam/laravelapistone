@@ -45,8 +45,6 @@ return [
     //     'admin',
     //   ],
     'active_check'     => false,
-    'has_role'         => false,
-    'has_system_class' => false,
   ],
   'notification'       => [
     'notifiable_type_user' => 'Wasateam\Laravelapistone\Models\User',

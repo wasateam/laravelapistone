@@ -30,7 +30,7 @@ class Admin extends JsonResource
       'created_admin'     => new Admin_R1($this->created_admin),
     ];
 
-    if (config('stone.auth.has_role')) {
+    if (config('stone.admin_role')) {
       $res['roles'] = AdminRole_R1::collection($this->roles);
     }
 

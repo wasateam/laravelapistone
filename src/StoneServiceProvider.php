@@ -2,6 +2,7 @@
 
 namespace Wasateam\Laravelapistone;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Wasateam\Laravelapistone\Commands\CommandStoneTest;
 
@@ -9,6 +10,30 @@ class StoneServiceProvider extends ServiceProvider
 {
   public function boot()
   {
+
+    // Routes
+    Route::middleware('api')->prefix('api')->group(function () {
+      $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+    });
+
+    // Publishes
+    // CMS
+    $this->publishes([
+      __DIR__ . '/../config/stone.php' => $this->app->configPath('stone-cms.php'),
+    ], 'stone-config-cms');
+
+    // Admin
+    $this->publishes([
+      __DIR__ . '/../database/migrations/admin'              => database_path('migrations'),
+      __DIR__ . '/../config/auth_admin.php'                  => $this->app->configPath('auth.php'),
+      __DIR__ . '/../database/seeders/admin'                 => database_path('seeders'),
+      __DIR__ . '/../database/migrations/admin_role'         => database_path('migrations'),
+      __DIR__ . '/../database/migrations/admin_system_class' => database_path('migrations'),
+      __DIR__ . '/../database/migrations/admin_group'        => database_path('migrations'),
+      __DIR__ . '/../database/migrations/cms_log'            => database_path('migrations'),
+    ], 'migrations-admin');
+
+    // OLD 2021-10
     $this->publishes([
       __DIR__ . '/../config/stone.php' => $this->app->configPath('stone.php'),
     ], 'stone-config');
@@ -116,11 +141,11 @@ class StoneServiceProvider extends ServiceProvider
     $this->publishes([
       __DIR__ . '/../database/migrations/service_store' => database_path('migrations'),
     ], 'migrations-service-store');
-    
+
     $this->publishes([
       __DIR__ . '/../database/migrations/pin_card' => database_path('migrations'),
     ], 'migrations-pin_card');
-    
+
     $this->publishes([
       __DIR__ . '/../database/migrations/service_plan' => database_path('migrations'),
     ], 'migrations-service_plan');

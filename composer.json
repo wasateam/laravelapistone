@@ -1,24 +1,30 @@
 {
-    "name": "wasateam/laravelapistone",
-    "description": "",
-    "authors": [
-        {
-            "name": "davidturtle",
-            "email": "davidturtle0313@gmail.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Wasateam\\Laravelapistone\\": "src"
-        }
-    },
-    "extra": {
-      "laravel": {
-        "providers": [
-          "Wasateam\\Laravelapistone\\StoneServiceProvider"
-        ]
-      }
-    },
-    "minimum-stability": "dev",
-    "require": {}
+  "name": "wasateam/laravelapistone",
+  "description": "",
+  "authors": [
+    {
+      "name": "davidturtle",
+      "email": "davidturtle0313@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Wasateam\\Laravelapistone\\": "src"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Wasateam\\Laravelapistone\\StoneServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "require": {
+    "doctrine/dbal": "^3.1",
+    "laravel/passport": "^10.1"
+  },
+  "require-dev": {
+    "knuckleswtf/scribe": "^2.7"
+  }
 }

@@ -39,6 +39,7 @@ use Wasateam\Laravelapistone\Controllers\UserAppInfoController;
 use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanController;
+use Wasateam\Laravelapistone\Controllers\UserServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
 
@@ -454,14 +455,16 @@ class RoutesHelper
       Route::resource('service_plan', ServicePlanController::class)->only($routes)->shallow();
       Route::resource('user_service_plan', UserServicePlanController::class)->only($routes)->shallow();
       Route::resource('service_plan_item', ServicePlanItemController::class)->only($routes)->shallow();
+      Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only($routes)->shallow();
     } else {
-      $routes = [
-        'index',
-        'show',
-      ];
-      Route::resource('service_plan', ServicePlanController::class)->only($routes)->shallow();
-      Route::resource('user_service_plan', UserServicePlanController::class)->only($routes)->shallow();
-      Route::resource('service_plan_item', ServicePlanItemController::class)->only($routes)->shallow();
+      // $routes = [
+      //   'index',
+      //   'show',
+      // ];
+      // Route::resource('service_plan', ServicePlanController::class)->only($routes)->shallow();
+      // Route::resource('user_service_plan', UserServicePlanController::class)->only($routes)->shallow();
+      // Route::resource('service_plan_item', ServicePlanItemController::class)->only($routes)->shallow();
+      // Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only($routes)->shallow();
     }
   }
 

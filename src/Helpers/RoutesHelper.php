@@ -22,6 +22,7 @@ use Wasateam\Laravelapistone\Controllers\PinCardController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
 use Wasateam\Laravelapistone\Controllers\ServicePlanController;
+use Wasateam\Laravelapistone\Controllers\ServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreCloseController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
@@ -452,6 +453,7 @@ class RoutesHelper
       ];
       Route::resource('service_plan', ServicePlanController::class)->only($routes)->shallow();
       Route::resource('user_service_plan', UserServicePlanController::class)->only($routes)->shallow();
+      Route::resource('service_plan_item', ServicePlanItemController::class)->only($routes)->shallow();
     } else {
       $routes = [
         'index',
@@ -459,6 +461,7 @@ class RoutesHelper
       ];
       Route::resource('service_plan', ServicePlanController::class)->only($routes)->shallow();
       Route::resource('user_service_plan', UserServicePlanController::class)->only($routes)->shallow();
+      Route::resource('service_plan_item', ServicePlanItemController::class)->only($routes)->shallow();
     }
   }
 

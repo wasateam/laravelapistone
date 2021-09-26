@@ -16,26 +16,25 @@ class ServiceStore extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       $res = [
-        'id'                     => $this->id,
-        'updated_admin'          => new Admin_R1($this->updated_admin),
-        'created_admin'          => new Admin_R1($this->created_admin),
-        'updated_at'             => $this->updated_at,
-        'name'                   => $this->name,
-        'type'                   => $this->type,
-        'cover_image'            => $this->cover_image,
-        'tel'                    => $this->tel,
-        'address'                => $this->address,
-        'des'                    => $this->des,
-        'business_hours'         => $this->business_hours,
-        'appointment_availables' => $this->appointment_availables,
-        'lat'                    => $this->lat,
-        'lng'                    => $this->lng,
-        'is_active'              => $this->is_active,
-        'payload'                => $this->payload,
-        'parking_info'           => $this->parking_info,
-        'transportation_info'    => $this->transportation_info,
-        'service_store_closes'   => ServiceStoreClose_R1::collection($this->service_store_closes),
-        'service_store_notis'    => ServiceStoreNoti_R1::collection($this->service_store_notis),
+        'id'                   => $this->id,
+        'updated_admin'        => new Admin_R1($this->updated_admin),
+        'created_admin'        => new Admin_R1($this->created_admin),
+        'updated_at'           => $this->updated_at,
+        'name'                 => $this->name,
+        'type'                 => $this->type,
+        'cover_image'          => $this->cover_image,
+        'tel'                  => $this->tel,
+        'address'              => $this->address,
+        'des'                  => $this->des,
+        'business_hours'       => $this->business_hours,
+        'lat'                  => $this->lat,
+        'lng'                  => $this->lng,
+        'is_active'            => $this->is_active,
+        'payload'              => $this->payload,
+        'parking_info'         => $this->parking_info,
+        'transportation_info'  => $this->transportation_info,
+        'service_store_closes' => ServiceStoreClose_R1::collection($this->service_store_closes),
+        'service_store_notis'  => ServiceStoreNoti_R1::collection($this->service_store_notis),
       ];
       if (config('stone.admin_group')) {
         if (config('stone.admin_blur')) {
@@ -45,30 +44,31 @@ class ServiceStore extends JsonResource
         }
       }
       if (config('stone.appointment')) {
-        $res['appointments'] = Appointment_R1::collection($this->appointments);
+        $res['appointment_availables'] = $this->appointment_availables;
+        $res['appointments']           = Appointment_R1::collection($this->appointments);
       }
       return $res;
     } else if (config('stone.mode') == 'webapi') {
       $res = [
-        'id'                     => $this->id,
-        'name'                   => $this->name,
-        'type'                   => $this->type,
-        'cover_image'            => $this->cover_image,
-        'tel'                    => $this->tel,
-        'address'                => $this->address,
-        'des'                    => $this->des,
-        'business_hours'         => $this->business_hours,
-        'appointment_availables' => $this->appointment_availables,
-        'lat'                    => $this->lat,
-        'lng'                    => $this->lng,
-        'payload'                => $this->payload,
-        'parking_info'           => $this->parking_info,
-        'transportation_info'    => $this->transportation_info,
-        'service_store_closes'   => ServiceStoreClose_R1::collection($this->service_store_closes),
-        'service_store_notis'    => ServiceStoreNoti_R1::collection($this->service_store_notis),
+        'id'                   => $this->id,
+        'name'                 => $this->name,
+        'type'                 => $this->type,
+        'cover_image'          => $this->cover_image,
+        'tel'                  => $this->tel,
+        'address'              => $this->address,
+        'des'                  => $this->des,
+        'business_hours'       => $this->business_hours,
+        'lat'                  => $this->lat,
+        'lng'                  => $this->lng,
+        'payload'              => $this->payload,
+        'parking_info'         => $this->parking_info,
+        'transportation_info'  => $this->transportation_info,
+        'service_store_closes' => ServiceStoreClose_R1::collection($this->service_store_closes),
+        'service_store_notis'  => ServiceStoreNoti_R1::collection($this->service_store_notis),
       ];
       if (config('stone.appointment')) {
-        $res['appointments'] = Appointment_R0::collection($this->appointments);
+        $res['appointment_availables'] = $this->appointment_availables;
+        $res['appointments']           = Appointment_R0::collection($this->appointments);
       }
       return $res;
     }

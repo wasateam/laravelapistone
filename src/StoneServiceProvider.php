@@ -99,6 +99,26 @@ class StoneServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user_device_token');
       }
 
+      # ServiceStore
+      if (config('stone.service_store')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/service_store');
+      }
+
+      # Appointment
+      if (config('stone.appointment')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/appointment');
+      }
+
+      # ServicePlan
+      if (config('stone.service_plan')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/service_plan');
+      }
+
+      # PinCard
+      if (config('stone.pin_card')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/pin_card');
+      }
+
       $this->publishes($publishes, 'stone-setup-cms');
     }
 

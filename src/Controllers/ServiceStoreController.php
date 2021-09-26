@@ -27,7 +27,6 @@ class ServiceStoreController extends Controller
     'address',
     'des',
     'business_hours',
-    'appointment_availables',
     'lat',
     'lng',
     'is_active',
@@ -52,6 +51,7 @@ class ServiceStoreController extends Controller
 
   public function __construct()
   {
+
     if (config('stone.admin_group')) {
       if (config('stone.admin_blur')) {
         $this->belongs_to_many = [
@@ -72,6 +72,10 @@ class ServiceStoreController extends Controller
           ],
         ];
       }
+    }
+
+    if (config('stone.appointment')) {
+      $this->input_fields[] = 'appointment_availables';
     }
   }
 

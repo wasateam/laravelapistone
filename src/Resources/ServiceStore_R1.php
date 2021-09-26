@@ -14,20 +14,24 @@ class ServiceStore_R1 extends JsonResource
    */
   public function toArray($request)
   {
-    return [
-      'id'                     => $this->id,
-      'name'                   => $this->name,
-      'type'                   => $this->type,
-      'cover_image'            => $this->cover_image,
-      'tel'                    => $this->tel,
-      'address'                => $this->address,
-      'des'                    => $this->des,
-      'business_hours'         => $this->business_hours,
-      'appointment_availables' => $this->appointment_availables,
-      'lat'                    => $this->lat,
-      'lng'                    => $this->lng,
-      'is_active'              => $this->is_active,
-      'payload'                => $this->payload,
+    $res = [
+      'id'             => $this->id,
+      'name'           => $this->name,
+      'type'           => $this->type,
+      'cover_image'    => $this->cover_image,
+      'tel'            => $this->tel,
+      'address'        => $this->address,
+      'des'            => $this->des,
+      'business_hours' => $this->business_hours,
+      'lat'            => $this->lat,
+      'lng'            => $this->lng,
+      'is_active'      => $this->is_active,
+      'payload'        => $this->payload,
     ];
+
+    if (config('stone.appointment')) {
+      $res['appointment_availables'] = $this->appointment_availables;
+    }
+    return $res;
   }
 }

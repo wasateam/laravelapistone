@@ -3,20 +3,20 @@
 return [
   'mode'               => 'cms',
   'storage'            => [
-    'service' => 'gcs', // gcs, s3, local
+    'service' => 'gcs', # gcs, s3, local
     'gcs' => [
       'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', null),
     ],
     'acl'     => true,
   ],
   'mail'               => [
-    'service'    => 'gmail', // gmail, surenotify
+    'service'    => 'gmail', # gmail, surenotify
     'api_key' => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
   ],
   'app_url'            => env('APP_URL'),
   'web_url'            => env('WEB_URL'),
-  // Auth
+  # Auth
   'auth'               => [
     'model_name'     => 'admin',
     'model'          => '\Wasateam\Laravelapistone\Models\Admin',
@@ -28,7 +28,7 @@ return [
     ],
     'active_check'   => true,
   ],
-  // Models
+  # Modules
   'admin_blur'         => true,
   'admin_role'         => true,
   'admin_group'        => true,
@@ -37,6 +37,7 @@ return [
     'is_active' => true,
     'model'     => '\Wasateam\Laravelapistone\Models\CmsLog',
   ],
+  'post_encode'        => false,
   'pocket'             => true,
   'tulpa'              => true,
   'user'               => true,
@@ -51,10 +52,11 @@ return [
   'notification'       => [
     'notifiable_type_user' => 'Wasateam\Laravelapistone\Models\Admin',
   ],
+  'service_store'      => false,
   'appointment'        => false,
   'service_plan'       => false,
   'pin_card'           => false,
   'calendar_highlight' => false,
-  'post_encode'        => false,
+  #
   'app'                => false,
 ];

@@ -117,19 +117,11 @@ class RoutesHelper
     # Admin
     if (config('stone.admin_blur')) {
       Route::resource('cmser', CMSAdminController::class)->only([
-        'index',
-        'show',
-        'store',
-        'update',
-        'destroy',
+        'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     } else {
       Route::resource('admin', CMSAdminController::class)->only([
-        'index',
-        'show',
-        'store',
-        'update',
-        'destroy',
+        'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
 
@@ -137,19 +129,11 @@ class RoutesHelper
     if (config('stone.admin_role')) {
       if (config('stone.admin_blur')) {
         Route::resource('cmser_role', AdminRoleController::class)->only([
-          'index',
-          'show',
-          'store',
-          'update',
-          'destroy',
+          'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
       } else {
         Route::resource('admin_role', AdminRoleController::class)->only([
-          'index',
-          'show',
-          'store',
-          'update',
-          'destroy',
+          'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
       }
     }
@@ -158,19 +142,11 @@ class RoutesHelper
     if (config('stone.admin_group')) {
       if (config('stone.admin_blur')) {
         Route::resource('cmser_group', AdminGroupController::class)->only([
-          'index',
-          'show',
-          'store',
-          'update',
-          'destroy',
+          'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
       } else {
         Route::resource('admin_group', AdminGroupController::class)->only([
-          'index',
-          'show',
-          'store',
-          'update',
-          'destroy',
+          'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
       }
     }
@@ -202,22 +178,14 @@ class RoutesHelper
     # User
     if (config('stone.user')) {
       Route::resource('user', UserController::class)->only([
-        'index',
-        'show',
-        'store',
-        'update',
-        'destroy',
+        'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
 
     # Blog
     if (config('stone.ws_blog')) {
       Route::resource('ws_blog', WsBlogController::class)->only([
-        'index',
-        'show',
-        'store',
-        'update',
-        'destroy',
+        'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       Route::get('/ws_blog/image/upload_url', [WsBlogController::class, 'image_get_upload_url']);
     }
@@ -225,70 +193,98 @@ class RoutesHelper
     # Tag
     if (config('stone.tag')) {
       Route::resource('tag', TagController::class)->only([
-        'index',
-        'show',
-        'store',
-        'update',
-        'destroy',
+        'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
 
     # Area
     if (config('stone.area')) {
       Route::resource('area', AreaController::class)->only([
-        'index',
-        'show',
-        'store',
-        'update',
-        'destroy',
+        'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       Route::resource('area_section', AreaSectionController::class)->only([
-        'index',
-        'show',
-        'store',
-        'update',
-        'destroy',
+        'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
 
     # SystemClass
     if (config('stone.system_class')) {
       Route::resource('system_class', SystemClassController::class)->only([
-        'index',
-        'show',
-        'store',
-        'update',
-        'destroy',
+        'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       Route::resource('system_subclass', SystemSubclassController::class)->only([
-        'index',
-        'show',
-        'store',
-        'update',
-        'destroy',
+        'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
 
     # ContactRequest
     if (config('stone.contact_request')) {
       Route::resource('contact_request', ContactRequestController::class)->only([
-        'index',
-        'show',
-        'store',
-        'update',
-        'destroy',
+        'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
 
     # UserDeviceToken
     if (config('stone.user_device_token')) {
       Route::resource('user_device_token', UserDeviceTokenController::class)->only([
-        'index',
-        'show',
-        'store',
-        'update',
-        'destroy',
+        'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+    }
+
+    # ServiceStore
+    if (config('stone.service_store')) {
+      Route::resource('service_store', ServiceStoreController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('service_store_noti', ServiceStoreNotiController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('service_store_close', ServiceStoreCloseController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
+
+    # Appointment
+    if (config('stone.appointment')) {
+      Route::resource('appointment', AppointmentController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
+
+    # ServicePlan
+    if (config('stone.service_plan')) {
+      Route::resource('service_plan', ServicePlanController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('user_service_plan', UserServicePlanController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('service_plan_item', ServicePlanItemController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
+
+    # Pin Card
+    if (config('stone.pin_card')) {
+      Route::resource('pin_card', PinCardController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::post('pin_card/generate', [PinCardController::class, 'generate']);
+      Route::get('pin_card/export/excel/signedurl', [PinCardController::class, 'export_excel_signedurl']);
+    }
+  }
+
+  public static function cms_public_routes()
+  {
+    if (config('stone.pin_card')) {
+      Route::group([
+        "middleware" => ["signed"],
+      ], function () {
+        Route::get('pin_card/export/excel', [PinCardController::class, 'export_excel'])->name('pin_card_export_excel');
+      });
     }
   }
 

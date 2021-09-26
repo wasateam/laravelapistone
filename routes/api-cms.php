@@ -10,20 +10,19 @@ use Illuminate\Support\Facades\Route;
   "avatarpatch",
 ]);
 
-// Boss
+# Boss
 Route::group([
   "middleware" => ["auth:admin", "scopes:boss"],
 ], function () {
-
-  # Boss
   \Wasateam\Laravelapistone\Helpers\RoutesHelper::cms_boss_routes();
 });
 
-// Admin
+# Admin
 Route::group([
   "middleware" => ["auth:admin", "scopes:admin"],
 ], function () {
-
-  # admin
   \Wasateam\Laravelapistone\Helpers\RoutesHelper::cms_admin_routes();
 });
+
+# Public
+\Wasateam\Laravelapistone\Helpers\RoutesHelper::cms_public_routes();

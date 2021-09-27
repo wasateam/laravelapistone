@@ -70,6 +70,27 @@ class FileController extends Controller
     return response($file)->header('Content-Type', $mimeType);
   }
 
+  public function file_public($model, $repo, $name)
+  {
+    $disk         = Storage::disk(config('stone.storage.service'));
+    $storage_path = "public/{$model}/{$repo}/{$name}";
+    try {
+      $mimeType = $disk->mimeType($storage_path);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'get file type fail or find no file.',
+      ], 400);
+    }
+    try {
+      $file = $disk->get($storage_path);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'get file type fail or find no file.',
+      ], 400);
+    }
+    return response($file)->header('Content-Type', $mimeType);
+  }
+
   // public function show($type, $model, $repo, $name)
   // {
   //    $disk = Storage::disk(config('stone.storage.service'));

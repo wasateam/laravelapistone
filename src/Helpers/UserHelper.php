@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers;
+namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
 use DB;

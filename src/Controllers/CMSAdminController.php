@@ -47,13 +47,9 @@ class CMSAdminController extends Controller
     'name',
     'email',
   ];
-  public $belongs_to_many = [
-    'roles',
-  ];
-  public $filter_belongs_to_many = [
-    'roles',
-  ];
-  public $order_fields = [
+  public $belongs_to_many        = [];
+  public $filter_belongs_to_many = [];
+  public $order_fields           = [
     'id',
     'updated_at',
     'created_at',
@@ -64,17 +60,19 @@ class CMSAdminController extends Controller
 
   public function __construct()
   {
+
+    if (config('stone.admin_role')) {
+      $this->belongs_to_many[]        = 'roles';
+      $this->filter_belongs_to_many[] = 'roles';
+    }
+
     if (config('stone.admin_group')) {
       if (config('stone.admin_blur')) {
-        $this->belongs_to_many = [
-          'roles',
-          'cmser_groups',
-        ];
+        $this->belongs_to_many[]        = 'cmser_groups';
+        $this->filter_belongs_to_many[] = 'cmser_groups';
       } else {
-        $this->belongs_to_many = [
-          'roles',
-          'admin_groups',
-        ];
+        $this->belongs_to_many[]        = 'admin_groups';
+        $this->filter_belongs_to_many[] = 'admin_groups';
       }
     }
   }

@@ -64,6 +64,11 @@ class StoneServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user');
       }
 
+      # UserDeviceToken
+      if (config('stone.user_device_token')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user_device_token');
+      }
+
       # Socialite
       if (config('stone.socialite')) {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/socialite');
@@ -117,6 +122,11 @@ class StoneServiceProvider extends ServiceProvider
       # PinCard
       if (config('stone.pin_card')) {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/pin_card');
+      }
+
+      # Locale
+      if (config('stone.locale')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/locale');
       }
 
       $this->publishes($publishes, 'stone-setup-cms');

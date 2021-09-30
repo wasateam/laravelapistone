@@ -14,7 +14,7 @@ class UserMy extends JsonResource
    */
   public function toArray($request)
   {
-    return [
+    $res = [
       'id'                => $this->id,
       'name'              => $this->name,
       'email'             => $this->email,
@@ -32,7 +32,16 @@ class UserMy extends JsonResource
       'byebye_at'         => $this->byebye_at,
       'email_verified_at' => $this->email_verified_at,
       'pocket_avatar'     => new PocketImage_R1($this->pocket_avatar),
-      'locale'            => new Locale_R1($this->locale),
     ];
+    if (config('stone.locale')) {
+      $res['locale'] = new Locale_R1($this->locale);
+    }
+    if (config('stone.service_plan')) {
+      $res['service_plans'] = ServicePlan_R1::collection($this->service_plans);
+    }
+    if (config('stone.user_device_token')) {
+      $res['user_device_tokens'] = UserDeviceToken_R1::collection($this->user_device_tokens);
+    }
+    return $res;
   }
 }

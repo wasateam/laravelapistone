@@ -156,6 +156,11 @@ class RoutesHelper
       'index',
       'show',
     ])->shallow();
+
+    # Locale
+    Route::resource('locale', LocaleController::class)->only([
+      'index', 'show', 'store', 'update', 'destroy',
+    ])->shallow();
   }
 
   public static function cms_admin_routes()
@@ -274,6 +279,23 @@ class RoutesHelper
       ])->shallow();
       Route::post('pin_card/generate', [PinCardController::class, 'generate']);
       Route::get('pin_card/export/excel/signedurl', [PinCardController::class, 'export_excel_signedurl']);
+    }
+
+    # Tulpa
+    if (config('stone.tulpa')) {
+      Route::get('/tulpa_page/image/upload_url', [TulpaPageController::class, 'image_get_upload_url']);
+      Route::resource('tulpa_page', TulpaPageController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('tulpa_cross_item', TulpaCrossItemController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('tulpa_page_template', TulpaPageTemplateController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('tulpa_section', TulpaSectionController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
     }
   }
 

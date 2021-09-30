@@ -52,6 +52,11 @@ class User extends Authenticatable
     return $this->hasMany(UserAppInfo::class, 'user_id');
   }
 
+  public function service_plans()
+  {
+    return $this->belongsToMany(ServicePlan::class, 'user_service_plans', 'user_id', 'service_plan_id');
+  }
+
   /**
    * The attributes that are mass assignable.
    *

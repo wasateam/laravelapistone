@@ -42,7 +42,11 @@ return [
   'tulpa'              => true,
   'user'               => true,
   'user_device_token'  => true,
-  'socialite'          => true,
+  'socialite'          => [
+    'facebook' => true,
+    'google'   => true,
+    'line'     => true,
+  ],
   'ws_blog'            => true,
   'tag'                => true,
   'area'               => true,

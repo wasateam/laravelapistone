@@ -57,6 +57,21 @@ class User extends Authenticatable
     return $this->belongsToMany(ServicePlan::class, 'user_service_plans', 'user_id', 'service_plan_id');
   }
 
+  public function socialite_google_accounts()
+  {
+    return $this->hasMany(SocialiteGoogleAccount::class, 'user_id');
+  }
+
+  public function socialite_facebook_accounts()
+  {
+    return $this->hasMany(SocialiteFacebookAccount::class, 'user_id');
+  }
+
+  public function socialite_line_accounts()
+  {
+    return $this->hasMany(SocialiteLineAccount::class, 'user_id');
+  }
+
   /**
    * The attributes that are mass assignable.
    *

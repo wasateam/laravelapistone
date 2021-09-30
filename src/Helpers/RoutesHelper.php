@@ -28,6 +28,9 @@ use Wasateam\Laravelapistone\Controllers\ServiceStoreController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
 use Wasateam\Laravelapistone\Controllers\SnappyController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
+use Wasateam\Laravelapistone\Controllers\SocialiteFacebookAccountController;
+use Wasateam\Laravelapistone\Controllers\SocialiteGoogleAccountController;
+use Wasateam\Laravelapistone\Controllers\SocialiteLineAccountController;
 use Wasateam\Laravelapistone\Controllers\SystemClassController;
 use Wasateam\Laravelapistone\Controllers\SystemSubclassController;
 use Wasateam\Laravelapistone\Controllers\TagController;
@@ -185,6 +188,25 @@ class RoutesHelper
       Route::resource('user', UserController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+    }
+
+    # Socialite
+    if (config('stone.socialite')) {
+      if (config('stone.socialite.google')) {
+        Route::resource('user', SocialiteGoogleAccountController::class)->only([
+          'index', 'show', 'store', 'update', 'destroy',
+        ])->shallow();
+      }
+      if (config('stone.socialite.facebook')) {
+        Route::resource('user', SocialiteFacebookAccountController::class)->only([
+          'index', 'show', 'store', 'update', 'destroy',
+        ])->shallow();
+      }
+      if (config('stone.socialite.line')) {
+        Route::resource('user', SocialiteLineAccountController::class)->only([
+          'index', 'show', 'store', 'update', 'destroy',
+        ])->shallow();
+      }
     }
 
     # Blog

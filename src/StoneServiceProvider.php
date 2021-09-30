@@ -71,7 +71,15 @@ class StoneServiceProvider extends ServiceProvider
 
       # Socialite
       if (config('stone.socialite')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/socialite');
+        if (config('stone.socialite.facebook')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/socialite/facebook');
+        }
+        if (config('stone.socialite.google')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/socialite/google');
+        }
+        if (config('stone.socialite.line')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/socialite/line');
+        }
       }
 
       # WsBlog

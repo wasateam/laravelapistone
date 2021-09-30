@@ -89,8 +89,13 @@ class ServiceStoreController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_IndexHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) {
+      return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) use ($request) {
         $snap = $snap->where('is_active', 1);
+        if ($request->country) {
+          $snap = $snap->whereHas('admin_groups', function ($query) use ($request) {
+            $query = $query->where('name', '=', $request->country);
+          });
+        }
         return $snap;
       });
     }

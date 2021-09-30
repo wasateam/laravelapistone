@@ -17,6 +17,8 @@ class SocialiteGoogleAccount extends JsonResource
     if (config('stone.mode') == 'cms') {
       $res = [
         'id'               => $this->id,
+        'created_at'       => $this->created_at,
+        'updated_at'       => $this->updated_at,
         'provider_user_id' => $this->provider_user_id,
         'provider'         => $this->provider,
         'user_id'          => new User_R1($this->user_id),

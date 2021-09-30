@@ -18,7 +18,7 @@ class CreatePinCardsTable extends Migration
       $table->timestamps();
       $table->softDeletes();
       $table->string('created_admin_id')->nullable();
-      $table->string('pin')->unique();
+      $table->string('pin', 40)->unique();
       $table->string('service_plan_id')->nullable();
     });
   }

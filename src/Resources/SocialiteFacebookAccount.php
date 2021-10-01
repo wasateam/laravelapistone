@@ -21,7 +21,7 @@ class SocialiteFacebookAccount extends JsonResource
         'updated_at'       => $this->updated_at,
         'provider_user_id' => $this->provider_user_id,
         'provider'         => $this->provider,
-        'user_id'          => new User_R1($this->user_id),
+        'user'             => new User_R1($this->user),
       ];
       return $res;
     }

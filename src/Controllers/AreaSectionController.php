@@ -28,11 +28,7 @@ class AreaSectionController extends Controller
   public $filter_belongs_to = [
     'area',
   ];
-  public $user_record_field = 'updated_admin_id';
-  public $user_create_field = 'created_admin_id';
-  public $parent_model      = 'Wasateam\Laravelapistone\Models\Area';
-  public $parent_id_field   = 'area_id';
-  public $order_fields      = [
+  public $order_fields = [
     'sequence',
     'updated_at',
     'created_at',

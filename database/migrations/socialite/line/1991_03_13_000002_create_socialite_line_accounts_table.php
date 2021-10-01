@@ -15,7 +15,7 @@ class CreateSocialiteLineAccountsTable extends Migration
   {
     Schema::create('socialite_line_accounts', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->integer('user_id');
+      $table->string('user_id');
       $table->string('provider_user_id');
       $table->string('provider');
       $table->timestamps();

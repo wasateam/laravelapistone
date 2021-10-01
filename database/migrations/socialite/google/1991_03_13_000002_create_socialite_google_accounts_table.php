@@ -15,7 +15,7 @@ class CreateSocialiteGoogleAccountsTable extends Migration
   {
     Schema::create('socialite_google_accounts', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->integer('user_id');
+      $table->string('user_id');
       $table->string('provider_user_id');
       $table->string('provider');
       $table->timestamps();

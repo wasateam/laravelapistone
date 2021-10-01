@@ -319,6 +319,13 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
+
+    # Notification
+    Route::resource('notification', NotificationController::class)->only([
+      'index',
+      'show',
+      'destroy',
+    ])->shallow();
   }
 
   public static function cms_public_routes()

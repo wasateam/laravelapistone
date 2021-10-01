@@ -19,6 +19,7 @@ class Area extends JsonResource
         'id'            => $this->id,
         'updated_admin' => new Admin_R1($this->updated_admin),
         'sequence'      => $this->sequence,
+        'created_at'    => $this->created_at,
         'updated_at'    => $this->updated_at,
         'name'          => $this->name,
         'area_sections' => AreaSection_R1::collection($this->area_sections),
@@ -26,8 +27,6 @@ class Area extends JsonResource
     } else if (config('stone.mode') == 'webapi') {
       return [
         'id'            => $this->id,
-        'sequence'      => $this->sequence,
-        'updated_at'    => $this->updated_at,
         'name'          => $this->name,
         'area_sections' => AreaSection_R1::collection($this->area_sections),
       ];

@@ -19,6 +19,7 @@ class AreaSection extends JsonResource
         'id'            => $this->id,
         'updated_admin' => new Admin_R1($this->updated_admin),
         'sequence'      => $this->sequence,
+        'created_at'    => $this->created_at,
         'updated_at'    => $this->updated_at,
         'name'          => $this->name,
       ];

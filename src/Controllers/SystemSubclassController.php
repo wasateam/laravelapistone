@@ -28,11 +28,7 @@ class SystemSubclassController extends Controller
   public $filter_belongs_to = [
     'system_class',
   ];
-  public $user_record_field = 'updated_admin_id';
-  public $user_create_field = 'created_admin_id';
-  public $parent_model      = 'Wasateam\Laravelapistone\Models\SystemClass';
-  public $parent_id_field   = 'system_class_id';
-  public $order_fields      = [
+  public $order_fields = [
     'sequence',
     'updated_at',
     'created_at',

@@ -23,12 +23,8 @@ class SystemClassController extends Controller
     'sequence',
     'name',
   ];
-  public $belongs_to = [
-    'area',
-  ];
-  public $filter_belongs_to = [
-    'area',
-  ];
+  public $belongs_to        = [];
+  public $filter_belongs_to = [];
   public $user_record_field = 'updated_admin_id';
   public $user_create_field = 'created_admin_id';
   public $order_fields      = [
@@ -36,9 +32,15 @@ class SystemClassController extends Controller
     'updated_at',
     'created_at',
   ];
-  public $order_belongs_to = [
-    'area',
-  ];
+  public $order_belongs_to = [];
+  public function __construct()
+  {
+    if (config('stone.area')) {
+      $this->belongs_to[]        = 'area';
+      $this->filter_belongs_to[] = 'area';
+      $this->order_belongs_to[]  = 'area';
+    }
+  }
 
   /**
    * Index

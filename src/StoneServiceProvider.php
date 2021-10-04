@@ -137,6 +137,11 @@ class StoneServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/locale');
       }
 
+      # Notification
+      if (config('stone.notification')) {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/notification');
+      }
+
       $this->publishes($publishes, 'stone-setup-cms');
     }
 

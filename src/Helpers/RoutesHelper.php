@@ -339,6 +339,67 @@ class RoutesHelper
     }
   }
 
+  public static function webapi_auth_routes()
+  {
+
+  }
+
+  public static function webapi_public_routes()
+  {
+
+    # Tulpa
+    if (config('stone.tulpa')) {
+      Route::get('tulpa_page', [TulpaPageController::class, 'index']);
+      Route::get('tulpa_page/page', [TulpaPageController::class, 'show']);
+      Route::resource('tulpa_page_template', TulpaPageTemplateController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+      Route::resource('tulpa_section', TulpaSectionController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+    }
+
+    # Blog
+    if (config('stone.ws_blog')) {
+      Route::resource('ws_blog', WsBlogController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+      Route::get('ws_blog/{id}/read', [WsBlogController::class, 'read']);
+    }
+
+    # ServiceStore
+    if (config('stone.service_store')) {
+      Route::resource('service_store', ServiceStoreController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+      Route::resource('service_store_noti', ServiceStoreNotiController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+      Route::resource('service_store_close', ServiceStoreCloseController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+    }
+
+    # Socialite
+    if (config('stone.socialite')) {
+      if (config('stone.socialite.google')) {
+        Route::get('signin/google', [SocialiteController::class, 'googleCallback']);
+      }
+      if (config('stone.socialite.facebook')) {
+        Route::get('signin/facebook', [SocialiteController::class, 'facebookCallback']);
+      }
+      if (config('stone.socialite.line')) {
+        Route::get('signin/line', [SocialiteController::class, 'lineCallback']);
+      }
+    }
+  }
+
   public static function admin_routes($routes = [
     'index',
     'show',

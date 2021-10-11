@@ -17,9 +17,15 @@ class StoneServiceProvider extends ServiceProvider
       __DIR__ . '/../config/stone-cms.php' => $this->app->configPath('stone.php'),
     ], 'stone-config-cms');
 
+    # WEBAPI
+    $this->publishes([
+      __DIR__ . '/../config/stone-webapi.php' => $this->app->configPath('stone.php'),
+    ], 'stone-config-webapi');
+
+
+    # Routes
     if (config('stone.mode') == 'cms') {
 
-      # Routes
       Route::middleware('api')->prefix('api')->group(function () {
         $this->loadRoutesFrom(__DIR__ . '/../routes/api-cms.php');
       });
@@ -143,6 +149,12 @@ class StoneServiceProvider extends ServiceProvider
       }
 
       $this->publishes($publishes, 'stone-setup-cms');
+    }
+
+    if (config('stone.mode') == 'webapi') {
+      Route::middleware('api')->prefix('api')->group(function () {
+        $this->loadRoutesFrom(__DIR__ . '/../routes/api-webapi.php');
+      });
     }
 
     // OLD 2021-10

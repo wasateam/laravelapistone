@@ -1,69 +1,51 @@
 <?php
 
 return [
-  'mode'               => env('STONE_MODE', 'cms'), // cms, webapi
-  'uuid' => env('UUID', false),
-  'app_mode'           => env('APP_MODE', false),
-  'user_device_token'  => env('USER_DEVICE_TOKEN', false),
+  'mode'               => 'webapi',
   'storage'            => [
-    'signed_url' => env('STONE_STORAGE_SIGNED_URL', false),
-    'service'    => env('STONE_STORAGE_SERVICE', 'gcs'), // gcs, local, s3
+    'service' => 'gcs', # gcs, s3, local
     'gcs' => [
       'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', null),
     ],
-    'acl'        => env('STONE_STORAGE_ACL', true),
+    'acl'     => true,
   ],
   'mail'               => [
     'service'    => env('gmail'), // gmail, surenotify
     'api_key' => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
   ],
-  'log'                => [
-    'is_active' => env('STONE_LOG_ACTIVE', false),
-    'model'     => '\Wasateam\Laravelapistone\Models\CmsLog',
-    // 'model'     => '\Wasateam\Laravelapistone\Models\WebLog',
-  ],
   'app_url'            => env('APP_URL'),
   'web_url'            => env('WEB_URL'),
-  'locale'             => env('LOCALE', false),
   // Auth
-  'admin_blur'         => true,
   'auth'               => [
-    'model_name'       => 'user',
-    'model'            => '\Wasateam\Laravelapistone\Models\User',
-    'resource'         => '\Wasateam\Laravelapistone\Resources\User',
-    'auth_scope'       => 'user',
-    'default_scopes'   => [
-      'boss',
+    'model_name'     => 'user',
+    'model'          => '\Wasateam\Laravelapistone\Models\User',
+    'resource'       => '\Wasateam\Laravelapistone\Resources\User',
+    'auth_scope'     => 'user',
+    'default_scopes' => [
       'user',
     ],
-    //   'model_name'     => 'admin',
-    //   'model'          => '\Wasateam\Laravelapistone\Models\Admin',
-    //   'resource'       => '\Wasateam\Laravelapistone\Resources\Admin',
-    //   'auth_scope'     => 'admin',
-    //   'default_scopes' => [
-    //     'admin',
-    //   ],
-    'active_check'     => false,
+    'active_check'   => true,
   ],
-  'notification'       => [
-    'notifiable_type_user' => 'Wasateam\Laravelapistone\Models\User',
+  # Modules
+  'log'                => [
+    'is_active' => true,
+    'model'     => '\Wasateam\Laravelapistone\Models\WebLog',
   ],
-  'admin_group'        => env('ADMIN_GROUP', false),
-  'contact_request'    => [
-    'notify_mail' => env('CONTACT_REQUEST_NOTIFY_MAIL'),
+  'post_encode'        => false,
+  'tulpa'              => true,
+  'socialite'          => [
+    'facebook' => true,
+    'google'   => true,
+    'line'     => true,
   ],
-  // App Mode
-  'app'                => env('APP', false),
-  'appointment'        => env('APPOINTMENT', false),
-  'service_plan'       => env('SERVICE_PLAN', false),
-  'pin_card'           => env('PIN_CARD', false),
-  'calendar_highlight' => env('CALENDAR_HIGHLIGHT', false),
-  // Member
-  // 'user'    => [
-  //   'model_name' => 'user',
-  //   'model'      => '\Wasateam\Laravelapistone\Models\User',
-  //   'resource'   => '\Wasateam\Laravelapistone\Resources\User',
-  // ],
-  'post_encode'    => false,
+  'ws_blog'            => true,
+  'tag'                => true,
+  'contact_request'    => false,
+  'locale'             => false,
+  'service_store'      => false,
+  'appointment'        => false,
+  'service_plan'       => false,
+  'pin_card'           => false,
+  'calendar_highlight' => false,
 ];

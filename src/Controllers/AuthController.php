@@ -74,6 +74,9 @@ class AuthController extends Controller
     if ($request->has('tel')) {
       $user->tel = $request->tel;
     }
+    if (config('stone.auth.active_check')) {
+      $user->is_active = 1;
+    }
     $user->scopes = $default_scopes;
     $user->save();
     return new $resource($user);
@@ -196,7 +199,7 @@ class AuthController extends Controller
     ModelHelper::ws_Log(config('stone.auth.model'), $this, 'signout');
     try {
       $request->user()->token()->revoke();
-    } catch (\Throwable $th) {
+    } catch (\Throwable$th) {
       return response()->json([
         'message' => 'signout fail.',
       ]);
@@ -246,7 +249,7 @@ class AuthController extends Controller
     }
     $user->save();
     return response()->json([
-      'user'   => new $resource($user),
+      'user' => new $resource($user),
     ], 200);
   }
 

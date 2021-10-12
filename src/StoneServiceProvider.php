@@ -156,6 +156,11 @@ class StoneServiceProvider extends ServiceProvider
       Route::middleware('api')->prefix('api')->group(function () {
         $this->loadRoutesFrom(__DIR__ . '/../routes/api-webapi.php');
       });
+
+      # Publish
+      $publishes                                       = [];
+      $publishes[__DIR__ . '/../config/auth_user.php'] = $this->app->configPath('auth.php');
+      $this->publishes($publishes, 'stone-setup-webapi');
     }
 
     // OLD 2021-10

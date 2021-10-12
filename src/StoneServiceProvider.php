@@ -22,132 +22,133 @@ class StoneServiceProvider extends ServiceProvider
       __DIR__ . '/../config/stone-webapi.php' => $this->app->configPath('stone.php'),
     ], 'stone-config-webapi');
 
-
-    # Routes
     if (config('stone.mode') == 'cms') {
 
+      # Routes
       Route::middleware('api')->prefix('api')->group(function () {
         $this->loadRoutesFrom(__DIR__ . '/../routes/api-cms.php');
       });
 
-      $publishes = [];
+      if (config('stone.migration')) {
 
-      # Admin
-      $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin');
+        # Admin
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin');
+        # AdminRole
+        if (config('stone.admin_role')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_role');
+        }
+        # AdminGroup
+        if (config('stone.admin_group')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_group');
+        }
+        # AdminSystemClass
+        if (config('stone.admin_system_class')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_system_class');
+        }
+        # CMSLog
+        if (config('stone.log')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/cms_log');
+        }
+
+        # Pocket
+        if (config('stone.pocket')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/pocket_image');
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/pocket_file');
+        }
+
+        # Tulpa
+        if (config('stone.tulpa')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/tulpa');
+        }
+
+        # User
+        if (config('stone.user')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user');
+        }
+
+        # UserDeviceToken
+        if (config('stone.user_device_token')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user_device_token');
+        }
+
+        # Socialite
+        if (config('stone.socialite')) {
+          if (config('stone.socialite.facebook')) {
+            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/socialite/facebook');
+          }
+          if (config('stone.socialite.google')) {
+            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/socialite/google');
+          }
+          if (config('stone.socialite.line')) {
+            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/socialite/line');
+          }
+        }
+
+        # WsBlog
+        if (config('stone.ws_blog')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/ws_blog');
+        }
+
+        # Tag
+        if (config('stone.tag')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/tag');
+        }
+
+        # Area
+        if (config('stone.area')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/area');
+        }
+
+        # SystemClass
+        if (config('stone.system_class')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/system_class');
+        }
+
+        # ContactRequest
+        if (config('stone.contact_request')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/contact_request');
+        }
+
+        # UserDeviceToken
+        if (config('stone.user_device_token')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user_device_token');
+        }
+
+        # ServiceStore
+        if (config('stone.service_store')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/service_store');
+        }
+
+        # Appointment
+        if (config('stone.appointment')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/appointment');
+        }
+
+        # ServicePlan
+        if (config('stone.service_plan')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/service_plan');
+        }
+
+        # PinCard
+        if (config('stone.pin_card')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/pin_card');
+        }
+
+        # Locale
+        if (config('stone.locale')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/locale');
+        }
+
+        # Notification
+        if (config('stone.notification')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/notification');
+        }
+      }
+
+      # Publish
+      $publishes                                         = [];
       $publishes[__DIR__ . '/../config/auth_admin.php']  = $this->app->configPath('auth.php');
       $publishes[__DIR__ . '/../database/seeders/admin'] = database_path('seeders');
-
-      # AdminRole
-      if (config('stone.admin_role')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_role');
-      }
-      # AdminGroup
-      if (config('stone.admin_group')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_group');
-      }
-      # AdminSystemClass
-      if (config('stone.admin_system_class')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_system_class');
-      }
-      # CMSLog
-      if (config('stone.log')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/cms_log');
-      }
-
-      # Pocket
-      if (config('stone.pocket')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/pocket_image');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/pocket_file');
-      }
-
-      # Tulpa
-      if (config('stone.tulpa')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/tulpa');
-      }
-
-      # User
-      if (config('stone.user')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user');
-      }
-
-      # UserDeviceToken
-      if (config('stone.user_device_token')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user_device_token');
-      }
-
-      # Socialite
-      if (config('stone.socialite')) {
-        if (config('stone.socialite.facebook')) {
-          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/socialite/facebook');
-        }
-        if (config('stone.socialite.google')) {
-          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/socialite/google');
-        }
-        if (config('stone.socialite.line')) {
-          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/socialite/line');
-        }
-      }
-
-      # WsBlog
-      if (config('stone.ws_blog')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/ws_blog');
-      }
-
-      # Tag
-      if (config('stone.tag')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/tag');
-      }
-
-      # Area
-      if (config('stone.area')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/area');
-      }
-
-      # SystemClass
-      if (config('stone.system_class')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/system_class');
-      }
-
-      # ContactRequest
-      if (config('stone.contact_request')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/contact_request');
-      }
-
-      # UserDeviceToken
-      if (config('stone.user_device_token')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user_device_token');
-      }
-
-      # ServiceStore
-      if (config('stone.service_store')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/service_store');
-      }
-
-      # Appointment
-      if (config('stone.appointment')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/appointment');
-      }
-
-      # ServicePlan
-      if (config('stone.service_plan')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/service_plan');
-      }
-
-      # PinCard
-      if (config('stone.pin_card')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/pin_card');
-      }
-
-      # Locale
-      if (config('stone.locale')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/locale');
-      }
-
-      # Notification
-      if (config('stone.notification')) {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/notification');
-      }
-
       $this->publishes($publishes, 'stone-setup-cms');
     }
 

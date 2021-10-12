@@ -2,6 +2,7 @@
 
 return [
   'mode'               => 'cms',
+  'migration'          => true,
   'storage'            => [
     'service' => 'gcs', # gcs, s3, local
     'gcs' => [

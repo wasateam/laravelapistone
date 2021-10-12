@@ -4,10 +4,13 @@ use Illuminate\Support\Facades\Route;
 # Auth
 \Wasateam\Laravelapistone\Helpers\RoutesHelper::auth_routes([
   "signin",
+  "signup",
   "signout",
   "userget",
   "userpatch",
+  "passwordpatch",
   "avatarpatch",
+  "forgetpassword",
 ]);
 
 Route::group([

@@ -386,6 +386,44 @@ class RoutesHelper
       ])->shallow();
     }
 
+    # Area
+    if (config('stone.area')) {
+      Route::resource('area', AreaController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+      Route::resource('area.area_section', AreaSectionController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+    }
+
+    # SystemClass
+    if (config('stone.system_class')) {
+      Route::resource('area.system_class', SystemClassController::class)->only([
+        'show',
+      ])->shallow();
+      Route::get('area/{area}/system_class', [SystemClassController::class, 'index_with_area']);
+      Route::resource('system_class.system_subclass', SystemSubclassController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+    }
+
+    # UserDeviceToken
+    if (config('stone.user_device_token')) {
+      Route::post('device_token', [UserDeviceTokenController::class, 'active']);
+      Route::delete('device_token', [UserDeviceTokenController::class, 'deactive']);
+    }
+
+    # Notification
+    if (config('stone.notification')) {
+      Route::get('notification', [NotificationController::class, 'user_index']);
+      Route::get('notification/unread', [NotificationController::class, 'user_index_unread']);
+      Route::post('notification/{id}/read', [NotificationController::class, 'user_read']);
+      Route::post('notification/readall', [NotificationController::class, 'user_readall']);
+    }
+
     # Socialite
     if (config('stone.socialite')) {
       if (config('stone.socialite.google')) {
@@ -397,6 +435,16 @@ class RoutesHelper
       if (config('stone.socialite.line')) {
         Route::get('signin/line', [SocialiteController::class, 'lineCallback']);
       }
+    }
+
+    if (config('stone.file_upload') == 'laravel_signed') {
+      Route::group([
+        "middleware" => ["signed"],
+      ], function () {
+        Route::get('/{model}/{model_id}/{type}/{repo}/{name}', '\Wasateam\Laravelapistone\Controllers\FileController@file_idmatch')->name('file_idmatch');
+        Route::get('/{model}/{type}/{repo}/{name}', '\Wasateam\Laravelapistone\Controllers\FileController@file_general')->name('file_general');
+        Route::get('/{parent}/{parent_id}/{model}/{type}/{repo}/{name}', '\Wasateam\Laravelapistone\Controllers\FileController@file_parentidmatch')->name('file_parentidmatch');
+      });
     }
   }
 

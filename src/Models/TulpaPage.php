@@ -49,7 +49,9 @@ class TulpaPage extends Model
   }
 
   protected $casts = [
-    'tags'    => \Wasateam\Laravelapistone\Casts\JsonCast::class,
-    'content' => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
+    'tags'          => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'content'       => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
+    'og_image'      => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
+    'canonical_url' => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
   ];
 }

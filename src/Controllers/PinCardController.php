@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Exports\PinCardExport;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\StrHelper;
 use Wasateam\Laravelapistone\Models\PinCard;
 
 /**
@@ -113,7 +114,7 @@ class PinCardController extends Controller
       while ($try_count < 3) {
         try {
           $model                   = new $this->model;
-          $model->pin              = Str::random(20);
+          $model->pin              = StrHelper::generateRandomString(12, '23456789abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ');
           $model->created_admin_id = $user->id;
           $model->service_plan_id  = $service_plan;
           $model->save();

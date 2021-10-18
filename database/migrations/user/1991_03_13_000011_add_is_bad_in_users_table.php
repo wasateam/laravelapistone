@@ -14,7 +14,7 @@ class AddIsBadInUsersTable extends Migration
   public function up()
   {
     Schema::table('users', function (Blueprint $table) {
-      $talbe->boolean('is_bad')->nullable()->default(0);
+      $table->boolean('is_bad')->nullable()->default(0);
       $table->integer('bonus_points')->nullable()->default(0);
       $table->string('birthday')->nullable();
       $table->uuid('uuid')->nullable();

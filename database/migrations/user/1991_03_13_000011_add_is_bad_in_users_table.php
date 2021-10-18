@@ -17,6 +17,7 @@ class AddIsBadInUsersTable extends Migration
       $talbe->boolean('is_bad')->nullable()->default(0);
       $table->integer('bonus_points')->nullable()->default(0);
       $table->string('birthday')->nullable();
+      $table->uuid('uuid')->nullable();
     });
   }
 
@@ -31,6 +32,7 @@ class AddIsBadInUsersTable extends Migration
       $table->dropColumn('is_bad');
       $table->dropColumn('bonus_points');
       $table->dropColumn('birthday');
+      $table->dropColumn('uuid');
     });
   }
 }

@@ -16,6 +16,7 @@ class UserMy extends JsonResource
   {
     $res = [
       'id'                => $this->id,
+      'uuid'              => $this->uuid,
       'name'              => $this->name,
       'email'             => $this->email,
       'avatar'            => $this->avatar,

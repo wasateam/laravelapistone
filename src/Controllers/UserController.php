@@ -67,6 +67,8 @@ class UserController extends Controller
   ];
   public $user_record_field = 'updated_admin_id';
   public $user_create_field = 'created_admin_id';
+  public $uuid = true;
+
 
   public function __construct()
   {

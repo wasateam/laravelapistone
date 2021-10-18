@@ -201,7 +201,7 @@ class UserController extends Controller
    */
   public function reset_password_mail($id)
   {
-    $model = $this->$model::find($id);
+    $model = $this->model::find($id);
     $res   = Http::withHeaders([])->post(config('stone.web_api_url') . '/api/auth/forgetpassword/request', [
       "email" => $model->email,
     ]);

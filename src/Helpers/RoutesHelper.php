@@ -185,6 +185,10 @@ class RoutesHelper
 
     # User
     if (config('stone.user')) {
+      if(config('stone.user.is_bad')){
+        Route::post('user/{id}/bad', [UserController::class, 'bad']);
+        Route::post('user/{id}/notbad', [UserController::class, 'notbad']);
+      }
       Route::resource('user', UserController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();

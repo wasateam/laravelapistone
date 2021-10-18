@@ -5,14 +5,14 @@ return [
   'migration'          => true,
   'storage'            => [
     'service' => 'gcs', # gcs, s3, local
-    'gcs' => [
+    'gcs'     => [
       'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', null),
     ],
     'acl'     => true,
   ],
   'mail'               => [
     'service'    => 'gmail', # gmail, surenotify
-    'api_key' => env('MAIL_API_KEY'),
+    'api_key'    => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
   ],
   'app_url'            => env('APP_URL'),
@@ -41,7 +41,10 @@ return [
   'post_encode'        => false,
   'pocket'             => true,
   'tulpa'              => true,
-  'user'               => true,
+  'user'               => [
+    'is_bad'       => true,
+    'bonus_points' => true,
+  ],
   'user_device_token'  => true,
   'socialite'          => [
     'facebook' => true,

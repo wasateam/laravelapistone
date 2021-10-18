@@ -44,6 +44,9 @@ class UserController extends Controller
     'verified_at',
     "byebye_at",
     "mama_language",
+    "is_bad",
+    "bonus_points",
+    "birthday",
   ];
   public $filter_fields = [
     'byebye_at',
@@ -71,6 +74,12 @@ class UserController extends Controller
         'locale',
       ];
     }
+    if (config('stone.user.is_bad')) {
+      $this->input_fields[] = 'is_bad';
+    }
+    if (config('stone.user.bonus_points')) {
+      $this->input_fields[] = 'bonus_points';
+    }
   }
 
   /**
@@ -97,6 +106,10 @@ class UserController extends Controller
    * @bodyParam scopes object No-example
    * @bodyParam tel string No-example
    * @bodyParam payload object No-example
+   * @bodyParam is_bad boolean No-example
+   * @bodyParam bonus_points int No-example
+   * @bodyParam birthday date No-example
+   * @bodyParam is_active boolean No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -128,6 +141,10 @@ class UserController extends Controller
    * @bodyParam scopes object No-example
    * @bodyParam tel string No-example
    * @bodyParam payload object No-example
+   * @bodyParam is_bad boolean No-example
+   * @bodyParam bonus_points int No-example
+   * @bodyParam birthday date No-example
+   * @bodyParam is_active boolean No-example
    */
   public function update(Request $request, $id)
   {
@@ -142,5 +159,36 @@ class UserController extends Controller
   public function destroy($id)
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
+  }
+
+  /**
+   * Bad
+   *
+   * @urlParam  user required The ID of user. Example: 2
+   */
+  public function bad($id)
+  {
+    $model         = $this->$model::find($id);
+    $model->is_bad = 1;
+    $model->save();
+    return response()->json([
+      'message' => 'marked as bad',
+    ]);
+
+  }
+
+  /**
+   * NotBad
+   *
+   * @urlParam  user required The ID of user. Example: 2
+   */
+  public function notbad($id)
+  {
+    $model         = $this->$model::find($id);
+    $model->is_bad = 0;
+    $model->save();
+    return response()->json([
+      'message' => 'marked as notbad',
+    ]);
   }
 }

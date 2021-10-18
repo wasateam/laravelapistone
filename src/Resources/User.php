@@ -31,6 +31,8 @@ class User extends JsonResource
       'mama_language'     => $this->mama_language,
       'byebye_at'         => $this->byebye_at,
       'email_verified_at' => $this->email_verified_at,
+      'birthday'          => $this->birthday,
+      'is_active'         => $this->is_active,
       'pocket_avatar'     => new PocketImage_R1($this->pocket_avatar),
     ];
     if (config('stone.locale')) {
@@ -41,6 +43,12 @@ class User extends JsonResource
     }
     if (config('stone.user_device_token')) {
       $res['user_device_tokens'] = UserDeviceToken_R1::collection($this->user_device_tokens);
+    }
+    if (config('stone.user.is_bad')) {
+      $res['is_bad'] = $this->is_bad;
+    }
+    if (config('stone.user.bonus_points')) {
+      $res['bonus_points'] = $this->bonus_points;
     }
     return $res;
   }

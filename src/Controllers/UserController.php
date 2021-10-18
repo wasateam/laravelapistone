@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
@@ -190,5 +191,26 @@ class UserController extends Controller
     return response()->json([
       'message' => 'marked as notbad',
     ]);
+  }
+
+  /**
+   * Send ResetPassword Mail
+   *
+   */
+  public function reset_password_mail($id)
+  {
+    $model = $this->$model::find($id);
+    $res   = Http::withHeaders([])->post(config('stone.web_api_url') . '/api/auth/forgetpassword/request', [
+      "email" => $model->email,
+    ]);
+    if ($res->status() == '200') {
+      return response()->json([
+        'message' => 'reset password mail sent.',
+      ]);
+    } else {
+      return response()->json([
+        'message' => 'reset password mail request fail.',
+      ], 400);
+    }
   }
 }

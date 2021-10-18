@@ -17,6 +17,7 @@ return [
   ],
   'app_url'            => env('APP_URL'),
   'web_url'            => env('WEB_URL'),
+  'web_api_url'        => env('WEB_API_URL'),
   # Auth
   'auth'               => [
     'model_name'     => 'admin',
@@ -42,8 +43,9 @@ return [
   'pocket'             => true,
   'tulpa'              => true,
   'user'               => [
-    'is_bad'       => true,
-    'bonus_points' => true,
+    'is_bad'              => true,
+    'bonus_points'        => true,
+    'reset_password_mail' => true,
   ],
   'user_device_token'  => true,
   'socialite'          => [

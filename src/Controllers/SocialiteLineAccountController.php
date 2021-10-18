@@ -17,7 +17,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 class SocialiteLineAccountController extends Controller
 {
   public $model        = 'Wasateam\Laravelapistone\Models\SocialiteLineAccount';
-  public $name         = 'SocialiteLineAccount';
+  public $name         = 'socialite_line_account';
   public $resource     = 'Wasateam\Laravelapistone\Resources\SocialiteLineAccount';
   public $input_fields = [
     'provider_user_id',

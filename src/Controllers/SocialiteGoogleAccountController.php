@@ -17,7 +17,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 class SocialiteGoogleAccountController extends Controller
 {
   public $model        = 'Wasateam\Laravelapistone\Models\SocialiteGoogleAccount';
-  public $name         = 'SocialiteGoogleAccount';
+  public $name         = 'socialite_google_account';
   public $resource     = 'Wasateam\Laravelapistone\Resources\SocialiteGoogleAccount';
   public $input_fields = [
     'provider_user_id',

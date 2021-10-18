@@ -17,7 +17,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 class SocialiteFacebookAccountController extends Controller
 {
   public $model        = 'Wasateam\Laravelapistone\Models\SocialiteFacebookAccount';
-  public $name         = 'SocialiteFacebookAccount';
+  public $name         = 'socialite_facebook_account';
   public $resource     = 'Wasateam\Laravelapistone\Resources\SocialiteFacebookAccount';
   public $input_fields = [
     'provider_user_id',

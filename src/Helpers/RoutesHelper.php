@@ -200,17 +200,17 @@ class RoutesHelper
     # Socialite
     if (config('stone.socialite')) {
       if (config('stone.socialite.google')) {
-        Route::resource('user', SocialiteGoogleAccountController::class)->only([
+        Route::resource('socialite_google_account', SocialiteGoogleAccountController::class)->only([
           'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
       }
       if (config('stone.socialite.facebook')) {
-        Route::resource('user', SocialiteFacebookAccountController::class)->only([
+        Route::resource('socialite_facebook_account', SocialiteFacebookAccountController::class)->only([
           'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
       }
       if (config('stone.socialite.line')) {
-        Route::resource('user', SocialiteLineAccountController::class)->only([
+        Route::resource('socialite_line_account', SocialiteLineAccountController::class)->only([
           'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
       }

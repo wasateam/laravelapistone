@@ -5,6 +5,9 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\URL;
+use Maatwebsite\Excel\Facades\Excel;
+use Wasateam\Laravelapistone\Exports\UserExport;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
@@ -52,11 +55,13 @@ class UserController extends Controller
   public $filter_fields = [
     'byebye_at',
     'is_active',
+    'is_bad',
   ];
   public $search_fields = [
     'id',
     'name',
     'email',
+    'uuid',
   ];
   public $order_fields = [
     'id',
@@ -67,8 +72,7 @@ class UserController extends Controller
   ];
   public $user_record_field = 'updated_admin_id';
   public $user_create_field = 'created_admin_id';
-  public $uuid = true;
-
+  public $uuid              = true;
 
   public function __construct()
   {
@@ -171,7 +175,7 @@ class UserController extends Controller
    */
   public function bad($id)
   {
-    $model         = $this->$model::find($id);
+    $model         = $this->model::find($id);
     $model->is_bad = 1;
     $model->save();
     return response()->json([
@@ -187,7 +191,7 @@ class UserController extends Controller
    */
   public function notbad($id)
   {
-    $model         = $this->$model::find($id);
+    $model         = $this->model::find($id);
     $model->is_bad = 0;
     $model->save();
     return response()->json([
@@ -214,5 +218,29 @@ class UserController extends Controller
         'message' => 'reset password mail request fail.',
       ], 400);
     }
+  }
+
+  /**
+   * Export Excel Signedurl
+   *
+   */
+  public function export_excel_signedurl(Request $request)
+  {
+    $users = $request->has('users') ? $request->users : null;
+    return URL::temporarySignedRoute(
+      'user_export_excel',
+      now()->addMinutes(30),
+      ['users' => $users]
+    );
+  }
+
+  /**
+   * Export Excel
+   *
+   */
+  public function export_excel(Request $request)
+  {
+    $users = $request->has('users') ? $request->users : null;
+    return Excel::download(new UserExport($users), 'user.xlsx');
   }
 }

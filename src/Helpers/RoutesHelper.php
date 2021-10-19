@@ -192,6 +192,9 @@ class RoutesHelper
       if (config('stone.user.reset_password_mail')) {
         Route::post('user/{id}/reset_password_mail', [UserController::class, 'reset_password_mail']);
       }
+      if (config('stone.user.export')) {
+        Route::get('user/export/excel/signedurl', [UserController::class, 'export_excel_signedurl']);
+      }
       Route::resource('user', UserController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
@@ -342,6 +345,15 @@ class RoutesHelper
         "middleware" => ["signed"],
       ], function () {
         Route::get('pin_card/export/excel', [PinCardController::class, 'export_excel'])->name('pin_card_export_excel');
+      });
+    }
+
+    if (config('stone.user')) {
+      Route::group([
+        "middleware" => ["signed"],
+      ], function () {
+        if(config('stone.user.export'))
+        Route::get('user/export/excel', [UserController::class, 'export_excel'])->name('user_export_excel');
       });
     }
   }

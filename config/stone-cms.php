@@ -43,6 +43,7 @@ return [
   'pocket'             => true,
   'tulpa'              => true,
   'user'               => [
+    'export'              => true,
     'is_bad'              => true,
     'bonus_points'        => true,
     'reset_password_mail' => true,

@@ -72,10 +72,13 @@ class UserController extends Controller
   ];
   public $user_record_field = 'updated_admin_id';
   public $user_create_field = 'created_admin_id';
-  public $uuid              = true;
+  public $uuid              = false;
 
   public function __construct()
   {
+    if (config('stone.user.uuid')) {
+      $this->uuid = true;
+    }
     if (config('stone.locale')) {
       $this->belongs_to = [
         'locale',

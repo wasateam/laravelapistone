@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
@@ -76,6 +77,9 @@ class AuthController extends Controller
     }
     if (config('stone.auth.active_check')) {
       $user->is_active = 1;
+    }
+    if (config('stone.auth.uuid')) {
+      $user->uuid = Str::uuid();
     }
     $user->scopes = $default_scopes;
     $user->save();
@@ -199,7 +203,7 @@ class AuthController extends Controller
     ModelHelper::ws_Log(config('stone.auth.model'), $this, 'signout');
     try {
       $request->user()->token()->revoke();
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'signout fail.',
       ]);

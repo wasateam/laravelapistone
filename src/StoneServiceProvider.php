@@ -143,6 +143,16 @@ class StoneServiceProvider extends ServiceProvider
         if (config('stone.notification')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/notification');
         }
+
+        # Shop
+        if (config('stone.shop')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/shop');
+        }
+
+        # FeaturedClass
+        if (config('stone.featured_class')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/featured_class');
+        }
       }
 
       # Publish

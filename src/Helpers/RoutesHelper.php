@@ -474,7 +474,7 @@ class RoutesHelper
     # Socialite
     Route::group([
       'prefix' => 'auth',
-    ], function () use ($routes) {
+    ], function () {
       if (config('stone.socialite')) {
         if (config('stone.socialite.google')) {
           Route::get('signin/google', [SocialiteController::class, 'googleCallback']);

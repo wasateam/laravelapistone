@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Services;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Contracts\User as ProviderUser;
 use Wasateam\Laravelapistone\Models\User;
 
@@ -52,7 +53,7 @@ class SocialiteAccountService
           $user->uuid = Str::uuid();
         }
         $default_scopes = config('stone.auth.default_scopes');
-        $user->scopes = $default_scopes;
+        $user->scopes   = $default_scopes;
         $user->save();
         $user->markEmailAsVerified();
       }

@@ -17,7 +17,7 @@ class CreateShopProductExpectShipsTable extends Migration
       $table->id();
       $table->timestamps();
       $table->softDeletes();
-      $table->uuid()->unique();
+      $table->uuid('uuid')->nullable()->unique();
       $table->string('shop_product_id')->nullable();
       $table->date('start_date')->nullable();
       $table->date('end_date')->nullable();

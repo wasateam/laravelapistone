@@ -17,7 +17,7 @@ class CreateFeaturedClassesTable extends Migration
       $table->id();
       $table->timestamps();
       $table->softDeletes();
-      $table->uuid()->unique();
+      $table->uuid('uuid')->nullable()->unique();
       $table->string('name')->nullable();
     });
   }

@@ -17,7 +17,7 @@ class CreateShopProductImagesTable extends Migration
       $table->id();
       $table->timestamps();
       $table->softDeletes();
-      $table->uuid()->unique();
+      $table->uuid('uuid')->nullable()->unique();
       $table->string('shop_product_id')->nullable();
       $table->text('url')->nullable();
       $table->string('name')->nullable();

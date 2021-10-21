@@ -17,7 +17,7 @@ class CreateShopProductsTable extends Migration
       $table->id();
       $table->timestamps();
       $table->softDeletes();
-      $table->uuid()->unique();
+      $table->uuid('uuid')->nullable()->unique();
       $table->string('type')->nullable();
       $table->string('no')->nullable();
       $table->string('name')->nullable();

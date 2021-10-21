@@ -472,17 +472,21 @@ class RoutesHelper
     }
 
     # Socialite
-    if (config('stone.socialite')) {
-      if (config('stone.socialite.google')) {
-        Route::get('signin/google', [SocialiteController::class, 'googleCallback']);
+    Route::group([
+      'prefix' => 'auth',
+    ], function () use ($routes) {
+      if (config('stone.socialite')) {
+        if (config('stone.socialite.google')) {
+          Route::get('signin/google', [SocialiteController::class, 'googleCallback']);
+        }
+        if (config('stone.socialite.facebook')) {
+          Route::get('signin/facebook', [SocialiteController::class, 'facebookCallback']);
+        }
+        if (config('stone.socialite.line')) {
+          Route::get('signin/line', [SocialiteController::class, 'lineCallback']);
+        }
       }
-      if (config('stone.socialite.facebook')) {
-        Route::get('signin/facebook', [SocialiteController::class, 'facebookCallback']);
-      }
-      if (config('stone.socialite.line')) {
-        Route::get('signin/line', [SocialiteController::class, 'lineCallback']);
-      }
-    }
+    });
 
     if (config('stone.file_upload') == 'laravel_signed') {
       Route::group([

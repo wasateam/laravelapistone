@@ -68,6 +68,10 @@ return [
   'service_plan'       => false,
   'pin_card'           => false,
   'calendar_highlight' => false,
+  'shop'               => [
+    'uuid' => true,
+  ],
+  'featured_class'     => true,
   #
   'app'                => false,
 ];

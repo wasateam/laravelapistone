@@ -16,6 +16,7 @@ use Wasateam\Laravelapistone\Controllers\CalendarHighlightController;
 use Wasateam\Laravelapistone\Controllers\CMSAdminController;
 use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
+use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NotificationController;
 use Wasateam\Laravelapistone\Controllers\PinCardController;
@@ -26,6 +27,9 @@ use Wasateam\Laravelapistone\Controllers\ServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreCloseController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
+use Wasateam\Laravelapistone\Controllers\ShopProductController;
+use Wasateam\Laravelapistone\Controllers\ShopProductCoverFrameController;
+use Wasateam\Laravelapistone\Controllers\ShopProductExpectShipController;
 use Wasateam\Laravelapistone\Controllers\SnappyController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
 use Wasateam\Laravelapistone\Controllers\SocialiteFacebookAccountController;
@@ -331,11 +335,33 @@ class RoutesHelper
     }
 
     # Notification
-    Route::resource('notification', NotificationController::class)->only([
-      'index',
-      'show',
-      'destroy',
-    ])->shallow();
+    if (config('stone.notification')) {
+      Route::resource('notification', NotificationController::class)->only([
+        'index',
+        'show',
+        'destroy',
+      ])->shallow();
+    }
+
+    # Shop
+    if (config('stone.shop')) {
+      Route::resource('shop_product', ShopProductController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('shop_product_cover_frame', ShopProductCoverFrameController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('shop_product_expect_ship', ShopProductExpectShipController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
+
+    # FeaturedClass
+    if (config('stone.featured_class')) {
+      Route::resource('featured_class', FeaturedClassController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
   }
 
   public static function cms_public_routes()
@@ -352,8 +378,10 @@ class RoutesHelper
       Route::group([
         "middleware" => ["signed"],
       ], function () {
-        if(config('stone.user.export'))
-        Route::get('user/export/excel', [UserController::class, 'export_excel'])->name('user_export_excel');
+        if (config('stone.user.export')) {
+          Route::get('user/export/excel', [UserController::class, 'export_excel'])->name('user_export_excel');
+        }
+
       });
     }
   }

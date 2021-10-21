@@ -2,9 +2,9 @@
 
 namespace Wasateam\Laravelapistone\Services;
 
-use Wasateam\Laravelapistone\Models\User;
 use Carbon\Carbon;
 use Laravel\Socialite\Contracts\User as ProviderUser;
+use Wasateam\Laravelapistone\Models\User;
 
 class SocialiteAccountService
 {
@@ -44,6 +44,15 @@ class SocialiteAccountService
         $user->name     = $providerUser->getName();
         $user->password = md5(rand(1, 10000));
         $user->avatar   = $providerUser->avatar;
+
+        if (config('stone.auth.active_check')) {
+          $user->is_active = 1;
+        }
+        if (config('stone.auth.uuid')) {
+          $user->uuid = Str::uuid();
+        }
+        $default_scopes = config('stone.auth.default_scopes');
+        $user->scopes = $default_scopes;
         $user->save();
         $user->markEmailAsVerified();
       }

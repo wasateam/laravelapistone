@@ -5,6 +5,7 @@ namespace Wasateam\Laravelapistone\Services;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Contracts\User as ProviderUser;
+use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Models\User;
 
 class SocialiteAccountService
@@ -60,7 +61,7 @@ class SocialiteAccountService
       $account->user()->associate($user);
       $account->save();
     }
-    $tokenResult  = $user->createToken('Personal Access Token');
+    $tokenResult  = $user->createToken('Personal Access Token', AuthHelper::getUserScopes($user));
     $access_token = $tokenResult->accessToken;
     $user         = User::where('id', $user->id)->first();
     return response()->json([

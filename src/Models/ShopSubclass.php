@@ -5,13 +5,13 @@ namespace Wasateam\Laravelapistone\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ShopClass extends Model
+class ShopSubclass extends Model
 {
   use HasFactory;
   use \Illuminate\Database\Eloquent\SoftDeletes;
 
-  public function shop_subclasses()
+  public function shop_class()
   {
-    return $this->hasMany(ShopSubclass::class);
+    return $this->belongsTo(ShopClass::class, 'shop_class_id');
   }
 }

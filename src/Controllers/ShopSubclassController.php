@@ -8,23 +8,24 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group ShopClass
+ * @group ShopSubclass
  *
  * @authenticated
  *
- * APIs for shop_class
+ * APIs for shop_subclass
  */
-class ShopClassController extends Controller
+class ShopSubclassController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Models\ShopClass';
-  public $name         = 'shop_class';
-  public $resource     = 'Wasateam\Laravelapistone\Resources\ShopClass';
+  public $model        = 'Wasateam\Laravelapistone\Models\ShopSubclass';
+  public $name         = 'shop_subclass';
+  public $resource     = 'Wasateam\Laravelapistone\Resources\ShopSubclass';
   public $input_fields = [
     'name',
     'sq',
     'type',
   ];
   public $belongs_to = [
+    'shop_class',
   ];
   public $uuid = false;
 
@@ -51,6 +52,7 @@ class ShopClassController extends Controller
    * @bodyParam name string No-example
    * @bodyParam sq string No-example
    * @bodyParam type string No-example
+   * @bodyParam shop_class id No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -60,7 +62,7 @@ class ShopClassController extends Controller
   /**
    * Show
    *
-   * @urlParam  shop_class required The ID of shop_class. Example: 1
+   * @urlParam  shop_subclass required The ID of shop_subclass. Example: 1
    */
   public function show(Request $request, $id = null)
   {
@@ -70,10 +72,11 @@ class ShopClassController extends Controller
   /**
    * Update
    *
-   * @urlParam  shop_class required The ID of shop_class. Example: 1
+   * @urlParam  shop_subclass required The ID of shop_subclass. Example: 1
    * @bodyParam name string No-example
    * @bodyParam sq string No-example
    * @bodyParam type string No-example
+   * @bodyParam shop_class id No-example
    */
   public function update(Request $request, $id)
   {
@@ -83,7 +86,7 @@ class ShopClassController extends Controller
   /**
    * Delete
    *
-   * @urlParam  shop_class required The ID of shop_class. Example: 2
+   * @urlParam  shop_subclass required The ID of shop_subclass. Example: 2
    */
   public function destroy($id)
   {

@@ -17,6 +17,7 @@ class CreateShopClassesTable extends Migration
       $table->id();
       $table->timestamps();
       $table->softDeletes();
+      $table->uuid('uuid')->nullable()->unique();
       $table->string('sq')->nullable();
       $table->string('name')->nullable();
       $table->string('type')->nullable();

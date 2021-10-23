@@ -27,9 +27,11 @@ use Wasateam\Laravelapistone\Controllers\ServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreCloseController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
+use Wasateam\Laravelapistone\Controllers\ShopClassController;
 use Wasateam\Laravelapistone\Controllers\ShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductCoverFrameController;
 use Wasateam\Laravelapistone\Controllers\ShopProductExpectShipController;
+use Wasateam\Laravelapistone\Controllers\ShopSubclassController;
 use Wasateam\Laravelapistone\Controllers\SnappyController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
 use Wasateam\Laravelapistone\Controllers\SocialiteFacebookAccountController;
@@ -352,6 +354,12 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       Route::resource('shop_product_expect_ship', ShopProductExpectShipController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('shop_class', ShopClassController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('shop_subclass', ShopSubclassController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }

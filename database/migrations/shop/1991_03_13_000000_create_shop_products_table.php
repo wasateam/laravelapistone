@@ -37,6 +37,7 @@ class CreateShopProductsTable extends Migration
       $table->integer('max_buyable_count')->nullable();
       $table->string('storage_space')->nullable();
       $table->text('cover_image')->nullable();
+      $table->longText('images')->nullable();
       $table->longText('description')->nullable();
       $table->string('source')->nullable();
       $table->string('store_temperature')->nullable();

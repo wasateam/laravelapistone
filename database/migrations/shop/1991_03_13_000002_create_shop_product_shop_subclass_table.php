@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateShopProductSystemSubclassTable extends Migration
+class CreateShopProductShopSubclassTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,9 +13,9 @@ class CreateShopProductSystemSubclassTable extends Migration
    */
   public function up()
   {
-    Schema::create('shop_product_system_subclass', function (Blueprint $table) {
+    Schema::create('shop_product_shop_subclass', function (Blueprint $table) {
       $table->string('shop_product_id');
-      $table->string('system_subclass_id');
+      $table->string('shop_subclass_id');
     });
   }
 
@@ -26,6 +26,6 @@ class CreateShopProductSystemSubclassTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('shop_product_system_subclass');
+    Schema::dropIfExists('shop_product_shop_subclass');
   }
 }

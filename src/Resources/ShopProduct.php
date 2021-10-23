@@ -36,13 +36,20 @@ class ShopProduct extends JsonResource
         'max_buyable_count'        => $this->max_buyable_count,
         'storage_space'            => $this->storage_space,
         'cover_image'              => $this->cover_image,
+        'images'                   => $this->images,
         'description'              => $this->description,
         'source'                   => $this->source,
         'store_temperature'        => $this->store_temperature,
         'ranking_score'            => $this->ranking_score,
         'shop_product_cover_frame' => new ShopProductCoverFrame_R1($this->shop_product_cover_frame),
-
+        'suggests'                 => ShopProduct_R1::collection($this->suggests),
+        'shop_classes'             => ShopClass_R1::collection($this->shop_classes),
+        'shop_subclasses'          => ShopSubclass_R1::collection($this->shop_subclasses),
       ];
+      if (config('stone.area')) {
+        $res['areas']         = Area_R1::collection($this->areas);
+        $res['area_sections'] = AreaSection_R1::collection($this->area_sections);
+      }
       if (config('stone.featured_class')) {
         $res['featured_classes'] = FeaturedClass_R1::collection($this->featured_classes);
       }
@@ -65,12 +72,20 @@ class ShopProduct extends JsonResource
         'stock_count'                 => $this->stock_count,
         'max_buyable_count'           => $this->max_buyable_count,
         'cover_image'                 => $this->cover_image,
+        'images'                      => $this->images,
         'shop_product_cover_frame_id' => $this->shop_product_cover_frame_id,
         'description'                 => $this->description,
         'source'                      => $this->source,
         'store_temperature'           => $this->store_temperature,
         'shop_product_cover_frame'    => new ShopProductCoverFrame_R1($this->shop_product_cover_frame),
+        'suggests'                    => ShopProduct_R1::collection($this->suggests),
+        'shop_classes'                => ShopClass_R1::collection($this->shop_classes),
+        'shop_subclasses'             => ShopSubclass_R1::collection($this->shop_subclasses),
       ];
+      if (config('stone.area')) {
+        $res['areas']         = Area_R1::collection($this->areas);
+        $res['area_sections'] = AreaSection_R1::collection($this->area_sections);
+      }
       if (config('stone.featured_class')) {
         $res['featured_classes'] = FeaturedClass_R1::collection($this->featured_classes);
       }

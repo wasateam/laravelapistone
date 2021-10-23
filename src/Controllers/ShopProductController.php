@@ -40,6 +40,7 @@ class ShopProductController extends Controller
     'max_buyable_count',
     'storage_space',
     'cover_image',
+    'images',
     'description',
     'source',
     'store_temperature',
@@ -64,8 +65,8 @@ class ShopProductController extends Controller
   ];
   public $belongs_to_many = [
     'suggests',
-    'system_class',
-    'system_subclass',
+    'shop_classes',
+    'shop_subclasses',
   ];
   public $order_fields = [
     'ranking_score',
@@ -84,6 +85,10 @@ class ShopProductController extends Controller
     }
     if (config('stone.featured_class')) {
       $this->belongs_to_many[] = 'featured_classes';
+    }
+    if (config('stone.area')) {
+      $this->belongs_to_many[] = 'areas';
+      $this->belongs_to_many[] = 'area_sections';
     }
   }
 
@@ -118,12 +123,17 @@ class ShopProductController extends Controller
    * @bodyParam max_buyable_count string No-example
    * @bodyParam storage_space string No-example
    * @bodyParam cover_image string No-example
+   * @bodyParam images string No-example
    * @bodyParam description string No-example
    * @bodyParam source string No-example
    * @bodyParam store_temperature string No-example
    * @bodyParam ranking_score string No-example
    * @bodyParam shop_product_cover_frame id No-example
    * @bodyParam suggests ids No-example
+   * @bodyParam shop_classes ids No-example
+   * @bodyParam shop_subclasses ids No-example
+   * @bodyParam areas ids No-example
+   * @bodyParam area_sections ids No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -162,12 +172,17 @@ class ShopProductController extends Controller
    * @bodyParam max_buyable_count string No-example
    * @bodyParam storage_space string No-example
    * @bodyParam cover_image string No-example
+   * @bodyParam images string No-example
    * @bodyParam description string No-example
    * @bodyParam source string No-example
    * @bodyParam store_temperature string No-example
    * @bodyParam ranking_score string No-example
    * @bodyParam shop_product_cover_frame id No-example
    * @bodyParam suggests ids No-example
+   * @bodyParam shop_classes ids No-example
+   * @bodyParam shop_subclasses ids No-example
+   * @bodyParam areas ids No-example
+   * @bodyParam area_sections ids No-example
    */
   public function update(Request $request, $id)
   {

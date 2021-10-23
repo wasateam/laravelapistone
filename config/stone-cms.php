@@ -71,6 +71,7 @@ return [
   'shop'               => [
     'uuid' => true,
   ],
+  // multiple layers
   'featured_class'     => true,
   #
   'app'                => false,

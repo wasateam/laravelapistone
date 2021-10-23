@@ -64,6 +64,8 @@ class ShopProductController extends Controller
   ];
   public $belongs_to_many = [
     'suggests',
+    'system_class',
+    'system_subclass',
   ];
   public $order_fields = [
     'ranking_score',

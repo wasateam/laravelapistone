@@ -39,4 +39,14 @@ class ShopProduct extends Model
   {
     return $this->belongsToMany(ShopProduct::class, 'shop_product_suggest', 'shop_product_id', 'suggest_id');
   }
+
+  public function system_classes()
+  {
+    return $this->belongsTo(SystemClasses::class, 'shop_product_system_class', 'shop_product_id', 'system_class_id');
+  }
+
+  public function system_subclasses()
+  {
+    return $this->belongsTo(SystemSubclasses::class, 'shop_product_system_subclass', 'shop_product_id', 'system_subclass_id');
+  }
 }

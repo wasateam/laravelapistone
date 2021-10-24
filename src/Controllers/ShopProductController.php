@@ -95,10 +95,9 @@ class ShopProductController extends Controller
       $this->belongs_to_many[] = 'area_sections';
     }
   }
-
   /**
    * Index
-   * @urlParam search string No-example
+   * @urlParam search string 搜尋字串 No-example
    * @queryParam page int 頁碼  No-example
    * @queryParam shop_classes ids 分類  No-example
    * @queryParam shop_subclasses ids 子分類  No-example

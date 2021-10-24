@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group ShopClass
+ * @group 商品分類
  *
  * @authenticated
  *
@@ -37,20 +37,25 @@ class ShopClassController extends Controller
 
   /**
    * Index
-   * @urlParam search string No-example
+   * @urlParam search string 搜尋字串 No-example
+   * @queryParam page int 頁碼(前台全抓)  No-example
    *
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id);
+    } else if (config('stone.mode') == 'webapi') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id, true);
+    }
   }
 
   /**
    * Store
    *
-   * @bodyParam name string No-example
-   * @bodyParam sq string No-example
-   * @bodyParam type string No-example
+   * @bodyParam name string 名稱 No-example
+   * @bodyParam sq string 順序設定 No-example
+   * @bodyParam type string 類型(current現貨,pre_order預購) No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -71,9 +76,9 @@ class ShopClassController extends Controller
    * Update
    *
    * @urlParam  shop_class required The ID of shop_class. Example: 1
-   * @bodyParam name string No-example
-   * @bodyParam sq string No-example
-   * @bodyParam type string No-example
+   * @bodyParam name string 名稱 No-example
+   * @bodyParam sq string 順序設定 No-example
+   * @bodyParam type string 類型(current現貨,pre_order預購) No-example
    */
   public function update(Request $request, $id)
   {

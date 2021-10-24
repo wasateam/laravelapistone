@@ -8,11 +8,11 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group ShopProduct
+ * @group 商品
  *
  * @authenticated
  *
- * APIs for shop_product
+ * 商品列表API
  */
 class ShopProductController extends Controller
 {
@@ -68,6 +68,10 @@ class ShopProductController extends Controller
     'shop_classes',
     'shop_subclasses',
   ];
+  public $filter_belongs_to_many = [
+    'shop_classes',
+    'shop_subclasses',
+  ];
   public $order_fields = [
     'ranking_score',
     'updated_at',
@@ -95,6 +99,9 @@ class ShopProductController extends Controller
   /**
    * Index
    * @urlParam search string No-example
+   * @queryParam page int 頁碼  No-example
+   * @queryParam shop_classes ids 分類  No-example
+   * @queryParam shop_subclasses ids 子分類  No-example
    *
    */
   public function index(Request $request, $id = null)
@@ -105,35 +112,31 @@ class ShopProductController extends Controller
   /**
    * Store
    *
-   * @bodyParam no string No-example
-   * @bodyParam name string No-example
-   * @bodyParam subtitle string No-example
-   * @bodyParam status string No-example
-   * @bodyParam on_time string No-example
-   * @bodyParam off_time string No-example
-   * @bodyParam is_active string No-example
-   * @bodyParam spec string No-example
-   * @bodyParam cost string No-example
-   * @bodyParam price string No-example
-   * @bodyParam discount_price string No-example
-   * @bodyParam weight_capacity string No-example
-   * @bodyParam tax string No-example
-   * @bodyParam stock_count string No-example
-   * @bodyParam stock_alert_count string No-example
-   * @bodyParam max_buyable_count string No-example
-   * @bodyParam storage_space string No-example
-   * @bodyParam cover_image string No-example
-   * @bodyParam images string No-example
-   * @bodyParam description string No-example
-   * @bodyParam source string No-example
-   * @bodyParam store_temperature string No-example
-   * @bodyParam ranking_score string No-example
-   * @bodyParam shop_product_cover_frame id No-example
-   * @bodyParam suggests ids No-example
-   * @bodyParam shop_classes ids No-example
-   * @bodyParam shop_subclasses ids No-example
-   * @bodyParam areas ids No-example
-   * @bodyParam area_sections ids No-example
+   * @bodyParam name string 商品名稱 No-example
+   * @bodyParam subtitle string 商品副標 No-example
+   * @bodyParam on_time datetime 上架時間 No-example
+   * @bodyParam off_time datetime 下架時間 No-example
+   * @bodyParam is_active boolean 商品狀態 No-example
+   * @bodyParam spec string 商品規格 No-example
+   * @bodyParam cost int 成本 No-example
+   * @bodyParam price int 售價 No-example
+   * @bodyParam discount_price int 優惠價 No-example
+   * @bodyParam weight_capacity 重量/容量 string No-example
+   * @bodyParam tax string 應稅/免稅 No-example
+   * @bodyParam stock_count string 庫存數量 No-example
+   * @bodyParam stock_alert_count string 庫存預警數量 No-example
+   * @bodyParam max_buyable_count string 最大可購買數量 No-example
+   * @bodyParam storage_space string 商品儲位 No-example
+   * @bodyParam cover_image string 商品封面圖 No-example
+   * @bodyParam images string 商品圖 No-example
+   * @bodyParam description string 商品簡介 No-example
+   * @bodyParam ranking_score string 熱門分數 No-example
+   * @bodyParam shop_product_cover_frame id 活動圖框 No-example
+   * @bodyParam suggests ids 推薦商品 No-example
+   * @bodyParam shop_classes ids 分類 No-example
+   * @bodyParam shop_subclasses ids 子分類 No-example
+   * @bodyParam areas ids 地區 No-example
+   * @bodyParam area_sections ids 子地區 No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -154,35 +157,31 @@ class ShopProductController extends Controller
    * Update
    *
    * @urlParam  shop_product required The ID of shop_product. Example: 1
-   * @bodyParam no string No-example
-   * @bodyParam name string No-example
-   * @bodyParam subtitle string No-example
-   * @bodyParam status string No-example
-   * @bodyParam on_time string No-example
-   * @bodyParam off_time string No-example
-   * @bodyParam is_active string No-example
-   * @bodyParam spec string No-example
-   * @bodyParam cost string No-example
-   * @bodyParam price string No-example
-   * @bodyParam discount_price string No-example
-   * @bodyParam weight_capacity string No-example
-   * @bodyParam tax string No-example
-   * @bodyParam stock_count string No-example
-   * @bodyParam stock_alert_count string No-example
-   * @bodyParam max_buyable_count string No-example
-   * @bodyParam storage_space string No-example
-   * @bodyParam cover_image string No-example
-   * @bodyParam images string No-example
-   * @bodyParam description string No-example
-   * @bodyParam source string No-example
-   * @bodyParam store_temperature string No-example
-   * @bodyParam ranking_score string No-example
-   * @bodyParam shop_product_cover_frame id No-example
-   * @bodyParam suggests ids No-example
-   * @bodyParam shop_classes ids No-example
-   * @bodyParam shop_subclasses ids No-example
-   * @bodyParam areas ids No-example
-   * @bodyParam area_sections ids No-example
+   * @bodyParam name string 商品名稱 No-example
+   * @bodyParam subtitle string 商品副標 No-example
+   * @bodyParam on_time datetime 上架時間 No-example
+   * @bodyParam off_time datetime 下架時間 No-example
+   * @bodyParam is_active boolean 商品狀態 No-example
+   * @bodyParam spec string 商品規格 No-example
+   * @bodyParam cost int 成本 No-example
+   * @bodyParam price int 售價 No-example
+   * @bodyParam discount_price int 優惠價 No-example
+   * @bodyParam weight_capacity 重量/容量 string No-example
+   * @bodyParam tax string 應稅/免稅 No-example
+   * @bodyParam stock_count string 庫存數量 No-example
+   * @bodyParam stock_alert_count string 庫存預警數量 No-example
+   * @bodyParam max_buyable_count string 最大可購買數量 No-example
+   * @bodyParam storage_space string 商品儲位 No-example
+   * @bodyParam cover_image string 商品封面圖 No-example
+   * @bodyParam images string 商品圖 No-example
+   * @bodyParam description string 商品簡介 No-example
+   * @bodyParam ranking_score string 熱門分數 No-example
+   * @bodyParam shop_product_cover_frame id 活動圖框 No-example
+   * @bodyParam suggests ids 推薦商品 No-example
+   * @bodyParam shop_classes ids 分類 No-example
+   * @bodyParam shop_subclasses ids 子分類 No-example
+   * @bodyParam areas ids 地區 No-example
+   * @bodyParam area_sections ids 子地區 No-example
    */
   public function update(Request $request, $id)
   {

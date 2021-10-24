@@ -17,7 +17,6 @@ class ShopProduct extends JsonResource
     if (config('stone.mode') == 'cms') {
       $res = [
         'id'                       => $this->id,
-        'type'                     => $this->type,
         'no'                       => $this->no,
         'name'                     => $this->name,
         'subtitle'                 => $this->subtitle,
@@ -59,7 +58,6 @@ class ShopProduct extends JsonResource
     } else if (config('stone.mode') == 'webapi') {
       $res = [
         'id'                          => $this->id,
-        'type'                        => $this->type,
         'no'                          => $this->no,
         'name'                        => $this->name,
         'subtitle'                    => $this->subtitle,

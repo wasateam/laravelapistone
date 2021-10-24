@@ -17,7 +17,6 @@ class ShopProduct_R1 extends JsonResource
     if (config('stone.mode') == 'cms') {
       $res = [
         'id'                => $this->id,
-        'type'              => $this->type,
         'no'                => $this->no,
         'name'              => $this->name,
         'subtitle'          => $this->subtitle,

@@ -69,7 +69,9 @@ return [
   'pin_card'           => false,
   'calendar_highlight' => false,
   'shop'               => [
-    'uuid' => true,
+    'uuid'      => true,
+    'pre_order' => true,
+    'current'   => true,
   ],
   // multiple layers
   'featured_class'     => true,

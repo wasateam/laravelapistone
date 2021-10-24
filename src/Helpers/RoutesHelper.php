@@ -347,9 +347,16 @@ class RoutesHelper
 
     # Shop
     if (config('stone.shop')) {
-      Route::resource('shop_product', ShopProductController::class)->only([
-        'index', 'show', 'store', 'update', 'destroy',
-      ])->shallow();
+      if (config('stone.shop.current')) {
+        Route::resource('shop_product', ShopProductController::class)->only([
+          'index', 'show', 'store', 'update', 'destroy',
+        ])->shallow();
+      }
+      // if (config('stone.shop.pre_order')) {
+      //   Route::resource('shop_product_pre_order', ShopProductPreOrderController::class)->only([
+      //     'index', 'show', 'store', 'update', 'destroy',
+      //   ])->shallow();
+      // }
       Route::resource('shop_product_cover_frame', ShopProductCoverFrameController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
@@ -495,6 +502,32 @@ class RoutesHelper
         }
       }
     });
+
+    # Shop
+    if (config('stone.shop')) {
+      if (config('stone.shop.current')) {
+        Route::resource('shop_product', ShopProductController::class)->only([
+          'index', 'show',
+        ])->shallow();
+      }
+      // if (config('stone.shop.pre_order')) {
+      //   Route::resource('shop_product_pre_order', ShopProductPreOrderController::class)->only([
+      //     'index', 'show',
+      //   ])->shallow();
+      // }
+      Route::resource('shop_product_cover_frame', ShopProductCoverFrameController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      Route::resource('shop_product_expect_ship', ShopProductExpectShipController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      Route::resource('shop_class', ShopClassController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      Route::resource('shop_subclass', ShopSubclassController::class)->only([
+        'index', 'show',
+      ])->shallow();
+    }
 
     if (config('stone.file_upload') == 'laravel_signed') {
       Route::group([

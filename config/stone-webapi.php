@@ -52,5 +52,10 @@ return [
   'service_plan'       => false,
   'pin_card'           => false,
   'calendar_highlight' => false,
+  'shop'               => [
+    'uuid'      => true,
+    'pre_order' => true,
+    'current'   => true,
+  ],
   'file_upload'        => 'laravel_signed',
 ];

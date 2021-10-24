@@ -42,12 +42,12 @@ class ShopProduct extends Model
 
   public function shop_classes()
   {
-    return $this->belongsTo(ShopClass::class, 'shop_product_shop_class', 'shop_product_id', 'shop_class_id');
+    return $this->belongsToMany(ShopClass::class, 'shop_product_shop_class', 'shop_product_id', 'shop_class_id');
   }
 
   public function shop_subclasses()
   {
-    return $this->belongsTo(ShopSubclass::class, 'shop_product_shop_subclass', 'shop_product_id', 'shop_subclass_id');
+    return $this->belongsToMany(ShopSubclass::class, 'shop_product_shop_subclass', 'shop_product_id', 'shop_subclass_id');
   }
 
   protected $casts = [

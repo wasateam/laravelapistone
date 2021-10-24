@@ -9,17 +9,17 @@ use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group FeatureClass
+ * @group FeaturedClass
  *
  * @authenticated
  *
- * APIs for feature_class
+ * APIs for featured_class
  */
-class FeatureClassController extends Controller
+class FeaturedClassController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Models\FeatureClass';
-  public $name         = 'feature_class';
-  public $resource     = 'Wasateam\Laravelapistone\Resources\FeatureClass';
+  public $model        = 'Wasateam\Laravelapistone\Models\FeaturedClass';
+  public $name         = 'featured_class';
+  public $resource     = 'Wasateam\Laravelapistone\Resources\FeaturedClass';
   public $input_fields = [
     'name',
   ];

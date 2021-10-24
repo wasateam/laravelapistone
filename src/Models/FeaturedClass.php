@@ -12,6 +12,6 @@ class FeaturedClass extends Model
 
   public function shop_products()
   {
-    return $this->belongsToMany(ShopProduct::class, 'feature_class_shop_product', 'feature_class_id', 'shop_product_id');
+    return $this->belongsToMany(ShopProduct::class, 'featured_class_shop_product', 'featured_class_id', 'shop_product_id');
   }
 }

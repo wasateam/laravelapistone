@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFeatureClassShopProductTable extends Migration
+class CreateFeaturedClassShopProductTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,8 +13,8 @@ class CreateFeatureClassShopProductTable extends Migration
    */
   public function up()
   {
-    Schema::create('feature_class_shop_product', function (Blueprint $table) {
-      $table->string('feature_class_id');
+    Schema::create('featured_class_shop_product', function (Blueprint $table) {
+      $table->string('featured_class_id');
       $table->string('shop_product_id');
     });
   }
@@ -26,6 +26,6 @@ class CreateFeatureClassShopProductTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('feature_class_shop_product');
+    Schema::dropIfExists('featured_class_shop_product');
   }
 }

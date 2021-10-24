@@ -12,7 +12,7 @@ class ShopProduct extends Model
 
   public function featured_classes()
   {
-    return $this->belongsToMany(FeaturedClass::class, 'feature_class_shop_product', 'shop_product_id', 'feature_class_id');
+    return $this->belongsToMany(FeaturedClass::class, 'featured_class_shop_product', 'shop_product_id', 'featured_class_id');
   }
 
   public function areas()
@@ -49,4 +49,8 @@ class ShopProduct extends Model
   {
     return $this->belongsTo(ShopSubclass::class, 'shop_product_shop_subclass', 'shop_product_id', 'shop_subclass_id');
   }
+
+  protected $casts = [
+    'cover_image' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
+  ];
 }

@@ -153,6 +153,11 @@ class StoneServiceProvider extends ServiceProvider
         if (config('stone.featured_class')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/featured_class');
         }
+
+        # Test
+        if (config('stone.test')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/test');
+        }
       }
 
       # Publish
@@ -293,6 +298,10 @@ class StoneServiceProvider extends ServiceProvider
     $this->publishes([
       __DIR__ . '/../database/migrations/appointment' => database_path('migrations'),
     ], 'migrations-appointment');
+
+    $this->publishes([
+      __DIR__ . '/../database/migrations/test' => database_path('migrations'),
+    ], 'migrations-test');
 
     if ($this->app->runningInConsole()) {
       $this->commands([

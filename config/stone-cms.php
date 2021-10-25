@@ -68,6 +68,7 @@ return [
   'service_plan'       => false,
   'pin_card'           => false,
   'calendar_highlight' => false,
+  'test'               => false,
   'shop'               => [
     'uuid'      => true,
     'pre_order' => true,

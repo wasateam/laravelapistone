@@ -31,6 +31,8 @@ use Wasateam\Laravelapistone\Controllers\ShopClassController;
 use Wasateam\Laravelapistone\Controllers\ShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductCoverFrameController;
 use Wasateam\Laravelapistone\Controllers\ShopProductExpectShipController;
+use Wasateam\Laravelapistone\Controllers\ShopShipAreaSettingController;
+use Wasateam\Laravelapistone\Controllers\ShopShipTimeSettingController;
 use Wasateam\Laravelapistone\Controllers\ShopSubclassController;
 use Wasateam\Laravelapistone\Controllers\SnappyController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
@@ -367,6 +369,12 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       Route::resource('shop_subclass', ShopSubclassController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('shop_ship_area_setting', ShopShipAreaSettingController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('shop_ship_time_setting', ShopShipTimeSettingController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }

@@ -65,7 +65,7 @@ class ServiceStoreNotiController extends Controller
 
   /**
    * Index
-   * @urlParam search string No-example
+   * @queryParam search string No-example
    *
    */
   public function index(Request $request, $id = null)

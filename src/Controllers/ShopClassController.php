@@ -37,7 +37,7 @@ class ShopClassController extends Controller
 
   /**
    * Index
-   * @urlParam search string 搜尋字串 No-example
+   * @queryParam search string 搜尋字串 No-example
    * @queryParam page int 頁碼(前台全抓)  No-example
    *
    */

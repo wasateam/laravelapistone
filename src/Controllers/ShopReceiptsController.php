@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ShopBill;
+use App\Models\ShopReceipt;
 use Illuminate\Http\Request;
 
-class ShopBillController extends Controller
+class ShopReceiptController extends Controller
 {
     /**
      * Display a listing of the resource.

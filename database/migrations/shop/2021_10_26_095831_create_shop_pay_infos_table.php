@@ -15,6 +15,12 @@ class CreateShopPayInfosTable extends Migration
     {
         Schema::create('shop_pay_infos', function (Blueprint $table) {
             $table->id();
+            // 付款方式
+            // 付款狀態
+            // 優惠活動/方式/金額
+            // 運費
+            // 商品總金額
+            // 訂單金額
             $table->timestamps();
         });
     }

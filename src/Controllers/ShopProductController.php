@@ -97,7 +97,7 @@ class ShopProductController extends Controller
   }
   /**
    * Index
-   * @urlParam search string 搜尋字串 No-example
+   * @queryParam search string 搜尋字串 No-example
    * @queryParam page int 頁碼  No-example
    * @queryParam shop_classes ids 分類  No-example
    * @queryParam shop_subclasses ids 子分類  No-example

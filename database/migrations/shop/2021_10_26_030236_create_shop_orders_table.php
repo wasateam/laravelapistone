@@ -35,8 +35,8 @@ class CreateShopOrdersTable extends Migration
             $table->string('receiver')->nullable(); 
             // 收件人電話
             $table->string('receiver_tel')->nullable(); 
-            // 收件人地址
-            $table->string('receiver_address')->nullable(); 
+            // 地址
+            $table->string('address')->nullable(); 
             // 收件備註
             $table->text('receive_remark')->nullable(); 
             // 包裝方式
@@ -57,7 +57,10 @@ class CreateShopOrdersTable extends Migration
             $table->date('shipment_date')->nullable(); 
             // 客服備註
             $table->text('customer_service')->nullable(); 
-
+            // Areas
+            $table->string('area_id')->nullable();
+            // AreaSections
+            $table->string('area_section_id')->nullable();
             // 付款狀態關連到 付款資訊
         });
     }

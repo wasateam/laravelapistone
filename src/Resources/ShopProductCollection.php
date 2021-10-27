@@ -61,6 +61,8 @@ class ShopProductCollection extends JsonResource
         'shop_product_cover_frame_id' => $this->shop_product_cover_frame_id,
         'description'                 => $this->description,
         'store_temperature'           => $this->store_temperature,
+        'shop_classes'                => ShopClass_R0::collection($this->shop_classes),
+        'shop_subclasses'             => ShopSubclass_R0::collection($this->shop_subclasses),
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;

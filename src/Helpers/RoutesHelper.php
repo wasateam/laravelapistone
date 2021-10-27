@@ -454,7 +454,7 @@ class RoutesHelper
         'index',
         'show',
       ])->shallow();
-      Route::resource('area.area_section', AreaSectionController::class)->only([
+      Route::resource('area_section', AreaSectionController::class)->only([
         'index',
         'show',
       ])->shallow();

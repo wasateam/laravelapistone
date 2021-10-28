@@ -12,6 +12,7 @@ use Wasateam\Laravelapistone\Exports\PinCardExport;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StrHelper;
 use Wasateam\Laravelapistone\Models\PinCard;
+use Wasateam\Laravelapistone\Models\ServicePlanItem;
 
 /**
  * @group PinCard
@@ -119,7 +120,7 @@ class PinCardController extends Controller
           $model->service_plan_id  = $service_plan;
           $model->save();
           break;
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
         }
         $try_count++;
       }
@@ -152,6 +153,17 @@ class PinCardController extends Controller
     $user_service_plan->user_id         = $user->id;
     $user_service_plan->service_plan_id = $model->service_plan_id;
     $user_service_plan->save();
+    // foreach ($user_service_plan->service_plan as $key => $value) {
+    //   # code...
+    // }
+    $plan_content = $user_service_plan->service_plan ? $user_service_plan->service_plan->payload : null;
+    foreach ($plan_content as $item_uuid => $item_content) {
+      $user_service_item                       = new UserServicePlanItem;
+      $service_plan_item                       = ServicePlanItem::where('uuid', $item_uuid)->first();
+      $user_service_item->service_plan_item_id = $service_plan_item->id;
+      $user_service_item->content              = $item_content;
+      $user_service_item->save();
+    }
     return response()->json([
       'message' => 'successful registed.',
     ]);

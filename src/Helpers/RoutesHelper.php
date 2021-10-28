@@ -411,7 +411,18 @@ class RoutesHelper
 
   public static function webapi_auth_routes()
   {
+    # Pincard
+    if (config('stone.pin_card')) {
+      Route::post('pin_card/register', [PinCardController::class, 'register']);
+    }
 
+    # Appointment
+    Route::resource('appointment', AppointmentController::class)->only([
+      'index',
+      'show',
+      'store',
+      'update',
+    ])->shallow();
   }
 
   public static function webapi_public_routes()

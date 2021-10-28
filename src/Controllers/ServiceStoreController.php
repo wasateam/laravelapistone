@@ -38,6 +38,7 @@ class ServiceStoreController extends Controller
   ];
   public $search_fields = [
     'name',
+    'address',
   ];
   public $order_fields = [
     'updated_at',

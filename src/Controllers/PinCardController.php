@@ -13,6 +13,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StrHelper;
 use Wasateam\Laravelapistone\Models\PinCard;
 use Wasateam\Laravelapistone\Models\ServicePlanItem;
+use Wasateam\Laravelapistone\Models\UserServicePlanItem;
 
 /**
  * @group PinCard

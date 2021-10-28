@@ -9,11 +9,21 @@ class ShopOrder extends Model
 {
     use HasFactory;
 
-    public function areas()
+    public function area()
     {
-        return $this->belongsTo(Area::class, 'area_id');
+        return $this->belongsTo(Area::class, 'areas_id');
     }
+
     public function area_sections() {
-        return $this->belongsTo(AreaSection::class, 'area_section_id');
+        return $this->belongsToMany(AreaSection::class, 'area_sections_id');
+    }
+
+    public function shop_order_shop_products()
+    {
+        return $this->hasMany(ShopOrderShopProduct::class, 'shop_orders_id');
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class, 'shop_orders_id');
     }
 }

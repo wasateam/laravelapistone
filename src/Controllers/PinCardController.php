@@ -159,14 +159,16 @@ class PinCardController extends Controller
     //   # code...
     // }
     $plan_content = $user_service_plan->service_plan ? $user_service_plan->service_plan->payload : null;
-    foreach ($plan_content as $item_uuid => $item_content) {
-      $user_service_item                       = new UserServicePlanItem;
-      $service_plan_item                       = ServicePlanItem::where('uuid', $item_uuid)->first();
-      $user_service_item->service_plan_id      = $model->service_plan_id;
-      $user_service_item->user_service_plan    = $user_service_plan->id;
-      $user_service_item->service_plan_item_id = $service_plan_item->id;
-      $user_service_item->content              = $item_content;
-      $user_service_item->save();
+    if ($plan_content) {
+      foreach ($plan_content as $item_uuid => $item_content) {
+        $user_service_item                       = new UserServicePlanItem;
+        $service_plan_item                       = ServicePlanItem::where('uuid', $item_uuid)->first();
+        $user_service_item->service_plan_id      = $model->service_plan_id;
+        $user_service_item->user_service_plan    = $user_service_plan->id;
+        $user_service_item->service_plan_item_id = $service_plan_item->id;
+        $user_service_item->content              = $item_content;
+        $user_service_item->save();
+      }
     }
     return response()->json([
       'message' => 'successful registed.',

@@ -17,7 +17,7 @@ class ShopShipAreaSetting extends Model
 
   public function area_sections()
   {
-    return $this->belongsToMany(AreaSection::class);
+    return $this->belongsToMany(AreaSection::class, 'shop_ship_area_setting_area_section', 'shop_ship_area_setting_id', 'area_section_id');
   }
 
   protected $casts = [

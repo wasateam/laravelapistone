@@ -6,7 +6,7 @@ use Auth;
 use Closure;
 use Illuminate\Http\Request;
 
-class AppScope
+class IsUser
 {
   public function handle(Request $request, Closure $next)
   {

@@ -535,6 +535,12 @@ class RoutesHelper
       Route::resource('shop_subclass', ShopSubclassController::class)->only([
         'index', 'show',
       ])->shallow();
+      Route::resource('shop_ship_area_setting', ShopShipAreaSettingController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      Route::resource('shop_ship_time_setting', ShopShipTimeSettingController::class)->only([
+        'index', 'show',
+      ])->shallow();
     }
 
     if (config('stone.file_upload') == 'laravel_signed') {

@@ -13,6 +13,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StrHelper;
 use Wasateam\Laravelapistone\Models\PinCard;
 use Wasateam\Laravelapistone\Models\ServicePlanItem;
+use Wasateam\Laravelapistone\Models\UserServicePlan;
 use Wasateam\Laravelapistone\Models\UserServicePlanItem;
 
 /**
@@ -150,7 +151,7 @@ class PinCardController extends Controller
     $model->status  = 1;
     $model->user_id = $user->id;
     $model->save();
-    $user_service_plan                  = new \Wasateam\laravelapistone\Models\UserServicePlan;
+    $user_service_plan                  = new UserServicePlan;
     $user_service_plan->user_id         = $user->id;
     $user_service_plan->service_plan_id = $model->service_plan_id;
     $user_service_plan->save();
@@ -161,6 +162,8 @@ class PinCardController extends Controller
     foreach ($plan_content as $item_uuid => $item_content) {
       $user_service_item                       = new UserServicePlanItem;
       $service_plan_item                       = ServicePlanItem::where('uuid', $item_uuid)->first();
+      $user_service_item->service_plan_id      = $model->service_plan_id;
+      $user_service_item->user_service_plan    = $user_service_plan->id;
       $user_service_item->service_plan_item_id = $service_plan_item->id;
       $user_service_item->content              = $item_content;
       $user_service_item->save();

@@ -17,36 +17,21 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  */
 class WsBlogController extends Controller
 {
-  public $model                   = 'Wasateam\Laravelapistone\Models\WsBlog';
-  public $name                    = 'ws_blog';
-  public $resource                = 'Wasateam\Laravelapistone\Resources\WsBlog';
-  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\WsBlogCollection';
+  public $model                   = 'Wasateam\Laravelapistone\Models\WsBlogClass';
+  public $name                    = 'ws_blog_class';
+  public $resource                = 'Wasateam\Laravelapistone\Resources\WsBlogClass';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\WsBlogClassCollection';
   public $input_fields            = [
-    'title',
-    'description',
-    'publish_at',
-    'publish_status',
-    'read_count',
-    'content',
-    'tags',
+    'id',
+    'no',
+    'category',
   ];
   public $search_fields = [
-    'title',
-  ];
-  public $belongs_to = [
-    'cover_image',
-  ];
-  public $belongs_to_many = [
-    'ws_blogs_class',
-  ];
-  public $filter_belongs_to_many = [
-    'ws_blogs_class',
+    'category',
   ];
   public $order_fields = [
-    'publish_at',
-    'read_count',
+    'no',
   ];
-  public $user_record_field = 'updated_admin_id';
 
   /**
    * Index
@@ -129,43 +114,4 @@ class WsBlogController extends Controller
     return ModelHelper::ws_DestroyHandler($this, $id);
   }
 
-  /**
-   * Pocket Image Get Upload Url
-   *
-   */
-  public function image_get_upload_url(Request $request)
-  {
-    $name            = $request->name;
-    $storage_service = config('stone.storage.service');
-    if ($storage_service == 'gcs') {
-      return GcsHelper::getUploadSignedUrlByNameAndPath($name, 'ws_blog');
-    }
-  }
-
-  /**
-   * Pocket Image Upload Complete
-   *
-   */
-  public function image_upload_complete(Request $request)
-  {
-    $url = $request->url;
-    GcsHelper::makeUrlPublic($url);
-    return response()->json([
-      'message' => 'ok.',
-    ]);
-  }
-
-  /**
-   * Read
-   *
-   */
-  public function read($id)
-  {
-    $blog = $this->model::find($id);
-    $blog->read_count++;
-    $blog->save();
-    return response()->json([
-      'message' => 'ok.',
-    ]);
-  }
 }

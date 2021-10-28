@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserServicePlan extends JsonResource
+class UserServicePlanItem_R1 extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -15,10 +15,12 @@ class UserServicePlan extends JsonResource
   public function toArray($request)
   {
     $res = [
-      'id'                      => $this->id,
-      'created_at'              => $this->created_at,
-      'service_plan'            => new ServicePlan_R1($this->service_plan),
-      'user_service_plan_items' => UserServicePlanItem_R1::collection($this->user_service_plan_items),
+      'id'                => $this->id,
+      'created_at'        => $this->created_at,
+      'updated_at'        => $this->updated_at,
+      'content'           => $this->content,
+      'expired_at'        => $this->expired_at,
+      'service_plan_item' => new ServicePlanItem_R1($this->service_plan_item),
     ];
     if (config('stone.mode') == 'cms') {
       $res['user'] = new User_R1($this->user);

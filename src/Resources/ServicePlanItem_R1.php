@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ServicePlanItem extends JsonResource
+class ServicePlanItem_R1 extends JsonResource
 {
   /**
    * Transform the resource into an array.

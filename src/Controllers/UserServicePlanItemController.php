@@ -26,10 +26,14 @@ class UserServicePlanItemController extends Controller
   public $search_fields = [
   ];
   public $belongs_to = [
+    'service_plan',
     'service_plan_item',
+    'user_service_plan',
   ];
   public $filter_belongs_to = [
+    'service_plan',
     'service_plan_item',
+    'user_service_plan',
   ];
   public $order_fields = [
     'updated_at',

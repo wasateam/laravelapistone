@@ -423,6 +423,17 @@ class RoutesHelper
       'store',
       'update',
     ])->shallow();
+
+  }
+
+  public static function webapi_isuser_routes()
+  {
+
+    # UserServicePlan
+    Route::resource('user_service_plan', UserServicePlanController::class)->only([
+      'index',
+      'show',
+    ])->shallow();
   }
 
   public static function webapi_public_routes()

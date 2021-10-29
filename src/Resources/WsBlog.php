@@ -25,7 +25,7 @@ class WsBlog extends JsonResource
         'read_count'       => $this->read_count,
         'content'          => $this->content,
         'tags'             => $this->tags,
-        'ws_blogs_classes' => WsBlogClass::collection($this->ws_blogs_classes),
+        'ws_blog_classes' => WsBlogClass::collection($this->ws_blog_classes),
         'cover_image'      => new PocketImage_R1($this->cover_image),
       ];
     } else if (config('stone.mode') == 'webapi') {
@@ -37,7 +37,7 @@ class WsBlog extends JsonResource
         'read_count'       => $this->read_count,
         'content'          => $this->content,
         'tags'             => $this->tags,
-        'ws_blogs_classes' => WsBlogClass::collection($this->ws_blogs_classes),
+        'ws_blog_classes' => WsBlogClass::collection($this->ws_blog_classes),
         'cover_image'      => PocketHelper::get_pocket_url($this->cover_image),
       ];
     }

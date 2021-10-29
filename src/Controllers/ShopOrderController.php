@@ -17,21 +17,17 @@ class ShopOrderController extends Controller
       'id',
       'no',
       'type',
-      'selected',
-      'order_time',
       'receiver',
       'receiver_tel',
       'receiver_address',
       'receive_remark',
       'package_methods',
-      'order_status',
-      'order_remark_status',
-      'logistics_methods',
+      'status',
+      'remark_status',
+      'deliver_way',
       'delivery_time',
       'delivery_remark',
-      'shipment_status',
-      'shipment_date',
-      'customer_service',
+      'customer_service_remark',
     ];
     public $search_fields = [
       'no',
@@ -39,16 +35,14 @@ class ShopOrderController extends Controller
       'receiver_tel',
     ];
     public $filter_fields = [
-      'selected',
-      'order_status',
-      'shipment_status',
-      'order_time',
+      'status',
       'type', // 訂單種類
-      'order_remark_status',
+      'remark_status',
       // 發票狀態
       // 配送時段
     ];
     public $belongs_to = [
+      'user'
     ];
     public $belongs_to_many = [
     ];
@@ -57,8 +51,6 @@ class ShopOrderController extends Controller
     public $order_fields = [
       'updated_at',
       'created_at',
-      'order_time',
-      'shipment_date',
     ];
     public $uuid = false;
 
@@ -79,21 +71,17 @@ class ShopOrderController extends Controller
       *
       * @bodyParam type string 訂單類型 No-example
       * @bodyParam no string 訂單編號 No-example
-      * @bodyParam selected boolean 選取狀態 No-example
-      * @bodyParam order_time datetime 訂購日期 No-example
       * @bodyParam receiver string 收件者 No-example
       * @bodyParam receiver_tel string 收件人電話 No-example
       * @bodyParam receiver_address string 收件人住址 No-example
       * @bodyParam receive_remark text 收件備註 No-example
       * @bodyParam package_methods string 包裝方式 No-example
-      * @bodyParam order_status 訂單狀態 string No-example
-      * @bodyParam order_remark_status string 訂單備註狀態 No-example
-      * @bodyParam logistics_methods string 物流方式 No-example
+      * @bodyParam status 訂單狀態 string No-example
+      * @bodyParam remark_status string 訂單備註狀態 No-example
+      * @bodyParam deliver_way string 物流方式 No-example
       * @bodyParam delivery_time time 配送時段 No-example
       * @bodyParam delivery_remark text 配送備註 No-example
-      * @bodyParam shipment_status string 出貨狀態 No-example
-      * @bodyParam shipment_date date 出貨日期 No-example
-      * @bodyParam customer_service text 客服備註 No-example
+      * @bodyParam customer_service_remark text 客服備註 No-example
       * 
     */
     public function store(Request $request, $id = null)
@@ -117,21 +105,17 @@ class ShopOrderController extends Controller
       *
       * @bodyParam type string 訂單類型 No-example
       * @bodyParam no string 訂單編號 No-example
-      * @bodyParam selected boolean 選取狀態 No-example
-      * @bodyParam order_time datetime 訂購日期 No-example
       * @bodyParam receiver string 收件者 No-example
       * @bodyParam receiver_tel string 收件人電話 No-example
       * @bodyParam receiver_address string 收件人住址 No-example
       * @bodyParam receive_remark text 收件備註 No-example
       * @bodyParam package_methods string 包裝方式 No-example
-      * @bodyParam order_status 訂單狀態 string No-example
-      * @bodyParam order_remark_status string 訂單備註狀態 No-example
-      * @bodyParam logistics_methods string 物流方式 No-example
+      * @bodyParam status 訂單狀態 string No-example
+      * @bodyParam remark_status string 訂單備註狀態 No-example
+      * @bodyParam deliver_way string 物流方式 No-example
       * @bodyParam delivery_time time 配送時段 No-example
       * @bodyParam delivery_remark text 配送備註 No-example
-      * @bodyParam shipment_status string 出貨狀態 No-example
-      * @bodyParam shipment_date date 出貨日期 No-example
-      * @bodyParam customer_service text 客服備註 No-example
+      * @bodyParam customer_service_remark text 客服備註 No-example
       * 
     */
     public function update(Request $request, $id)

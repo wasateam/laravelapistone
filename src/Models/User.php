@@ -72,9 +72,9 @@ class User extends Authenticatable
     return $this->hasMany(SocialiteLineAccount::class, 'user_id');
   }
 
-  public function shop_orders()
+  public function shop_order()
   {
-    return $this->hasMany(ShopOrder::class, 'shop_orders_id');
+    return $this->hasMany(ShopOrder::class, 'shop_order_id');
   }
 
   /**

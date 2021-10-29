@@ -18,12 +18,12 @@ class ShopOrder extends Model
         return $this->belongsToMany(AreaSection::class, 'area_sections_id');
     }
 
-    public function shop_order_shop_products()
+    public function shop_order_shop_product()
     {
-        return $this->hasMany(ShopOrderShopProduct::class, 'shop_orders_id');
+        return $this->hasMany(ShopOrderShopProduct::class, 'shop_order_id');
     }
 
     public function user() {
-        return $this->belongsTo(User::class, 'shop_orders_id');
+        return $this->belongsTo(User::class, 'shop_order_id');
     }
 }

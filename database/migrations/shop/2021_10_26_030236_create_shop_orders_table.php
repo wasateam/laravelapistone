@@ -27,10 +27,6 @@ class CreateShopOrdersTable extends Migration
             $table->string('type')->nullable(); 
             // 訂單編號
             $table->string('no')->nullable(); 
-            // 選取狀態
-            $table->boolean('selected')->nullable()->default(false); 
-            // 訂購日期
-            $table->datetime('order_time')->nullable(); 
             // 收件者
             $table->string('receiver')->nullable(); 
             // 收件人電話
@@ -42,24 +38,20 @@ class CreateShopOrdersTable extends Migration
             // 包裝方式
             $table->string('package_methods')->nullable(); 
             // 訂單狀態
-            $table->string('order_status')->nullable(); 
+            $table->string('status')->nullable(); 
             // 訂單備註狀態
-            $table->string('order_remark_status')->nullable(); 
+            $table->string('remark_status')->nullable(); 
             // 物流方式
-            $table->string('logistics_methods')->nullable(); 
+            $table->string('deliver_way')->nullable(); 
             // 配送時段
             $table->time('delivery_time')->nullable(); 
             // 配送備註
             $table->text('delivery_remark')->nullable(); 
-            // 出貨狀態
-            $table->string('shipment_status')->nullable(); 
-            // 出貨日期
-            $table->date('shipment_date')->nullable(); 
             // 客服備註
-            $table->text('customer_service')->nullable(); 
-            // Areas
+            $table->text('customer_service_remark')->nullable(); 
+            // Area
             $table->string('area_id')->nullable();
-            // AreaSections
+            // AreaSection
             $table->string('area_section_id')->nullable();
             // 付款狀態關連到 付款資訊
         });

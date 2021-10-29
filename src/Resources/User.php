@@ -45,7 +45,7 @@ class User extends JsonResource
     if (config('stone.user_device_token')) {
       $res['user_device_tokens'] = UserDeviceToken_R1::collection($this->user_device_tokens);
     }
-    if (config('stone.user.is_bad')) {
+    if (config('Resource::stone.user.is_bad')) {
       $res['is_bad'] = $this->is_bad;
     }
     if (config('stone.user.bonus_points')) {

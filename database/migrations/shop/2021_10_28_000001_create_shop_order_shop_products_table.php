@@ -13,11 +13,11 @@ class CreateShopOrderShopProductsTable extends Migration
    */
   public function up()
   {
-    Schema::create('shop_order_shop_products', function (Blueprint $table) {
+    Schema::create('shop_order_shop_product', function (Blueprint $table) {
       // 訂單 id
-      $table->string('shop_orders_id')->nullable();
+      $table->string('shop_order_id')->nullable();
       // 商品 id
-      $table->string('shop_products_id')->nullable();
+      $table->string('shop_product_id')->nullable();
       // 購買數量
       $table->string('count')->nullable();
       // 商品小計
@@ -32,6 +32,6 @@ class CreateShopOrderShopProductsTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('shop_order_shop_products');
+    Schema::dropIfExists('shop_order_shop_product');
   }
 }

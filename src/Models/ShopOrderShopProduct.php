@@ -11,9 +11,9 @@ class ShopOrderShopProduct extends Model
   use \Illuminate\Database\Eloquent\SoftDeletes;
 
   public function shop_order() {
-    return $this->belongsTo(ShopOrder::class, 'shop_orders_id');
+    return $this->belongsTo(ShopOrder::class, 'shop_order_id');
   }
   public function shop_product() {
-    return $this->belongsTo(ShopProduct::class, 'shop_products_id');
+    return $this->belongsTo(ShopProduct::class, 'shop_product_id');
   }
 }

@@ -21,7 +21,6 @@ class CreateWsBlogsTable extends Migration
       $table->string('title');
       $table->text('description')->nullable();
       $table->datetime('publish_at')->nullable();
-      $table->boolean('publish_status')->nullable();
       $table->integer('read_count')->default(0);
       $table->integer('cover_image_id')->nullable();
       $table->longText('content')->nullable();

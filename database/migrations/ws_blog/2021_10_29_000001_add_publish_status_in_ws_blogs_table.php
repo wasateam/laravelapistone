@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateWsBlogsClassTable extends Migration
+class AddPublishStatusInWsBlogsTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,11 +13,8 @@ class CreateWsBlogsClassTable extends Migration
    */
   public function up()
   {
-    Schema::create('ws_blogs_class', function (Blueprint $table) {
-      $table->id();
-      $table->timestamps();
-      // 文章類別名稱
-      $table->string('name')->nullable();
+    Schema::create('ws_blogs', function (Blueprint $table) {
+      $table->boolean('publish_status')->nullable();
     });
   }
 
@@ -28,6 +25,8 @@ class CreateWsBlogsClassTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('ws_blogs_class');
+    Schema::table('ws_blogs', function (Blueprint $table) {
+      $table->dropColumn('publish_status');
+    });
   }
 }

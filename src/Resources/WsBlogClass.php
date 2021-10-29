@@ -17,15 +17,13 @@ class WsBlogClass extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       return [
-        'id'           => $this->id,
-        'no'           => $this->no,
-        'category'     => $this->name,
+        'id'       => $this->id,
+        'name'     => $this->name,
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
-        'id'           => $this->id,
-        'no'           => $this->no,
-        'category'     => $this->name,
+        'id'       => $this->id,
+        'name'     => $this->name,
       ];
     }
   }

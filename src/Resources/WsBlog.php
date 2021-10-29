@@ -17,26 +17,28 @@ class WsBlog extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       return [
-        'id'              => $this->id,
-        'title'           => $this->title,
-        'description'     => $this->description,
-        'publish_at'      => $this->publish_at,
-        'publish_status'  => $this->publish_status,
-        'read_count'      => $this->read_count,
-        'content'         => $this->content,
-        'tags'            => $this->tags,
-        'cover_image'     => new PocketImage_R1($this->cover_image),
+        'id'               => $this->id,
+        'title'            => $this->title,
+        'description'      => $this->description,
+        'publish_at'       => $this->publish_at,
+        'publish_status'   => $this->publish_status,
+        'read_count'       => $this->read_count,
+        'content'          => $this->content,
+        'tags'             => $this->tags,
+        'ws_blogs_class'   => WsBlogClass::collection($this->ws_blogs_class),
+        'cover_image'      => new PocketImage_R1($this->cover_image),
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
-        'id'          => $this->id,
-        'title'       => $this->title,
-        'description' => $this->description,
-        'publish_at'  => $this->publish_at,
-        'read_count'  => $this->read_count,
-        'content'     => $this->content,
-        'tags'        => $this->tags,
-        'cover_image' => PocketHelper::get_pocket_url($this->cover_image),
+        'id'               => $this->id,
+        'title'            => $this->title,
+        'description'      => $this->description,
+        'publish_at'       => $this->publish_at,
+        'read_count'       => $this->read_count,
+        'content'          => $this->content,
+        'tags'             => $this->tags,
+        'ws_blogs_class'   => WsBlogClass::collection($this->ws_blogs_class),
+        'cover_image'      => PocketHelper::get_pocket_url($this->cover_image),
       ];
     }
   }

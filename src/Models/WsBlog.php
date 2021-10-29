@@ -29,8 +29,8 @@ class WsBlog extends Model
     return $this->belongsTo(PocketImage::class, 'cover_image_id');
   }
 
-  public function ws_blog_class() {
-    return $this->belongsToMany(WsBlogClass::class, 'ws_blogs_link_class', 'ws_blogs_id', 'ws_blogs_class_id');
+  public function ws_blog_classes() {
+    return $this->belongsToMany(WsBlogClass::class, 'ws_blog_ws_blog_class', 'ws_blogs_id', 'ws_blogs_class_id');
   }
 
   protected $casts = [

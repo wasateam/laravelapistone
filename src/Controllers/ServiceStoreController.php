@@ -32,6 +32,7 @@ class ServiceStoreController extends Controller
     'is_active',
     'payload',
     'parking_info',
+    'parking_link',
     'transportation_info',
   ];
   public $belongs_to_many = [
@@ -118,6 +119,7 @@ class ServiceStoreController extends Controller
    * @bodyParam is_active int Example: 1
    * @bodyParam payload object No-example
    * @bodyParam parking_info string No-example
+   * @bodyParam parking_link string No-example
    * @bodyParam transportation_info string No-example
    */
   public function store(Request $request, $id = null)
@@ -159,6 +161,7 @@ class ServiceStoreController extends Controller
    * @bodyParam is_active int Example: 1
    * @bodyParam payload object No-example
    * @bodyParam parking_info string No-example
+   * @bodyParam parking_link string No-example
    * @bodyParam transportation_info string No-example
    */
   public function update(Request $request, $id)

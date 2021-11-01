@@ -33,6 +33,13 @@ class UserServicePlanController extends Controller
     'updated_at',
     'created_at',
   ];
+  public $search_relationship_fields = [
+    'user' => [
+      'name',
+      'email',
+      'tel',
+    ],
+  ];
 
   public function __construct()
   {

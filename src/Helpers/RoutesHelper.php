@@ -434,6 +434,10 @@ class RoutesHelper
       'index',
       'show',
     ])->shallow();
+    Route::resource('user_service_plan_item', UserServicePlanController::class)->only([
+      'index',
+      'show',
+    ])->shallow();
   }
 
   public static function webapi_public_routes()

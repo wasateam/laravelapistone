@@ -22,6 +22,8 @@ class UserServicePlanItemController extends Controller
   public $input_fields = [
     'content',
     'expired_at',
+    'total_count',
+    'remain_count',
   ];
   public $search_fields = [
   ];
@@ -71,6 +73,8 @@ class UserServicePlanItemController extends Controller
    * @bodyParam service_plan_item string Example: 1
    * @bodyParam content string Example: 1
    * @bodyParam expired_at date Example: 2021-10-10 10:00:00
+   * @bodyParam total_count int No-example
+   * @bodyParam remain_count int No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -95,6 +99,8 @@ class UserServicePlanItemController extends Controller
    * @bodyParam service_plan_item string Example: 1
    * @bodyParam content string Example: 1
    * @bodyParam expired_at date Example: 2021-10-10 10:00:00
+   * @bodyParam total_count int No-example
+   * @bodyParam remain_count int No-example
    */
   public function update(Request $request, $id)
   {

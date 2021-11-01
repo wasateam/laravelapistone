@@ -161,8 +161,17 @@ class PinCardController extends Controller
     $plan_content = $user_service_plan->service_plan ? $user_service_plan->service_plan->payload : null;
     if ($plan_content) {
       foreach ($plan_content as $item_uuid => $item_content) {
-        $user_service_item                       = new UserServicePlanItem;
-        $service_plan_item                       = ServicePlanItem::where('uuid', $item_uuid)->first();
+        $user_service_item = new UserServicePlanItem;
+        $service_plan_item = ServicePlanItem::where('uuid', $item_uuid)->first();
+        $_type             = $service_plan_item->type;
+        if ($_type == 'annual-times') {
+          $user_service_item->total_count  = $item_content;
+          $user_service_item->remain_count = $item_content;
+          $user_service_item->expired_at   = Carbon::now()->addYears(1);
+        } else if ($_type == 'count') {
+          $user_service_item->total_count  = $item_content;
+          $user_service_item->remain_count = $item_content;
+        }
         $user_service_item->service_plan_id      = $model->service_plan_id;
         $user_service_item->user_service_plan_id = $user_service_plan->id;
         $user_service_item->service_plan_item_id = $service_plan_item->id;

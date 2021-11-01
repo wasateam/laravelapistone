@@ -20,6 +20,8 @@ class UserServicePlanItem_R1 extends JsonResource
       'updated_at'        => $this->updated_at,
       'content'           => $this->content,
       'expired_at'        => $this->expired_at,
+      'total_count'  => $this->total_count,
+      'remain_count' => $this->remain_count,
       'service_plan_item' => new ServicePlanItem_R1($this->service_plan_item),
     ];
     if (config('stone.mode') == 'cms') {

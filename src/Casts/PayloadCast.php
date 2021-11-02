@@ -32,7 +32,7 @@ class PayloadCast implements CastsAttributes
   {
     if (config('stone.post_encode')) {
       $_value = base64_decode($value);
-      return json_encode($_value, JSON_UNESCAPED_UNICODE);
+      return $_value;
     } else {
       return json_encode($value, JSON_UNESCAPED_UNICODE);
     }

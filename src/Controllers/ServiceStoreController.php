@@ -33,6 +33,7 @@ class ServiceStoreController extends Controller
     'payload',
     'parking_info',
     'parking_infos',
+    'parking_image',
     'parking_link',
     'transportation_info',
   ];
@@ -122,6 +123,7 @@ class ServiceStoreController extends Controller
    * @bodyParam parking_info string No-example
    * @bodyParam parking_infos array No-example
    * @bodyParam parking_link string No-example
+   * @bodyParam parking_image string No-example
    * @bodyParam transportation_info string No-example
    */
   public function store(Request $request, $id = null)
@@ -165,6 +167,7 @@ class ServiceStoreController extends Controller
    * @bodyParam parking_info string No-example
    * @bodyParam parking_infos array No-example
    * @bodyParam parking_link string No-example
+   * @bodyParam parking_image string No-example
    * @bodyParam transportation_info string No-example
    */
   public function update(Request $request, $id)

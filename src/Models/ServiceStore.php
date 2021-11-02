@@ -55,5 +55,6 @@ class ServiceStore extends Model
     'payload'                => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'parking_link'           => \Wasateam\Laravelapistone\Casts\UrlCast::class,
     'parking_infos'          => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
+    'parking_image'          => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
   ];
 }

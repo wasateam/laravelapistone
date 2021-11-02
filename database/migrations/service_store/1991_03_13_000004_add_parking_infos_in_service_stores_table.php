@@ -15,6 +15,7 @@ class AddParkingInfosInServiceStoresTable extends Migration
   {
     Schema::table('service_stores', function (Blueprint $table) {
       $table->longText('parking_infos');
+      $table->text('parking_image');
     });
   }
 
@@ -27,6 +28,7 @@ class AddParkingInfosInServiceStoresTable extends Migration
   {
     Schema::table('service_stores', function (Blueprint $table) {
       $table->dropColumn('parking_infos');
+      $table->dropColumn('parking_image');
     });
   }
 }

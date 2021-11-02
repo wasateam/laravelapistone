@@ -14,8 +14,8 @@ class AddParkingInfosInServiceStoresTable extends Migration
   public function up()
   {
     Schema::table('service_stores', function (Blueprint $table) {
-      $table->longText('parking_infos');
-      $table->text('parking_image');
+      $table->longText('parking_infos')->nullable();
+      $table->text('parking_image')->nullable();
     });
   }
 

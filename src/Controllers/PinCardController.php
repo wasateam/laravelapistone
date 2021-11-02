@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -155,9 +156,6 @@ class PinCardController extends Controller
     $user_service_plan->user_id         = $user->id;
     $user_service_plan->service_plan_id = $model->service_plan_id;
     $user_service_plan->save();
-    // foreach ($user_service_plan->service_plan as $key => $value) {
-    //   # code...
-    // }
     $plan_content = $user_service_plan->service_plan ? $user_service_plan->service_plan->payload : null;
     if ($plan_content) {
       foreach ($plan_content as $item_uuid => $item_content) {

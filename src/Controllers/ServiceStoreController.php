@@ -32,6 +32,7 @@ class ServiceStoreController extends Controller
     'is_active',
     'payload',
     'parking_info',
+    'parking_infos',
     'parking_link',
     'transportation_info',
   ];
@@ -119,6 +120,7 @@ class ServiceStoreController extends Controller
    * @bodyParam is_active int Example: 1
    * @bodyParam payload object No-example
    * @bodyParam parking_info string No-example
+   * @bodyParam parking_infos array No-example
    * @bodyParam parking_link string No-example
    * @bodyParam transportation_info string No-example
    */
@@ -161,6 +163,7 @@ class ServiceStoreController extends Controller
    * @bodyParam is_active int Example: 1
    * @bodyParam payload object No-example
    * @bodyParam parking_info string No-example
+   * @bodyParam parking_infos array No-example
    * @bodyParam parking_link string No-example
    * @bodyParam transportation_info string No-example
    */

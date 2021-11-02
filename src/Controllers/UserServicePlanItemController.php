@@ -116,4 +116,35 @@ class UserServicePlanItemController extends Controller
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
   }
+
+  /**
+   * Remain Count Deduct
+   *
+   * @urlParam  user_service_plan_item required The ID of user_service_plan_item. Example: 2
+   */
+  public function remain_count_deduct($id)
+  {
+    try {
+      $model = $this->model::find($id);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
+    }
+
+    if (!$model) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
+    }
+
+    if ($model->remain_count > 0) {
+      $model->remain_count--;
+      $model->save();
+    }
+
+    return response()->json([
+      "message" => 'deducted.',
+    ], 200);
+  }
 }

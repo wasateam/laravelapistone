@@ -310,6 +310,7 @@ class RoutesHelper
       Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      Route::post('user_service_plan_item/{id}/remain_count_deduct', [UserServicePlanItemController::class, 'remain_count_deduct']);
     }
 
     # Pin Card

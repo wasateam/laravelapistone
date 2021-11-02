@@ -26,7 +26,7 @@ class ChangePayloadTypeInServicePlansTable extends Migration
   public function down()
   {
     Schema::table('service_plans', function (Blueprint $table) {
-      $table->string('payload')->nullable()->change();
+      $table->string('payload', 255)->nullable()->change();
     });
   }
 }

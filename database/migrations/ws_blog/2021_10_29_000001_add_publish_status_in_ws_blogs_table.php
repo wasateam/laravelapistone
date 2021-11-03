@@ -13,7 +13,7 @@ class AddPublishStatusInWsBlogsTable extends Migration
    */
   public function up()
   {
-    Schema::create('ws_blogs', function (Blueprint $table) {
+    Schema::table('ws_blogs', function (Blueprint $table) {
       $table->boolean('publish_status')->nullable();
     });
   }

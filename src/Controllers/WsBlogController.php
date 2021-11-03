@@ -25,12 +25,22 @@ class WsBlogController extends Controller
     'title',
     'description',
     'publish_at',
+    'publish_status',
     'read_count',
     'content',
     'tags',
   ];
+  public $search_fields = [
+    'title',
+  ];
   public $belongs_to = [
     'cover_image',
+  ];
+  public $belongs_to_many = [
+    'ws_blogs_classes',
+  ];
+  public $filter_belongs_to_many = [
+    'ws_blogs_classes',
   ];
   public $order_fields = [
     'publish_at',

@@ -37,10 +37,10 @@ class WsBlogController extends Controller
     'cover_image',
   ];
   public $belongs_to_many = [
-    'ws_blogs_classes',
+    'ws_blog_classes',
   ];
   public $filter_belongs_to_many = [
-    'ws_blogs_classes',
+    'ws_blog_classes',
   ];
   public $order_fields = [
     'publish_at',

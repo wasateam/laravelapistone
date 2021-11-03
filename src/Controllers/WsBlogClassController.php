@@ -7,19 +7,18 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group WsBlog
+ * @group WsBlogClass
  *
  * @authenticated
  *
  * APIs for ws_blog
  */
-class WsBlogController extends Controller
+class WsBlogClassController extends Controller
 {
-  public $model                   = 'Wasateam\Laravelapistone\Models\WsBlogClass';
-  public $name                    = 'ws_blog_class';
-  public $resource                = 'Wasateam\Laravelapistone\Resources\WsBlogClass';
-  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\WsBlogClassCollection';
-  public $input_fields            = [
+  public $model        = 'Wasateam\Laravelapistone\Models\WsBlogClass';
+  public $name         = 'ws_blog_class';
+  public $resource     = 'Wasateam\Laravelapistone\Resources\WsBlogClass';
+  public $input_fields = [
     'id',
     'name',
   ];
@@ -41,7 +40,7 @@ class WsBlogController extends Controller
    * Store
    *
    * @bodyParam name string No-example
-   * 
+   *
    */
   public function store(Request $request, $id = null)
   {
@@ -63,7 +62,7 @@ class WsBlogController extends Controller
    *
    * @urlParam  blog required The ID of blog. Example: 1
    * @bodyParam name string No-example
-   * 
+   *
    */
   public function update(Request $request, $id)
   {

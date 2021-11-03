@@ -52,6 +52,7 @@ use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
+use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
 
 class RoutesHelper
@@ -233,6 +234,9 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       Route::get('/ws_blog/image/upload_url', [WsBlogController::class, 'image_get_upload_url']);
+      Route::resource('ws_blog_class', WsBlogClassController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
     }
 
     # Tag
@@ -465,6 +469,10 @@ class RoutesHelper
         'show',
       ])->shallow();
       Route::get('ws_blog/{id}/read', [WsBlogController::class, 'read']);
+      Route::resource('ws_blog_class', WsBlogClassController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
     }
 
     # ServiceStore

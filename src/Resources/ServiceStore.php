@@ -36,6 +36,8 @@ class ServiceStore extends JsonResource
         'parking_link'         => $this->parking_link,
         'parking_image'        => $this->parking_image,
         'transportation_info'  => $this->transportation_info,
+        'work_on_holiday'      => $this->work_on_holiday,
+        'service_at_night'     => $this->service_at_night,
         'service_store_closes' => ServiceStoreClose_R1::collection($this->service_store_closes),
         'service_store_notis'  => ServiceStoreNoti_R1::collection($this->service_store_notis),
       ];
@@ -69,6 +71,8 @@ class ServiceStore extends JsonResource
         'parking_link'         => $this->parking_link,
         'parking_image'        => $this->parking_image,
         'transportation_info'  => $this->transportation_info,
+        'work_on_holiday'      => $this->work_on_holiday,
+        'service_at_night'     => $this->service_at_night,
         'service_store_closes' => ServiceStoreClose_R1::collection($this->service_store_closes),
         'service_store_notis'  => ServiceStoreNoti_R1::collection($this->service_store_notis),
       ];

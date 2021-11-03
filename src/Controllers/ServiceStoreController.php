@@ -36,12 +36,18 @@ class ServiceStoreController extends Controller
     'parking_image',
     'parking_link',
     'transportation_info',
+    'work_on_holiday',
+    'service_at_night',
   ];
   public $belongs_to_many = [
   ];
   public $search_fields = [
     'name',
     'address',
+  ];
+  public $filter_fields = [
+    'work_on_holiday',
+    'service_at_night',
   ];
   public $order_fields = [
     'updated_at',
@@ -125,6 +131,8 @@ class ServiceStoreController extends Controller
    * @bodyParam parking_link string No-example
    * @bodyParam parking_image string No-example
    * @bodyParam transportation_info string No-example
+   * @bodyParam work_on_holiday boolean No-example
+   * @bodyParam service_at_night boolean No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -169,6 +177,8 @@ class ServiceStoreController extends Controller
    * @bodyParam parking_link string No-example
    * @bodyParam parking_image string No-example
    * @bodyParam transportation_info string No-example
+   * @bodyParam work_on_holiday boolean No-example
+   * @bodyParam service_at_night boolean No-example
    */
   public function update(Request $request, $id)
   {

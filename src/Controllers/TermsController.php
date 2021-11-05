@@ -24,7 +24,8 @@ class TermsController extends Controller
   {
     $model = GeneralContent::where('name', 'terms')->first();
     if (!$model) {
-      $model = new GeneralContent;
+      $model       = new GeneralContent;
+      $model->name = 'terms';
       $model->save();
     }
     return response()->json([
@@ -46,7 +47,8 @@ class TermsController extends Controller
     }
     $model = GeneralContent::where('name', 'terms')->first();
     if (!$model) {
-      $model = new GeneralContent;
+      $model       = new GeneralContent;
+      $model->name = 'terms';
       $model->save();
     }
     $model->content = $request->content;

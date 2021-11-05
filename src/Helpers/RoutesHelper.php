@@ -22,6 +22,7 @@ use Wasateam\Laravelapistone\Controllers\NotificationController;
 use Wasateam\Laravelapistone\Controllers\PinCardController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
+use Wasateam\Laravelapistone\Controllers\PrivacyController;
 use Wasateam\Laravelapistone\Controllers\ServicePlanController;
 use Wasateam\Laravelapistone\Controllers\ServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreCloseController;
@@ -42,6 +43,7 @@ use Wasateam\Laravelapistone\Controllers\SocialiteLineAccountController;
 use Wasateam\Laravelapistone\Controllers\SystemClassController;
 use Wasateam\Laravelapistone\Controllers\SystemSubclassController;
 use Wasateam\Laravelapistone\Controllers\TagController;
+use Wasateam\Laravelapistone\Controllers\TermsController;
 use Wasateam\Laravelapistone\Controllers\TulpaCrossItemController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
@@ -390,6 +392,14 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
+
+    # Privacy Terms
+    if (config('stone.privacy_terms')) {
+      Route::get('privacy', [PrivacyController::class, 'show']);
+      Route::patch('privacy', [PrivacyController::class, 'update']);
+      Route::get('terms', [TermsController::class, 'show']);
+      Route::patch('terms', [TermsController::class, 'update']);
+    }
   }
 
   public static function cms_public_routes()
@@ -586,6 +596,12 @@ class RoutesHelper
         Route::get('/{model}/{type}/{repo}/{name}', '\Wasateam\Laravelapistone\Controllers\FileController@file_general')->name('file_general');
         Route::get('/{parent}/{parent_id}/{model}/{type}/{repo}/{name}', '\Wasateam\Laravelapistone\Controllers\FileController@file_parentidmatch')->name('file_parentidmatch');
       });
+    }
+
+    # Privacy Terms
+    if (config('stone.privacy_terms')) {
+      Route::get('privacy', [PrivacyController::class, 'show']);
+      Route::get('terms', [TermsController::class, 'show']);
     }
   }
 

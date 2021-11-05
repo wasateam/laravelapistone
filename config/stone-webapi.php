@@ -4,14 +4,14 @@ return [
   'mode'               => 'webapi',
   'storage'            => [
     'service' => 'gcs', # gcs, s3, local
-    'gcs' => [
+    'gcs'     => [
       'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', null),
     ],
     'acl'     => true,
   ],
   'mail'               => [
     'service'    => env('gmail'), // gmail, surenotify
-    'api_key' => env('MAIL_API_KEY'),
+    'api_key'    => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
   ],
   'app_url'            => env('APP_URL'),
@@ -58,4 +58,5 @@ return [
     'current'   => true,
   ],
   'file_upload'        => 'laravel_signed',
+  'privacy_terms'      => true,
 ];

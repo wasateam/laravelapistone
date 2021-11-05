@@ -18,7 +18,7 @@ class CreateGeneralContentsTable extends Migration
       $table->timestamps();
       $table->softDeletes();
       $table->string('name');
-      $table->longText('content');
+      $table->longText('content')->nullable();
     });
   }
 

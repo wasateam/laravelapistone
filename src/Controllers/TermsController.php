@@ -38,7 +38,7 @@ class TermsController extends Controller
    *
    * @bodyParam content string Example: My Page 1
    */
-  public function update(Request $request, $id)
+  public function update(Request $request)
   {
     if (!$request->has('content')) {
       return response()->json([

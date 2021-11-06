@@ -47,11 +47,11 @@ class PrivacyController extends Controller
     }
     $model = GeneralContent::where('name', 'privacy')->first();
     if (!$model) {
-      $model = new GeneralContent;
+      $model       = new GeneralContent;
+      $model->name = 'privacy';
       $model->save();
     }
     $model->content = $request->content;
-    $model->name    = 'privacy';
     $model->save();
     return response()->json([
       'content' => $model->content,

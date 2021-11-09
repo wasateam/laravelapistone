@@ -45,7 +45,7 @@ class ShopCartProductController extends Controller
       $this->input_fields[] = 'price';
       $this->input_fields[] = 'discount_price';
       $this->belongs_to[]   = 'shop_cart';
-      $this->shop_product[] = 'shop_product';
+      $this->belongs_to[]   = 'shop_product';
     }
   }
 

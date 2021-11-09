@@ -101,11 +101,22 @@ class ShopProductController extends Controller
    * @queryParam page int 頁碼  No-example
    * @queryParam shop_classes ids 分類  No-example
    * @queryParam shop_subclasses ids 子分類  No-example
+   * @queryParam areas ids 地區  No-example
+   * @queryParam area_sections ids 子地區  No-example
    *
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id);
+    } else if (config('stone.mode') == 'webapi') {
+      if (!$request->has('shop_classes') && !$request->has('shop_subclasses')) {
+        return response()->json([
+          'message' => 'shop_classes or shop_subclasses is required.',
+        ], 400);
+      }
+      return ModelHelper::ws_IndexHandler($this, $request, $id, true);
+    }
   }
 
   /**

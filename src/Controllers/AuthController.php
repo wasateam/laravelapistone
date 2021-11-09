@@ -251,6 +251,12 @@ class AuthController extends Controller
     if ($request->has('payload')) {
       $user->payload = $request->payload;
     }
+    if ($request->has('birthday')) {
+      $user->birthday = $request->birthday;
+    }
+    if ($request->has('description')) {
+      $user->description = $request->description;
+    }
     $user->save();
     return response()->json([
       'user' => new $resource($user),

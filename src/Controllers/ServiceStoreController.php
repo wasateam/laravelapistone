@@ -32,12 +32,22 @@ class ServiceStoreController extends Controller
     'is_active',
     'payload',
     'parking_info',
+    'parking_infos',
+    'parking_image',
+    'parking_link',
     'transportation_info',
+    'work_on_holiday',
+    'service_at_night',
   ];
   public $belongs_to_many = [
   ];
   public $search_fields = [
     'name',
+    'address',
+  ];
+  public $filter_fields = [
+    'work_on_holiday',
+    'service_at_night',
   ];
   public $order_fields = [
     'updated_at',
@@ -81,7 +91,7 @@ class ServiceStoreController extends Controller
 
   /**
    * Index
-   * @urlParam search string No-example
+   * @queryParam search string No-example
    *
    */
   public function index(Request $request, $id = null)
@@ -117,7 +127,12 @@ class ServiceStoreController extends Controller
    * @bodyParam is_active int Example: 1
    * @bodyParam payload object No-example
    * @bodyParam parking_info string No-example
+   * @bodyParam parking_infos array No-example
+   * @bodyParam parking_link string No-example
+   * @bodyParam parking_image string No-example
    * @bodyParam transportation_info string No-example
+   * @bodyParam work_on_holiday boolean No-example
+   * @bodyParam service_at_night boolean No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -158,7 +173,12 @@ class ServiceStoreController extends Controller
    * @bodyParam is_active int Example: 1
    * @bodyParam payload object No-example
    * @bodyParam parking_info string No-example
+   * @bodyParam parking_infos array No-example
+   * @bodyParam parking_link string No-example
+   * @bodyParam parking_image string No-example
    * @bodyParam transportation_info string No-example
+   * @bodyParam work_on_holiday boolean No-example
+   * @bodyParam service_at_night boolean No-example
    */
   public function update(Request $request, $id)
   {

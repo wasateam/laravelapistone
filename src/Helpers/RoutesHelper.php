@@ -22,6 +22,7 @@ use Wasateam\Laravelapistone\Controllers\NotificationController;
 use Wasateam\Laravelapistone\Controllers\PinCardController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
+use Wasateam\Laravelapistone\Controllers\PrivacyController;
 use Wasateam\Laravelapistone\Controllers\ServicePlanController;
 use Wasateam\Laravelapistone\Controllers\ServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreCloseController;
@@ -31,6 +32,8 @@ use Wasateam\Laravelapistone\Controllers\ShopClassController;
 use Wasateam\Laravelapistone\Controllers\ShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductCoverFrameController;
 use Wasateam\Laravelapistone\Controllers\ShopProductExpectShipController;
+use Wasateam\Laravelapistone\Controllers\ShopShipAreaSettingController;
+use Wasateam\Laravelapistone\Controllers\ShopShipTimeSettingController;
 use Wasateam\Laravelapistone\Controllers\ShopSubclassController;
 use Wasateam\Laravelapistone\Controllers\SnappyController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
@@ -40,6 +43,7 @@ use Wasateam\Laravelapistone\Controllers\SocialiteLineAccountController;
 use Wasateam\Laravelapistone\Controllers\SystemClassController;
 use Wasateam\Laravelapistone\Controllers\SystemSubclassController;
 use Wasateam\Laravelapistone\Controllers\TagController;
+use Wasateam\Laravelapistone\Controllers\TermsController;
 use Wasateam\Laravelapistone\Controllers\TulpaCrossItemController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
@@ -50,7 +54,9 @@ use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
+use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
+use Wasateam\Laravelapistone\Controllers\EcpayController;
 
 class RoutesHelper
 {
@@ -231,6 +237,9 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       Route::get('/ws_blog/image/upload_url', [WsBlogController::class, 'image_get_upload_url']);
+      Route::resource('ws_blog_class', WsBlogClassController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
     }
 
     # Tag
@@ -308,6 +317,7 @@ class RoutesHelper
       Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      Route::post('user_service_plan_item/{id}/remain_count_deduct', [UserServicePlanItemController::class, 'remain_count_deduct']);
     }
 
     # Pin Card
@@ -369,6 +379,12 @@ class RoutesHelper
       Route::resource('shop_subclass', ShopSubclassController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      Route::resource('shop_ship_area_setting', ShopShipAreaSettingController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('shop_ship_time_setting', ShopShipTimeSettingController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
     }
 
     # FeaturedClass
@@ -376,6 +392,14 @@ class RoutesHelper
       Route::resource('featured_class', FeaturedClassController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+    }
+
+    # Privacy Terms
+    if (config('stone.privacy_terms')) {
+      Route::get('privacy', [PrivacyController::class, 'show']);
+      Route::patch('privacy', [PrivacyController::class, 'update']);
+      Route::get('terms', [TermsController::class, 'show']);
+      Route::patch('terms', [TermsController::class, 'update']);
     }
   }
 
@@ -403,7 +427,33 @@ class RoutesHelper
 
   public static function webapi_auth_routes()
   {
+    # Pincard
+    if (config('stone.pin_card')) {
+      Route::post('pin_card/register', [PinCardController::class, 'register']);
+    }
 
+    # Appointment
+    Route::resource('appointment', AppointmentController::class)->only([
+      'index',
+      'show',
+      'store',
+      'update',
+    ])->shallow();
+
+  }
+
+  public static function webapi_isuser_routes()
+  {
+
+    # UserServicePlan
+    Route::resource('user_service_plan', UserServicePlanController::class)->only([
+      'index',
+      'show',
+    ])->shallow();
+    Route::resource('user_service_plan_item', UserServicePlanController::class)->only([
+      'index',
+      'show',
+    ])->shallow();
   }
 
   public static function webapi_public_routes()
@@ -430,6 +480,10 @@ class RoutesHelper
         'show',
       ])->shallow();
       Route::get('ws_blog/{id}/read', [WsBlogController::class, 'read']);
+      Route::resource('ws_blog_class', WsBlogClassController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
     }
 
     # ServiceStore
@@ -454,7 +508,7 @@ class RoutesHelper
         'index',
         'show',
       ])->shallow();
-      Route::resource('area.area_section', AreaSectionController::class)->only([
+      Route::resource('area_section', AreaSectionController::class)->only([
         'index',
         'show',
       ])->shallow();
@@ -527,6 +581,12 @@ class RoutesHelper
       Route::resource('shop_subclass', ShopSubclassController::class)->only([
         'index', 'show',
       ])->shallow();
+      Route::resource('shop_ship_area_setting', ShopShipAreaSettingController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      Route::resource('shop_ship_time_setting', ShopShipTimeSettingController::class)->only([
+        'index', 'show',
+      ])->shallow();
     }
 
     if (config('stone.file_upload') == 'laravel_signed') {
@@ -538,6 +598,23 @@ class RoutesHelper
         Route::get('/{parent}/{parent_id}/{model}/{type}/{repo}/{name}', '\Wasateam\Laravelapistone\Controllers\FileController@file_parentidmatch')->name('file_parentidmatch');
       });
     }
+
+    # Privacy Terms
+    if (config('stone.privacy_terms')) {
+      Route::get('privacy', [PrivacyController::class, 'show']);
+      Route::get('terms', [TermsController::class, 'show']);
+    }
+
+    # Third Party Payment
+    if (config('stone.thrid_party_payment')) {
+
+      # Ecpay Insite Pay Test
+      if (config('stone.thrid_party_payment.service') == 'ecpay_inpay') {
+        Route::get('ecpay/inpay/merchant_init', [EcpayController::class, 'get_inpay_merchant_init']);
+        Route::post('ecpay/inpay/create_payment', [EcpayController::class, 'inpay_create_payment']);
+      }
+    }
+
   }
 
   public static function admin_routes($routes = [

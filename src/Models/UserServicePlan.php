@@ -19,4 +19,9 @@ class UserServicePlan extends Model
   {
     return $this->belongsTo(ServicePlan::class, 'service_plan_id');
   }
+
+  public function user_service_plan_items()
+  {
+    return $this->hasMany(UserServicePlanItem::class, 'user_service_plan_id');
+  }
 }

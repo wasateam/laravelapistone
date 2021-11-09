@@ -53,5 +53,8 @@ class ServiceStore extends Model
     'business_hours'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'appointment_availables' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'payload'                => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'parking_link'           => \Wasateam\Laravelapistone\Casts\UrlCast::class,
+    'parking_infos'          => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
+    'parking_image'          => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
   ];
 }

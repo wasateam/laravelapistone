@@ -28,6 +28,11 @@ class WsBlog extends Model
     return $this->belongsTo(PocketImage::class, 'cover_image_id');
   }
 
+  public function ws_blog_classes()
+  {
+    return $this->belongsToMany(WsBlogClass::class, 'ws_blog_ws_blog_class', 'ws_blog_id', 'ws_blog_class_id');
+  }
+
   protected $casts = [
     'tags' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
   ];

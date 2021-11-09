@@ -18,7 +18,9 @@ class CreateUserServicePlanItemsTable extends Migration
       $table->timestamps();
       $table->softDeletes();
       $table->string('user_id');
-      $table->string('service_plan_item');
+      $table->string('user_service_plan_id');
+      $table->string('service_plan_id');
+      $table->string('service_plan_item_id');
       $table->text('content')->nullable();
       $table->timestamp('expired_at')->nullable();
     });

@@ -31,6 +31,9 @@ class StoneServiceProvider extends ServiceProvider
 
       if (config('stone.migration')) {
 
+        # GeneralContent
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/general_content');
+
         # Admin
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin');
         # AdminRole

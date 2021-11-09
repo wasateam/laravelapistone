@@ -22,14 +22,20 @@ class UserServicePlanItemController extends Controller
   public $input_fields = [
     'content',
     'expired_at',
+    'total_count',
+    'remain_count',
   ];
   public $search_fields = [
   ];
   public $belongs_to = [
+    'service_plan',
     'service_plan_item',
+    'user_service_plan',
   ];
   public $filter_belongs_to = [
+    'service_plan',
     'service_plan_item',
+    'user_service_plan',
   ];
   public $order_fields = [
     'updated_at',
@@ -52,7 +58,7 @@ class UserServicePlanItemController extends Controller
 
   /**
    * Index
-   * @urlParam search string No-example
+   * @queryParam search string No-example
    *
    */
   public function index(Request $request, $id = null)
@@ -67,6 +73,8 @@ class UserServicePlanItemController extends Controller
    * @bodyParam service_plan_item string Example: 1
    * @bodyParam content string Example: 1
    * @bodyParam expired_at date Example: 2021-10-10 10:00:00
+   * @bodyParam total_count int No-example
+   * @bodyParam remain_count int No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -91,6 +99,8 @@ class UserServicePlanItemController extends Controller
    * @bodyParam service_plan_item string Example: 1
    * @bodyParam content string Example: 1
    * @bodyParam expired_at date Example: 2021-10-10 10:00:00
+   * @bodyParam total_count int No-example
+   * @bodyParam remain_count int No-example
    */
   public function update(Request $request, $id)
   {
@@ -105,5 +115,36 @@ class UserServicePlanItemController extends Controller
   public function destroy($id)
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
+  }
+
+  /**
+   * Remain Count Deduct
+   *
+   * @urlParam  user_service_plan_item required The ID of user_service_plan_item. Example: 2
+   */
+  public function remain_count_deduct($id)
+  {
+    try {
+      $model = $this->model::find($id);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
+    }
+
+    if (!$model) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
+    }
+
+    if ($model->remain_count > 0) {
+      $model->remain_count--;
+      $model->save();
+    }
+
+    return response()->json([
+      "message" => 'deducted.',
+    ], 200);
   }
 }

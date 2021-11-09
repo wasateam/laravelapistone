@@ -19,6 +19,7 @@ class AdminMy extends JsonResource
       'id'                => $this->id,
       'name'              => $this->name,
       'email'             => $this->email,
+      'avatar'            => $this->avatar,
       'scopes'            => AuthHelper::getUserScopes($this, 'admin'),
       'locale'            => $this->locale,
       'created_at'        => $this->created_at,

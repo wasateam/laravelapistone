@@ -20,6 +20,7 @@ class Admin extends JsonResource
       'name'              => $this->name,
       'email'             => $this->email,
       'status'            => $this->status,
+      'avatar'            => $this->avatar,
       'is_active'         => $this->is_active,
       'created_at'        => $this->created_at,
       'updated_at'        => $this->updated_at,

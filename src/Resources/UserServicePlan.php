@@ -15,13 +15,13 @@ class UserServicePlan extends JsonResource
   public function toArray($request)
   {
     $res = [
-      'id'         => $this->id,
-      'created_at' => $this->created_at,
-      'updated_at' => $this->updated_at,
+      'id'                      => $this->id,
+      'created_at'              => $this->created_at,
+      'service_plan'            => new ServicePlan_R1($this->service_plan),
+      'user_service_plan_items' => UserServicePlanItem_R1::collection($this->user_service_plan_items),
     ];
     if (config('stone.mode') == 'cms') {
-      $res['user']         = new User_R1($this->user);
-      $res['service_plan'] = new ServicePlan_R1($this->service_plan);
+      $res['user'] = new User_R1_CMS($this->user);
     }
     return $res;
   }

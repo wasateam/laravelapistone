@@ -77,4 +77,5 @@ return [
   'featured_class'     => true,
   #
   'app'                => false,
+  'privacy_terms'      => true,
 ];

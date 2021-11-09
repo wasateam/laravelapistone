@@ -11,6 +11,6 @@ class ServicePlanItem extends Model
   use \Illuminate\Database\Eloquent\SoftDeletes;
 
   protected $casts = [
-    'items'             => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'items'             => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
   ];
 }

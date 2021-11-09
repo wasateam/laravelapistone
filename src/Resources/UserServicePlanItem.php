@@ -15,11 +15,13 @@ class UserServicePlanItem extends JsonResource
   public function toArray($request)
   {
     $res = [
-      'id'         => $this->id,
-      'created_at' => $this->created_at,
-      'updated_at' => $this->updated_at,
-      'content'    => $this->content,
-      'expired_at' => $this->expired_at,
+      'id'           => $this->id,
+      'created_at'   => $this->created_at,
+      'updated_at'   => $this->updated_at,
+      'content'      => $this->content,
+      'expired_at'   => $this->expired_at,
+      'total_count'  => $this->total_count,
+      'remain_count' => $this->remain_count,
     ];
     if (config('stone.mode') == 'cms') {
       $res['user']              = new User_R1($this->user);

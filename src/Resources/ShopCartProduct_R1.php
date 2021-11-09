@@ -20,6 +20,7 @@ class ShopCartProduct_R1 extends JsonResource
       'updated_at'     => $this->updated_at,
       'name'           => $this->name,
       'price'          => $this->price,
+      'count'          => $this->count,
       'discount_price' => $this->discount_price,
       'shop_product'   => new ShopProduct_R1($this->shop_product),
     ];

@@ -44,25 +44,46 @@ class CreateShopOrdersTable extends Migration
       $table->date('receiver_birthday')->nullable();
       // 收件地址
       $table->integer('user_address_id')->nullable();
+      $table->date('receive_address')->nullable();
       // 收件備註
       $table->text('receive_remark')->nullable();
       // 包裝方式
-      $table->integer('package_method_id')->nullable();
+      $table->integer('package_way_id')->nullable();
       // 訂單狀態
       $table->integer('status')->nullable();
       // 訂單備註狀態
       $table->text('status_remark')->nullable();
+      //收穫方式
+      $table->integer('receive_way_id')->nullable();
       // 物流方式
-      $table->integer('deliver_way_id')->nullable();
-      $table->time('delivery_time')->nullable();
-      $table->text('delivery_remark')->nullable();
+      $table->integer('shop_ship_area_setting_id')->nullable();
+      $table->text('ship_way')->nullable();
+      $table->datetime('delivery_date')->nullable();
+      $table->integer('shop_ship_time_setting_id')->nullable();
+      $table->time('ship_start_time')->nullable();
+      $table->time('ship_end_time')->nullable();
+      $table->text('ship_remark')->nullable();
+      $table->datetime('ship_date')->nullable();
+      $table->integer('ship_status')->default(0);
       // 客服備註
       $table->text('customer_service_remark')->nullable();
       // Area
       $table->integer('area_id')->nullable();
       // AreaSection
       $table->integer('area_section_id')->nullable();
-      // 付款狀態關連到 付款資訊
+      //付款資訊
+      $table->text('pay_type')->nullable();
+      $table->text('pay_status')->nullable();
+      $table->integer('freight')->nullable();
+      $table->integer('products_price')->nullable();
+      $table->integer('order_price')->nullable();
+      //發票資訊
+      $table->text('receipt_number')->nullable();
+      $table->text('receipt_status')->nullable();
+      $table->text('receipt_type')->nullable();
+      $table->text('receipt_carrier_number')->nullable();
+      $table->text('receipt_tax')->nullable();
+      $table->text('receipt_title')->nullable();
     });
   }
 

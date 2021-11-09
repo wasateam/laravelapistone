@@ -56,6 +56,7 @@ use Wasateam\Laravelapistone\Controllers\UserServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
+use Wasateam\Laravelapistone\Controllers\EcpayController;
 
 class RoutesHelper
 {
@@ -603,6 +604,17 @@ class RoutesHelper
       Route::get('privacy', [PrivacyController::class, 'show']);
       Route::get('terms', [TermsController::class, 'show']);
     }
+
+    # Third Party Payment
+    if (config('stone.thrid_party_payment')) {
+
+      # Ecpay Insite Pay Test
+      if (config('stone.thrid_party_payment.service') == 'ecpay_inpay') {
+        Route::get('ecpay/inpay/merchant_init', [EcpayController::class, 'get_inpay_merchant_init']);
+        Route::post('ecpay/inpay/create_payment', [EcpayController::class, 'inpay_create_payment']);
+      }
+    }
+
   }
 
   public static function admin_routes($routes = [

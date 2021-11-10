@@ -19,6 +19,7 @@ class CreateShopOrderShopProductsTable extends Migration
       $table->softDeletes();
       $table->integer('shop_order_id');
       $table->integer('shop_product_id');
+      $table->integer('shop_cart_product_id');
       $table->integer('count')->nullable();
       $table->string('name')->nullable();
       $table->string('subtitle')->nullable();

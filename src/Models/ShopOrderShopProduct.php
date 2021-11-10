@@ -15,6 +15,11 @@ class ShopOrderShopProduct extends Model
     return $this->belongsTo(ShopProduct::class, 'shop_product_id');
   }
 
+  public function shop_cart_product()
+  {
+    return $this->belongsTo(ShopCartProduct::class, 'shop_cart_product_id');
+  }
+
   public function shop_order()
   {
     return $this->belongsTo(ShopOrder::class, 'shop_order_id');

@@ -39,6 +39,7 @@ class ShopOrderShopProductController extends Controller
       $this->input_fields[]      = 'weight_capacity';
       $this->input_fields[]      = 'cover_image';
       $this->belongs_to[]        = 'shop_product';
+      $this->belongs_to[]        = 'shop_cart_product';
       $this->belongs_to[]        = 'shop_order';
       $this->filter_belongs_to[] = 'shop_product';
     }
@@ -93,6 +94,7 @@ class ShopOrderShopProductController extends Controller
    * @bodyParam cover_image int 數量 Example:1
    * @bodyParam shop_order int 購物車 Example:1
    * @bodyParam shop_product int 產品 Example:1
+   * @bodyParam shop_cart_product int 購物車產品 Example:1
    */
   public function store(Request $request, $id = null)
   {
@@ -137,6 +139,7 @@ class ShopOrderShopProductController extends Controller
    * @bodyParam cover_image int 數量 Example:1
    * @bodyParam shop_order int 購物車 Example:1
    * @bodyParam shop_product int 產品 Example:1
+   * @bodyParam shop_cart_product int 購物車產品 Example:1
    */
   public function update(Request $request, $id)
   {

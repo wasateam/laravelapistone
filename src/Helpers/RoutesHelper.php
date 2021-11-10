@@ -36,6 +36,7 @@ use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductCoverFrameController;
 use Wasateam\Laravelapistone\Controllers\ShopProductExpectShipController;
+use Wasateam\Laravelapistone\Controllers\ShopReturnRecordController;
 use Wasateam\Laravelapistone\Controllers\ShopShipAreaSettingController;
 use Wasateam\Laravelapistone\Controllers\ShopShipTimeSettingController;
 use Wasateam\Laravelapistone\Controllers\ShopSubclassController;
@@ -400,6 +401,10 @@ class RoutesHelper
       Route::resource('shop_cart', ShopCartProductController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      # Shop Return Record
+      Route::resource('shop_return_record', ShopReturnRecordController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
 
     }
 
@@ -621,6 +626,10 @@ class RoutesHelper
       Route::get('/auth/shop_cart_product/index', [ShopCartProductController::class, 'auth_cart_product_index']);
       Route::post('/auth/shop_cart_product/store', [ShopCartProductController::class, 'product_store_auth_cart']);
       Route::post('/shop_cart_product/{shop_cart_product_id}', [ShopCartProductController::class, 'disabled']);
+      # Shop Return Record
+      Route::resource('shop_return_record', ShopReturnRecordController::class)->only([
+        'index', 'show',
+      ])->shallow();
     }
 
     if (config('stone.file_upload') == 'laravel_signed') {

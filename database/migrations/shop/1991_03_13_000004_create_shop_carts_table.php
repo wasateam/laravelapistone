@@ -19,7 +19,7 @@ class CreateShopCartsTable extends Migration
       $table->softDeletes();
       $table->integer('updated_user_id')->nullable();
       $table->integer('created_user_id')->nullable();
-      $table->integer('user_id');
+      $table->string('user_id');
     });
   }
 

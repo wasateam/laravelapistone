@@ -26,7 +26,7 @@ class CreateShopOrdersTable extends Migration
       $table->uuid('uuid')->nullable()->unique();
       $table->integer('created_user_id')->nulllable();
       $table->integer('updated_user_id')->nulllable();
-      $table->integer('user_id')->nulllable();
+      $table->string('user_id')->nulllable();
       // 訂單類型 （種類）
       $table->string('type')->nullable();
       // 訂單編號

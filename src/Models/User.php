@@ -77,6 +77,11 @@ class User extends Authenticatable
     return $this->hasMany(ShopOrder::class, 'shop_order_id');
   }
 
+  public function addresses()
+  {
+    return $this->hasMany(UserAddress::class, 'user_id');
+  }
+
   /**
    * The attributes that are mass assignable.
    *

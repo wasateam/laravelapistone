@@ -16,6 +16,7 @@ use Wasateam\Laravelapistone\Controllers\CalendarHighlightController;
 use Wasateam\Laravelapistone\Controllers\CMSAdminController;
 use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
+use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NotificationController;
@@ -29,6 +30,7 @@ use Wasateam\Laravelapistone\Controllers\ServiceStoreCloseController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
 use Wasateam\Laravelapistone\Controllers\ShopClassController;
+use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductCoverFrameController;
 use Wasateam\Laravelapistone\Controllers\ShopProductExpectShipController;
@@ -48,6 +50,7 @@ use Wasateam\Laravelapistone\Controllers\TulpaCrossItemController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
+use Wasateam\Laravelapistone\Controllers\UserAddress;
 use Wasateam\Laravelapistone\Controllers\UserAppInfoController;
 use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
@@ -56,7 +59,6 @@ use Wasateam\Laravelapistone\Controllers\UserServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
-use Wasateam\Laravelapistone\Controllers\EcpayController;
 
 class RoutesHelper
 {
@@ -385,6 +387,10 @@ class RoutesHelper
       Route::resource('shop_ship_time_setting', ShopShipTimeSettingController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+
     }
 
     # FeaturedClass
@@ -453,6 +459,15 @@ class RoutesHelper
     Route::resource('user_service_plan_item', UserServicePlanController::class)->only([
       'index',
       'show',
+    ])->shallow();
+
+    # UserAddress
+    Route::resource('user_address', UserAddress::class)->only([
+      'index',
+      'show',
+      'store',
+      'update',
+      'delete',
     ])->shallow();
   }
 
@@ -585,6 +600,9 @@ class RoutesHelper
         'index', 'show',
       ])->shallow();
       Route::resource('shop_ship_time_setting', ShopShipTimeSettingController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
         'index', 'show',
       ])->shallow();
     }

@@ -24,8 +24,6 @@ class CreateShopOrdersTable extends Migration
       $table->timestamps();
       $table->softDeletes();
       $table->uuid('uuid')->nullable()->unique();
-      $table->integer('created_user_id')->nulllable();
-      $table->integer('updated_user_id')->nulllable();
       $table->string('user_id')->nulllable();
       // 訂單類型 （種類）
       $table->string('type')->nullable();
@@ -51,7 +49,7 @@ class CreateShopOrdersTable extends Migration
       // 包裝方式
       $table->text('package_way')->nullable();
       // 訂單狀態
-      $table->integer('status')->nullable();
+      $table->string('status')->nullable();
       // 訂單備註狀態
       $table->text('status_remark')->nullable();
       //收穫方式
@@ -65,7 +63,7 @@ class CreateShopOrdersTable extends Migration
       $table->time('ship_end_time')->nullable();
       $table->text('ship_remark')->nullable();
       $table->datetime('ship_date')->nullable();
-      $table->integer('ship_status')->default(0);
+      $table->string('ship_status')->nullable();
       // 客服備註
       $table->text('customer_service_remark')->nullable();
       // Area

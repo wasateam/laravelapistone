@@ -1,0 +1,44 @@
+<?php
+
+namespace Wasateam\Laravelapistone\Helpers;
+
+use Wasateam\Laravelapistone\Models\ShopOrder;
+use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
+use Wasateam\Laravelapistone\Models\ShopProduct;
+use Wasateam\Laravelapistone\Models\ShopReturnRecord;
+
+class ShopHelper
+{
+  public static function returnProductChangeCount($return_record_id)
+  {
+    //商品退訂->商品庫存、訂單商品數量重新計算
+    $return_record      = ShopReturnRecord::where('id', $return_record_id)->first();
+    $shop_product       = ShopProduct::where('id', $return_record->shop_product_id)->first();
+    $shop_order_product = ShopOrderShopProduct::where('id', $return_record->shop_order_shop_product_id)->first();
+    //加商品庫存
+    $shop_product->stock_count = $shop_product->stock_count + $return_record->count;
+    $shop_product->save();
+    //減少訂單商品數量
+    $shop_order_product->count = $shop_order_product->count - $return_record->count;
+    $shop_order_product->save();
+  }
+
+  public static function shopOrderProductChangeCount($shop_order_product_id)
+  {
+    //成立訂單，更改商品庫存
+    $shop_order_product = ShopOrderShopProduct::where('id', $shop_order_product_id)->first();
+    $shop_product       = ShopProduct::where('id', $shop_order_product->shop_product_id)->first();
+    //減少商品庫存
+    $shop_product->stock_count = $shop_product->stock_count - $shop_order_product->count;
+    $shop_product->save();
+  }
+
+  public static function calculateShopOrderPrice($shop_order_id)
+  {
+    //計算訂單金額
+    $shop_order = ShopOrder::where('id', $shop_order_id)->first();
+    //商品價錢總和  - 沒有優惠價就使用售價
+
+    //運費 100
+  }
+}

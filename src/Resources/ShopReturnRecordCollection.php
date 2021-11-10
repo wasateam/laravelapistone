@@ -21,6 +21,7 @@ class ShopReturnRecordCollection extends ResourceCollection
       "shop_order_shop_product" => new ShopOrderShopProduct($this->shop_order_shop_product),
       "count"                   => $this->count,
       "remark"                  => $this->remark,
+      "price"                   => $this->price,
     ];
   }
 }

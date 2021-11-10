@@ -22,6 +22,7 @@ class CreateShopReturnRecordsTable extends Migration
       $table->string('shop_order_shop_product_id');
       $table->string('shop_product_id');
       $table->integer('count')->default(0);
+      $table->integer('price')->nullable();
       $table->text('remark')->nullable();
     });
   }

@@ -46,7 +46,7 @@ class ModelHelper
     // Collection
     $collection = self::indexGetPaginate($setting, $snap, $request, $getall);
     try {
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'get index error.',
       ]);
@@ -97,7 +97,7 @@ class ModelHelper
     // Parent
     try {
       $model = self::storeParentId($model, $setting, $id);
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'store parent id fail.',
       ], 400);
@@ -116,7 +116,7 @@ class ModelHelper
     // Save
     $model->save();
     try {
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'data store fail.',
       ], 400);
@@ -131,7 +131,7 @@ class ModelHelper
     // Locale Set
     try {
       self::setLocale($model, $setting, $request);
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'locales data store fail.',
       ], 400);
@@ -241,7 +241,7 @@ class ModelHelper
       //   'message' => 'batch store complete.',
       //   'data'    => $result_data,
       // ], 200);
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'batch store fail. but some have been created.',
       ], 400);
@@ -277,7 +277,7 @@ class ModelHelper
     // Get
     try {
       $model = $snap->first();
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'no data.',
       ], 400);
@@ -342,7 +342,7 @@ class ModelHelper
     // Save
     try {
       $model->save();
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'data update fail.',
       ], 400);
@@ -354,7 +354,7 @@ class ModelHelper
     // Locale Set
     try {
       ModelHelper::setLocale($model, $setting, $request);
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'locales data update fail.',
       ], 400);
@@ -445,7 +445,7 @@ class ModelHelper
           "message" => 'delete error.',
         ], 400);
       }
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         "message" => 'delete error.',
       ], 400);
@@ -467,7 +467,7 @@ class ModelHelper
     }
     try {
       $disk->put($store_value, $content);
-    } catch (\Throwable$th) {
+    } catch (\Throwable $th) {
       return response()->json([
         'message' => 'store file dail.',
       ], 400);
@@ -902,7 +902,7 @@ class ModelHelper
           try {
             //code...
             $model_locale->save();
-          } catch (\Throwable$th) {
+          } catch (\Throwable $th) {
             throw $th;
           }
         }
@@ -937,7 +937,7 @@ class ModelHelper
       // Check Parent exist
       try {
         $parent_model = $setting->parent_model::find($parent_id);
-      } catch (\Throwable$th) {
+      } catch (\Throwable $th) {
         throw $th;
       }
       if (!$parent_model) {

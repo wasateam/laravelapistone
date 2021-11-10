@@ -7,6 +7,7 @@ use Auth;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\ShopOrder;
+use Wasateam\Laravelapistone\Models\ShopProduct;
 
 /**
  * @group 訂單商品
@@ -84,20 +85,28 @@ class ShopOrderShopProductController extends Controller
   /**
    * Store
    *
-   * @bodyParam name string 商品名稱 Example:name
-   * @bodyParam subtitle string 商品副標 Example:subtitle
-   * @bodyParam price int 售價 Example:100
-   * @bodyParam discount_price int 優惠價 Example:99
    * @bodyParam count int 數量 Example:1
-   * @bodyParam discount_price int 數量 Example:1
-   * @bodyParam weight_capacity int 數量 Example:1
-   * @bodyParam cover_image int 數量 Example:1
    * @bodyParam shop_order int 購物車 Example:1
    * @bodyParam shop_product int 產品 Example:1
    * @bodyParam shop_cart_product int 購物車產品 Example:1
    */
   public function store(Request $request, $id = null)
   {
+    $shop_product = ShopProduct::where('id', $request->shop_product)->where('is_active', '==', 1)->first();
+    if (!$shop_product) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
+    }
+    $request->request->add([
+      'name'            => $shop_product->name,
+      'subtitle'        => $shop_product->subtitle,
+      'price'           => $shop_product->price,
+      'discount_price'  => $shop_product->discount_price,
+      'spec'            => $shop_product->spec,
+      'weight_capacity' => $shop_product->weight_capacity,
+      'cover_image'     => $shop_product->cover_image,
+    ]);
 
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_StoreHandler($this, $request, $id);
@@ -109,7 +118,12 @@ class ShopOrderShopProductController extends Controller
           'message' => 'invaid scopes',
         ], 400);
       }
-      return ModelHelper::ws_StoreHandler($this, $request, $id);
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
+        $shop_product              = ShopProduct::where('id', $model->shop_product->id)->first();
+        $stock_count               = $shop_product->stock_count - $model->count;
+        $shop_product->stock_count = $stock_count;
+        $shop_product->save();
+      });
 
     }
 
@@ -129,33 +143,29 @@ class ShopOrderShopProductController extends Controller
    * Update
    *
    * @urlParam  shop_order_shop_product required The ID of shop_order_shop_product. Example: 1
-   * @bodyParam name string 商品名稱 Example:name
-   * @bodyParam subtitle string 商品副標 Example:subtitle
-   * @bodyParam price int 售價 Example:100
-   * @bodyParam discount_price int 優惠價 Example:99
    * @bodyParam count int 數量 Example:1
-   * @bodyParam discount_price int 數量 Example:1
-   * @bodyParam weight_capacity int 數量 Example:1
-   * @bodyParam cover_image int 數量 Example:1
    * @bodyParam shop_order int 購物車 Example:1
    * @bodyParam shop_product int 產品 Example:1
    * @bodyParam shop_cart_product int 購物車產品 Example:1
    */
   public function update(Request $request, $id)
   {
-    if (config('stone.mode') == 'cms') {
-      return ModelHelper::ws_UpdateHandler($this, $request, $id);
-    } else if (config('stone.mode') == 'webapi') {
-      $shop_order = ShopOrder::where('id', $request->shop_order)->first();
-      $auth       = Auth::user();
-      if ($shop_order->user->id != $auth->id) {
-        return response()->json([
-          'message' => 'invaid scopes',
-        ], 400);
-      }
-      return ModelHelper::ws_UpdateHandler($this, $request, $id);
-
+    $shop_product = ShopProduct::where('id', $request->shop_product)->where('is_active', '==', 1)->first();
+    if (!$shop_product) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
     }
+    $request->request->add([
+      'name'            => $shop_product->name,
+      'subtitle'        => $shop_product->subtitle,
+      'price'           => $shop_product->price,
+      'discount_price'  => $shop_product->discount_price,
+      'spec'            => $shop_product->spec,
+      'weight_capacity' => $shop_product->weight_capacity,
+      'cover_image'     => $shop_product->cover_image,
+    ]);
+    return ModelHelper::ws_UpdateHandler($this, $request, $id);
   }
 
   /**

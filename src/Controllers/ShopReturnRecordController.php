@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopReturnRecord;
 
@@ -25,11 +26,12 @@ class ShopReturnRecordController extends Controller
   public $input_fields            = [
     'count',
     'remark',
+    'price',
   ];
   public $belongs_to = [
     'user',
     'shop_order',
-    'shop_return_record',
+    'shop_order_shop_product',
     'shop_product',
   ];
   public $filter_fields = [
@@ -45,7 +47,7 @@ class ShopReturnRecordController extends Controller
   {
     if (config('stone.mode') == 'cms') {
       $this->filter_fields[] = 'user';
-      $this->filter_fields[] = 'shop_return_record';
+      $this->filter_fields[] = 'shop_order_shop_product';
       $this->filter_fields[] = 'shop_product';
     }
   }
@@ -53,7 +55,7 @@ class ShopReturnRecordController extends Controller
    * Index
    * @queryParam user ids 人員  No-example
    * @queryParam shop_order ids 訂單  No-example
-   * @queryParam shop_return_record ids 訂單商品  No-example
+   * @queryParam shop_order_shop_product ids 訂單商品  No-example
    * @queryParam shop_product ids 商品  No-example
    *
    */
@@ -80,15 +82,18 @@ class ShopReturnRecordController extends Controller
    * Store
    *
    * @bodyParam user int 人員 Example:1
-   * @bodyParam shop_order int 商品 Example:1
-   * @bodyParam shop_return_record int 數量 Example:1
-   * @bodyParam shop_product int 購物車 Example:1
-   * @bodyParam count int 產品 Example:1
+   * @bodyParam shop_order int 訂單 Example:1
+   * @bodyParam shop_order_shop_product int 訂單商品 Example:1
+   * @bodyParam shop_product int 商品 Example:1
+   * @bodyParam count int 數量 Example:1
+   * @bodyParam price int 價格 Example:1
    * @bodyParam remark string 備註 Example:remark
    */
   public function store(Request $request, $id = null)
   {
-    return ModelHelper::ws_StoreHandler($this, $request, $id);
+    return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
+      ShopHelper::returnProductChangeCount($model->id);
+    });
   }
 
   /**
@@ -122,15 +127,18 @@ class ShopReturnRecordController extends Controller
    *
    * @urlParam  shop_return_record required The ID of shop_return_record. Example: 1
    * @bodyParam user int 人員 Example:1
-   * @bodyParam shop_order int 商品 Example:1
-   * @bodyParam shop_return_record int 數量 Example:1
-   * @bodyParam shop_product int 購物車 Example:1
-   * @bodyParam count int 產品 Example:1
+   * @bodyParam shop_order int 訂單 Example:1
+   * @bodyParam shop_order_shop_product int 訂單商品 Example:1
+   * @bodyParam shop_product int 商品 Example:1
+   * @bodyParam count int 數量 Example:1
+   * @bodyParam price int 價格 Example:1
    * @bodyParam remark string 備註 Example:remark
    */
   public function update(Request $request, $id)
   {
-    return ModelHelper::ws_UpdateHandler($this, $request, $id);
+    return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) {
+      ShopHelper::returnProductChangeCount($model->id);
+    });
   }
 
   /**

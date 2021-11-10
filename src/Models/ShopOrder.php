@@ -19,6 +19,21 @@ class ShopOrder extends Model
     return $this->belongsTo(AreaSection::class, 'area_section_id');
   }
 
+  public function shop_ship_time_setting()
+  {
+    return $this->belongsTo(ShopShopTimeSetting::class, 'shop_ship_time_setting_id');
+  }
+
+  public function shop_ship_area_setting()
+  {
+    return $this->belongsTo(ShopShipAreaSetting::class, 'shop_ship_area_setting_id');
+  }
+
+  public function user_address()
+  {
+    return $this->belongsTo(UserAddress::class, 'user_address_id');
+  }
+
   public function shop_order_shop_product()
   {
     return $this->hasMany(ShopOrderShopProduct::class, 'shop_order_id');
@@ -28,4 +43,12 @@ class ShopOrder extends Model
   {
     return $this->belongsTo(User::class, 'user_id');
   }
+
+  protected $casts = [
+    'discounts'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'orderer_birthday'  => 'datetime',
+    'receiver_birthday' => 'datetime',
+    'delivery_date'     => 'datetime',
+    'ship_date'         => 'datetime',
+  ];
 }

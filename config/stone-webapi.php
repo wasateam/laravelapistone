@@ -52,6 +52,7 @@ return [
   'service_plan'        => false,
   'pin_card'            => false,
   'calendar_highlight'  => false,
+  'address'             => false,
   'shop'                => [
     'uuid'      => true,
     'pre_order' => true,
@@ -60,9 +61,9 @@ return [
   'file_upload'         => 'laravel_signed',
   'privacy_terms'       => true,
   'thrid_party_payment' => [
-    'service' => 'ecpay_inpay',
-    'mode'    => env('ECPAY_MODE', 'dev'),
-    'ecpay_inpay'   => [
+    'service'     => 'ecpay_inpay',
+    'mode'        => env('ECPAY_MODE', 'dev'),
+    'ecpay_inpay' => [
       'insite_order_return_url' => env('APP_URL') . env('ECPAY_INSITE_ORDER_RETURN_URL', "/api/callback/ecpay/insite/order"),
       'cardinfo'                => [
         '3d_order_return_url' => env('APP_URL') . env('ECPAY_CARDINFO_3DORDER_RETURN_URL', "/api/callback/ecpay/cardinfo/3dorder"),

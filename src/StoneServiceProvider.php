@@ -127,6 +127,11 @@ class StoneServiceProvider extends ServiceProvider
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/appointment');
         }
 
+        # User Address
+        if (config('stone.address')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user_address');
+        }
+
         # ServicePlan
         if (config('stone.service_plan')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/service_plan');

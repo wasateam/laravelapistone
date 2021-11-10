@@ -45,14 +45,8 @@ class UserServicePlanItemController extends Controller
   public function __construct()
   {
     if (config('stone.mode') == 'cms') {
-      $this->belongs_to = [
-        'user',
-        'service_plan_item',
-      ];
-      $this->filter_belongs_to = [
-        'user',
-        'service_plan_item',
-      ];
+      $this->belongs_to[]        = 'user';
+      $this->filter_belongs_to[] = 'user';
     }
   }
 

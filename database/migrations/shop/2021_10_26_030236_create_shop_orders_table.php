@@ -44,17 +44,17 @@ class CreateShopOrdersTable extends Migration
       $table->date('receiver_birthday')->nullable();
       // 收件地址
       $table->integer('user_address_id')->nullable();
-      $table->date('receive_address')->nullable();
+      $table->text('receive_address')->nullable();
       // 收件備註
       $table->text('receive_remark')->nullable();
       // 包裝方式
-      $table->integer('package_way_id')->nullable();
+      $table->text('package_way')->nullable();
       // 訂單狀態
       $table->integer('status')->nullable();
       // 訂單備註狀態
       $table->text('status_remark')->nullable();
       //收穫方式
-      $table->integer('receive_way_id')->nullable();
+      $table->text('receive_way')->nullable();
       // 物流方式
       $table->integer('shop_ship_area_setting_id')->nullable();
       $table->text('ship_way')->nullable();
@@ -74,6 +74,7 @@ class CreateShopOrdersTable extends Migration
       //付款資訊
       $table->text('pay_type')->nullable();
       $table->text('pay_status')->nullable();
+      $table->longText('discounts')->nullable();
       $table->integer('freight')->nullable();
       $table->integer('products_price')->nullable();
       $table->integer('order_price')->nullable();

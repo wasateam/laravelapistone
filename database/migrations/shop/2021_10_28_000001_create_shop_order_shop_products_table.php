@@ -14,14 +14,20 @@ class CreateShopOrderShopProductsTable extends Migration
   public function up()
   {
     Schema::create('shop_order_shop_product', function (Blueprint $table) {
-      // 訂單 id
-      $table->string('shop_order_id')->nullable();
-      // 商品 id
-      $table->string('shop_product_id')->nullable();
-      // 購買數量
-      $table->string('count')->nullable();
-      // 商品小計
-      $table->string('subtotal')->nullable();
+      $table->id();
+      $table->timestamps();
+      $table->softDeletes();
+      $table->integer('shop_order_id');
+      $table->integer('shop_product_id');
+      $table->integer('count')->nullable();
+      $table->string('name')->nullable();
+      $table->string('subtitle')->nullable();
+      $table->string('spec')->nullable();
+      $table->status('status')->nullable();
+      $table->integer('price')->nullable();
+      $table->integer('discount_price')->nullable();
+      $table->string('weight_capacity')->nullable();
+      $table->text('cover_image')->nullable();
     });
   }
 

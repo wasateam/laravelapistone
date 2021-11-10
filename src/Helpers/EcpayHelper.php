@@ -66,7 +66,7 @@ class EcpayHelper
       "MerchantID"        => config('stone.thrid_party_payment.ecpay_inpay.merchant_id'),
       "RememberCard"      => 1,
       "PaymentUIType"     => 2,
-      "ChoosePaymentList" => "1",
+      "ChoosePaymentList" => "1,2,3,4,5",
       "OrderInfo"         => [
         "MerchantTradeNo"   => self::newMerchantTradeNo(),
         "MerchantTradeDate" => Carbon::now()->format('Y/m/d H:i:s'),

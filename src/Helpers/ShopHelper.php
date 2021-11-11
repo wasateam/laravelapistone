@@ -40,9 +40,9 @@ class ShopHelper
     //商品價錢總和  - 沒有優惠價就使用售價
     $shop_order_shop_products = $shop_order->shop_order_shop_products;
     $shop_product_price_arr   = $shop_order_shop_products->map(function ($item) {
-      return $item->discount_price ? $item->discount_price : $item->price;
+      return $item->discount_price ? $item->discount_price * $item->count : $item->price * $item->count;
     });
-    $shop_product_price_total = array_sum($shop_product_price_arr);
+    $shop_product_price_total = Self::sum_price($shop_product_price_arr);
 
     //運費 100
     $freight = 100;
@@ -65,5 +65,14 @@ class ShopHelper
     $shop_order->freight        = $price_array['freight'];
     $shop_order->order_price    = $price_array['order_price'];
     $shop_order->save();
+  }
+
+  public static function sum_price($price_array)
+  {
+    $total = 0;
+    foreach ($price_array as $price) {
+      $total = $total + $price;
+    }
+    return $total;
   }
 }

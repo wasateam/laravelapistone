@@ -32,6 +32,7 @@ use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
 use Wasateam\Laravelapistone\Controllers\ShopCartController;
 use Wasateam\Laravelapistone\Controllers\ShopCartProductController;
 use Wasateam\Laravelapistone\Controllers\ShopClassController;
+use Wasateam\Laravelapistone\Controllers\ShopOrderController;
 use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductCoverFrameController;
@@ -394,6 +395,11 @@ class RoutesHelper
       Route::resource('shop_ship_time_setting', ShopShipTimeSettingController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      # Shop Order
+      Route::resource('shop_order', ShopOrderController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Order Product
       Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
@@ -623,6 +629,12 @@ class RoutesHelper
       Route::resource('shop_ship_time_setting', ShopShipTimeSettingController::class)->only([
         'index', 'show',
       ])->shallow();
+      # Shop Order
+      Route::resource('shop_order', ShopOrderController::class)->only([
+        'show', 'store',
+      ])->shallow();
+      Route::get('/auth/shop_order', [ShopOrderController::class, 'auth_shop_order_index']);
+      # Shop Order Product
       Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
         'index', 'show', 'store',
       ])->shallow();

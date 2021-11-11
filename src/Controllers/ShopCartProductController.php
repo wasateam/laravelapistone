@@ -145,6 +145,7 @@ class ShopCartProductController extends Controller
         $model->subtitle       = $shop_product->subtitle;
         $model->price          = $shop_product->price;
         $model->discount_price = $shop_product->discount_price;
+        $model->user_id        = Auth::user()->id;
         $model->save();
       });
 

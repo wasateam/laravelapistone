@@ -13,7 +13,7 @@ class CreateShopOrderShopProductsTable extends Migration
    */
   public function up()
   {
-    Schema::create('shop_order_shop_product', function (Blueprint $table) {
+    Schema::create('shop_order_shop_products', function (Blueprint $table) {
       $table->id();
       $table->timestamps();
       $table->softDeletes();
@@ -39,6 +39,6 @@ class CreateShopOrderShopProductsTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('shop_order_shop_product');
+    Schema::dropIfExists('shop_order_shop_products');
   }
 }

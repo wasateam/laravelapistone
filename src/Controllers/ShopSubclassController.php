@@ -27,6 +27,9 @@ class ShopSubclassController extends Controller
   public $belongs_to = [
     'shop_class',
   ];
+  public $filter_belongs_to = [
+    'shop_class',
+  ];
   public $uuid = false;
 
   public function __construct()

@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserServicePlanItem_R1 extends JsonResource
+class UserServicePlan_R1 extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -16,11 +16,10 @@ class UserServicePlanItem_R1 extends JsonResource
   {
     $res = [
       'id'           => $this->id,
-      'content'      => $this->content,
-      'expired_at'   => $this->expired_at,
-      'total_count'  => $this->total_count,
-      'remain_count' => $this->remain_count,
+      'created_at'   => $this->created_at,
+      'service_plan' => new UserServicePlan_R0($this->service_plan),
     ];
+    $res['user'] = new User_R0($this->user);
     return $res;
   }
 }

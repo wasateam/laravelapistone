@@ -3,9 +3,11 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\UserServicePlanItem;
+use Wasateam\Laravelapistone\Models\UserServicePlanRecord;
 
 /**
  * @group UserServicePlanItem
@@ -28,11 +30,13 @@ class UserServicePlanItemController extends Controller
   public $search_fields = [
   ];
   public $belongs_to = [
+    'user',
     'service_plan',
     'service_plan_item',
     'user_service_plan',
   ];
   public $filter_belongs_to = [
+    'user',
     'service_plan',
     'service_plan_item',
     'user_service_plan',
@@ -45,14 +49,6 @@ class UserServicePlanItemController extends Controller
   public function __construct()
   {
     if (config('stone.mode') == 'cms') {
-      $this->belongs_to = [
-        'user',
-        'service_plan_item',
-      ];
-      $this->filter_belongs_to = [
-        'user',
-        'service_plan_item',
-      ];
     }
   }
 
@@ -122,7 +118,7 @@ class UserServicePlanItemController extends Controller
    *
    * @urlParam  user_service_plan_item required The ID of user_service_plan_item. Example: 2
    */
-  public function remain_count_deduct($id)
+  public function remain_count_deduct(Request $request, $id)
   {
     try {
       $model = $this->model::find($id);
@@ -138,8 +134,31 @@ class UserServicePlanItemController extends Controller
       ], 400);
     }
 
+    if (!$request->has('count')) {
+      $count = 1;
+    } else {
+      $count = $request->count;
+    }
+    if (!$request->has('remark')) {
+      $remark = 1;
+    } else {
+      $remark = $request->remark;
+    }
+
     if ($model->remain_count > 0) {
-      $model->remain_count--;
+      $user                              = Auth::user();
+      $record                            = new UserServicePlanRecord;
+      $record->count                     = $count;
+      $record->remark                    = $remark;
+      $record->user_id                   = $model->user->id;
+      $record->service_plan_id           = $model->service_plan->id;
+      $record->service_plan_item_id      = $model->service_plan_item->id;
+      $record->user_service_plan_id      = $model->user_service_plan->id;
+      $record->user_service_plan_item_id = $model->id;
+      $record->admin_id                  = $user->id;
+      $record->save();
+
+      $model->remain_count = $model->remain_count - $count;
       $model->save();
     }
 

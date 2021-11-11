@@ -1,0 +1,119 @@
+<?php
+
+namespace Wasateam\Laravelapistone\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Models\UserServicePlanRecord;
+
+/**
+ * @group UserServicePlanRecord
+ *
+ * @authenticated
+ *
+ * APIs for user_service_plan_record
+ */
+class UserServicePlanRecordController extends Controller
+{
+  public $model        = 'Wasateam\Laravelapistone\Models\UserServicePlanRecord';
+  public $name         = 'user_service_plan_record';
+  public $resource     = 'Wasateam\Laravelapistone\Resources\UserServicePlanRecord';
+  public $input_fields = [
+    'count',
+    'remark',
+  ];
+  public $search_fields = [
+  ];
+  public $belongs_to = [
+    'user',
+    'service_plan',
+    'service_plan_item',
+    'user_service_plan',
+    'user_service_plan_item',
+  ];
+  public $filter_belongs_to = [
+    'user',
+    'service_plan',
+    'service_plan_item',
+    'user_service_plan',
+    'user_service_plan_item',
+  ];
+  public $order_fields = [
+    'updated_at',
+    'created_at',
+  ];
+
+  public function __construct()
+  {
+    if (config('stone.mode') == 'cms') {
+      $this->$belongs_to[]        = 'admin';
+      $this->$filter_belongs_to[] = 'admin';
+    }
+  }
+
+  /**
+   * Index
+   * @queryParam search string No-example
+   *
+   */
+  public function index(Request $request, $id = null)
+  {
+    return ModelHelper::ws_IndexHandler($this, $request, $id);
+  }
+
+  /**
+   * Store
+   *
+   * @bodyParam count int Example: 1
+   * @bodyParam remark string Example: asdfasdfasdfas
+   * @bodyParam user id Example: 1
+   * @bodyParam service_plan id Example: 1
+   * @bodyParam service_plan_item id Example: 1
+   * @bodyParam user_service_plan id Example: 1
+   * @bodyParam user_service_plan_item id Example: 1
+   * @bodyParam admin id Example: 1
+   */
+  public function store(Request $request, $id = null)
+  {
+    return ModelHelper::ws_StoreHandler($this, $request, $id);
+  }
+
+  /**
+   * Show
+   *
+   * @urlParam  user_service_plan_record required The ID of user_service_plan_record. Example: 1
+   */
+  public function show(Request $request, $id = null)
+  {
+    return ModelHelper::ws_ShowHandler($this, $request, $id);
+  }
+
+  /**
+   * Update
+   *
+   * @urlParam  user_service_plan_record required The ID of user_service_plan_record. Example: 1
+   * @bodyParam count int Example: 1
+   * @bodyParam remark string Example: asdfasdfasdfas
+   * @bodyParam user id Example: 1
+   * @bodyParam service_plan id Example: 1
+   * @bodyParam service_plan_item id Example: 1
+   * @bodyParam user_service_plan id Example: 1
+   * @bodyParam user_service_plan_item id Example: 1
+   * @bodyParam admin id Example: 1
+   */
+  public function update(Request $request, $id)
+  {
+    return ModelHelper::ws_UpdateHandler($this, $request, $id);
+  }
+
+  /**
+   * Delete
+   *
+   * @urlParam  user_service_plan_record required The ID of user_service_plan_record. Example: 2
+   */
+  public function destroy($id)
+  {
+    return ModelHelper::ws_DestroyHandler($this, $id);
+  }
+}

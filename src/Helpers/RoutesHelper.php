@@ -53,6 +53,7 @@ use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanItemController;
+use Wasateam\Laravelapistone\Controllers\UserServicePlanRecordController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
@@ -317,6 +318,9 @@ class RoutesHelper
       Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      Route::resource('user_service_plan_record', UserServicePlanRecordController::class)->only([
+        'index', 'show',
+      ])->shallow();
       Route::post('user_service_plan_item/{id}/remain_count_deduct', [UserServicePlanItemController::class, 'remain_count_deduct']);
     }
 
@@ -450,9 +454,12 @@ class RoutesHelper
       'index',
       'show',
     ])->shallow();
-    Route::resource('user_service_plan_item', UserServicePlanController::class)->only([
+    Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only([
       'index',
       'show',
+    ])->shallow();
+    Route::resource('user_service_plan_record', UserServicePlanRecordController::class)->only([
+      'index', 'show',
     ])->shallow();
   }
 

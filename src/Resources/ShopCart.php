@@ -18,7 +18,7 @@ class ShopCart extends JsonResource
       'id'                 => $this->id,
       'created_at'         => $this->created_at,
       'updated_at'         => $this->updated_at,
-      'user'               => new User_R1($this->updated_at),
+      'user'               => new User_R1($this->user),
       'shop_cart_products' => ShopCartProduct_R1::collection($this->shop_cart_products),
     ];
   }

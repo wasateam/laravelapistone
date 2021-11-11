@@ -13,7 +13,7 @@ class ShopCart extends Model
 
   public function shop_cart_products()
   {
-    return $this->hasMany(ShopCartProduct::class, 'shop_cart_product_id')->where('status', '==', 1);
+    return $this->hasMany(ShopCartProduct::class, 'shop_cart_id')->where('status', 1);
   }
 
   public function user()

@@ -3,7 +3,6 @@
 namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Wasateam\Laravelapistone\Models\ShopProduct;
 
 class ShopCartProduct extends JsonResource
 {

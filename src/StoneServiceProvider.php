@@ -128,7 +128,7 @@ class StoneServiceProvider extends ServiceProvider
         }
 
         # User Address
-        if (config('stone.address')) {
+        if (config('stone.user.address')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user_address');
         }
 

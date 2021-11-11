@@ -24,9 +24,12 @@ class ShopCartProductController extends Controller
   public $name                    = 'shop_cart_product';
   public $resource                = 'Wasateam\Laravelapistone\Resources\ShopCartProduct';
   public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\ShopCartProductCollection';
-  public $input_fields            = [];
-  public $belongs_to              = [];
-  public $filter_fields           = [
+  public $input_fields            = [
+    'count',
+  ];
+  public $belongs_to = [
+  ];
+  public $filter_fields = [
     'status',
   ];
   public $filter_belongs_to = [
@@ -72,7 +75,8 @@ class ShopCartProductController extends Controller
     return ModelHelper::ws_IndexHandler($this, $request, $id, $request->get_all, function ($snap) use ($auth) {
       $snap = $snap->whereHas('shop_cart', function ($query) use ($auth) {
         return $query->where('user_id', $auth->id);
-      })->where('status', '==', 1);
+      })->where('status', 1);
+      return $snap;
     });
   }
 
@@ -93,7 +97,7 @@ class ShopCartProductController extends Controller
   }
 
   /**
-   * Store Auth Cart
+   * Add Auth Cart
    *
    * @bodyParam shop_product int 商品id Example:1
    * @bodyParam count int 數量 Example:1
@@ -107,20 +111,68 @@ class ShopCartProductController extends Controller
       $auth_shop_cart->user_id = $auth->id;
       $auth_shop_cart->save();
     }
-    $shop_product = ShopProduct::where('id', $request->shop_product)->where('is_active', '==', 1)->first();
+    $shop_product = ShopProduct::where('id', $request->shop_product)->where('is_active', 1)->first();
     if (!$shop_product) {
       return response()->json([
         'message' => 'no data.',
       ], 400);
     }
-    $request->request->add([
-      'shop_cart'      => $auth_shop_cart->id,
-      'name'           => $shop_product->name,
-      'subtitle'       => $shop_product->subtitle,
-      'price'          => $shop_product->price,
-      'discount_price' => $shop_product->discount_price,
-    ]);
-    return ModelHelper::ws_StoreHandler($this, $request, $id);
+    $shop_cart_product = ShopCartProduct::where('shop_product_id', $request->shop_product)->where('status', 1)->first();
+    //原本選的量
+    $original_count = $shop_cart_product->count ? $shop_cart_product->count : 0;
+    //原本選的量＋新增的量
+    $count = $original_count + $request->count;
+    if ($shop_product->stock_count < $count) {
+      return response()->json([
+        'message' => 'products not enough.',
+      ], 400);
+    }
+    if ($shop_cart_product) {
+      return ModelHelper::ws_UpdateHandler($this, $request, $shop_cart_product->id, [], function ($model) use ($shop_product, $auth_shop_cart, $count) {
+        $model->shop_cart_id    = $auth_shop_cart->id;
+        $model->shop_product_id = $shop_product->id;
+        $model->name            = $shop_product->name;
+        $model->subtitle        = $shop_product->subtitle;
+        $model->price           = $shop_product->price;
+        $model->discount_price  = $shop_product->discount_price;
+        $model->count           = $count;
+        $model->save();
+      });
+    } else {
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($shop_product, $auth_shop_cart) {
+        $model->shop_cart_id   = $auth_shop_cart->id;
+        $model->name           = $shop_product->name;
+        $model->subtitle       = $shop_product->subtitle;
+        $model->price          = $shop_product->price;
+        $model->discount_price = $shop_product->discount_price;
+        $model->save();
+      });
+
+    }
+  }
+
+  /**
+   * Update Auth Cart Product
+   *
+   * @bodyParam count int 數量 Example:1
+   */
+  public function update_auth_cart_product(Request $request, $id = null)
+  {
+    $auth              = Auth::user();
+    $shop_cart_product = ShopCartProduct::where('shop_product_id', $id)->where('status', 1)->whereHas('shop_cart', function ($query) use ($auth) {
+      return $query->where('user_id', $auth->id);
+    })->first();
+    if (!$shop_cart_product) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
+    }
+    if ($shop_cart_product->shop_product->stock_count < $request->count) {
+      return response()->json([
+        'message' => 'products not enough.',
+      ], 400);
+    }
+    return ModelHelper::ws_UpdateHandler($this, $request, $shop_cart_product->id);
   }
 
   /**

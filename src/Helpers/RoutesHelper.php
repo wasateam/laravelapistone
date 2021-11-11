@@ -53,7 +53,7 @@ use Wasateam\Laravelapistone\Controllers\TulpaCrossItemController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
-use Wasateam\Laravelapistone\Controllers\UserAddress;
+use Wasateam\Laravelapistone\Controllers\UserAddressController;
 use Wasateam\Laravelapistone\Controllers\UserAppInfoController;
 use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
@@ -483,7 +483,7 @@ class RoutesHelper
       'index', 'show',
     ])->shallow();
     # UserAddress
-    Route::resource('user_address', UserAddress::class)->only([
+    Route::resource('user_address', UserAddressController::class)->only([
       'index',
       'show',
       'store',
@@ -631,6 +631,7 @@ class RoutesHelper
       # Shop Cart Product
       Route::get('/auth/shop_cart_product/index', [ShopCartProductController::class, 'auth_cart_product_index']);
       Route::post('/auth/shop_cart_product/store', [ShopCartProductController::class, 'product_store_auth_cart']);
+      Route::post('/auth/shop_cart_product/{shop_cart_product_id}/update', [ShopCartProductController::class, 'update_auth_cart_product']);
       Route::post('/shop_cart_product/{shop_cart_product_id}', [ShopCartProductController::class, 'disabled']);
       # Shop Return Record
       Route::resource('shop_return_record', ShopReturnRecordController::class)->only([

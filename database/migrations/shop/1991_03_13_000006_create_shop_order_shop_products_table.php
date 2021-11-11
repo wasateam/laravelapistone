@@ -24,7 +24,7 @@ class CreateShopOrderShopProductsTable extends Migration
       $table->string('name')->nullable();
       $table->string('subtitle')->nullable();
       $table->string('spec')->nullable();
-      $table->status('status')->nullable();
+      $table->string('status')->nullable();
       $table->integer('price')->nullable();
       $table->integer('discount_price')->nullable();
       $table->string('weight_capacity')->nullable();

@@ -5,6 +5,7 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\ShopHelper;
 
 class ShopOrderController extends Controller
 {
@@ -39,11 +40,11 @@ class ShopOrderController extends Controller
     'ship_status',
     'customer_service_remark',
     'pay_type',
-    'pay_status',
-    'discounts',
-    'freight',
-    'products_price',
-    'order_price',
+    // 'pay_status',
+    // 'discounts',
+    // 'freight',
+    // 'products_price',
+    // 'order_price',
     'receipt_number',
     'receipt_status',
     'receipt_type',
@@ -73,6 +74,13 @@ class ShopOrderController extends Controller
   {
     if (config('stone.shop.uuid')) {
       $this->uuid = true;
+    }
+    if (config('stone.mode') == 'cms') {
+      $this->input_fields[] = 'pay_status';
+      $this->input_fields[] = 'discounts';
+      $this->input_fields[] = 'freight';
+      $this->input_fields[] = 'products_price';
+      $this->input_fields[] = 'order_price';
     }
   }
 
@@ -129,14 +137,15 @@ class ShopOrderController extends Controller
    */
   public function store(Request $request, $id = null)
   {
-    return ModelHelper::ws_StoreHandler($this, $request, $id);
+    return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
+      ShopHelper::changeShopOrderPrice($model->id);
+    });
   }
 
   /**
-   * Display the specified resource.
+   * Show
    *
-   * @param  \App\Models\ShopOrder  $shopOrder
-   * @return \Illuminate\Http\Response
+   * @urlParam  shop_order required The ID of shop_order. Example: 1
    */
   public function show(Request $request, $id = null)
   {
@@ -188,7 +197,9 @@ class ShopOrderController extends Controller
    */
   public function update(Request $request, $id)
   {
-    return ModelHelper::ws_UpdateHandler($this, $request, $id);
+    return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) {
+      ShopHelper::changeShopOrderPrice($model->id);
+    });
   }
 
   /**
@@ -205,23 +216,23 @@ class ShopOrderController extends Controller
    * Export Excel Signedurl
    *
    */
-  public function export_excel_signedurl(Request $request)
-  {
-    $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
-    return URL::temporarySignedRoute(
-      'user_export_excel',
-      now()->addMinutes(30),
-      ['shop_orders' => $shop_orders]
-    );
-  }
+  // public function export_excel_signedurl(Request $request)
+  // {
+  //   $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
+  //   return URL::temporarySignedRoute(
+  //     'user_export_excel',
+  //     now()->addMinutes(30),
+  //     ['shop_orders' => $shop_orders]
+  //   );
+  // }
 
   /**
    * Export Excel
    *
    */
-  public function export_excel(Request $request)
-  {
-    $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
-    return Excel::download(new UserExport($shop_orders), 'shop_orders.xlsx');
-  }
+  // public function export_excel(Request $request)
+  // {
+  //   $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
+  //   return Excel::download(new UserExport($shop_orders), 'shop_orders.xlsx');
+  // }
 }

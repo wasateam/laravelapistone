@@ -38,7 +38,32 @@ class ShopHelper
     //計算訂單金額
     $shop_order = ShopOrder::where('id', $shop_order_id)->first();
     //商品價錢總和  - 沒有優惠價就使用售價
+    $shop_order_shop_products = $shop_order->shop_order_shop_products;
+    $shop_product_price_arr   = $shop_order_shop_products->map(function ($item) {
+      return $item->discount_price ? $item->discount_price : $item->price;
+    });
+    $shop_product_price_total = array_sum($shop_product_price_arr);
 
     //運費 100
+    $freight = 100;
+
+    $order_price = $shop_product_price_total + $freight;
+
+    return [
+      "products_price" => $shop_product_price_total,
+      "freight"        => $freight,
+      "order_price"    => $order_price,
+    ];
+
+  }
+
+  public static function changeShopOrderPrice($shop_order_id)
+  {
+    $shop_order                 = ShopOrder::where('id', $shop_order_id)->first();
+    $price_array                = Self::calculateShopOrderPrice($shop_order_id);
+    $shop_order->products_price = $price_array['products_price'];
+    $shop_order->freight        = $price_array['freight'];
+    $shop_order->order_price    = $price_array['order_price'];
+    $shop_order->save();
   }
 }

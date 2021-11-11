@@ -34,7 +34,7 @@ class ShopOrder extends Model
     return $this->belongsTo(UserAddress::class, 'user_address_id');
   }
 
-  public function shop_order_shop_product()
+  public function shop_order_shop_products()
   {
     return $this->hasMany(ShopOrderShopProduct::class, 'shop_order_id');
   }

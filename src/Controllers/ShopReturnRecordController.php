@@ -93,6 +93,7 @@ class ShopReturnRecordController extends Controller
   {
     return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
       ShopHelper::returnProductChangeCount($model->id);
+      ShopHelper::changeShopOrderPrice($model->shop_order->id);
     });
   }
 
@@ -138,6 +139,7 @@ class ShopReturnRecordController extends Controller
   {
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) {
       ShopHelper::returnProductChangeCount($model->id);
+      ShopHelper::changeShopOrderPrice($model->shop_order->id);
     });
   }
 

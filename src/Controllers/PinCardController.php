@@ -100,7 +100,7 @@ class PinCardController extends Controller
   }
 
   /**
-   * Register
+   * Generate
    *
    * @bodyParam service_plan string Example: 1
    */
@@ -166,7 +166,7 @@ class PinCardController extends Controller
           $user_service_item->total_count  = $item_content;
           $user_service_item->remain_count = $item_content;
           $user_service_item->expired_at   = Carbon::now()->addYears(1);
-        } else if ($_type == 'count') {
+        } else if ($_type == 'times') {
           $user_service_item->total_count  = $item_content;
           $user_service_item->remain_count = $item_content;
         }

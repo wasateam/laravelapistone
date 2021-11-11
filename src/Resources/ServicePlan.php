@@ -15,12 +15,16 @@ class ServicePlan extends JsonResource
   public function toArray($request)
   {
     return [
-      'id'         => $this->id,
-      'created_at' => $this->created_at,
-      'updated_at' => $this->updated_at,
-      'name'       => $this->name,
-      'remark'     => $this->remark,
-      'payload'    => $this->payload,
+      'id'            => $this->id,
+      'created_at'    => $this->created_at,
+      'updated_at'    => $this->updated_at,
+      'name'          => $this->name,
+      'remark'        => $this->remark,
+      'payload'       => $this->payload,
+      'period_month'  => $this->period_month,
+      'total_price'   => $this->total_price,
+      'annual_price'  => $this->annual_price,
+      'monthly_price' => $this->monthly_price,
     ];
   }
 }

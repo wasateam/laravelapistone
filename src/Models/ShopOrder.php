@@ -21,7 +21,7 @@ class ShopOrder extends Model
 
   public function shop_ship_time_setting()
   {
-    return $this->belongsTo(ShopShopTimeSetting::class, 'shop_ship_time_setting_id');
+    return $this->belongsTo(ShopShipTimeSetting::class, 'shop_ship_time_setting_id');
   }
 
   public function shop_ship_area_setting()

@@ -22,7 +22,7 @@ class ShopOrderController extends Controller
   public $model                   = 'Wasateam\Laravelapistone\Models\ShopOrder';
   public $name                    = 'shop_order';
   public $resource                = 'Wasateam\Laravelapistone\Resources\ShopOrder';
-  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\ShopProductCollection';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\ShopOrderCollection';
   public $input_fields            = [
     'type',
     'orderer',
@@ -165,6 +165,11 @@ class ShopOrderController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_StoreHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
+      if ($request->user != Auth::user()->id) {
+        return response()->json([
+          'message' => 'not you',
+        ], 400);
+      }
       if (!$request->has('shop_cart_products') || !is_array($request->shop_cart_products)) {
         return response()->json([
           'message' => 'products required.',

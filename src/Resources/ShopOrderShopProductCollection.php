@@ -2,9 +2,9 @@
 
 namespace Wasateam\Laravelapistone\Resources;
 
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class ShopOrderShopProductCollection extends ResourceCollection
+class ShopOrderShopProductCollection extends JsonResource
 {
   /**
    * Transform the resource collection into an array.

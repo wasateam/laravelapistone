@@ -52,7 +52,7 @@ class User extends JsonResource
       $res['bonus_points'] = $this->bonus_points;
     }
     if (config('stone.user.address')) {
-      $res['addresses'] = $this->addresses;
+      $res['addresses'] = UserAddress::collection($this->addresses);
     }
     return $res;
   }

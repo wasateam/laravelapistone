@@ -217,6 +217,16 @@ class RoutesHelper
       Route::resource('user', UserController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      if (config('stone.user.address')) {
+        # UserAddress
+        Route::resource('user_address', UserAddressController::class)->only([
+          'index',
+          'show',
+          'store',
+          'update',
+          'destroy',
+        ])->shallow();
+      }
     }
 
     # Socialite
@@ -494,7 +504,7 @@ class RoutesHelper
       'show',
       'store',
       'update',
-      'delete',
+      'destroy',
     ])->shallow();
   }
 

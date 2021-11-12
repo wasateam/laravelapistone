@@ -3,8 +3,11 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Models\User;
+use Wasateam\Laravelapistone\Models\UserAddress;
 
 /**
  * @group UserAddress
@@ -23,6 +26,8 @@ class UserAddressController extends Controller
   ];
   public $belongs_to = [
     'user',
+    'area',
+    'area_section',
   ];
   public $filter_belongs_to = [
     'user',
@@ -48,9 +53,27 @@ class UserAddressController extends Controller
    *
    * @bodyParam  address string Example:address
    * @bodyParam  user int Example: 1
+   * @bodyParam  area int Example: 1
+   * @bodyParam  area_section int Example: 1
    */
   public function store(Request $request, $id = null)
   {
+    if (!$request->has('user')) {
+      return response()->json([
+        'message' => 'need user;',
+      ], 400);
+    }
+    $user = User::where('id', $request->user)->first();
+    if (!$user) {
+      return response()->json([
+        'message' => 'no user;',
+      ], 400);
+    }
+    if (count($user->addresses) == 3) {
+      return response()->json([
+        'message' => 'max address',
+      ], 400);
+    }
     return ModelHelper::ws_StoreHandler($this, $request, $id);
   }
 
@@ -71,10 +94,22 @@ class UserAddressController extends Controller
    * @urlParam  user_address required The ID of user_address. Example: 1
    * @bodyParam  address string Example:address
    * @bodyParam  user int Example: 1
+   * @bodyParam  area int Example: 1
+   * @bodyParam  area_section int Example: 1
    */
   public function update(Request $request, $id)
   {
-    return ModelHelper::ws_UpdateHandler($this, $request, $id);
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_UpdateHandler($this, $request, $id);
+    } else if (config('stone.mode') == 'webapi') {
+      $user_address = UserAddress::where('user_id', $id)->first();
+      if ($user_address->id != Auth::user()->id) {
+        return response()->json([
+          'message' => 'Invalid Scope(s)',
+        ], 400);
+      }
+      return ModelHelper::ws_UpdateHandler($this, $request, $id);
+    }
   }
 
   /**

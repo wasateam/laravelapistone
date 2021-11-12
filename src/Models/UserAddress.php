@@ -15,4 +15,14 @@ class UserAddress extends Model
   {
     return $this->belongsTo(User::class, 'user_id');
   }
+
+  public function area()
+  {
+    return $this->belongsTo(Area::class, 'area_id');
+  }
+
+  public function area_section()
+  {
+    return $this->belongsTo(AreaSection::class, 'area_section_id');
+  }
 }

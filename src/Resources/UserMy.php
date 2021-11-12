@@ -50,6 +50,9 @@ class UserMy extends JsonResource
     if (config('stone.user.bonus_points')) {
       $res['bonus_points'] = $this->bonus_points;
     }
+    if (config('stone.user.address')) {
+      $res['addresses'] = UserAddress::collection($this->addresses);
+    }
     return $res;
   }
 }

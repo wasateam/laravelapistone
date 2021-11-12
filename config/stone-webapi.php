@@ -52,7 +52,13 @@ return [
   'service_plan'        => false,
   'pin_card'            => false,
   'calendar_highlight'  => false,
-  'address'             => false,
+  'user'                => [
+    'export'              => true,
+    'is_bad'              => true,
+    'bonus_points'        => true,
+    'reset_password_mail' => true,
+    'address'             => true,
+  ],
   'shop'                => [
     'uuid'      => true,
     'pre_order' => true,

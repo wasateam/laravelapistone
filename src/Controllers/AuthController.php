@@ -83,6 +83,9 @@ class AuthController extends Controller
     }
     $user->scopes = $default_scopes;
     $user->save();
+    if (config('stone.auth.signup_complete_action')) {
+      config('stone.auth.signup_complete_action')::signup_complete_action($user);
+    }
     return new $resource($user);
   }
 

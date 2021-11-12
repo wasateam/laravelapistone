@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopOrder;
+use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
 use Wasateam\Laravelapistone\Models\ShopReturnRecord;
 
 /**
@@ -26,7 +27,6 @@ class ShopReturnRecordController extends Controller
   public $input_fields            = [
     'count',
     'remark',
-    'price',
   ];
   public $belongs_to = [
     'user',
@@ -34,7 +34,7 @@ class ShopReturnRecordController extends Controller
     'shop_order_shop_product',
     'shop_product',
   ];
-  public $filter_fields = [
+  public $filter_belongs_to = [
     'shop_order',
   ];
   public $order_fields = [
@@ -46,9 +46,9 @@ class ShopReturnRecordController extends Controller
   public function __construct()
   {
     if (config('stone.mode') == 'cms') {
-      $this->filter_fields[] = 'user';
-      $this->filter_fields[] = 'shop_order_shop_product';
-      $this->filter_fields[] = 'shop_product';
+      $this->filter_belongs_to[] = 'user';
+      $this->filter_belongs_to[] = 'shop_order_shop_product';
+      $this->filter_belongs_to[] = 'shop_product';
     }
   }
   /**
@@ -74,7 +74,7 @@ class ShopReturnRecordController extends Controller
           ], 400);
         }
       }
-      return ModelHelper::wxs_IndexHandler($this, $request, $id);
+      return ModelHelper::ws_IndexHandler($this, $request, $id);
     }
   }
 
@@ -86,12 +86,15 @@ class ShopReturnRecordController extends Controller
    * @bodyParam shop_order_shop_product int 訂單商品 Example:1
    * @bodyParam shop_product int 商品 Example:1
    * @bodyParam count int 數量 Example:1
-   * @bodyParam price int 價格 Example:1
    * @bodyParam remark string 備註 Example:remark
    */
   public function store(Request $request, $id = null)
   {
+    $shop_order_shop_product = ShopOrderShopProduct::where('id', $request->shop_order_shop_product)->first();
+    $request->request->add(['shop_product' => $shop_order_shop_product->shop_product->id]);
     return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
+      $model->price = $model->shop_order_shop_product->discount_price ? $model->shop_order_shop_product->discount_price * $model->count : $model->shop_order_shop_product->price * $model->count;
+      $model->save();
       ShopHelper::returnProductChangeCount($model->id);
       ShopHelper::changeShopOrderPrice($model->shop_order->id);
     });

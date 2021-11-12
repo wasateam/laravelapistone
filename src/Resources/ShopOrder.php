@@ -57,6 +57,7 @@ class ShopOrder extends JsonResource
         'receipt_tax'              => $this->receipt_tax,
         'receipt_title'            => $this->receipt_title,
         'shop_order_shop_products' => ShopOrderShopProductCollection::collection($this->shop_order_shop_products),
+        'shop_return_records'      => ShopReturnRecord_R0::collection($this->shop_return_records),
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
@@ -104,6 +105,7 @@ class ShopOrder extends JsonResource
         'receipt_tax'              => $this->receipt_tax,
         'receipt_title'            => $this->receipt_title,
         'shop_order_shop_products' => ShopOrderShopProductCollection::collection($this->shop_order_shop_products),
+        'shop_return_records'      => ShopReturnRecord_R0::collection($this->shop_return_records),
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;

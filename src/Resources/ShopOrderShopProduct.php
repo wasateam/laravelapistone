@@ -15,21 +15,22 @@ class ShopOrderShopProduct extends JsonResource
   public function toArray($request)
   {
     return [
-      'id'                => $this->id,
-      'created_at'        => $this->created_at,
-      'updated_at'        => $this->updated_at,
-      'name'              => $this->name,
-      'subtitle'          => $this->subtitle,
-      'price'             => $this->price,
-      'discount_price'    => $this->discount_price,
-      'spec'              => $this->spec,
-      'weight_capacity'   => $this->weight_capacity,
-      'cover_image'       => $this->cover_image,
-      'count'             => $this->count,
-      'discount_price'    => $this->discount_price,
-      'shop_order'        => new ShopOrder_R0($this->shop_order),
-      'shop_product'      => new ShopProduct_R0($this->shop_product),
-      'shop_cart_product' => new ShopCartProduct($this->shop_cart_product),
+      'id'                  => $this->id,
+      'created_at'          => $this->created_at,
+      'updated_at'          => $this->updated_at,
+      'name'                => $this->name,
+      'subtitle'            => $this->subtitle,
+      'price'               => $this->price,
+      'discount_price'      => $this->discount_price,
+      'spec'                => $this->spec,
+      'weight_capacity'     => $this->weight_capacity,
+      'cover_image'         => $this->cover_image,
+      'count'               => $this->count,
+      'discount_price'      => $this->discount_price,
+      'shop_order'          => new ShopOrder_R0($this->shop_order),
+      'shop_product'        => new ShopProduct_R0($this->shop_product),
+      'shop_cart_product'   => new ShopCartProduct($this->shop_cart_product),
+      'shop_return_records' => ShopReturnRecord_R0::collection($this->shop_return_records),
     ];
   }
 }

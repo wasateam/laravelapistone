@@ -24,4 +24,9 @@ class ShopOrderShopProduct extends Model
   {
     return $this->belongsTo(ShopOrder::class, 'shop_order_id');
   }
+
+  public function shop_return_records()
+  {
+    return $this->hasMany(ShopReturnRecord::class);
+  }
 }

@@ -208,6 +208,7 @@ class ShopOrderController extends Controller
           $new_order_product->weight_capacity      = $shop_product->weight_capacity;
           $new_order_product->cover_image          = $shop_product->cover_image;
           $new_order_product->shop_product_id      = $shop_product->id;
+          $new_order_product->cost                 = $shop_product->cost;
           $new_order_product->shop_cart_product_id = $my_cart_product['id'];
           $new_order_product->shop_order_id        = $model->id;
           $new_order_product->save();

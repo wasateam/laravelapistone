@@ -38,6 +38,7 @@ class ShopOrderShopProductController extends Controller
       $this->input_fields[]      = 'discount_price';
       $this->input_fields[]      = 'spec';
       $this->input_fields[]      = 'weight_capacity';
+      $this->input_fields[]      = 'cost';
       $this->input_fields[]      = 'cover_image';
       $this->belongs_to[]        = 'shop_product';
       $this->belongs_to[]        = 'shop_cart_product';
@@ -106,6 +107,7 @@ class ShopOrderShopProductController extends Controller
       'spec'            => $shop_product->spec,
       'weight_capacity' => $shop_product->weight_capacity,
       'cover_image'     => $shop_product->cover_image,
+      'cost'            => $shop_product->cost,
     ]);
 
     if (config('stone.mode') == 'cms') {
@@ -164,6 +166,7 @@ class ShopOrderShopProductController extends Controller
       'spec'            => $shop_product->spec,
       'weight_capacity' => $shop_product->weight_capacity,
       'cover_image'     => $shop_product->cover_image,
+      'cost'            => $shop_product->cost,
     ]);
     return ModelHelper::ws_UpdateHandler($this, $request, $id);
   }

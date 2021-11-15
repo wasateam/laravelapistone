@@ -78,4 +78,5 @@ return [
   #
   'app'                => false,
   'privacy_terms'      => true,
+  'country_code'      => true,
 ];

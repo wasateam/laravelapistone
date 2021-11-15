@@ -35,6 +35,7 @@ class TulpaPageController extends Controller
     'content',
     'canonical_url',
   ];
+  public $filter_fields = [];
   public $search_fields = [
     'name',
     'title',
@@ -62,28 +63,23 @@ class TulpaPageController extends Controller
   {
     if (config('stone.admin_group')) {
       if (config('stone.admin_blur')) {
-        $this->belongs_to_many = [
-          'tulpa_sections',
-          'cmser_groups',
-          'tulpa_cross_items',
-        ];
-        $this->scope_filter_belongs_to_many = [
-          'cmser_groups' => [
-            'boss',
-          ],
+        $this->belongs_to_many[]                            = 'tulpa_sections';
+        $this->belongs_to_many[]                            = 'cmser_groups';
+        $this->belongs_to_many[]                            = 'tulpa_cross_items';
+        $this->scope_filter_belongs_to_many['cmser_groups'] = [
+          'boss',
         ];
       } else {
-        $this->belongs_to_many = [
-          'tulpa_sections',
-          'admin_groups',
-          'tulpa_cross_items',
-        ];
-        $this->scope_filter_belongs_to_many = [
-          'admin_groups' => [
-            'boss',
-          ],
+        $this->belongs_to_many[]                            = 'tulpa_sections';
+        $this->belongs_to_many[]                            = 'admin_groups';
+        $this->belongs_to_many[]                            = 'tulpa_cross_items';
+        $this->scope_filter_belongs_to_many['admin_groups'] = [
+          'boss',
         ];
       }
+    }
+    if (config('stone.country_code')) {
+      $this->filter_fields[] = 'country_code';
     }
   }
 
@@ -121,6 +117,7 @@ class TulpaPageController extends Controller
    * @bodyParam tulpa_sections object No-example
    * @bodyParam admin_groups object No-example
    * @bodyParam tulpa_cross_items object No-example
+   * @bodyParam country_code string No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -163,6 +160,7 @@ class TulpaPageController extends Controller
    * @bodyParam tulpa_sections object No-example
    * @bodyParam admin_groups object No-example
    * @bodyParam tulpa_cross_items object No-example
+   * @bodyParam country_code string No-example
    */
   public function update(Request $request, $id)
   {

@@ -47,6 +47,7 @@ return [
     'is_bad'              => true,
     'bonus_points'        => true,
     'reset_password_mail' => true,
+    'address'             => true,
   ],
   'user_device_token'  => true,
   'socialite'          => [

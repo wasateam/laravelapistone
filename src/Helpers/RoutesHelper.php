@@ -16,6 +16,7 @@ use Wasateam\Laravelapistone\Controllers\CalendarHighlightController;
 use Wasateam\Laravelapistone\Controllers\CMSAdminController;
 use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
+use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NotificationController;
@@ -28,10 +29,15 @@ use Wasateam\Laravelapistone\Controllers\ServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreCloseController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
+use Wasateam\Laravelapistone\Controllers\ShopCartController;
+use Wasateam\Laravelapistone\Controllers\ShopCartProductController;
 use Wasateam\Laravelapistone\Controllers\ShopClassController;
+use Wasateam\Laravelapistone\Controllers\ShopOrderController;
+use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductCoverFrameController;
 use Wasateam\Laravelapistone\Controllers\ShopProductExpectShipController;
+use Wasateam\Laravelapistone\Controllers\ShopReturnRecordController;
 use Wasateam\Laravelapistone\Controllers\ShopShipAreaSettingController;
 use Wasateam\Laravelapistone\Controllers\ShopShipTimeSettingController;
 use Wasateam\Laravelapistone\Controllers\ShopSubclassController;
@@ -48,6 +54,7 @@ use Wasateam\Laravelapistone\Controllers\TulpaCrossItemController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
 use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
+use Wasateam\Laravelapistone\Controllers\UserAddressController;
 use Wasateam\Laravelapistone\Controllers\UserAppInfoController;
 use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
@@ -57,7 +64,6 @@ use Wasateam\Laravelapistone\Controllers\UserServicePlanRecordController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
-use Wasateam\Laravelapistone\Controllers\EcpayController;
 
 class RoutesHelper
 {
@@ -211,6 +217,16 @@ class RoutesHelper
       Route::resource('user', UserController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      if (config('stone.user.address')) {
+        # UserAddress
+        Route::resource('user_address', UserAddressController::class)->only([
+          'index',
+          'show',
+          'store',
+          'update',
+          'destroy',
+        ])->shallow();
+      }
     }
 
     # Socialite
@@ -389,6 +405,27 @@ class RoutesHelper
       Route::resource('shop_ship_time_setting', ShopShipTimeSettingController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      # Shop Order
+      Route::resource('shop_order', ShopOrderController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Order Product
+      Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Cart
+      Route::resource('shop_cart', ShopCartController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Cart Product
+      Route::resource('shop_cart', ShopCartProductController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Return Record
+      Route::resource('shop_return_record', ShopReturnRecordController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+
     }
 
     # FeaturedClass
@@ -460,6 +497,14 @@ class RoutesHelper
     ])->shallow();
     Route::resource('user_service_plan_record', UserServicePlanRecordController::class)->only([
       'index', 'show',
+    ])->shallow();
+    # UserAddress
+    Route::resource('user_address', UserAddressController::class)->only([
+      'index',
+      'show',
+      'store',
+      'update',
+      'destroy',
     ])->shallow();
 
     # Appointment
@@ -599,6 +644,26 @@ class RoutesHelper
         'index', 'show',
       ])->shallow();
       Route::resource('shop_ship_time_setting', ShopShipTimeSettingController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      # Shop Order
+      Route::resource('shop_order', ShopOrderController::class)->only([
+        'show', 'store',
+      ])->shallow();
+      Route::get('/auth/shop_order', [ShopOrderController::class, 'auth_shop_order_index']);
+      # Shop Order Product
+      Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
+        'index', 'show', 'store',
+      ])->shallow();
+      # Shop Cart
+      Route::get('/auth/shop_cart', [ShopCartController::class, 'auth_cart']);
+      # Shop Cart Product
+      Route::get('/auth/shop_cart_product/index', [ShopCartProductController::class, 'auth_cart_product_index']);
+      Route::post('/auth/shop_cart_product/store', [ShopCartProductController::class, 'product_store_auth_cart']);
+      Route::post('/auth/shop_cart_product/{shop_cart_product_id}/update', [ShopCartProductController::class, 'update_auth_cart_product']);
+      Route::post('/shop_cart_product/{shop_cart_product_id}', [ShopCartProductController::class, 'disabled']);
+      # Shop Return Record
+      Route::resource('shop_return_record', ShopReturnRecordController::class)->only([
         'index', 'show',
       ])->shallow();
     }

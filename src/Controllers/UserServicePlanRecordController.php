@@ -24,6 +24,7 @@ class UserServicePlanRecordController extends Controller
     'remark',
   ];
   public $search_fields = [
+    'remark',
   ];
   public $belongs_to = [
     'user',
@@ -47,8 +48,8 @@ class UserServicePlanRecordController extends Controller
   public function __construct()
   {
     if (config('stone.mode') == 'cms') {
-      $this->$belongs_to[]        = 'admin';
-      $this->$filter_belongs_to[] = 'admin';
+      $this->belongs_to[]        = 'admin';
+      $this->filter_belongs_to[] = 'admin';
     }
   }
 

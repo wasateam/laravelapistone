@@ -506,6 +506,13 @@ class RoutesHelper
       'update',
       'destroy',
     ])->shallow();
+
+    # Appointment
+    if (config('stone.appointment')) {
+      Route::resource('appointment', AppointmentController::class)->only([
+        'index', 'show', 'store',
+      ])->shallow();
+    }
   }
 
   public static function webapi_public_routes()
@@ -686,7 +693,6 @@ class RoutesHelper
         Route::post('ecpay/inpay/create_payment', [EcpayController::class, 'inpay_create_payment']);
       }
     }
-
   }
 
   public static function admin_routes($routes = [

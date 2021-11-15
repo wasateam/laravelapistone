@@ -23,6 +23,10 @@ class ServicePlanController extends Controller
     'name',
     'remark',
     'payload',
+    'period_month',
+    'total_price',
+    'annual_price',
+    'monthly_price',
   ];
   public $search_fields = [
     'name',
@@ -31,7 +35,7 @@ class ServicePlanController extends Controller
     'updated_at',
     'created_at',
   ];
-  public $uuid              = true;
+  public $uuid = true;
 
   /**
    * Index
@@ -49,6 +53,10 @@ class ServicePlanController extends Controller
    * @bodyParam name string Example: Plan A
    * @bodyParam remark string Example: hahahaha
    * @bodyParam payload string No-example
+   * @bodyParam period_month int No-example
+   * @bodyParam total_price int No-example
+   * @bodyParam annual_price int No-example
+   * @bodyParam monthly_price int No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -72,6 +80,10 @@ class ServicePlanController extends Controller
    * @bodyParam name string Example: Plan A
    * @bodyParam remark string Example: hahahaha
    * @bodyParam payload string No-example
+   * @bodyParam period_month int No-example
+   * @bodyParam total_price int No-example
+   * @bodyParam annual_price int No-example
+   * @bodyParam monthly_price int No-example
    */
   public function update(Request $request, $id)
   {

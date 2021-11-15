@@ -26,6 +26,7 @@ return [
       'user',
     ],
     'active_check'   => true,
+    // 'signup_complete_action' => '\App\Helpers\TestHelper',
   ],
   # Modules
   'log'                 => [

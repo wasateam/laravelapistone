@@ -3,10 +3,10 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\Appointment;
-use Auth;
 
 /**
  * @group Appointment
@@ -75,7 +75,7 @@ class AppointmentController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_StoreHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      return ModelHelper::ws_StoreHandler($this, $request, $id, null, function ($model) {
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
         $user           = Auth::user();
         $model->user_id = $user->id;
         $model->save();

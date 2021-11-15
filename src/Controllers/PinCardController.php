@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Exports\PinCardExport;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\Models\UserServicePlanHelper;
 use Wasateam\Laravelapistone\Helpers\StrHelper;
 use Wasateam\Laravelapistone\Models\PinCard;
 use Wasateam\Laravelapistone\Models\ServicePlanItem;
@@ -100,7 +101,7 @@ class PinCardController extends Controller
   }
 
   /**
-   * Register
+   * Generate
    *
    * @bodyParam service_plan string Example: 1
    */
@@ -156,17 +157,21 @@ class PinCardController extends Controller
     $user_service_plan->user_id         = $user->id;
     $user_service_plan->service_plan_id = $model->service_plan_id;
     $user_service_plan->save();
+    UserServicePlanHelper::setExpiredAt($user_service_plan);
     $plan_content = $user_service_plan->service_plan ? $user_service_plan->service_plan->payload : null;
     if ($plan_content) {
       foreach ($plan_content as $item_uuid => $item_content) {
         $user_service_item = new UserServicePlanItem;
         $service_plan_item = ServicePlanItem::where('uuid', $item_uuid)->first();
-        $_type             = $service_plan_item->type;
+        if (!$service_plan_item) {
+          continue;
+        }
+        $_type = $service_plan_item->type;
         if ($_type == 'annual-times') {
           $user_service_item->total_count  = $item_content;
           $user_service_item->remain_count = $item_content;
           $user_service_item->expired_at   = Carbon::now()->addYears(1);
-        } else if ($_type == 'count') {
+        } else if ($_type == 'times') {
           $user_service_item->total_count  = $item_content;
           $user_service_item->remain_count = $item_content;
         }

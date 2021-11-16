@@ -119,7 +119,7 @@ class ShopCartProductController extends Controller
     }
     $shop_cart_product = ShopCartProduct::where('shop_product_id', $request->shop_product)->where('status', 1)->first();
     //原本選的量
-    $original_count = $shop_cart_product->count ? $shop_cart_product->count : 0;
+    $original_count = $shop_cart_product && $shop_cart_product->count ? $shop_cart_product->count : 0;
     //原本選的量＋新增的量
     $count = $original_count + $request->count;
     if ($shop_product->stock_count < $count) {

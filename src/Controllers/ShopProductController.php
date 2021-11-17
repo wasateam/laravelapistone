@@ -115,7 +115,10 @@ class ShopProductController extends Controller
           'message' => 'shop_classes or shop_subclasses is required.',
         ], 400);
       }
-      return ModelHelper::ws_IndexHandler($this, $request, $id, true);
+      return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
+        $snap = $snap->where('is_active', 1);
+        return $snap;
+      });
     }
   }
 

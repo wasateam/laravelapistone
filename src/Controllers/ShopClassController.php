@@ -26,6 +26,9 @@ class ShopClassController extends Controller
   ];
   public $belongs_to = [
   ];
+  public $order_fields = [
+    'sq',
+  ];
   public $uuid = false;
 
   public function __construct()

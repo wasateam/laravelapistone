@@ -18,6 +18,7 @@ class ShopOrder extends JsonResource
       $res = [
         'id'                       => $this->id,
         'no'                       => $this->no,
+        'type'                     => $this->type,
         'created_at'               => $this->created_at,
         'orderer'                  => $this->orderer,
         'orderer_tel'              => $this->orderer_tel,
@@ -66,6 +67,7 @@ class ShopOrder extends JsonResource
       $res = [
         'id'                       => $this->id,
         'no'                       => $this->no,
+        'type'                     => $this->type,
         'created_at'               => $this->created_at,
         'orderer'                  => $this->orderer,
         'orderer_tel'              => $this->orderer_tel,

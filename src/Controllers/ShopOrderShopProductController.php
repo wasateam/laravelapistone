@@ -23,8 +23,11 @@ class ShopOrderShopProductController extends Controller
   public $resource                = 'Wasateam\Laravelapistone\Resources\ShopOrderShopProduct';
   public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\ShopOrderShopProductCollection';
   public $input_fields            = [];
-  public $belongs_to              = [];
-  public $filter_belongs_to       = [
+  public $filter_fields           = [
+    'type',
+  ];
+  public $belongs_to        = [];
+  public $filter_belongs_to = [
     'shop_order',
   ];
 
@@ -39,6 +42,7 @@ class ShopOrderShopProductController extends Controller
       $this->input_fields[]      = 'spec';
       $this->input_fields[]      = 'weight_capacity';
       $this->input_fields[]      = 'cost';
+      $this->input_fields[]      = 'type';
       $this->input_fields[]      = 'cover_image';
       $this->belongs_to[]        = 'shop_product';
       $this->belongs_to[]        = 'shop_cart_product';
@@ -101,6 +105,7 @@ class ShopOrderShopProductController extends Controller
     }
     $request->request->add([
       'name'            => $shop_product->name,
+      'type'            => $shop_product->type,
       'subtitle'        => $shop_product->subtitle,
       'price'           => $shop_product->price,
       'discount_price'  => $shop_product->discount_price,
@@ -160,6 +165,7 @@ class ShopOrderShopProductController extends Controller
     }
     $request->request->add([
       'name'            => $shop_product->name,
+      'type'            => $shop_product->type,
       'subtitle'        => $shop_product->subtitle,
       'price'           => $shop_product->price,
       'discount_price'  => $shop_product->discount_price,

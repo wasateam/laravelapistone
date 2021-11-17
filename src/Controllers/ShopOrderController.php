@@ -65,6 +65,7 @@ class ShopOrderController extends Controller
   public $search_fields = [
   ];
   public $filter_fields = [
+    'type',
   ];
   public $belongs_to = [
     'user',

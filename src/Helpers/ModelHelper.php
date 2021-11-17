@@ -298,6 +298,7 @@ class ModelHelper
     $setting = self::getSetting($controller);
 
     // Validation
+    $rules     = self::getValidatorRules($setting, 'update', $id);
     $validator = Validator::make($request->all(), $rules, $setting->validation_messages);
     if ($validator->fails()) {
       return response()->json([
@@ -533,13 +534,31 @@ class ModelHelper
     return $setting;
   }
 
-  public static function getValidatorRules($setting, $type = '')
+  public static function getValidatorRules($setting, $type = '', $id = null)
   {
+    $rules;
     if (isset($setting->{"{$type}_validation_rules"})) {
-      return $setting->{"{$type}_validation_rules"};
+      $rules = $setting->{"{$type}_validation_rules"};
     } else {
-      return $setting->validation_rules;
+      $rules = $setting->validation_rules;
     }
+    if ($type == 'update') {
+      $_rules = [];
+      foreach ($rules as $key => $rule) {
+        $_rule_strings = [];
+        $rule_strings  = explode("|", $rule);
+        foreach ($rule_strings as $rule_string_key => $rule_string) {
+          if (strpos($rule_string, 'unique') !== false) {
+            $_rule_strings[] = $rule_string . ',id,' . $id;
+          } else {
+            $_rule_strings[] = $rule_string;
+          }
+        }
+        $_rules[$key] = implode('|', $_rule_strings);
+      }
+      $rules = $_rules;
+    }
+    return $rules;
   }
 
   public static function indexGetSnap($setting, $request, $parent_id, $limit = true)

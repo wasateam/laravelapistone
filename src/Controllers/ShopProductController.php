@@ -80,6 +80,9 @@ class ShopProductController extends Controller
     'discount_price',
     'stock_count',
   ];
+  public $validation_rules = [
+    'no' => "required|unique:shop_products",
+  ];
   public $uuid = false;
 
   public function __construct()

@@ -30,6 +30,7 @@ class TulpaPageCollection extends JsonResource
         'status'              => $this->status,
         'content'             => $this->content,
         'canonical_url'       => $this->canonical_url,
+        'country_code'        => $this->country_code,
         'tulpa_page_template' => new TulpaPageTemplate_R1($this->tulpa_page_template),
         'tulpa_cross_items'   => TulpaCrossItem_R1::collection($this->tulpa_cross_items),
       ];
@@ -50,6 +51,7 @@ class TulpaPageCollection extends JsonResource
         'og_image'      => $this->og_image,
         'content'       => $this->content,
         'canonical_url' => $this->canonical_url,
+        'country_code'  => $this->country_code,
       ];
       return $res;
     }

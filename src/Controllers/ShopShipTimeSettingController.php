@@ -23,6 +23,10 @@ class ShopShipTimeSettingController extends Controller
     'start_time',
     'end_time',
     'max_count',
+    'type',
+  ];
+  public $filter_fields = [
+    'type',
   ];
   public $belongs_to = [
   ];
@@ -54,6 +58,7 @@ class ShopShipTimeSettingController extends Controller
    * @bodyParam start_time string No-example
    * @bodyParam end_time string No-example
    * @bodyParam max_count string No-example
+   * @bodyParam type string No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -77,6 +82,7 @@ class ShopShipTimeSettingController extends Controller
    * @bodyParam start_time string No-example
    * @bodyParam end_time string No-example
    * @bodyParam max_count string No-example
+   * @bodyParam type string No-example
    */
   public function update(Request $request, $id)
   {

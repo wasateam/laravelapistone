@@ -140,12 +140,13 @@ class ShopCartProductController extends Controller
       });
     } else {
       return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($shop_product, $auth_shop_cart) {
-        $model->shop_cart_id   = $auth_shop_cart->id;
-        $model->name           = $shop_product->name;
-        $model->subtitle       = $shop_product->subtitle;
-        $model->price          = $shop_product->price;
-        $model->discount_price = $shop_product->discount_price;
-        $model->user_id        = Auth::user()->id;
+        $model->shop_cart_id    = $auth_shop_cart->id;
+        $model->shop_product_id = $shop_product->id;
+        $model->name            = $shop_product->name;
+        $model->subtitle        = $shop_product->subtitle;
+        $model->price           = $shop_product->price;
+        $model->discount_price  = $shop_product->discount_price;
+        $model->user_id         = Auth::user()->id;
         $model->save();
       });
 
@@ -160,7 +161,7 @@ class ShopCartProductController extends Controller
   public function update_auth_cart_product(Request $request, $id = null)
   {
     $auth              = Auth::user();
-    $shop_cart_product = ShopCartProduct::where('shop_product_id', $id)->where('status', 1)->whereHas('shop_cart', function ($query) use ($auth) {
+    $shop_cart_product = ShopCartProduct::where('id', $id)->where('status', 1)->whereHas('shop_cart', function ($query) use ($auth) {
       return $query->where('user_id', $auth->id);
     })->first();
     if (!$shop_cart_product) {

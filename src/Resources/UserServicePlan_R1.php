@@ -18,6 +18,7 @@ class UserServicePlan_R1 extends JsonResource
       'id'           => $this->id,
       'created_at'   => $this->created_at,
       'service_plan' => new UserServicePlan_R0($this->service_plan),
+      'expired_at'   => $this->expired_at,
     ];
     $res['user'] = new User_R0($this->user);
     return $res;

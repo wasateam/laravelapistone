@@ -25,7 +25,9 @@ class UserServicePlanItem extends JsonResource
     ];
     if (config('stone.mode') == 'cms') {
       $res['user']              = new User_R1($this->user);
+      $res['service_plan']      = new ServicePlan_R1($this->service_plan);
       $res['service_plan_item'] = new ServicePlanItem_R1($this->service_plan_item);
+      $res['user_service_plan'] = new UserServicePlan_R1($this->user_service_plan);
     }
     return $res;
   }

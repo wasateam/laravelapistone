@@ -18,7 +18,8 @@ class UserServicePlan extends JsonResource
       'id'                      => $this->id,
       'created_at'              => $this->created_at,
       'service_plan'            => new ServicePlan_R1($this->service_plan),
-      'user_service_plan_items' => UserServicePlanItem_R1::collection($this->user_service_plan_items),
+      'user_service_plan_items' => UserServicePlanItem_R2::collection($this->user_service_plan_items),
+      'expired_at'              => $this->expired_at,
     ];
     if (config('stone.mode') == 'cms') {
       $res['user'] = new User_R1_CMS($this->user);

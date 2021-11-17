@@ -112,7 +112,8 @@ class User extends Authenticatable
     'email_verified_at' => 'datetime',
     'password'          => \Wasateam\Laravelapistone\Casts\PasswordCast::class,
     'scopes'            => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'payload'            => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     // 'avatar'            => \Wasateam\Laravelapistone\Casts\SignedUrlAuthCast::class,
-    '',
+    // '',
   ];
 }

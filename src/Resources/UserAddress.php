@@ -19,6 +19,7 @@ class UserAddress extends JsonResource
       'created_at'   => $this->created_at,
       'updated_at'   => $this->updated_at,
       'address'      => $this->address,
+      'type'         => $this->type,
       'user'         => new User_R1($this->user),
       'area'         => new Area($this->area),
       'area_section' => new AreaSection($this->area_section),

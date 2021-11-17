@@ -23,6 +23,7 @@ class UserAddressController extends Controller
   public $resource     = 'Wasateam\Laravelapistone\Resources\UserAddress';
   public $input_fields = [
     'address',
+    'type',
   ];
   public $belongs_to = [
     'user',
@@ -31,6 +32,9 @@ class UserAddressController extends Controller
   ];
   public $filter_belongs_to = [
     'user',
+  ];
+  public $filter_fields = [
+    'type',
   ];
   public $order_fields = [
     'updated_at',
@@ -41,6 +45,7 @@ class UserAddressController extends Controller
    * Index
    *
    * @queryParam  user int No-example 1
+   * @queryParam  type string No-example type
    *
    */
   public function index(Request $request, $id = null)
@@ -52,6 +57,7 @@ class UserAddressController extends Controller
    * Store
    *
    * @bodyParam  address string Example:address
+   * @bodyParam  type string Example:delivery,mailing
    * @bodyParam  user int Example: 1
    * @bodyParam  area int Example: 1
    * @bodyParam  area_section int Example: 1
@@ -69,10 +75,14 @@ class UserAddressController extends Controller
         'message' => 'no user;',
       ], 400);
     }
-    if (count($user->addresses) == 3) {
-      return response()->json([
-        'message' => 'max address',
-      ], 400);
+    if ($request->type) {
+      $user_addresses = UserAddress::where('user_id', $user->id)->where('type', $request->type)->get();
+      $has_type       = array_search($request->type, array_column(config('stone.user.address'), 'type'));
+      if ($request->type == 'delivery' && count($user->addresses) == 3) {
+        return response()->json([
+          'message' => 'max address',
+        ], 400);
+      }
     }
     return ModelHelper::ws_StoreHandler($this, $request, $id);
   }
@@ -92,7 +102,8 @@ class UserAddressController extends Controller
    * Update
    *
    * @urlParam  user_address required The ID of user_address. Example: 1
-   * @bodyParam  address string Example:address
+   * @bodyParam  type string Example:delivery,mailing
+   * @bodyParam  type string Example:type
    * @bodyParam  user int Example: 1
    * @bodyParam  area int Example: 1
    * @bodyParam  area_section int Example: 1

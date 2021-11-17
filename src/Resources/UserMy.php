@@ -33,6 +33,7 @@ class UserMy extends JsonResource
       'byebye_at'         => $this->byebye_at,
       'email_verified_at' => $this->email_verified_at,
       'birthday'          => $this->birthday,
+      'gender'            => $this->gender,
       'pocket_avatar'     => new PocketImage_R1($this->pocket_avatar),
     ];
     if (config('stone.locale')) {

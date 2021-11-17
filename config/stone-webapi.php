@@ -58,7 +58,13 @@ return [
     'is_bad'              => true,
     'bonus_points'        => true,
     'reset_password_mail' => true,
-    'address'             => true,
+    //如果地址無類別，改成true
+    'address'             => [
+      [
+        'type'  => 'delivery',
+        'limit' => 3,
+      ],
+    ],
   ],
   'shop'                => [
     'uuid'      => true,

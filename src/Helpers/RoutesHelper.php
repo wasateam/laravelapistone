@@ -32,6 +32,7 @@ use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
 use Wasateam\Laravelapistone\Controllers\ShopCartController;
 use Wasateam\Laravelapistone\Controllers\ShopCartProductController;
 use Wasateam\Laravelapistone\Controllers\ShopClassController;
+use Wasateam\Laravelapistone\Controllers\ShopFreeShippingController;
 use Wasateam\Laravelapistone\Controllers\ShopOrderController;
 use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductController;
@@ -425,6 +426,10 @@ class RoutesHelper
       Route::resource('shop_return_record', ShopReturnRecordController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      # Shop Free Shipping
+      Route::resource('shop_free_shipping', ShopFreeShippingController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
 
     }
 
@@ -664,6 +669,10 @@ class RoutesHelper
       Route::post('/shop_cart_product/{shop_cart_product_id}', [ShopCartProductController::class, 'disabled']);
       # Shop Return Record
       Route::resource('shop_return_record', ShopReturnRecordController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      # Shop Free Shipping
+      Route::resource('shop_free_shipping', ShopFreeShippingController::class)->only([
         'index', 'show',
       ])->shallow();
     }

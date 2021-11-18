@@ -26,7 +26,7 @@ class ChangeNoTypeInShopProductsTable extends Migration
   public function down()
   {
     Schema::table('shop_products', function (Blueprint $table) {
-      $table->string('no')->nullable()->unique(false)->change();
+      $table->dropUnique(['no']);
     });
   }
 }

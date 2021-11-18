@@ -12,7 +12,7 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
 
 /**
  * @group 訂單
- * 
+ *
  * type 訂單類型
  * orderer 訂購人
  * orderer_tel 訂購人電話
@@ -50,8 +50,8 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  *
  * @authenticated
  *
- * 
- * 
+ *
+ *
  */
 class ShopOrderController extends Controller
 {
@@ -170,6 +170,7 @@ class ShopOrderController extends Controller
    * @bodyParam receiver_email string 收件人mail Example:aa@aa.com
    * @bodyParam receiver_gender string 收件人性別 Example:female,male
    * @bodyParam receiver_birthday string 收件人生日 Example:1000-10-10
+   * @bodyParam user_address int 人員地址 Example:1
    * @bodyParam receive_address string 收件人住址 Example:address
    * @bodyParam receive_remark text 收件備註 Example:receive_remark
    * @bodyParam package_way text 包裝方式 Example:nomarl-package
@@ -178,6 +179,8 @@ class ShopOrderController extends Controller
    * @bodyParam receive_way text 收貨方式 Example:receive_way
    * @bodyParam ship_way text 配送方式 Example:ship_way
    * @bodyParam delivery_date text 配送日期 Example:2021-10-10
+   * @bodyParam shop_ship_area_setting int 配送地區 Example:1
+   * @bodyParam shop_ship_time_setting int 配送時間 Example:1
    * @bodyParam ship_start_time text 出貨開始時間 Example:10:10
    * @bodyParam ship_end_time text 出貨結束時間 Example:10:20
    * @bodyParam ship_remark text 出貨備註 Example:ship_remark
@@ -285,6 +288,7 @@ class ShopOrderController extends Controller
    * @bodyParam receiver_email string 收件人mail Example:aa@aa.com
    * @bodyParam receiver_gender string 收件人性別 Example:female,male
    * @bodyParam receiver_birthday string 收件人生日 Example:1000-10-10
+   * @bodyParam user_address int 人員地址 Example:1
    * @bodyParam receive_address string 收件人住址 Example:address
    * @bodyParam receive_remark text 收件備註 Example:receive_remark
    * @bodyParam package_way text 包裝方式 Example:nomarl-package
@@ -293,6 +297,8 @@ class ShopOrderController extends Controller
    * @bodyParam receive_way text 收貨方式 Example:receive_way
    * @bodyParam ship_way text 配送方式 Example:ship_way
    * @bodyParam delivery_date text 配送日期 Example:2021-10-10
+   * @bodyParam shop_ship_area_setting int 配送地區 Example:1
+   * @bodyParam shop_ship_time_setting int 配送時間 Example:1
    * @bodyParam ship_start_time text 出貨開始時間 Example:10:10
    * @bodyParam ship_end_time text 出貨結束時間 Example:10:20
    * @bodyParam ship_remark text 出貨備註 Example:ship_remark

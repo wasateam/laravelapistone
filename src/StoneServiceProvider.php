@@ -48,9 +48,15 @@ class StoneServiceProvider extends ServiceProvider
         if (config('stone.admin_system_class')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_system_class');
         }
+
         # CMSLog
         if (config('stone.log')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/cms_log');
+        }
+
+        # WebLog
+        if (config('stone.web_log')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/web_log');
         }
 
         # Pocket

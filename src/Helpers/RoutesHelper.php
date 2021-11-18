@@ -175,10 +175,12 @@ class RoutesHelper
     }
 
     # CMS Log
-    Route::resource('cms_log', CmsLogController::class)->only([
-      'index',
-      'show',
-    ])->shallow();
+    if (config('stone.log')) {
+      Route::resource('cms_log', CmsLogController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+    }
 
     # Locale
     Route::resource('locale', LocaleController::class)->only([
@@ -446,6 +448,14 @@ class RoutesHelper
       Route::patch('privacy', [PrivacyController::class, 'update']);
       Route::get('terms', [TermsController::class, 'show']);
       Route::patch('terms', [TermsController::class, 'update']);
+    }
+
+    # Web Log
+    if (config('stone.web_log')) {
+      Route::resource('web_log', WebLogController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
     }
   }
 

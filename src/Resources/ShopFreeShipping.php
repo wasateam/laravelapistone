@@ -15,13 +15,14 @@ class ShopFreeShipping extends JsonResource
   public function toArray($request)
   {
     return [
-      "id"         => $this->id,
-      "created_at" => $this->created_at,
-      "updated_at" => $this->updated_at,
-      "name"       => $this->name,
-      "price"      => $this->price,
-      "start_date" => $this->start_date,
-      "end_date"   => $this->end_date,
+      "id"            => $this->id,
+      "created_at"    => $this->created_at,
+      "updated_at"    => $this->updated_at,
+      "name"          => $this->name,
+      "price"         => $this->price,
+      "start_date"    => $this->start_date,
+      "end_date"      => $this->end_date,
+      "is_no_limited" => $this->is_no_limited,
     ];
   }
 }

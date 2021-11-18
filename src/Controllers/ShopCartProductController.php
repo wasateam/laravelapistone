@@ -117,7 +117,7 @@ class ShopCartProductController extends Controller
         'message' => 'no data.',
       ], 400);
     }
-    $shop_cart_product = ShopCartProduct::where('shop_product_id', $request->shop_product)->where('status', 1)->first();
+    $shop_cart_product = ShopCartProduct::where('shop_product_id', $request->shop_product)->where('status', 1)->where('user_id', $auth->id)->first();
     //原本選的量
     $original_count = $shop_cart_product && $shop_cart_product->count ? $shop_cart_product->count : 0;
     //原本選的量＋新增的量

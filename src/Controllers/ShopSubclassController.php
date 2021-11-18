@@ -30,6 +30,10 @@ class ShopSubclassController extends Controller
   public $filter_belongs_to = [
     'shop_class',
   ];
+  public $order_fields = [
+    'sq',
+  ];
+  public $order_by = 'sq';
   public $uuid = false;
 
   public function __construct()

@@ -30,20 +30,12 @@ class UrlsCast implements CastsAttributes
    */
   public function set($model, $key, $value, $attributes)
   {
-    // if (config('stone.post_encode')) {
-    //   $_value = [];
-    //   foreach ($value as $value_item) {
-    //     $_value[] = base64_decode($value_item);
-    //   }
-    //   return $_value;
-    // } else {
-    //   return $value;
-    // }
     if (config('stone.post_encode')) {
       $_value = base64_decode($value);
+      error_log($_value);
     } else {
-      $_value = $value;
+      $_value = json_encode($value, JSON_UNESCAPED_UNICODE);
     }
-    return json_encode($_value, JSON_UNESCAPED_UNICODE);
+    return $_value;
   }
 }

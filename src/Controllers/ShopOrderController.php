@@ -12,10 +12,46 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
 
 /**
  * @group 訂單
+ * 
+ * type 訂單類型
+ * orderer 訂購人
+ * orderer_tel 訂購人電話
+ * orderer_birthday 訂購人生日
+ * orderer_email 訂購人信箱
+ * orderer_gender 訂購人性別
+ * receiver 收件人
+ * receiver_tel 收件人電話
+ * receiver_email 收件人信箱
+ * receiver_gender 收件人性別
+ * receiver_birthday 收件人生日
+ * receive_address 收件人地址
+ * receive_remark 收件人備註
+ * package_way 包裝方式
+ * status 狀態
+ * status_remark 狀態備註
+ * receive_way 收貨方式
+ * ship_way 物流方式
+ * delivery_date 運送時間
+ * ship_start_time 運送開始時間
+ * ship_end_time 運送結束時間
+ * ship_remark 運送備註
+ * ship_date 運送日期
+ * ship_status 運送狀態
+ * customer_service_remark 客戶服務備註
+ * pay_type 付款類型
+ * invoice_type 發票類型
+ * invoice_carrier_number 發票載具編號
+ * invoice_tax_type 發票含稅狀態
+ * invoice_title 發票抬頭
+ * invoice_company_name 發票公司名稱
+ * invoice_address 發票地址
+ * invoice_uniform_number 發票統一編號
+ * shop_cart_products 訂單商品
  *
  * @authenticated
  *
- * 訂單 API
+ * 
+ * 
  */
 class ShopOrderController extends Controller
 {
@@ -55,12 +91,15 @@ class ShopOrderController extends Controller
     // 'freight',
     // 'products_price',
     // 'order_price',
-    // 'receipt_number',
-    // 'receipt_status',
-    'receipt_type',
-    'receipt_carrier_number',
-    'receipt_tax',
-    'receipt_title',
+    // 'invoice_number',
+    // 'invoice_status',
+    'invoice_type',
+    'invoice_carrier_number',
+    'invoice_tax_type',
+    'invoice_title',
+    'invoice_company_name',
+    'invoice_address',
+    'invoice_uniform_number',
   ];
   public $search_fields = [
   ];
@@ -151,16 +190,15 @@ class ShopOrderController extends Controller
    * @bodyParam freight text 運費  Example:freight
    * @bodyParam products_price text  商品總金額 Example:products_price
    * @bodyParam order_price text 訂單金額  Example:order_price
-   * @bodyParam receipt_number text  發票號碼 Example:receipt_number
-   * @bodyParam receipt_status text  發票狀態 Example:receipt_status
-   * @bodyParam receipt_type text  發票形式 Example:receipt_type
-   * @bodyParam receipt_carrier_number text 發票載具編號  Example:receipt_carrier_number
-   * @bodyParam receipt_tax text  統一編號  Example:receipt_tax
-   * @bodyParam receipt_title text  抬頭 Example:receipt_title
-   * @bodyParam shop_cart_products object 訂單商品 Example:[
-   * {"id":1}]
-   *
+   * @bodyParam invoice_carrier_number string 發票載具編號 No-example
+   * @bodyParam invoice_tax_type string 發票含稅狀態 No-example
+   * @bodyParam invoice_title string 發票抬頭 Example: 山葵組設計股份有限公司
+   * @bodyParam invoice_company_name 發票公司名稱 string Example: 山葵組設計股份有限公司
+   * @bodyParam invoice_address string 發票地址 No-example
+   * @bodyParam invoice_uniform_number string 發票統一編號 No-example
+   * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1}]
    */
+
   public function store(Request $request, $id = null)
   {
     if (config('stone.mode') == 'cms') {
@@ -267,12 +305,12 @@ class ShopOrderController extends Controller
    * @bodyParam freight text 運費  Example:freight
    * @bodyParam products_price text  商品總金額 Example:products_price
    * @bodyParam order_price text 訂單金額  Example:order_price
-   * @bodyParam receipt_number text  發票號碼 Example:receipt_number
-   * @bodyParam receipt_status text  發票狀態 Example:receipt_status
-   * @bodyParam receipt_type text  發票形式 Example:receipt_type
-   * @bodyParam receipt_carrier_number text 發票載具編號  Example:receipt_carrier_number
-   * @bodyParam receipt_tax text  統一編號  Example:receipt_tax
-   * @bodyParam receipt_title text  抬頭 Example:receipt_title
+   * @bodyParam invoice_carrier_number string 發票載具編號 No-example
+   * @bodyParam invoice_tax_type string 發票含稅狀態 No-example
+   * @bodyParam invoice_title string 發票抬頭 Example: 山葵組設計股份有限公司
+   * @bodyParam invoice_company_name 發票公司名稱 string Example: 山葵組設計股份有限公司
+   * @bodyParam invoice_address string 發票地址 No-example
+   * @bodyParam invoice_uniform_number string 發票統一編號 No-example
    *
    */
   public function update(Request $request, $id)

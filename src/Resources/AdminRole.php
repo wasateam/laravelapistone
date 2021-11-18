@@ -21,7 +21,6 @@ class AdminRole extends JsonResource
       'scopes'        => $this->scopes,
       'created_at'    => $this->created_at,
       'updated_at'    => $this->updated_at,
-      // 'updated_admin' => new Admin_R1($this->updated_admin),
     ];
   }
 }

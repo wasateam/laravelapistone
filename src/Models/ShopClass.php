@@ -12,6 +12,6 @@ class ShopClass extends Model
 
   public function shop_subclasses()
   {
-    return $this->hasMany(ShopSubclass::class);
+    return $this->hasMany(ShopSubclass::class)->orderBy('sq');
   }
 }

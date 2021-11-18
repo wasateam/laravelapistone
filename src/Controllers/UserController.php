@@ -51,6 +51,7 @@ class UserController extends Controller
     "is_bad",
     "bonus_points",
     "birthday",
+    "gender",
   ];
   public $filter_fields = [
     'byebye_at',
@@ -119,6 +120,7 @@ class UserController extends Controller
    * @bodyParam is_bad boolean No-example
    * @bodyParam bonus_points int No-example
    * @bodyParam birthday date No-example
+   * @bodyParam gender string Example:male,female
    * @bodyParam is_active boolean No-example
    */
   public function store(Request $request, $id = null)
@@ -154,6 +156,7 @@ class UserController extends Controller
    * @bodyParam is_bad boolean No-example
    * @bodyParam bonus_points int No-example
    * @bodyParam birthday date No-example
+   * @bodyParam gender string Example:male,female
    * @bodyParam is_active boolean No-example
    */
   public function update(Request $request, $id)

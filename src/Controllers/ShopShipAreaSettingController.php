@@ -22,6 +22,10 @@ class ShopShipAreaSettingController extends Controller
   public $input_fields = [
     'is_all_area_section',
     'ship_ways',
+    'type',
+  ];
+  public $filter_fields = [
+    'type',
   ];
   public $belongs_to = [
     'area',
@@ -37,6 +41,7 @@ class ShopShipAreaSettingController extends Controller
   /**
    * Index
    * @queryParam search string No-example
+   * @queryParam type string No-example
    *
    */
   public function index(Request $request, $id = null)

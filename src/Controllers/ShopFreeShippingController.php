@@ -10,7 +10,6 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 /**
  * @group 免運門檻
  *
- * 免運門檻列表API
  * create,update時的欄位----
  * name 免運名稱
  * price 免運金額
@@ -56,7 +55,11 @@ class ShopFreeShippingController extends Controller
     return ModelHelper::ws_IndexHandler($this, $request, $id, $request->get_all, function ($snap) use ($request) {
       $date = ($request != null) && $request->filled('date') ? Carbon::parse($request->date) : null;
       if (isset($date)) {
-        $snap = $snap->where('end_date', '>=', $date)->where('start_date', '<=', $date);
+        $snap = $snap->where(function ($query) use ($date) {
+          $query->where('end_date', '>=', $date)->where('start_date', '<=', $date);
+        })->orWhere(function ($query) {
+          return $query->whereNull('end_date')->whereNull('start_date');
+        });
       }
       return $snap;
     });

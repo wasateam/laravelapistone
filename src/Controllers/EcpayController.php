@@ -62,4 +62,8 @@ class EcpayController extends Controller
     }
     EcpayHelper::createPayment($request->PayToken, $request->MerchantTradeNo);
   }
+
+  public function callback_ecpay_inpay_order(Request $request){
+    
+  }
 }

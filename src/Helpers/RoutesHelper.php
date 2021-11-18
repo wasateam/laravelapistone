@@ -700,6 +700,13 @@ class RoutesHelper
       Route::get('privacy', [PrivacyController::class, 'show']);
       Route::get('terms', [TermsController::class, 'show']);
     }
+
+    # Ecpay
+    if (config('sotne.thrid_party_payment')) {
+      if (config('sotne.thrid_party_payment.service') == 'ecpay_inpay') {
+        Route::post('callback/ecpay/inpay/order', [EcpayController::class, 'callback_ecpay_inpay_order']);
+      }
+    }
   }
 
   public static function admin_routes($routes = [

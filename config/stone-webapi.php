@@ -76,7 +76,7 @@ return [
     'service'     => 'ecpay_inpay',
     'mode'        => env('ECPAY_MODE', 'dev'),
     'ecpay_inpay' => [
-      'insite_order_return_url' => env('APP_URL') . env('ECPAY_INSITE_ORDER_RETURN_URL', "/api/callback/ecpay/insite/order"),
+      'insite_order_return_url' => env('APP_URL') . env('ECPAY_INSITE_ORDER_RETURN_URL', "/api/callback/ecpay/inpay/order"),
       'cardinfo'                => [
         'order_return_url'  => env('APP_URL') . env('ECPAY_CARDINFO_3DORDER_RETURN_URL', "/api/callback/ecpay/cardinfo/3dorder"),
         'period_return_url' => env('APP_URL') . env('ECPAY_CARDINFO_PERIOD_RETURN_URL', "/api/callback/ecpay/cardinfo/period"),

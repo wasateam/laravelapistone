@@ -45,6 +45,7 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * invoice_company_name 發票公司名稱
  * invoice_address 發票地址
  * invoice_uniform_number 發票統一編號
+ * invoice_email 發票統一編號
  * shop_cart_products 訂單商品
  * ecpay_merchant_trade_no 綠界訂單編號
  *
@@ -97,6 +98,8 @@ class ShopOrderController extends Controller
     'invoice_company_name',
     'invoice_address',
     'invoice_uniform_number',
+    'invoice_email',
+    'ecpay_merchant_trade_no',
   ];
   public $search_fields = [
   ];
@@ -189,6 +192,7 @@ class ShopOrderController extends Controller
    * @bodyParam freight text 運費  Example:freight
    * @bodyParam products_price text  商品總金額 Example:products_price
    * @bodyParam order_price text 訂單金額  Example:order_price
+   * @bodyParam invoice_type string 發票類型 No-example
    * @bodyParam invoice_carrier_number string 發票載具編號 No-example
    * @bodyParam invoice_tax_type string 發票含稅狀態 No-example
    * @bodyParam invoice_title string 發票抬頭 Example: 山葵組設計股份有限公司
@@ -307,6 +311,7 @@ class ShopOrderController extends Controller
    * @bodyParam freight text 運費  Example:freight
    * @bodyParam products_price text  商品總金額 Example:products_price
    * @bodyParam order_price text 訂單金額  Example:order_price
+   * @bodyParam invoice_type string 發票類型 No-example
    * @bodyParam invoice_carrier_number string 發票載具編號 No-example
    * @bodyParam invoice_tax_type string 發票含稅狀態 No-example
    * @bodyParam invoice_title string 發票抬頭 Example: 山葵組設計股份有限公司

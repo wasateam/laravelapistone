@@ -58,6 +58,9 @@ class ShopOrder extends JsonResource
         'invoice_title'            => $this->invoice_title,
         'invoice_company_name'     => $this->invoice_company_name,
         'invoice_address'          => $this->invoice_address,
+        'invoice_uniform_number'   => $this->invoice_uniform_number,
+        'invoice_email'            => $this->invoice_email,
+        'ecpay_merchant_trade_no'  => $this->ecpay_merchant_trade_no,
         'shop_order_shop_products' => ShopOrderShopProductCollection::collection($this->shop_order_shop_products),
         'shop_return_records'      => ShopReturnRecord_R0::collection($this->shop_return_records),
       ];
@@ -108,6 +111,9 @@ class ShopOrder extends JsonResource
         'invoice_title'            => $this->invoice_title,
         'invoice_company_name'     => $this->invoice_company_name,
         'invoice_address'          => $this->invoice_address,
+        'invoice_uniform_number'   => $this->invoice_uniform_number,
+        'invoice_email'            => $this->invoice_email,
+        'ecpay_merchant_trade_no'  => $this->ecpay_merchant_trade_no,
         'shop_order_shop_products' => ShopOrderShopProductCollection::collection($this->shop_order_shop_products),
         'shop_return_records'      => ShopReturnRecord_R0::collection($this->shop_return_records),
       ];

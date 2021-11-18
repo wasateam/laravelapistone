@@ -15,6 +15,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * price 免運金額
  * start_date 開始日期
  * end_date 結束日期
+ * is_no_limited 有無限制，有的話填true
  *
  * @authenticated
  */
@@ -29,9 +30,13 @@ class ShopFreeShippingController extends Controller
     'start_date',
     'end_date',
     'price',
+    'is_no_limited',
   ];
   public $search_fields = [
     'name',
+  ];
+  public $filter_fields = [
+    'is_no_limited',
   ];
   public $order_fields = [
     "start_date",
@@ -48,6 +53,7 @@ class ShopFreeShippingController extends Controller
    * Index
    * @queryParam search string 搜尋字串 No-example
    * @queryParam date string 篩選時間日期 No-example
+   * @queryParam is_no_limited string 是否有限制0or1 No-example
    *
    */
   public function index(Request $request, $id = null)
@@ -59,7 +65,7 @@ class ShopFreeShippingController extends Controller
           $query->where('end_date', '>=', $date)->where('start_date', '<=', $date);
         })->orWhere(function ($query) {
           return $query->whereNull('end_date')->whereNull('start_date');
-        });
+        })->orWhereNull('is_no_limited');
       }
       return $snap;
     });
@@ -72,6 +78,7 @@ class ShopFreeShippingController extends Controller
    * @bodyParam price int 免運金額 Example:1000
    * @bodyParam start_date string 開始日期 Example:2021-10-10
    * @bodyParam end_date string 結束日期 Example:2021-10-20
+   * @bodyParam is_no_limited boolean 有無限制 true
    */
   public function store(Request $request, $id = null)
   {
@@ -95,6 +102,7 @@ class ShopFreeShippingController extends Controller
    * @bodyParam price int 免運金額 Example:1000
    * @bodyParam start_date string 開始日期 Example:2021-10-10
    * @bodyParam end_date string 結束日期 Example:2021-10-20
+   * @bodyParam is_no_limited boolean 有無限制 true
    */
   public function update(Request $request, $id)
   {

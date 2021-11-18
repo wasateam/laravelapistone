@@ -5,6 +5,8 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
+use Wasateam\Laravelapistone\Helpers\CartHelper;
+use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
@@ -45,7 +47,7 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * invoice_company_name 發票公司名稱
  * invoice_address 發票地址
  * invoice_uniform_number 發票統一編號
- * invoice_email 發票統一編號
+ * invoice_email 發票信箱
  * shop_cart_products 訂單商品
  * ecpay_merchant_trade_no 綠界訂單編號
  *
@@ -237,7 +239,34 @@ class ShopOrderController extends Controller
           ], 400);
         }
       }
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($my_cart_products) {
+
+      # invoice
+      $invoice_number;
+      if (config('stone.invoice')) {
+        if (config('stone.invoice.service') == 'ecpay') {
+          if ($request->has('invoice_type') && $request->has('invoice_carrier_number')) {
+            $invoice_type           = $request->invoice_type;
+            $invoice_carrier_number = $request->invoice_carrier_number;
+            $order_amount           = CartHelper::getOrderAmount($my_cart_products);
+            $items                  = EcpayHelper::getInvoiceItemsFromShopCartProducts($my_cart_products);
+            if ($invoice_type == 'mobile') {
+              $post_data = EcpayHelper::getInvoicePostData([
+                'CarrierType'  => 3,
+                'CarrierNum'   => $invoice_carrier_number,
+                'CustomerName' => $request->orderer,
+                'TaxType'      => 1,
+                'Print'        => 0,
+                'Items'        => $items,
+                'SalesAmount'  => $order_amount,
+              ]);
+            }
+            $invoice_number = EcpayHelper::createInvoice($post_data);
+          }
+        }
+      }
+
+      # Shop Order Shop Product
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($my_cart_products, $invoice_number) {
         foreach ($my_cart_products as $my_cart_product) {
           $new_order_product                       = new ShopOrderShopProduct;
           $cart_product                            = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->first();
@@ -260,6 +289,12 @@ class ShopOrderController extends Controller
           ShopHelper::shopOrderProductChangeCount($new_order_product->id);
         }
         ShopHelper::changeShopOrderPrice($model->id);
+
+        # Invoice
+        if ($invoice_number) {
+          $model->invoice_number = $invoice_number;
+          $model->save();
+        }
       });
     }
   }

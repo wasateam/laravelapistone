@@ -5,6 +5,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Wasateam\Laravelapistone\Helpers\CartHelper;
 
 class EcpayHelper
 {
@@ -168,6 +169,8 @@ class EcpayHelper
     if ($res->status() == '200') {
       $res_json = $res->json();
       $res_data = self::getDecryptData($res_json['Data'], 'invoice');
+      error_log(json_encode($res_data));
+      return $res_data->InvoiceNo;
     }
   }
 
@@ -180,22 +183,25 @@ class EcpayHelper
 
   public static function getInvoicePostData($data)
   {
-    return [
-      "MerchantID"         => "2000132",
+    $post_data = [
+      "MerchantID"         => config('stone.invoice.ecpay.merchant_id'),
       "RelateNumber"       => self::newRelateNumber(),
       "CustomerID"         => "",
       "CustomerIdentifier" => "",
-      "CustomerName"       => "綠界科技股份有限公司",
-      "CustomerAddr"       => "106 台北市南港區發票一街 1 號 1 樓",
+      "CustomerName"       => "",
+      "CustomerAddr"       => "",
+      // "CustomerName"       => "綠界科技股份有限公司",
+      // "CustomerAddr"       => "106 台北市南港區發票一街 1 號 1 樓",
       "CustomerPhone"      => "",
       "CustomerEmail"      => "test@ecpay.com.tw",
       "ClearanceMark"      => "1",
-      "Print"              => "1",
+      "Print"              => "0",
       "Donation"           => "0",
       "LoveCode"           => "",
       "CarrierType"        => "",
       "CarrierNum"         => "",
-      "TaxType"            => "1",
+      "TaxType"            => "",
+      // "TaxType"            => "",
       "SalesAmount"        => 100,
       "InvoiceRemark"      => "發票備註",
       "InvType"            => "07",
@@ -232,41 +238,31 @@ class EcpayHelper
           "ItemRemark"  => "item03_desc",
         ],
       ],
-      // "MerchantID"         => config('stone.invoice.ecpay.merchant_id'),
-      // 'RelateNumber'       => self::newRelateNumber(),
-      // 'CustomerID'         => '123123',
-      // 'CustomerIdentifier' => '',
-      // 'CustomerName'       => '',
-      // // 'CustomerIdentifier' => '12341234',
-      // // 'CustomerName'       => 'companyyyyy',
-      // 'CustomerAddr'       => '',
-      // 'CustomerPhone'      => '',
-      // 'CustomerEmail'      => 'hello@wasateam.com',
-      // 'ClearanceMark'      => '',
-      // 'Print'              => '0',
-      // 'Donation'           => '0',
-      // // 'LoveCode'           => '',
-      // 'CarrierType'        => '',
-      // 'CarrierNum'         => '',
-      // 'TaxType'            => '1',
-      // // 'SpecialTaxType'     => '',
-      // 'SalesAmount'        => '333',
-      // 'InvoiceRemark'      => 'Remark Hereeee',
-      // 'Items'              => [
-      //   [
-      //     "ItemSeq"     => '123123',
-      //     "ItemName"    => 'Product AAA',
-      //     "ItemCount"   => '3',
-      //     "ItemWord"    => '個',
-      //     "ItemPrice"   => '111',
-      //     "ItemTaxType" => '1',
-      //     "ItemAmount"  => '333',
-      //     "ItemRemark"  => 'Product Remarkkkk',
-      //   ],
-      // ],
-      // 'InvType'            => '07',
-      // 'vat'                => '1',
     ];
+
+    if (array_key_exists('CarrierType', $data)) {
+      $post_data['CarrierType'] = $data['CarrierType'];
+    }
+    if (array_key_exists('CarrierNum', $data)) {
+      $post_data['CarrierNum'] = $data['CarrierNum'];
+    }
+    if (array_key_exists('TaxType', $data)) {
+      $post_data['TaxType'] = $data['TaxType'];
+    }
+    if (array_key_exists('Items', $data)) {
+      $post_data['Items'] = $data['Items'];
+    }
+    if (array_key_exists('CustomerName', $data)) {
+      $post_data['CustomerName'] = $data['CustomerName'];
+    }
+    if (array_key_exists('Print', $data)) {
+      $post_data['Print'] = $data['Print'];
+    }
+    if (array_key_exists('SalesAmount', $data)) {
+      $post_data['SalesAmount'] = $data['SalesAmount'];
+    }
+
+    return $post_data;
   }
 
   public static function createDelayInvoice($data)
@@ -384,5 +380,24 @@ class EcpayHelper
       // 'InvType'            => '07',
       // 'vat'                => '1',
     ];
+  }
+
+  public static function getInvoiceItemsFromShopCartProducts($shop_cart_products)
+  {
+    $items = [];
+    foreach ($shop_cart_products as $shop_cart_product) {
+      $amount  = CartHelper::getOrderProductAmountPrice($shop_cart_product);
+      $items[] = [
+        // "ItemSeq"     => 1,
+        "ItemName"    => $shop_cart_product['name'],
+        "ItemCount"   => $shop_cart_product['count'],
+        "ItemWord"    => "件",
+        "ItemPrice"   => $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'],
+        "ItemTaxType" => "1",
+        "ItemAmount"  => $amount,
+        "ItemRemark"  => "",
+      ];
+    }
+    return $items;
   }
 }

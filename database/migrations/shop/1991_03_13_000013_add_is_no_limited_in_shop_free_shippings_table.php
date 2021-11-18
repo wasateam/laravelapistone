@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ChangeNoTypeInShopProductsTable extends Migration
+class AddIsNoLimitedInShopFreeShippingsTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,8 +13,8 @@ class ChangeNoTypeInShopProductsTable extends Migration
    */
   public function up()
   {
-    Schema::table('shop_products', function (Blueprint $table) {
-      $table->string('no')->nullable()->unique()->change();
+    Schema::table('shop_free_shippings', function (Blueprint $table) {
+      $table->boolean('is_no_limited')->default(false)->nullable();
     });
   }
 
@@ -25,8 +25,8 @@ class ChangeNoTypeInShopProductsTable extends Migration
    */
   public function down()
   {
-    Schema::table('shop_products', function (Blueprint $table) {
-      $table->dropUnique(['no']);
+    Schema::table('shop_free_shippings', function (Blueprint $table) {
+      $table->dropColumn('is_no_limited');
     });
   }
 }

@@ -71,9 +71,9 @@ class EcpayHelper
     return "{$time}{$str}";
   }
 
-  public static function getInpayInitData()
+  public static function getInpayInitData($data = [])
   {
-    return [
+    $initData = [
       "MerchantID"        => config('stone.thrid_party_payment.ecpay_inpay.merchant_id'),
       "RememberCard"      => 1,
       "PaymentUIType"     => 2,
@@ -83,24 +83,37 @@ class EcpayHelper
         "MerchantTradeDate" => Carbon::now()->format('Y/m/d H:i:s'),
         "TotalAmount"       => 100,
         "ReturnURL"         => config('stone.thrid_party_payment.ecpay_inpay.insite_order_return_url'),
-        "TradeDesc"         => "Cool Trade",
+        "TradeDesc"         => "Trade",
         "ItemName"          => "ProductA, ProductB",
       ],
       "CardInfo"          => [
-        "OrderResultURL"    => config('stone.thrid_party_payment.ecpay_inpay.cardinfo.3d_order_return_url'),
+        "OrderResultURL"    => config('stone.thrid_party_payment.ecpay_inpay.cardinfo.order_return_url'),
         "CreditInstallment" => "3",
       ],
       "ATMInfo"           => [
         "ExpireDate" => 3,
       ],
+      "CVSInfo"           => [
+        "StoreExpireDate" => 10080,
+        "CVSCode"         => "CVS",
+      ],
+      "BarcodeInfo"       => [
+        "StoreExpireDate" => 7,
+      ],
       "ConsumerInfo"      => [
-        "MerchantMemberID" => "test123456",
+        "MerchantMemberID" => "1",
         "Email"            => "customer@email.com",
         "Phone"            => "0912345678",
         "Name"             => "Test",
-        "CountryCode"      => "158",
       ],
     ];
+    if ($data['ConsumerInfo']) {
+      $initData['ConsumerInfo'] = $data['ConsumerInfo'];
+    }
+    if ($data['OrderInfo']) {
+      $initData['OrderInfo'] = $data['OrderInfo'];
+    }
+    return $initData;
   }
 
   public static function createPayment($PayToken, $MerchantTradeNo)
@@ -155,7 +168,6 @@ class EcpayHelper
     if ($res->status() == '200') {
       $res_json = $res->json();
       $res_data = self::getDecryptData($res_json['Data'], 'invoice');
-      error_log(json_encode($res_data));
     }
   }
 
@@ -278,7 +290,6 @@ class EcpayHelper
     if ($res->status() == '200') {
       $res_json = $res->json();
       $res_data = self::getDecryptData($res_json['Data'], 'invoice');
-      error_log(json_encode($res_data));
     }
   }
 

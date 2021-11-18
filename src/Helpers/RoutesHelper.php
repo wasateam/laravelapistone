@@ -486,6 +486,14 @@ class RoutesHelper
       'update',
     ])->shallow();
 
+    # Third Party Payment
+    if (config('stone.thrid_party_payment')) {
+      # Ecpay Insite Pay Test
+      if (config('stone.thrid_party_payment.service') == 'ecpay_inpay') {
+        Route::post('ecpay/inpay/merchant_init', [EcpayController::class, 'get_inpay_merchant_init']);
+        Route::post('ecpay/inpay/create_payment', [EcpayController::class, 'inpay_create_payment']);
+      }
+    }
   }
 
   public static function webapi_isuser_routes()
@@ -693,13 +701,10 @@ class RoutesHelper
       Route::get('terms', [TermsController::class, 'show']);
     }
 
-    # Third Party Payment
-    if (config('stone.thrid_party_payment')) {
-
-      # Ecpay Insite Pay Test
-      if (config('stone.thrid_party_payment.service') == 'ecpay_inpay') {
-        Route::get('ecpay/inpay/merchant_init', [EcpayController::class, 'get_inpay_merchant_init']);
-        Route::post('ecpay/inpay/create_payment', [EcpayController::class, 'inpay_create_payment']);
+    # Ecpay
+    if (config('sotne.thrid_party_payment')) {
+      if (config('sotne.thrid_party_payment.service') == 'ecpay_inpay') {
+        Route::post('callback/ecpay/inpay/order', [EcpayController::class, 'callback_ecpay_inpay_order']);
       }
     }
   }

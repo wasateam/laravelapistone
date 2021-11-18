@@ -53,7 +53,6 @@ class ShopOrder extends Model
     'discounts'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'orderer_birthday'  => 'datetime',
     'receiver_birthday' => 'datetime',
-    'delivery_date'     => 'datetime',
     'ship_date'         => 'datetime',
   ];
 }

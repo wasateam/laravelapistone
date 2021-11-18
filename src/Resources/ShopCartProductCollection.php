@@ -20,6 +20,7 @@ class ShopCartProductCollection extends JsonResource
       'updated_at'     => $this->updated_at,
       'name'           => $this->name,
       'subtitle'       => $this->subtitle,
+      'count'          => $this->count,
       'price'          => $this->price,
       'discount_price' => $this->discount_price,
       'count'          => $this->count,

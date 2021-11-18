@@ -32,10 +32,25 @@ class ShopFreeShippingController extends Controller
   public $search_fields = [
     'name',
   ];
+  public $order_fields = [
+    "start_date",
+    "end_date",
+    "created_at",
+    "updated_at",
+  ];
+  public $time_fields = [
+    "start_date",
+    "end_date",
+    "created_at",
+    "updated_at",
+  ];
 
   /**
    * Index
    * @queryParam search string 搜尋字串 No-example
+   * @queryParam start_time string 開始時間 No-example
+   * @queryParam end_time string 結束時間 No-example
+   * @queryParam time_field string 篩選時間區間依據 No-example
    *
    */
   public function index(Request $request, $id = null)

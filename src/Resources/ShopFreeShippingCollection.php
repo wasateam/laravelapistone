@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ShopFreeShipping extends JsonResource
+class ShopFreeShippingCollection extends JsonResource
 {
   /**
    * Transform the resource collection into an array.

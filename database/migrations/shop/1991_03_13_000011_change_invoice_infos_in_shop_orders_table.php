@@ -54,6 +54,7 @@ class ChangeInvoiceInfosInShopOrdersTable extends Migration
       $table->dropColumn('invoice_title');
       $table->dropColumn('invoice_company_name');
       $table->dropColumn('invoice_address');
+      $table->dropColumn('invoice_uniform_number');
     });
   }
 }

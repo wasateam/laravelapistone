@@ -19,8 +19,8 @@ class CreateShopFreeShippingsTable extends Migration
       $table->softDeletes();
       $table->string('name')->nullable();
       $table->integer('price')->default(0);
-      $table->datetime('start_date')->nullable();
-      $table->datetime('end_date')->nullable();
+      $table->date('start_date')->nullable();
+      $table->date('end_date')->nullable();
     });
   }
 

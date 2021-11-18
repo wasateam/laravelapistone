@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
@@ -39,8 +40,6 @@ class ShopFreeShippingController extends Controller
     "updated_at",
   ];
   public $time_fields = [
-    "start_date",
-    "end_date",
     "created_at",
     "updated_at",
   ];
@@ -48,14 +47,18 @@ class ShopFreeShippingController extends Controller
   /**
    * Index
    * @queryParam search string 搜尋字串 No-example
-   * @queryParam start_time string 開始時間 No-example
-   * @queryParam end_time string 結束時間 No-example
-   * @queryParam time_field string 篩選時間區間依據 No-example
+   * @queryParam date string 篩選時間日期 No-example
    *
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    return ModelHelper::ws_IndexHandler($this, $request, $id, $request->get_all, function ($snap) use ($request) {
+      $date = ($request != null) && $request->filled('date') ? Carbon::parse($request->date) : null;
+      if (isset($date)) {
+        $snap = $snap->where('end_date', '>=', $date)->where('start_date', '<=', $date);
+      }
+      return $snap;
+    });
   }
 
   /**

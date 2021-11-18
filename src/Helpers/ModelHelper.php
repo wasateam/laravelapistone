@@ -298,7 +298,7 @@ class ModelHelper
     $setting = self::getSetting($controller);
 
     // Validation
-    $rules     = self::getValidatorRules($setting, 'store', $id);
+    $rules     = self::getValidatorRules($setting, 'update', $id);
     $validator = Validator::make($request->all(), $rules, $setting->validation_messages);
     if ($validator->fails()) {
       return response()->json([

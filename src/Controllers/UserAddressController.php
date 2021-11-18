@@ -12,9 +12,13 @@ use Wasateam\Laravelapistone\Models\UserAddress;
 /**
  * @group UserAddress
  *
- * @authenticated
+ * address 地址
+ * area 地址的地區
+ * area_section 地址的子地區
+ * user 所屬人員
+ * type 列別，可以為null
  *
- * APIs for user_address
+ * @authenticated
  */
 class UserAddressController extends Controller
 {

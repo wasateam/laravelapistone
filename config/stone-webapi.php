@@ -61,7 +61,7 @@ return [
     //如果地址無類別，改成true
     'address'             => [
       [
-        'type'  => 'delivery',
+        'type'  => 'delivery_address',
         'limit' => 3,
       ],
     ],

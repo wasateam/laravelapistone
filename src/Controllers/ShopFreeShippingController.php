@@ -11,6 +11,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * @group 免運門檻
  *
  * 免運門檻列表API
+ * create,update時的欄位----
  * name 免運名稱
  * price 免運金額
  * start_date 開始日期

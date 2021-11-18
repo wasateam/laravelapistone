@@ -60,8 +60,8 @@ return [
     'reset_password_mail' => true,
     //如果地址無類別，改成true
     'address'             => [
-      'delivery'=>[
-        'limit'=>3
+      'delivery' => [
+        'limit' => 3,
       ],
     ],
   ],
@@ -78,8 +78,8 @@ return [
     'ecpay_inpay' => [
       'insite_order_return_url' => env('APP_URL') . env('ECPAY_INSITE_ORDER_RETURN_URL', "/api/callback/ecpay/insite/order"),
       'cardinfo'                => [
-        '3d_order_return_url' => env('APP_URL') . env('ECPAY_CARDINFO_3DORDER_RETURN_URL', "/api/callback/ecpay/cardinfo/3dorder"),
-        'period_return_url'   => env('APP_URL') . env('ECPAY_CARDINFO_PERIOD_RETURN_URL', "/api/callback/ecpay/cardinfo/period"),
+        'order_return_url'  => env('APP_URL') . env('ECPAY_CARDINFO_3DORDER_RETURN_URL', "/api/callback/ecpay/cardinfo/3dorder"),
+        'period_return_url' => env('APP_URL') . env('ECPAY_CARDINFO_PERIOD_RETURN_URL', "/api/callback/ecpay/cardinfo/period"),
       ],
       'merchant_id'             => env('ECPAY_MERCHANT_ID', "3002607"),
       'uniform_no'              => env('ECPAY_UNIFORM_NO', "00000000"),

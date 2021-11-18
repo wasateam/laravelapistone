@@ -31,7 +31,6 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * status_remark 狀態備註
  * receive_way 收貨方式
  * ship_way 物流方式
- * delivery_date 運送時間
  * ship_start_time 運送開始時間
  * ship_end_time 運送結束時間
  * ship_remark 運送備註
@@ -47,10 +46,9 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * invoice_address 發票地址
  * invoice_uniform_number 發票統一編號
  * shop_cart_products 訂單商品
+ * ecpay_merchant_trade_no 綠界訂單編號
  *
  * @authenticated
- *
- *
  *
  */
 class ShopOrderController extends Controller
@@ -78,7 +76,6 @@ class ShopOrderController extends Controller
     'status_remark',
     'receive_way',
     'ship_way',
-    'delivery_date',
     'ship_start_time',
     'ship_end_time',
     'ship_remark',
@@ -178,7 +175,6 @@ class ShopOrderController extends Controller
    * @bodyParam status_remark text 狀態備註 Example:status_remark
    * @bodyParam receive_way text 收貨方式 Example:receive_way
    * @bodyParam ship_way text 配送方式 Example:ship_way
-   * @bodyParam delivery_date text 配送日期 Example:2021-10-10
    * @bodyParam shop_ship_area_setting int 配送地區 Example:1
    * @bodyParam shop_ship_time_setting int 配送時間 Example:1
    * @bodyParam ship_start_time text 出貨開始時間 Example:10:10
@@ -200,6 +196,7 @@ class ShopOrderController extends Controller
    * @bodyParam invoice_address string 發票地址 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
    * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1}]
+   * @bodyParam ecpay_merchant_trade_no string No-Example
    */
 
   public function store(Request $request, $id = null)
@@ -296,7 +293,6 @@ class ShopOrderController extends Controller
    * @bodyParam status_remark text 狀態備註 Example:status_remark
    * @bodyParam receive_way text 收貨方式 Example:receive_way
    * @bodyParam ship_way text 配送方式 Example:ship_way
-   * @bodyParam delivery_date text 配送日期 Example:2021-10-10
    * @bodyParam shop_ship_area_setting int 配送地區 Example:1
    * @bodyParam shop_ship_time_setting int 配送時間 Example:1
    * @bodyParam ship_start_time text 出貨開始時間 Example:10:10
@@ -317,6 +313,7 @@ class ShopOrderController extends Controller
    * @bodyParam invoice_company_name 發票公司名稱 string Example: 山葵組設計股份有限公司
    * @bodyParam invoice_address string 發票地址 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
+   * @bodyParam ecpay_merchant_trade_no string No-Example
    *
    */
   public function update(Request $request, $id)

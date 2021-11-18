@@ -75,10 +75,11 @@ class UserAddressController extends Controller
         'message' => 'no user;',
       ], 400);
     }
-    if ($request->type) {
-      $user_addresses = UserAddress::where('user_id', $user->id)->where('type', $request->type)->get();
-      $has_type       = array_search($request->type, array_column(config('stone.user.address'), 'type'));
-      if ($request->type == 'delivery' && count($user->addresses) == 3) {
+    if ($request->type && gettype(config('stone.user.address')) == 'array') {
+      $user_addresses    = UserAddress::where('user_id', $user->id)->where('type', $request->type)->count();
+      $all_address_types = config('stone.user.address');
+      $has_type          = array_key_exists($request->type, $all_address_types);
+      if ($has_type && $user_addresses >= $all_address_types[$request->type]['limit']) {
         return response()->json([
           'message' => 'max address',
         ], 400);

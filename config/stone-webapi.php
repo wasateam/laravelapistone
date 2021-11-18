@@ -60,9 +60,8 @@ return [
     'reset_password_mail' => true,
     //如果地址無類別，改成true
     'address'             => [
-      [
-        'type'  => 'delivery_address',
-        'limit' => 3,
+      'delivery'=>[
+        'limit'=>3
       ],
     ],
   ],

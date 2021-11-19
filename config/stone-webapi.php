@@ -45,7 +45,9 @@ return [
   'tag'                 => true,
   'area'                => true,
   'system_class'        => true,
-  'contact_request'     => false,
+  'contact_request'     => [
+    'notify_mail' => 'hello@wasateam.com',
+  ],
   'locale'              => false,
   'service_store'       => false,
   'notification'        => true,
@@ -91,5 +93,8 @@ return [
       'card_no'                 => env('ECPAY_CARD_NO', "4311-9522-2222-2222"),
       'card_safe_no'            => env('ECPAY_CARD_SAFE_NO', "222"),
     ],
+  ],
+  'test'                => [
+    'receive_mail' => env('STONE_TEST_RECEIVE_MAIL', 'hello@wasateam.com'),
   ],
 ];

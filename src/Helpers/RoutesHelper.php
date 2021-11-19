@@ -717,6 +717,13 @@ class RoutesHelper
         Route::post('callback/ecpay/inpay/order', [EcpayController::class, 'callback_ecpay_inpay_order']);
       }
     }
+
+    # ContactRequest
+    if (config('stone.contact_request')) {
+      Route::resource('contact_request', ContactRequestController::class)->only([
+        'store',
+      ])->shallow();
+    }
   }
 
   public static function admin_routes($routes = [

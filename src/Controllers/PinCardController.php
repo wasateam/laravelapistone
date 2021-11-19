@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Exports\PinCardExport;
+use Wasateam\Laravelapistone\Helpers\LogHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\Models\UserServicePlanHelper;
 use Wasateam\Laravelapistone\Helpers\StrHelper;
@@ -183,6 +184,7 @@ class PinCardController extends Controller
         $user_service_item->save();
       }
     }
+    LogHelper::createWebLog($user->id, 'register', 'service_plan', $model->service_plan_id, \Request::ip(), $request->pin);
     return response()->json([
       'message' => 'successful registed.',
     ]);

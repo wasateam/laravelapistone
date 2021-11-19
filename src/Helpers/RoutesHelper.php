@@ -38,6 +38,7 @@ use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductCoverFrameController;
 use Wasateam\Laravelapistone\Controllers\ShopProductExpectShipController;
+use Wasateam\Laravelapistone\Controllers\ShopProductImportRecordController;
 use Wasateam\Laravelapistone\Controllers\ShopReturnRecordController;
 use Wasateam\Laravelapistone\Controllers\ShopShipAreaSettingController;
 use Wasateam\Laravelapistone\Controllers\ShopShipTimeSettingController;
@@ -65,7 +66,6 @@ use Wasateam\Laravelapistone\Controllers\UserServicePlanRecordController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
-use Wasateam\Laravelapistone\Controllers\ShopProductImportRecordController;
 
 class RoutesHelper
 {
@@ -437,7 +437,7 @@ class RoutesHelper
       Route::resource('shop_product_import_record', ShopProductImportRecordController::class)->only([
         'index', 'show',
       ])->shallow();
-      
+      Route::post('shop_product/import/excel', [ShopProductController::class, 'import_excel']);
 
     }
 

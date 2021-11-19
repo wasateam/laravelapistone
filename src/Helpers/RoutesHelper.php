@@ -65,6 +65,7 @@ use Wasateam\Laravelapistone\Controllers\UserServicePlanRecordController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
+use Wasateam\Laravelapistone\Controllers\ShopProductImportRecordController;
 
 class RoutesHelper
 {
@@ -432,6 +433,11 @@ class RoutesHelper
       Route::resource('shop_free_shipping', ShopFreeShippingController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      # Shop Product Import Record
+      Route::resource('shop_product_import_record', ShopProductImportRecordController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      
 
     }
 

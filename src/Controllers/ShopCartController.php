@@ -89,6 +89,11 @@ class ShopCartController extends Controller
   {
     $auth           = Auth::user();
     $auth_shop_cart = ShopCart::where('user_id', $auth->id)->first();
+    if (!$auth_shop_cart) {
+      $auth_shop_cart          = new ShopCart;
+      $auth_shop_cart->user_id = $auth->id;
+      $auth_shop_cart->save();
+    }
     return new $this->resource($auth_shop_cart);
   }
 }

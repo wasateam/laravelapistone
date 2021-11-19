@@ -4,15 +4,19 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Maatwebsite\Excel\Facades\Excel;
+use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Imports\ShopProductImport;
 
 /**
  * @group 商品
  *
- * @authenticated
- *
  * 商品列表API
+ *
+ * Import Excel 要使用 js const formData = new FormData();
+ * formData.append("file", file);
+ * header 要帶 "Content-Type": "multipart/form-data",
+ *
+ * @authenticated
  */
 class ShopProductController extends Controller
 {
@@ -212,5 +216,13 @@ class ShopProductController extends Controller
   public function destroy($id)
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
+  }
+
+  /**
+   * Import Excel
+   */
+  public function import_excel(Request $request)
+  {
+    Excel::import(new ShopProductImport, $request->file('file'));
   }
 }

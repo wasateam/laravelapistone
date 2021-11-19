@@ -2,6 +2,8 @@
 
 namespace Wasateam\Laravelapistone\Helpers;
 
+use Carbon\Carbon;
+use Wasateam\Laravelapistone\Models\ShopFreeShipping;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
 use Wasateam\Laravelapistone\Models\ShopProduct;
@@ -74,5 +76,29 @@ class ShopHelper
       $total = $total + $price;
     }
     return $total;
+  }
+
+  public static function sameFreeDuration($start_date, $end_date)
+  {
+    //是否有重複區間的免運門檻
+    $snap = null;
+    if (isset($start_date) && isset($end_date)) {
+      $snap = ShopFreeShipping::where(function ($query) use ($start_date, $end_date) {
+        $query->where(function ($query) use ($start_date, $end_date) {
+          $query->where('start_date', '<=', Carbon::parse($start_date))->where('end_date', '>=', Carbon::parse($end_date));
+        })->orWhere(function ($query) use ($start_date, $end_date) {
+          $query->where('start_date', '<=', Carbon::parse($start_date))->where('end_date', '>=', Carbon::parse($start_date));
+        })->orWhere(function ($query) use ($start_date, $end_date) {
+          $query->where('start_date', '>=', Carbon::parse($start_date))->where('end_date', '<=', Carbon::parse($end_date));
+        })->orWhere(function ($query) use ($start_date, $end_date) {
+          $query->where('start_date', '<=', Carbon::parse($end_date))->where('end_date', '>=', Carbon::parse($end_date));
+        });
+      })->first();
+    }
+    if (isset($snap)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

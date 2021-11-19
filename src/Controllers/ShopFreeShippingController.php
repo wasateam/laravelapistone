@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\ShopHelper;
 
 /**
  * @group 免運門檻
@@ -30,13 +31,11 @@ class ShopFreeShippingController extends Controller
     'start_date',
     'end_date',
     'price',
-    'is_no_limited',
   ];
   public $search_fields = [
     'name',
   ];
   public $filter_fields = [
-    'is_no_limited',
   ];
   public $order_fields = [
     "start_date",
@@ -53,7 +52,6 @@ class ShopFreeShippingController extends Controller
    * Index
    * @queryParam search string 搜尋字串 No-example
    * @queryParam date string 篩選時間日期 No-example
-   * @queryParam is_no_limited string 是否有限制0or1 No-example
    *
    */
   public function index(Request $request, $id = null)
@@ -63,9 +61,7 @@ class ShopFreeShippingController extends Controller
       if (isset($date)) {
         $snap = $snap->where(function ($query) use ($date) {
           $query->where('end_date', '>=', $date)->where('start_date', '<=', $date);
-        })->orWhere(function ($query) {
-          return $query->whereNull('end_date')->whereNull('start_date');
-        })->orWhereNull('is_no_limited');
+        });
       }
       return $snap;
     });
@@ -78,10 +74,20 @@ class ShopFreeShippingController extends Controller
    * @bodyParam price int 免運金額 Example:1000
    * @bodyParam start_date string 開始日期 Example:2021-10-10
    * @bodyParam end_date string 結束日期 Example:2021-10-20
-   * @bodyParam is_no_limited boolean 有無限制 true
    */
   public function store(Request $request, $id = null)
   {
+    if (!$request->start_date || !$request->end_date) {
+      return response()->json([
+        'message' => 'need start_date and end_date.',
+      ], 400);
+    }
+    $has_same = ShopHelper::sameFreeDuration($request->start_date, $request->end_date);
+    if ($has_same) {
+      return response()->json([
+        'message' => 'this date already has shop_free_shipping.',
+      ], 400);
+    }
     return ModelHelper::ws_StoreHandler($this, $request, $id);
   }
 
@@ -102,10 +108,20 @@ class ShopFreeShippingController extends Controller
    * @bodyParam price int 免運金額 Example:1000
    * @bodyParam start_date string 開始日期 Example:2021-10-10
    * @bodyParam end_date string 結束日期 Example:2021-10-20
-   * @bodyParam is_no_limited boolean 有無限制 true
    */
   public function update(Request $request, $id)
   {
+    if (!$request->start_date || !$request->end_date) {
+      return response()->json([
+        'message' => 'need start_date and end_date.',
+      ], 400);
+    }
+    $has_same = ShopHelper::sameFreeDuration($request->start_date, $request->end_date);
+    if ($has_same) {
+      return response()->json([
+        'message' => 'this date already has shop_free_shipping.',
+      ], 400);
+    }
     return ModelHelper::ws_UpdateHandler($this, $request, $id);
   }
 

@@ -37,6 +37,9 @@ class ShopHelper
 
   public static function calculateShopOrderPrice($shop_order_id)
   {
+    $today      = Carbon::now();
+    $today_date = $today->format('Y-m-d');
+
     //計算訂單金額
     $shop_order = ShopOrder::where('id', $shop_order_id)->first();
     //商品價錢總和  - 沒有優惠價就使用售價
@@ -46,8 +49,12 @@ class ShopHelper
     });
     $shop_product_price_total = Self::sum_price($shop_product_price_arr);
 
-    //運費 100
-    $freight = 100;
+    //運費 default = 100
+    $free_freight_price = ShopFreeShipping::where('end_date', '>=', $today_date)->where('start_date', '<=', $today_date)->first();
+    $freight            = 100;
+    if ($free_freight_price && $shop_product_price_total >= $free_freight_price) {
+      $freight = 0;
+    }
 
     $order_price = $shop_product_price_total + $freight;
 

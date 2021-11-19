@@ -298,7 +298,7 @@ class ModelHelper
     $setting = self::getSetting($controller);
 
     // Validation
-    $rules     = self::getValidatorRules($setting, 'store', $id);
+    $rules     = self::getValidatorRules($setting, 'update', $id);
     $validator = Validator::make($request->all(), $rules, $setting->validation_messages);
     if ($validator->fails()) {
       return response()->json([
@@ -550,7 +550,7 @@ class ModelHelper
         $_rule_strings = [];
         $rule_strings  = explode(" ", $rule);
         foreach ($rule_strings as $rule_string_key => $rule_string) {
-          if (strpos($rule_string, 'required')) {
+          if (strpos($rule_string, 'unique')) {
             $_rule_strings[] = $rule_string . ',' . $id;
           } else {
             $_rule_strings[] = $rule_string;

@@ -20,7 +20,7 @@ class EcpayController extends Controller
     }
     $shop_cart_products = $request->shop_cart_products;
 
-    $order_price = CartHelper::getOrderPrice($shop_cart_products);
+    $order_price = CartHelper::getOrderAmount($shop_cart_products);
     $order_product_names = CartHelper::getOrderProductNames($shop_cart_products);
     
     $user             = Auth::user();

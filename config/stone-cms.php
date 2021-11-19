@@ -60,6 +60,7 @@ return [
     'google'   => true,
     'line'     => true,
   ],
+  'web_log'            => true,
   'ws_blog'            => true,
   'tag'                => true,
   'area'               => true,

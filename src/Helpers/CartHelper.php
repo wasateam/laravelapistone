@@ -4,15 +4,22 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 class CartHelper
 {
-  public static function getOrderPrice($shop_cart_products)
+  public static function getOrderAmount($shop_cart_products)
   {
-    $order_price = 0;
+    $order_amount = 0;
     foreach ($shop_cart_products as $shop_cart_product) {
       $count = $shop_cart_product['count'];
       $price = $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
-      $order_price += $count * $price;
+      $order_amount += $count * $price;
     }
-    return $order_price;
+    return $order_amount;
+  }
+
+  public static function getOrderProductAmountPrice($order_product)
+  {
+    $count = $order_product['count'];
+    $price = $order_product['discount_price'] ? $order_product['discount_price'] : $order_product['price'];
+    return $count * $price;
   }
 
   public static function getOrderProductNames($shop_cart_products)

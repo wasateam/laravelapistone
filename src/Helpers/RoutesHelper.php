@@ -175,10 +175,12 @@ class RoutesHelper
     }
 
     # CMS Log
-    Route::resource('cms_log', CmsLogController::class)->only([
-      'index',
-      'show',
-    ])->shallow();
+    if (config('stone.log')) {
+      Route::resource('cms_log', CmsLogController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+    }
 
     # Locale
     Route::resource('locale', LocaleController::class)->only([
@@ -447,6 +449,14 @@ class RoutesHelper
       Route::get('terms', [TermsController::class, 'show']);
       Route::patch('terms', [TermsController::class, 'update']);
     }
+
+    # Web Log
+    if (config('stone.web_log')) {
+      Route::resource('web_log', WebLogController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+    }
   }
 
   public static function cms_public_routes()
@@ -706,6 +716,13 @@ class RoutesHelper
       if (config('sotne.thrid_party_payment.service') == 'ecpay_inpay') {
         Route::post('callback/ecpay/inpay/order', [EcpayController::class, 'callback_ecpay_inpay_order']);
       }
+    }
+
+    # ContactRequest
+    if (config('stone.contact_request')) {
+      Route::resource('contact_request', ContactRequestController::class)->only([
+        'store',
+      ])->shallow();
     }
   }
 

@@ -10,7 +10,15 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 /**
  * @group  ContactRequest
  *
- * APIs for contact_request
+ * name 名稱
+ * email 信箱
+ * tel 電話
+ * remark 說明
+ * company_name 公司名稱
+ * budget 預算
+ * payload Payload隨便放
+ * ip 來源IP
+ * country_code 國家代碼
  *
  * @authenticated
  */
@@ -29,6 +37,20 @@ class ContactRequestController extends Controller
     "payload",
     "ip",
   ];
+  public $order_fields = [
+    'created_at',
+  ];
+  public $filter_fields = [];
+  public $order_by      = 'created_at';
+  public $order_way     = 'desc';
+
+  public function __construct()
+  {
+    if (config('stone.country_code')) {
+      $this->input_fields[]  = 'country_code';
+      $this->filter_fields[] = 'country_code';
+    }
+  }
 
   /**
    * Index
@@ -54,6 +76,7 @@ class ContactRequestController extends Controller
    * @bodyParam company_name string Example: Wasateam.co
    * @bodyParam budget string Example: nolimit
    * @bodyParam payload object No-example
+   * @bodyParam country_code string No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -63,7 +86,9 @@ class ContactRequestController extends Controller
       return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
         $model->ip = \Request::ip();
         $model->save();
-        EmailHelper::notify_contact_request($model);
+        if (config('stone.contact_request.notify_mail')) {
+          EmailHelper::notify_contact_request($model);
+        }
       });
     }
   }
@@ -90,6 +115,7 @@ class ContactRequestController extends Controller
    * @bodyParam company_name string Example: Wasateam.co
    * @bodyParam budget string Example: nolimit
    * @bodyParam payload object No-example
+   * @bodyParam country_code string No-example
    */
   public function update(Request $request, $id)
   {

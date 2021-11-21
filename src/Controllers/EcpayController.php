@@ -4,10 +4,10 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Auth;
-use Illuminate\Http\Request;
-use Wasateam\Laravelapistone\Helpers\EcpayHelper;
-use Wasateam\Laravelapistone\Helpers\CartHelper;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Wasateam\Laravelapistone\Helpers\CartHelper;
+use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 
 class EcpayController extends Controller
 {
@@ -20,13 +20,13 @@ class EcpayController extends Controller
     }
     $shop_cart_products = $request->shop_cart_products;
 
-    $order_price = CartHelper::getOrderAmount($shop_cart_products);
+    $order_price         = CartHelper::getOrderAmount($shop_cart_products);
     $order_product_names = CartHelper::getOrderProductNames($shop_cart_products);
-    
+
     $user             = Auth::user();
     $MerchantMemberID = config('stone.auth.uuid') ? $user->uuid : $user->id;
     $pay_data         = EcpayHelper::getInpayInitData([
-      "OrderInfo"         => [
+      "OrderInfo"    => [
         "MerchantTradeNo"   => EcpayHelper::newMerchantTradeNo(),
         "MerchantTradeDate" => Carbon::now()->format('Y/m/d H:i:s'),
         "TotalAmount"       => $order_price,
@@ -63,7 +63,8 @@ class EcpayController extends Controller
     EcpayHelper::createPayment($request->PayToken, $request->MerchantTradeNo);
   }
 
-  public function callback_ecpay_inpay_order(Request $request){
-    
+  public function callback_ecpay_inpay_order(Request $request)
+  {
+    Log::info(json_encode($request->all()));
   }
 }

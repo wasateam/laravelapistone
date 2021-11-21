@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\CartHelper;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
+use Illuminate\Support\Facades\Log;
 
 class EcpayController extends Controller
 {
@@ -65,6 +66,6 @@ class EcpayController extends Controller
 
   public function callback_ecpay_inpay_order(Request $request)
   {
-    Log::info(json_encode($request->all()));
+    Log::info($request->all());
   }
 }

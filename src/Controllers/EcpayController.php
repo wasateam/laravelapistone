@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Wasateam\Laravelapistone\Helpers\CartHelper;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
-use Illuminate\Support\Facades\Log;
 
 class EcpayController extends Controller
 {
@@ -25,7 +25,7 @@ class EcpayController extends Controller
     $order_product_names = CartHelper::getOrderProductNames($shop_cart_products);
 
     $user             = Auth::user();
-    $MerchantMemberID = config('stone.auth.uuid') ? $user->uuid : $user->id;
+    $MerchantMemberID = config('stone.auth.uuid') && $user->uuid ? $user->uuid : $user->id;
     $pay_data         = EcpayHelper::getInpayInitData([
       "OrderInfo"    => [
         "MerchantTradeNo"   => EcpayHelper::newMerchantTradeNo(),

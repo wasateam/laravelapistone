@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Wasateam\Laravelapistone\Helpers\EmailHelper;
 use Wasateam\Laravelapistone\Helpers\FcmHelper;
 use Wasateam\Laravelapistone\Tests\Feature\TestContactRequest;
+use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 
 class CommandStoneTest extends Command
 {
@@ -53,6 +54,12 @@ class CommandStoneTest extends Command
         "type"    => "FcmTset",
         "message" => "A data message",
       ],["cH8wqgZbnEvpn_pOrCD5rU:APA91bHeCVqRnJTMXscqvDZL5YNs3XNzzb7mtaVifqpuJeBHSm1uIcDXqcYrIMxagEyGQGh9Q6lsKi_rA-fvaAEbHcSL1Xuj__VqLhTN-MnXmvpGFZvttuWrKIpf12OQ6wLhs_MnJK0R"]);
+    }
+    if ($target == 'ecpay-inpay-token'){
+      $pay_data = EcpayHelper::getInpayInitData();
+      $token = EcpayHelper::getMerchantToken($pay_data);
+      error_log('token');
+      error_log($token);
     }
     return 0;
   }

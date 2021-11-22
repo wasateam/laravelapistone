@@ -9,6 +9,7 @@ use Wasateam\Laravelapistone\Helpers\CartHelper;
 
 class EcpayHelper
 {
+  # 取得加密檔案
   public static function getEncryptData($data, $type = 'payment')
   {
     $invoice_mode = config('stone.invoice.mode');
@@ -25,6 +26,7 @@ class EcpayHelper
     return $data_encrypt;
   }
 
+  # 取得解密檔案
   public static function getDecryptData($data_encrypt, $type = 'payment')
   {
     $invoice_mode = config('stone.invoice.mode');
@@ -40,6 +42,7 @@ class EcpayHelper
     return json_decode($data_decode);
   }
 
+  # 取得商品Token，準備站內付
   public static function getMerchantToken($data)
   {
     $mode         = config('stone.thrid_party_payment.mode');
@@ -65,6 +68,7 @@ class EcpayHelper
     }
   }
 
+  # 生成商品編號
   public static function newMerchantTradeNo()
   {
     $time = Carbon::now()->timestamp;
@@ -72,6 +76,7 @@ class EcpayHelper
     return "{$time}{$str}";
   }
 
+  # 取得站內付初始化資料，準備開始站內付
   public static function getInpayInitData($data = [])
   {
     $initData = [
@@ -108,15 +113,16 @@ class EcpayHelper
         "Name"             => "Test",
       ],
     ];
-    if ($data['ConsumerInfo']) {
+    if (array_key_exists('ConsumerInfo', $data)) {
       $initData['ConsumerInfo'] = $data['ConsumerInfo'];
     }
-    if ($data['OrderInfo']) {
+    if (array_key_exists('OrderInfo', $data)) {
       $initData['OrderInfo'] = $data['OrderInfo'];
     }
     return $initData;
   }
 
+  # 站內付送出，建立付費動作
   public static function createPayment($PayToken, $MerchantTradeNo)
   {
     $mode         = config('stone.thrid_party_payment.mode');
@@ -148,6 +154,7 @@ class EcpayHelper
 
   }
 
+  # 建立發票
   public static function createInvoice($data)
   {
     $mode         = config('stone.invoice.mode');

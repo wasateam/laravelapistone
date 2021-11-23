@@ -22,6 +22,10 @@ class FeaturedClassController extends Controller
   public $input_fields = [
     'name',
     'icon',
+    'sequence',
+  ];
+  public $order_fields = [
+    'sequence',
   ];
   public $uuid = false;
 
@@ -31,7 +35,7 @@ class FeaturedClassController extends Controller
       $this->uuid = true;
     }
     if (config('stone.mode') == 'cms') {
-      $this->belongs_to_many[] = "shop_product";
+      $this->belongs_to_many[] = "shop_products";
     }
   }
 

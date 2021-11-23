@@ -92,7 +92,6 @@ class ShopOrderController extends Controller
   public $resource                = 'Wasateam\Laravelapistone\Resources\ShopOrder';
   public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\ShopOrderCollection';
   public $input_fields            = [
-    'type',
     'orderer',
     'orderer_tel',
     'orderer_birthday',
@@ -137,6 +136,7 @@ class ShopOrderController extends Controller
   ];
   public $filter_fields = [
     'type',
+    'order_type',
   ];
   public $belongs_to = [
     'user',
@@ -191,7 +191,6 @@ class ShopOrderController extends Controller
    * Store
    *
    * @bodyParam user int 人員 Example:1
-   * @bodyParam type string 訂單類型 Example:type
    * @bodyParam orderer string 訂購者 Example:orderer_name
    * @bodyParam orderer_tel string 訂購者電話 Example:0900-000-000
    * @bodyParam orderer_birthday string 訂購者生日 Example:1000-10-10
@@ -249,6 +248,7 @@ class ShopOrderController extends Controller
       }
       $my_cart_products  = $request->shop_cart_products;
       $_my_cart_products = [];
+      $order_type        = "";
       foreach ($my_cart_products as $my_cart_product) {
         $cart_product = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
         if (!$cart_product) {
@@ -266,6 +266,12 @@ class ShopOrderController extends Controller
             'message' => 'products not enough;',
           ], 400);
         }
+        if (isset($order_type) && $cart_product->shop_product->order_type != $order_type) {
+          return response()->json([
+            'message' => 'product is not same order type.',
+          ], 400);
+        }
+        $order_type          = $cart_product->shop_product->order_type;
         $_my_cart_products[] = $cart_product;
       }
 
@@ -295,7 +301,7 @@ class ShopOrderController extends Controller
       }
 
       # Shop Order Shop Product
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($my_cart_products, $invoice_number) {
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($my_cart_products, $invoice_number, $order_type) {
         foreach ($my_cart_products as $my_cart_product) {
           $new_order_product                       = new ShopOrderShopProduct;
           $cart_product                            = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->first();
@@ -319,6 +325,11 @@ class ShopOrderController extends Controller
         }
         ShopHelper::changeShopOrderPrice($model->id);
 
+        # Order Type
+        if ($order_type) {
+          $model->order_type = $order_type;
+          $model->save();
+        }
         # Invoice
         if ($invoice_number) {
           $model->invoice_number = $invoice_number;
@@ -342,7 +353,6 @@ class ShopOrderController extends Controller
    * update
    *
    * @urlParam  shop_order required The ID of shop_order. Example: 1
-   * @bodyParam type string 訂單類型 No-example
    * @bodyParam orderer string 訂購者 Example:orderer_name
    * @bodyParam orderer_tel string 訂購者電話 Example:0900-000-000
    * @bodyParam orderer_birthday string 訂購者生日 Example:1000-10-10

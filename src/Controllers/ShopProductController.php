@@ -17,6 +17,8 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Im
  * header 要帶 "Content-Type": "multipart/form-data",
  *
  * fields ----
+ * type 類型
+ * order_type 訂單類型 如要建立訂單，商品的訂單類型皆需一致，不然無法建立訂單
  * name 商品名稱
  * subtitle 商品副標
  * on_time 上架時間
@@ -53,6 +55,7 @@ class ShopProductController extends Controller
   public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\ShopProductCollection';
   public $input_fields            = [
     'type',
+    'order_type',
     'no',
     'name',
     'subtitle',
@@ -91,6 +94,7 @@ class ShopProductController extends Controller
     'is_active',
     'status',
     'type',
+    'order_type',
     'source',
     'store_temperature',
   ];
@@ -139,6 +143,8 @@ class ShopProductController extends Controller
    * @queryParam featured_classes ids 精選分類  No-example
    * @queryParam areas ids 地區  No-example
    * @queryParam area_sections ids 子地區  No-example
+   * @queryParam type ids 類型  No-example
+   * @queryParam order_type ids 訂單類型  No-example
    *
    */
   public function index(Request $request, $id = null)
@@ -166,6 +172,8 @@ class ShopProductController extends Controller
   /**
    * Store
    *
+   * @bodyParam type string 類型 Example: 類型
+   * @bodyParam order_type string 訂單類型 Example: 訂單類型
    * @bodyParam name string 商品名稱 Example: 商品名稱
    * @bodyParam subtitle string 商品副標 Example: 商品副標
    * @bodyParam on_time datetime 上架時間 Example: 2021-10-10
@@ -211,6 +219,8 @@ class ShopProductController extends Controller
    * Update
    *
    * @urlParam  shop_product required The ID of shop_product. Example: 1
+   * @bodyParam type string 類型 Example: 類型
+   * @bodyParam order_type string 訂單類型 Example: 訂單類型
    * @bodyParam name string 商品名稱 Example: 商品名稱
    * @bodyParam subtitle string 商品副標 Example: 商品副標
    * @bodyParam on_time datetime 上架時間 Example: 2021-10-10

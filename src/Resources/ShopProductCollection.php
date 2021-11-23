@@ -42,6 +42,9 @@ class ShopProductCollection extends JsonResource
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
       }
+      if (config('stone.featured_class')) {
+        $res['featured_classes'] = FeaturedClass_R0::collection($this->featured_classes);
+      }
     } else if (config('stone.mode') == 'webapi') {
       $res = [
         'id'                          => $this->id,
@@ -66,6 +69,9 @@ class ShopProductCollection extends JsonResource
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
+      }
+      if (config('stone.featured_class')) {
+        $res['featured_classes'] = FeaturedClass_R0::collection($this->featured_classes);
       }
     }
     return $res;

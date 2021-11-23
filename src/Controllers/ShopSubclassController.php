@@ -23,6 +23,7 @@ class ShopSubclassController extends Controller
     'name',
     'sq',
     'type',
+    'icon',
   ];
   public $belongs_to = [
     'shop_class',
@@ -34,7 +35,7 @@ class ShopSubclassController extends Controller
     'sq',
   ];
   public $order_by = 'sq';
-  public $uuid = false;
+  public $uuid     = false;
 
   public function __construct()
   {

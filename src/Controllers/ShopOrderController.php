@@ -247,7 +247,8 @@ class ShopOrderController extends Controller
           'message' => 'products required.',
         ], 400);
       }
-      $my_cart_products = $request->shop_cart_products;
+      $my_cart_products  = $request->shop_cart_products;
+      $_my_cart_products = [];
       foreach ($my_cart_products as $my_cart_product) {
         $cart_product = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
         if (!$cart_product) {
@@ -265,17 +266,18 @@ class ShopOrderController extends Controller
             'message' => 'products not enough;',
           ], 400);
         }
+        $_my_cart_products[] = $cart_product;
       }
 
       # invoice
-      $invoice_number;
+      $invoice_number = null;
       if (config('stone.invoice')) {
         if (config('stone.invoice.service') == 'ecpay') {
           if ($request->has('invoice_type') && $request->has('invoice_carrier_number')) {
             $invoice_type           = $request->invoice_type;
             $invoice_carrier_number = $request->invoice_carrier_number;
-            $order_amount           = CartHelper::getOrderAmount($my_cart_products);
-            $items                  = EcpayHelper::getInvoiceItemsFromShopCartProducts($my_cart_products);
+            $order_amount           = CartHelper::getOrderAmount($_my_cart_products);
+            $items                  = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
             if ($invoice_type == 'mobile') {
               $post_data = EcpayHelper::getInvoicePostData([
                 'CarrierType'  => 3,

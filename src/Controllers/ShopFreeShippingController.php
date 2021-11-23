@@ -42,6 +42,7 @@ class ShopFreeShippingController extends Controller
     "end_date",
     "created_at",
     "updated_at",
+    'price',
   ];
   public $time_fields = [
     "created_at",

@@ -14,4 +14,8 @@ class ShopSubclass extends Model
   {
     return $this->belongsTo(ShopClass::class, 'shop_class_id');
   }
+
+  protected $casts = [
+    'icon' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
+  ];
 }

@@ -550,13 +550,15 @@ class ModelHelper
         $_rule_strings = [];
         $rule_strings  = explode(" ", $rule);
         foreach ($rule_strings as $rule_string_key => $rule_string) {
-          if (strpos($rule_string, 'unique')) {
-            $_rule_strings[] = $rule_string . ',' . $id;
+          if (strpos($rule_string, 'unique') && $key == 'id' && $id) {
+            $_rule_strings[] = $rule_string . ',' . 'id' . ',' . $id;
+          } else if (strpos($rule_string, 'unique')) {
+            $_rule_strings[] = $rule_string . ',' . $key . ',' . $id;
           } else {
             $_rule_strings[] = $rule_string;
           }
         }
-        $_rules[] = implode('|', $_rule_strings);
+        $_rules[$key] = implode('|', $_rule_strings);
       }
       $rules = $_rules;
     }

@@ -14,4 +14,8 @@ class FeaturedClass extends Model
   {
     return $this->belongsToMany(ShopProduct::class, 'featured_class_shop_product', 'featured_class_id', 'shop_product_id');
   }
+
+  protected $casts = [
+    'icon' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
+  ];
 }

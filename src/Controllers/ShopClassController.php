@@ -23,6 +23,7 @@ class ShopClassController extends Controller
     'name',
     'sq',
     'type',
+    'icon',
   ];
   public $belongs_to = [
   ];

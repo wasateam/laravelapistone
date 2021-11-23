@@ -16,6 +16,7 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * @group 訂單
  *
  * type 訂單類型
+ * no 訂單編號
  * orderer 訂購人
  * orderer_tel 訂購人電話
  * orderer_birthday 訂購人生日
@@ -52,7 +53,6 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * invoice_uniform_number 發票統一編號
  * invoice_email 發票信箱
  * shop_cart_products 訂單商品
- * ecpay_merchant_trade_no 綠界訂單編號
  * ecpay_merchant_id 綠界特店編號
  * ecpay_trade_no 綠界的交易編號
  * ecpay_charge_fee 手續費
@@ -132,7 +132,6 @@ class ShopOrderController extends Controller
     'invoice_address',
     'invoice_uniform_number',
     'invoice_email',
-    'ecpay_merchant_trade_no',
   ];
   public $search_fields = [
   ];
@@ -231,7 +230,6 @@ class ShopOrderController extends Controller
    * @bodyParam invoice_address string 發票地址 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
    * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1}]
-   * @bodyParam ecpay_merchant_trade_no string No-Example
    */
 
   public function store(Request $request, $id = null)
@@ -380,7 +378,6 @@ class ShopOrderController extends Controller
    * @bodyParam invoice_company_name 發票公司名稱 string Example: 山葵組設計股份有限公司
    * @bodyParam invoice_address string 發票地址 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
-   * @bodyParam ecpay_merchant_trade_no string No-Example
    *
    */
   public function update(Request $request, $id)

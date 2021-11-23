@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\CartHelper;
+use Illuminate\Support\Facades\Log;
 
 class EcpayHelper
 {
@@ -176,6 +177,7 @@ class EcpayHelper
     if ($res->status() == '200') {
       $res_json = $res->json();
       $res_data = self::getDecryptData($res_json['Data'], 'invoice');
+      Log::info($res_data);
       return $res_data->InvoiceNo;
     }
   }

@@ -67,13 +67,11 @@ class EcpayController extends Controller
 
   public function callback_ecpay_inpay_order(Request $request)
   {
-    Log::info($request->all());
-    Log::info($request->Data);
     $res = EcpayHelper::getDecryptData($request->Data);
     if ($res->RtnMsg != 1) {
       return '1|OK';
     }
-    $shop_order = ShopOrder::where('ecpay_merchant_trade_no', $res->OrderInfo->MerchantTradeNo);
+    $shop_order = ShopOrder::where('no', $res->OrderInfo->MerchantTradeNo);
     if (!$shop_order) {
       return;
     }

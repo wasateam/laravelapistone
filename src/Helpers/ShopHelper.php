@@ -85,7 +85,7 @@ class ShopHelper
     return $total;
   }
 
-  public static function sameFreeDuration($start_date, $end_date)
+  public static function sameFreeDuration($start_date, $end_date, $id = null)
   {
     //是否有重複區間的免運門檻
     $snap = null;
@@ -100,7 +100,11 @@ class ShopHelper
         })->orWhere(function ($query) use ($start_date, $end_date) {
           $query->where('start_date', '<=', Carbon::parse($end_date))->where('end_date', '>=', Carbon::parse($end_date));
         });
-      })->first();
+      });
+      if ($id) {
+        $snap = $snap->where('id', '!=', $id);
+      }
+      $snap = $snap->first();
     }
     if (isset($snap)) {
       return true;

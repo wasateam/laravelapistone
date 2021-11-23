@@ -504,7 +504,7 @@ class RoutesHelper
 
     # Third Party Payment
     if (config('stone.thrid_party_payment')) {
-      # Ecpay Insite Pay Test
+      # Ecpay Inpay
       if (config('stone.thrid_party_payment.service') == 'ecpay_inpay') {
         Route::post('ecpay/inpay/merchant_init', [EcpayController::class, 'get_inpay_merchant_init']);
         Route::post('ecpay/inpay/create_payment', [EcpayController::class, 'inpay_create_payment']);
@@ -527,6 +527,7 @@ class RoutesHelper
     Route::resource('user_service_plan_record', UserServicePlanRecordController::class)->only([
       'index', 'show',
     ])->shallow();
+
     # UserAddress
     Route::resource('user_address', UserAddressController::class)->only([
       'index',
@@ -540,6 +541,14 @@ class RoutesHelper
     if (config('stone.appointment')) {
       Route::resource('appointment', AppointmentController::class)->only([
         'index', 'show', 'store',
+      ])->shallow();
+    }
+
+    # Shop
+    if (config('stone.shop')) {
+      # Shop Order
+      Route::resource('shop_order', ShopOrderController::class)->only([
+        'index', 'show',
       ])->shallow();
     }
   }
@@ -677,9 +686,9 @@ class RoutesHelper
       ])->shallow();
       # Shop Order
       Route::resource('shop_order', ShopOrderController::class)->only([
-        'show', 'store',
+        'store',
       ])->shallow();
-      Route::get('/auth/shop_order', [ShopOrderController::class, 'auth_shop_order_index']);
+      // Route::get('/auth/shop_order', [ShopOrderController::class, 'auth_shop_order_index']);
       # Shop Order Product
       Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
         'index', 'show', 'store',

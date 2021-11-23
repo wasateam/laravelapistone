@@ -94,6 +94,15 @@ return [
       'card_safe_no'            => env('ECPAY_CARD_SAFE_NO', "222"),
     ],
   ],
+  'invoice'             => [
+    'service'    => 'ecpay',
+    'mode'       => env('ECPAY_MODE', 'dev'),
+    'delay'      => 3,
+    'notify_url' => env('APP_URL') . env('ECPAY_INVOICE_NOTIFY_URL', "/api/callback/invoice/notify"),
+    'ecpay'      => [
+      'merchant_id' => env('ECPAY_MERCHANT_ID', "2000132"),
+    ],
+  ],
   'test'                => [
     'receive_mail' => env('STONE_TEST_RECEIVE_MAIL', 'hello@wasateam.com'),
   ],

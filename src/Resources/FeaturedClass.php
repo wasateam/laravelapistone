@@ -20,11 +20,13 @@ class FeaturedClass extends JsonResource
         'updated_at' => $this->updated_at,
         'created_at' => $this->created_at,
         'name'       => $this->name,
+        'icon'       => $this->icon,
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
         'id'   => $this->id,
         'name' => $this->name,
+        'icon' => $this->icon,
       ];
     }
   }

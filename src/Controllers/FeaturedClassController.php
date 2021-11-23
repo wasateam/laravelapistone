@@ -5,7 +5,6 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
@@ -22,16 +21,17 @@ class FeaturedClassController extends Controller
   public $resource     = 'Wasateam\Laravelapistone\Resources\FeaturedClass';
   public $input_fields = [
     'name',
+    'icon',
   ];
-  public $belongs_to_many = [
-    'shop_product',
-  ];
-  public $uuid              = false;
+  public $uuid = false;
 
   public function __construct()
   {
     if (config('stone.shop.uuid')) {
       $this->uuid = true;
+    }
+    if (config('stone.mode') == 'cms') {
+      $this->belongs_to_many[] = "shop_product";
     }
   }
 
@@ -48,8 +48,8 @@ class FeaturedClassController extends Controller
   /**
    * Store
    *
-   * @bodyParam name string No-example
-   * @bodyParam shop_product id No-example
+   * @bodyParam name string Example:name
+   * @bodyParam shop_product id Example:1
    */
   public function store(Request $request, $id = null)
   {
@@ -70,8 +70,8 @@ class FeaturedClassController extends Controller
    * Update
    *
    * @urlParam  featured_class required The ID of featured_class. Example: 1
-   * @bodyParam name string No-example
-   * @bodyParam shop_product id No-example
+   * @bodyParam name string Example:name
+   * @bodyParam shop_product id Example:1
    */
   public function update(Request $request, $id)
   {

@@ -241,7 +241,7 @@ class ShopOrderController extends Controller
       }
 
       # invoice
-      $invoice_number;
+      $invoice_number = null;
       if (config('stone.invoice')) {
         if (config('stone.invoice.service') == 'ecpay') {
           if ($request->has('invoice_type') && $request->has('invoice_carrier_number')) {

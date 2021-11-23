@@ -68,9 +68,10 @@ return [
     ],
   ],
   'shop'                => [
-    'uuid'      => true,
-    'pre_order' => true,
-    'current'   => true,
+    'uuid'              => true,
+    'pre_order'         => true,
+    'current'           => true,
+    'custom_shop_order' => true,
   ],
   'file_upload'         => 'laravel_signed',
   'privacy_terms'       => true,

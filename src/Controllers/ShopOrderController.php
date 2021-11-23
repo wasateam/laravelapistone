@@ -5,7 +5,6 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
-use Wasateam\Laravelapistone\Helpers\CartHelper;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
@@ -42,6 +41,9 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * customer_service_remark 客戶服務備註
  * pay_type 付款類型
  * pay_status 付款狀態
+ * ~ sumulate-paid: 模擬測試付款
+ * ~ paid: 已付款
+ * ~ not-paid: 未付款
  * invoice_number 發票號碼
  * invoice_status 發票狀態
  * invoice_type 發票類型
@@ -280,22 +282,28 @@ class ShopOrderController extends Controller
       if (config('stone.invoice')) {
         if (config('stone.invoice.service') == 'ecpay') {
           if ($request->has('invoice_type') && $request->has('invoice_carrier_number')) {
-            $invoice_type           = $request->invoice_type;
-            $invoice_carrier_number = $request->invoice_carrier_number;
-            $order_amount           = CartHelper::getOrderAmount($_my_cart_products);
-            $items                  = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
-            if ($invoice_type == 'mobile') {
-              $post_data = EcpayHelper::getInvoicePostData([
-                'CarrierType'  => 3,
-                'CarrierNum'   => $invoice_carrier_number,
-                'CustomerName' => $request->orderer,
-                'TaxType'      => 1,
-                'Print'        => 0,
-                'Items'        => $items,
-                'SalesAmount'  => $order_amount,
-              ]);
+
+            try {
+              $invoice_type           = $request->invoice_type;
+              $invoice_carrier_number = $request->invoice_carrier_number;
+              $order_amount           = ShopHelper::getOrderAmount($_my_cart_products);
+              $items                  = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
+              if ($invoice_type == 'mobile') {
+                $post_data = EcpayHelper::getInvoicePostData([
+                  'CarrierType'  => 3,
+                  'CarrierNum'   => $invoice_carrier_number,
+                  'CustomerName' => $request->orderer,
+                  'TaxType'      => 1,
+                  'Print'        => 0,
+                  'Items'        => $items,
+                  'SalesAmount'  => $order_amount,
+                ]);
+              }
+              $invoice_status = 'done';
+              $invoice_number = EcpayHelper::createInvoice($post_data);
+            } catch (\Throwable $th) {
+              $invoice_status = 'fail';
             }
-            $invoice_number = EcpayHelper::createInvoice($post_data);
           }
         }
       }
@@ -331,8 +339,11 @@ class ShopOrderController extends Controller
           $model->save();
         }
         # Invoice
-        if ($invoice_number) {
-          $model->invoice_number = $invoice_number;
+        if ($invoice_status) {
+          $model->invoice_status = $invoice_status;
+          if ($invoice_status == 'done') {
+            $model->invoice_number = $invoice_number;
+          }
           $model->save();
         }
       });

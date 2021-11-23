@@ -5,8 +5,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use Wasateam\Laravelapistone\Helpers\CartHelper;
-use Illuminate\Support\Facades\Log;
+use Wasateam\Laravelapistone\Helpers\ShopHelper;
 
 class EcpayHelper
 {
@@ -69,16 +68,8 @@ class EcpayHelper
     }
   }
 
-  # 生成商品編號
-  public static function newMerchantTradeNo()
-  {
-    $time = Carbon::now()->timestamp;
-    $str  = Str::random(8);
-    return "{$time}{$str}";
-  }
-
   # 取得站內付初始化資料，準備開始站內付
-  public static function getInpayInitData($data = [])
+  public static function getInpayInitData($data = [], $order_type)
   {
     $initData = [
       "MerchantID"        => config('stone.thrid_party_payment.ecpay_inpay.merchant_id'),
@@ -86,7 +77,7 @@ class EcpayHelper
       "PaymentUIType"     => 2,
       "ChoosePaymentList" => "1,2,3,4,5",
       "OrderInfo"         => [
-        "MerchantTradeNo"   => self::newMerchantTradeNo(),
+        "MerchantTradeNo"   => ShopHelper::newShopOrderNo(),
         "MerchantTradeDate" => Carbon::now()->format('Y/m/d H:i:s'),
         "TotalAmount"       => 100,
         "ReturnURL"         => config('stone.thrid_party_payment.ecpay_inpay.insite_order_return_url'),
@@ -393,7 +384,7 @@ class EcpayHelper
   {
     $items = [];
     foreach ($shop_cart_products as $shop_cart_product) {
-      $amount  = CartHelper::getOrderProductAmountPrice($shop_cart_product);
+      $amount  = ShopHelper::getOrderProductAmountPrice($shop_cart_product);
       $items[] = [
         // "ItemSeq"     => 1,
         "ItemName"    => $shop_cart_product['name'],

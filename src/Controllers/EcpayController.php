@@ -6,9 +6,8 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Wasateam\Laravelapistone\Helpers\CartHelper;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
+use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 
 class EcpayController extends Controller
@@ -22,14 +21,20 @@ class EcpayController extends Controller
     }
     $shop_cart_products = $request->shop_cart_products;
 
-    $order_price         = CartHelper::getOrderAmount($shop_cart_products);
-    $order_product_names = CartHelper::getOrderProductNames($shop_cart_products);
+    $order_price         = ShopHelper::getOrderAmount($shop_cart_products);
+    $order_product_names = ShopHelper::getOrderProductNames($shop_cart_products);
+    $order_type          = ShopHelper::getOrderType($shop_cart_products);
 
     $user             = Auth::user();
     $MerchantMemberID = config('stone.auth.uuid') && $user->uuid ? $user->uuid : $user->id;
-    $pay_data         = EcpayHelper::getInpayInitData([
+    if (config('stone.shop.custom_shop_order')) {
+      $shop_order_no = \App\Helpers\AppHelper::newShopOrderNo($order_type);
+    } else {
+      $shop_order_no = ShopHelper::newShopOrderNo();
+    }
+    $pay_data = EcpayHelper::getInpayInitData([
       "OrderInfo"    => [
-        "MerchantTradeNo"   => EcpayHelper::newMerchantTradeNo(),
+        "MerchantTradeNo"   => $shop_order_no,
         "MerchantTradeDate" => Carbon::now()->format('Y/m/d H:i:s'),
         "TotalAmount"       => $order_price,
         "ReturnURL"         => config('stone.thrid_party_payment.ecpay_inpay.insite_order_return_url'),
@@ -42,7 +47,7 @@ class EcpayController extends Controller
         "Phone"            => $request->has('orderer_tel') ? $request->email : "",
         "Name"             => $request->has('orderer') ? $request->email : "",
       ],
-    ]);
+    ], $order_type);
     $token = EcpayHelper::getMerchantToken($pay_data);
     return response()->json([
       'token'           => $token,

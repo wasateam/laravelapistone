@@ -117,7 +117,7 @@ class ShopFreeShippingController extends Controller
         'message' => 'need start_date and end_date.',
       ], 400);
     }
-    $has_same = ShopHelper::sameFreeDuration($request->start_date, $request->end_date);
+    $has_same = ShopHelper::sameFreeDuration($request->start_date, $request->end_date, $id);
     if ($has_same) {
       return response()->json([
         'message' => 'this date already has shop_free_shipping.',

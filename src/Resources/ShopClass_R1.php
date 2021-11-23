@@ -22,6 +22,7 @@ class ShopClass_R1 extends JsonResource
         'name'       => $this->name,
         'sq'         => $this->sq,
         'type'       => $this->type,
+        'icon'       => $this->icon,
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
@@ -32,6 +33,7 @@ class ShopClass_R1 extends JsonResource
         'name' => $this->name,
         'sq'   => $this->sq,
         'type' => $this->type,
+        'icon' => $this->icon,
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;

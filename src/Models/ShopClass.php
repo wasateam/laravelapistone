@@ -14,4 +14,8 @@ class ShopClass extends Model
   {
     return $this->hasMany(ShopSubclass::class)->orderBy('sq');
   }
+
+  protected $casts = [
+    'icon' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
+  ];
 }

@@ -22,6 +22,7 @@ class ShopSubclass extends JsonResource
         'name'       => $this->name,
         'sq'         => $this->sq,
         'type'       => $this->type,
+        'icon'       => $this->icon,
         'shop_class' => new ShopClass_R1($this->shop_class),
       ];
       if (config('stone.shop.uuid')) {
@@ -33,6 +34,7 @@ class ShopSubclass extends JsonResource
         'name'       => $this->name,
         'sq'         => $this->sq,
         'type'       => $this->type,
+        'icon'       => $this->icon,
         'shop_class' => new ShopClass_R1($this->shop_class),
       ];
       if (config('stone.shop.uuid')) {

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\CartHelper;
+use Illuminate\Support\Facades\Log;
 
 class EcpayHelper
 {
@@ -57,7 +58,7 @@ class EcpayHelper
       "MerchantID" => config('stone.thrid_party_payment.ecpay_inpay.merchant_id'),
       "RqHeader"   => [
         "Timestamp" => Carbon::now()->timestamp,
-        "Revision"  => "1.0.0",
+        "Revision"  => "1.3.15",
       ],
       "Data"       => $data_encrypt,
     ]);
@@ -141,7 +142,7 @@ class EcpayHelper
       "MerchantID" => config('stone.thrid_party_payment.ecpay_inpay.merchant_id'),
       "RqHeader"   => [
         "Timestamp" => Carbon::now()->timestamp,
-        "Revision"  => "1.0.0",
+        "Revision"  => "1.3.15",
       ],
       "Data"       => $data_encrypt,
     ]);
@@ -168,7 +169,7 @@ class EcpayHelper
       "MerchantID" => config('stone.invoice.ecpay.merchant_id'),
       "RqHeader"   => [
         "Timestamp" => Carbon::now()->timestamp,
-        "Revision"  => "1.0.0",
+        "Revision"  => "1.3.15",
       ],
       "Data"       => $data_encrypt,
     ]);
@@ -176,7 +177,7 @@ class EcpayHelper
     if ($res->status() == '200') {
       $res_json = $res->json();
       $res_data = self::getDecryptData($res_json['Data'], 'invoice');
-      error_log(json_encode($res_data));
+      Log::info($res_data);
       return $res_data->InvoiceNo;
     }
   }
@@ -285,7 +286,7 @@ class EcpayHelper
       "MerchantID" => config('stone.invoice.ecpay.merchant_id'),
       "RqHeader"   => [
         "Timestamp" => Carbon::now()->timestamp,
-        "Revision"  => "1.0.0",
+        "Revision"  => "1.3.15",
       ],
       "Data"       => $data_encrypt,
     ]);

@@ -16,6 +16,7 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * @group 訂單
  *
  * type 訂單類型
+ * no 訂單編號
  * orderer 訂購人
  * orderer_tel 訂購人電話
  * orderer_birthday 訂購人生日
@@ -40,6 +41,9 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * ship_status 運送狀態
  * customer_service_remark 客戶服務備註
  * pay_type 付款類型
+ * pay_status 付款狀態
+ * invoice_number 發票號碼
+ * invoice_status 發票狀態
  * invoice_type 發票類型
  * invoice_carrier_number 發票載具編號
  * invoice_tax_type 發票含稅狀態
@@ -49,8 +53,35 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * invoice_uniform_number 發票統一編號
  * invoice_email 發票信箱
  * shop_cart_products 訂單商品
- * ecpay_merchant_trade_no 綠界訂單編號
- *
+ * ecpay_merchant_id 綠界特店編號
+ * ecpay_trade_no 綠界的交易編號
+ * ecpay_charge_fee 手續費
+ * pay_at 付款時間
+ * csv_pay_from CSV_繳費超商
+ * csv_payment_no CSV_繳費代碼
+ * csv_payment_url CSV_繳費連結
+ * barcode_pay_from Barcode_繳費超商
+ * atm_acc_bank ATM_付款人銀行代碼
+ * atm_acc_no 付款人銀行帳號後五碼
+ * card_auth_code 信用卡或銀聯卡_銀行授權碼
+ * card_gwsr 信用卡或銀聯卡_授權交易單號
+ * card_process_at 信用卡或銀聯卡_交易時間
+ * card_amount 信用卡或銀聯卡_金額
+ * card_pre_six_no 信用卡或銀聯卡_信用卡卡號前六碼
+ * card_last_four_no 信用卡或銀聯卡_信用卡卡號末四碼
+ * card_stage 信用卡或銀聯卡_分期期數
+ * card_stast 信用卡或銀聯卡_首期金額
+ * card_staed 信用卡或銀聯卡_各期金額
+ * card_red_dan 信用卡或銀聯卡_紅利扣點
+ * card_red_de_amt 信用卡或銀聯卡_紅利折抵金額
+ * card_red_ok_amt 信用卡或銀聯卡_實際扣款金額
+ * card_red_yet 信用卡或銀聯卡_紅利剩餘點數
+ * card_period_type 信用卡或銀聯卡_訂單建立時的所設定的週期種類
+ * card_frequency 信用卡或銀聯卡_訂單建立時的所設定的執行頻率
+ * card_exec_times 信用卡或銀聯卡_訂單建立時的所設定的執行次數
+ * card_period_amount 信用卡或銀聯卡_訂單建立時的每次要授權金額
+ * card_total_success_times 信用卡或銀聯卡_目前已成功授權的次數
+ * card_total_success_amount 信用卡或銀聯卡_目前已成功授權的金額合計
  * @authenticated
  *
  */
@@ -84,7 +115,7 @@ class ShopOrderController extends Controller
     'ship_date',
     'ship_status',
     'customer_service_remark',
-    'pay_type',
+    // 'pay_type',
     // 'pay_status',
     // 'discounts',
     // 'freight',
@@ -100,7 +131,6 @@ class ShopOrderController extends Controller
     'invoice_address',
     'invoice_uniform_number',
     'invoice_email',
-    'ecpay_merchant_trade_no',
   ];
   public $search_fields = [
   ];
@@ -187,8 +217,6 @@ class ShopOrderController extends Controller
    * @bodyParam ship_date text 出貨日期 Example:2021-10-11 21:00:00
    * @bodyParam ship_status text 出貨狀態 Example:ship_status
    * @bodyParam customer_service_remark text 客服備註 Example:customer_service_remark
-   * @bodyParam pay_type text  付款方式 Example:pay_type
-   * @bodyParam pay_status text  付款狀態 Example:pay_status
    * @bodyParam discounts text  優惠活動 Example:discounts
    * @bodyParam freight text 運費  Example:freight
    * @bodyParam products_price text  商品總金額 Example:products_price
@@ -200,8 +228,7 @@ class ShopOrderController extends Controller
    * @bodyParam invoice_company_name 發票公司名稱 string Example: 山葵組設計股份有限公司
    * @bodyParam invoice_address string 發票地址 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
-   * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1,"count":1}]
-   * @bodyParam ecpay_merchant_trade_no string No-Example
+   * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1}]
    */
 
   public function store(Request $request, $id = null)
@@ -352,8 +379,6 @@ class ShopOrderController extends Controller
    * @bodyParam ship_date text 出貨日期 Example:2021-10-11 21:00:00
    * @bodyParam ship_status text 出貨狀態 Example:ship_status
    * @bodyParam customer_service_remark text 客服備註 Example:customer_service_remark
-   * @bodyParam pay_type text  付款方式 Example:pay_type
-   * @bodyParam pay_status text  付款狀態 Example:pay_status
    * @bodyParam discounts text  優惠活動 Example:discounts
    * @bodyParam freight text 運費  Example:freight
    * @bodyParam products_price text  商品總金額 Example:products_price
@@ -365,7 +390,6 @@ class ShopOrderController extends Controller
    * @bodyParam invoice_company_name 發票公司名稱 string Example: 山葵組設計股份有限公司
    * @bodyParam invoice_address string 發票地址 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
-   * @bodyParam ecpay_merchant_trade_no string No-Example
    *
    */
   public function update(Request $request, $id)

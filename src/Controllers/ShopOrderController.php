@@ -201,7 +201,7 @@ class ShopOrderController extends Controller
    * @bodyParam invoice_company_name 發票公司名稱 string Example: 山葵組設計股份有限公司
    * @bodyParam invoice_address string 發票地址 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
-   * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1}]
+   * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1,"count":1}]
    * @bodyParam ecpay_merchant_trade_no string No-Example
    */
 
@@ -220,7 +220,8 @@ class ShopOrderController extends Controller
           'message' => 'products required.',
         ], 400);
       }
-      $my_cart_products = $request->shop_cart_products;
+      $my_cart_products  = $request->shop_cart_products;
+      $_my_cart_products = [];
       foreach ($my_cart_products as $my_cart_product) {
         $cart_product = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
         if (!$cart_product) {
@@ -238,6 +239,7 @@ class ShopOrderController extends Controller
             'message' => 'products not enough;',
           ], 400);
         }
+        $_my_cart_products[] = $cart_product;
       }
 
       # invoice
@@ -247,8 +249,8 @@ class ShopOrderController extends Controller
           if ($request->has('invoice_type') && $request->has('invoice_carrier_number')) {
             $invoice_type           = $request->invoice_type;
             $invoice_carrier_number = $request->invoice_carrier_number;
-            $order_amount           = CartHelper::getOrderAmount($my_cart_products);
-            $items                  = EcpayHelper::getInvoiceItemsFromShopCartProducts($my_cart_products);
+            $order_amount           = CartHelper::getOrderAmount($_my_cart_products);
+            $items                  = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
             if ($invoice_type == 'mobile') {
               $post_data = EcpayHelper::getInvoicePostData([
                 'CarrierType'  => 3,

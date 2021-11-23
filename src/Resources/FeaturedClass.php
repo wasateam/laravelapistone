@@ -21,6 +21,7 @@ class FeaturedClass extends JsonResource
         'created_at' => $this->created_at,
         'name'       => $this->name,
         'icon'       => $this->icon,
+        'sequence'   => $this->sequence,
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [

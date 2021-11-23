@@ -280,6 +280,7 @@ class ShopOrderController extends Controller
       }
 
       # invoice
+      $invoice_status = null;
       $invoice_number = null;
       if (config('stone.invoice')) {
         if (config('stone.invoice.service') == 'ecpay') {
@@ -311,7 +312,7 @@ class ShopOrderController extends Controller
       }
 
       # Shop Order Shop Product
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($my_cart_products, $invoice_number, $order_type) {
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($my_cart_products, $invoice_status, $invoice_number, $order_type) {
         foreach ($my_cart_products as $my_cart_product) {
           $new_order_product                       = new ShopOrderShopProduct;
           $cart_product                            = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->first();

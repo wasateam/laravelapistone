@@ -54,8 +54,10 @@ class ShopHelper
     //運費 default = 100
     $free_freight_price = ShopFreeShipping::where('end_date', '>=', $today_date)->where('start_date', '<=', $today_date)->first();
     $freight            = 100;
-    if ($free_freight_price && $shop_product_price_total >= $free_freight_price) {
-      $freight = 0;
+    if ($free_freight_price) {
+      if ($shop_product_price_total >= $free_freight_price->price) {
+        $freight = 0;
+      }
     }
 
     $order_price = $shop_product_price_total + $freight;

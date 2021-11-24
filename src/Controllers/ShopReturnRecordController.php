@@ -14,9 +14,23 @@ use Wasateam\Laravelapistone\Models\ShopReturnRecord;
 /**
  * @group 商品退貨紀錄
  *
- * @authenticated
- *
  * 商品退貨紀錄API
+ *
+ * index,store,update,delete,show 欄位
+ * count 退貨數量
+ * remark 備註
+ * return_reason 退貨理由
+ * user 誰的訂單
+ * shop_order 訂單
+ * shop_order_shop_product 訂單商品
+ * shop_product 商品(原始商品)
+ *
+ * return all 欄位
+ * shop_orders 需退訂訂單ids
+ * remark 備註
+ * return_reason 退貨理由
+ *
+ * @authenticated
  */
 class ShopReturnRecordController extends Controller
 {
@@ -27,6 +41,7 @@ class ShopReturnRecordController extends Controller
   public $input_fields            = [
     'count',
     'remark',
+    'return_reason',
   ];
   public $belongs_to = [
     'user',
@@ -87,6 +102,7 @@ class ShopReturnRecordController extends Controller
    * @bodyParam shop_product int 商品 Example:1
    * @bodyParam count int 數量 Example:1
    * @bodyParam remark string 備註 Example:remark
+   * @bodyParam return_reason string 退貨理由 Example:reason
    */
   public function store(Request $request, $id = null)
   {
@@ -137,6 +153,7 @@ class ShopReturnRecordController extends Controller
    * @bodyParam count int 數量 Example:1
    * @bodyParam price int 價格 Example:1
    * @bodyParam remark string 備註 Example:remark
+   * @bodyParam return_reason string 退貨理由 Example:reason
    */
   public function update(Request $request, $id)
   {
@@ -154,5 +171,54 @@ class ShopReturnRecordController extends Controller
   public function destroy($id)
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
+  }
+
+  /**
+   * Return All
+   *
+   * @bodyParam shop_orders object 訂單 Example:[1,2,3]
+   * @bodyParam remark string 備註 Example:remark
+   * @bodyParam return_reason string 退貨理由 Example:remark
+   */
+  public function return_all(Request $request)
+  {
+    if (!has($request->shop_orders) || count($request->shop_orders)) {
+      return response()->json([
+        'message' => 'need shop_orders',
+      ], 400);
+    }
+    $order_arr = $request->shop_orders;
+    foreach ($order_arr as $order_id) {
+      //get shop_order
+      $shop_order = ShopOrder::where('id', $order_id)->first();
+      if (!$shop_order) {
+        return response()->json([
+          'message' => 'shop order no data',
+        ], 400);
+      }
+      // get shop_order_shop_products in shop_order
+      $shop_order_shop_products = ShopOrderShopProduct::where('shop_order_id', $shop_order->id)->get();
+      // create shop_return_record for shop_order_shop_product
+      foreach ($shop_order_shop_products as $shop_order_shop_product) {
+        //shop_order_shop_product's count > 0
+        if ($shop_order_shop_product->count) {
+          $shop_return_record                             = new ShopReturnRecord;
+          $shop_return_record->user_id                    = $shop_order->user_id;
+          $shop_return_record->shop_order_id              = $shop_order->id;
+          $shop_return_record->shop_order_shop_product_id = $shop_order_shop_product->id;
+          $shop_return_record->count                      = $shop_order_shop_product->count;
+          $shop_return_record->price                      = $shop_order_shop_product->price;
+          $shop_return_record->remark                     = $request->remark ? $request->remark : null;
+          $shop_return_record->return_reason              = $request->return_reason ? $request->return_reason : null;
+          $shop_return_record->save();
+          ShopHelper::returnProductChangeCount($shop_return_record->id);
+        }
+      }
+      // refresh shop order price
+      ShopHelper::changeShopOrderPrice($shop_order->id);
+    }
+    return response()->json([
+      "message" => 'shop order returned.',
+    ], 201);
   }
 }

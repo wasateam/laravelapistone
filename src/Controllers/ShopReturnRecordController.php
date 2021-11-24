@@ -25,6 +25,11 @@ use Wasateam\Laravelapistone\Models\ShopReturnRecord;
  * shop_order_shop_product 訂單商品
  * shop_product 商品(原始商品)
  *
+ * return all 欄位
+ * shop_orders 需退訂訂單ids
+ * remark 備註
+ * return_reason 退貨理由
+ *
  * @authenticated
  */
 class ShopReturnRecordController extends Controller

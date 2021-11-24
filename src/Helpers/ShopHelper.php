@@ -72,6 +72,7 @@ class ShopHelper
 
   public static function changeShopOrderPrice($shop_order_id)
   {
+    //更新訂單價格
     $shop_order                 = ShopOrder::where('id', $shop_order_id)->first();
     $price_array                = Self::calculateShopOrderPrice($shop_order_id);
     $shop_order->products_price = $price_array['products_price'];

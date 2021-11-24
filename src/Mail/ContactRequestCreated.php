@@ -27,8 +27,10 @@ class ContactRequestCreated extends Mailable
    */
   public function build()
   {
-    return $this->subject('新的聯絡請求')->view('wasa.mail.contact_request')->with([
+    $fields = config('stone.contact_request.fields');
+    return $this->subject('New Contact Request')->view('wasa.mail.contact_request')->with([
       'contact_request' => $this->contact_request,
+      'fields'          => $fields,
     ]);
   }
 }

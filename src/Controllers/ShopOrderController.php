@@ -21,6 +21,8 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * orderer_birthday 訂購人生日
  * orderer_email 訂購人信箱
  * orderer_gender 訂購人性別
+ * ~ girl: 女森
+ * ~ boy: 男森
  * receiver 收件人
  * receiver_tel 收件人電話
  * receiver_email 收件人信箱

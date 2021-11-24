@@ -46,7 +46,15 @@ return [
   'area'                => true,
   'system_class'        => true,
   'contact_request'     => [
-    'notify_mail' => 'hello@wasateam.com',
+    // 'notify_mail' => 'hello@wasateam.com',
+    'fields' => [
+      'name'         => true,
+      'email'        => true,
+      'tel'          => true,
+      'company_name' => true,
+      'remark'       => true,
+      'budget'       => false,
+    ],
   ],
   'locale'              => false,
   'service_store'       => false,
@@ -107,4 +115,5 @@ return [
   'test'                => [
     'receive_mail' => env('STONE_TEST_RECEIVE_MAIL', 'hello@wasateam.com'),
   ],
+  'country_code'        => true,
 ];

@@ -42,22 +42,20 @@ class EmailHelper
     }
   }
 
-  public static function notify_contact_request($contact_request)
+  public static function notify_contact_request($contact_request, $mails)
   {
-
-    $email = config('stone.contact_request.notify_mail');
     if (config('stone.mail.service') == 'stmp') {
-      Mail::to($email)->send(new ContactRequestCreated($contact_request));
+      Mail::to($mails)->send(new ContactRequestCreated($contact_request));
     } else if (config('stone.mail.service') == 'surenotify') {
+      $recipients = [];
+      foreach ($mails as $mail) {
+        $recipients[] = [
+          "address" => $email,
+        ];
+      }
       self::mail_send_surenotify('wasa.mail.contact_request', [
         'contact_request' => $contact_request,
-      ], '新的聯絡請求', config('mail.from.name'), config('mail.from.address'),
-        [
-          [
-            "address" => $email,
-          ],
-        ]
-      );
+      ], 'New Contact Request', config('mail.from.name'), config('mail.from.address'), $recipients);
     }
   }
 

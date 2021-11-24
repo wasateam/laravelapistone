@@ -16,6 +16,7 @@ use Wasateam\Laravelapistone\Controllers\CalendarHighlightController;
 use Wasateam\Laravelapistone\Controllers\CMSAdminController;
 use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
+use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
@@ -293,6 +294,9 @@ class RoutesHelper
     # ContactRequest
     if (config('stone.contact_request')) {
       Route::resource('contact_request', ContactRequestController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('contact_request_notify_mail', ContactRequestNotifyMailController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }

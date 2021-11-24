@@ -4,8 +4,8 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Wasateam\Laravelapistone\Helpers\EmailHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Models\ContactRequestNotifyMail;
 
 /**
  * @group  ContactRequest
@@ -86,9 +86,26 @@ class ContactRequestController extends Controller
       return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
         $model->ip = \Request::ip();
         $model->save();
-        if (config('stone.contact_request.notify_mail')) {
-          EmailHelper::notify_contact_request($model);
+        // if (config('stone.contact_request.notify_mail')) {
+        //   EmailHelper::notify_contact_request($model);
+        // }
+        $notify_emails = [];
+        $notifies;
+        if (config('stone.country_code')) {
+          if ($model->country_code) {
+            $notifies = ContactRequestNotifyMail::where('country_code', $model->country_code);
+          } else {
+            $notifies = ContactRequestNotifyMail::whereNull('country_code');
+          }
+        } else {
+          $notifies = ContactRequestNotifyMail::all();
         }
+        if ($notifies) {
+          foreach ($notifies as $notify) {
+            $notify_emails[] = $notify->email;
+          }
+        }
+        EmailHelper::notify_contact_request($model, $notify_emails);
       });
     }
   }

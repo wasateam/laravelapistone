@@ -175,6 +175,10 @@
    .page-break {
       page-break-after: always;
     }
+
+    * {
+    font-family: TaipeiSansTCBeta;
+    }
     .pdf-file {
       padding: 72px;
     }

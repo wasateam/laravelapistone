@@ -27,6 +27,8 @@ class ContactRequestAutoReplyController extends Controller
     $snap = GeneralContent::where('name', 'contact-request-auto-reply');
     if ($request->has('country_code')) {
       $snap = $snap->where('country_code', $request->country_code);
+    } else {
+      $snap = $snap->whereNull('country_code');
     }
     $model = $snap->first();
     if (!$model) {
@@ -57,6 +59,8 @@ class ContactRequestAutoReplyController extends Controller
     $snap = GeneralContent::where('name', 'contact-request-auto-reply');
     if ($request->has('country_code')) {
       $snap = $snap->where('country_code', $request->country_code);
+    } else {
+      $snap = $snap->whereNull('country_code');
     }
     $model = $snap->first();
     if (!$model) {

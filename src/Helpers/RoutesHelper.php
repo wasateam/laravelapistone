@@ -15,6 +15,7 @@ use Wasateam\Laravelapistone\Controllers\AuthController;
 use Wasateam\Laravelapistone\Controllers\CalendarHighlightController;
 use Wasateam\Laravelapistone\Controllers\CMSAdminController;
 use Wasateam\Laravelapistone\Controllers\CmsLogController;
+use Wasateam\Laravelapistone\Controllers\ContactRequestAutoReplyController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
@@ -299,6 +300,10 @@ class RoutesHelper
       Route::resource('contact_request_notify_mail', ContactRequestNotifyMailController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      if (config('stone.contact_request.auto_reply')) {
+        Route::get('contact_request_auto_reply', [ContactRequestAutoReplyController::class, 'show']);
+        Route::patch('contact_request_auto_reply', [ContactRequestAutoReplyController::class, 'update']);
+      }
     }
 
     # UserDeviceToken
@@ -743,6 +748,9 @@ class RoutesHelper
       Route::resource('contact_request', ContactRequestController::class)->only([
         'store',
       ])->shallow();
+      if (config('stone.contact_request.auto_reply')) {
+        Route::get('contact_request_auto_reply', [ContactRequestAutoReplyController::class, 'show']);
+      }
     }
   }
 

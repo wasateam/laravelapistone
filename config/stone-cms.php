@@ -65,7 +65,9 @@ return [
   'tag'                => true,
   'area'               => true,
   'system_class'       => true,
-  'contact_request'    => false,
+  'contact_request'    => [
+    'auto_reply' => true,
+  ],
   'locale'             => false,
   'notification'       => [
     'notifiable_type_user' => 'Wasateam\Laravelapistone\Models\Admin',

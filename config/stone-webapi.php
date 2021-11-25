@@ -47,7 +47,7 @@ return [
   'system_class'        => true,
   'contact_request'     => [
     // 'notify_mail' => 'hello@wasateam.com',
-    'fields' => [
+    'fields'     => [
       'name'         => true,
       'email'        => true,
       'tel'          => true,
@@ -55,6 +55,7 @@ return [
       'remark'       => true,
       'budget'       => false,
     ],
+    'auto_reply' => true,
   ],
   'locale'              => false,
   'service_store'       => false,

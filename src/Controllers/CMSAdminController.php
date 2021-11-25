@@ -10,8 +10,18 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * @group Admin
  *
  * @authenticated
+ ** name 名稱
+ * email Email
+ * email_verified_at Email 驗證時間
+ * password 密碼
+ * status 帳號狀態
+ * avatar 大頭貼
+ * settings 相關設定
+ * scopes 使用權限
+ * is_active 是否啟用
+ * sequence 排列順序設定值
+ * country_code 國家代碼
  *
- * APIs for admin
  */
 class CMSAdminController extends Controller
 {
@@ -22,10 +32,14 @@ class CMSAdminController extends Controller
     'password.min' => 'password too short.',
     'email.unique' => 'email has been token.',
   ];
-  public $validation_rules = [
+  public $store_validation_rules = [
     'email'    => "required|string|email|unique:admins",
     'password' => 'required|string|min:6',
     'name'     => 'required|string|min:1|max:40',
+  ];
+  public $validation_rules = [
+    'email' => "required|string|email|unique:admins",
+    'name'  => 'required|string|min:1|max:40',
   ];
   public $input_fields = [
     'name',
@@ -60,12 +74,10 @@ class CMSAdminController extends Controller
 
   public function __construct()
   {
-
     if (config('stone.admin_role')) {
       $this->belongs_to_many[]        = 'roles';
       $this->filter_belongs_to_many[] = 'roles';
     }
-
     if (config('stone.admin_group')) {
       if (config('stone.admin_blur')) {
         $this->belongs_to_many[]        = 'cmser_groups';
@@ -74,6 +86,10 @@ class CMSAdminController extends Controller
         $this->belongs_to_many[]        = 'admin_groups';
         $this->filter_belongs_to_many[] = 'admin_groups';
       }
+    }
+    if (config('stone.country_code')) {
+      $this->input_fields[]  = 'country_code';
+      $this->filter_fields[] = 'country_code';
     }
   }
 
@@ -102,6 +118,7 @@ class CMSAdminController extends Controller
    * @bodyParam admin_groups object Example:1
    * @bodyParam cmser_groups object Example:1
    * @bodyParam scopes object Example:[]
+   * @bodyParam country_code string Example:tw
    */
   public function store(Request $request, $id = null)
   {
@@ -134,6 +151,7 @@ class CMSAdminController extends Controller
    * @bodyParam admin_groups object Example:1
    * @bodyParam cmser_groups object Example:1
    * @bodyParam scopes object Example:[]
+   * @bodyParam country_code string Example:tw
    */
   public function update(Request $request, $id)
   {

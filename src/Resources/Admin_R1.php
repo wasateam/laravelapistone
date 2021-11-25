@@ -17,6 +17,7 @@ class Admin_R1 extends JsonResource
     return [
       'id'            => $this->id,
       'name'          => $this->name,
+      'country_code'  => $this->country_code,
       'pocket_avatar' => new PocketImage_R1($this->pocket_avatar),
     ];
   }

@@ -79,6 +79,7 @@ class TulpaPageController extends Controller
       }
     }
     if (config('stone.country_code')) {
+      $this->input_fields[] = 'country_code';
       $this->filter_fields[] = 'country_code';
     }
   }

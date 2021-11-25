@@ -13,14 +13,14 @@ use Illuminate\Support\Facades\Route;
 Route::group([
   "middleware" => ["auth:admin"],
 ], function () {
-# Boss
+  # Boss
   Route::group([
     "middleware" => ["scopes:boss"],
   ], function () {
     \Wasateam\Laravelapistone\Helpers\RoutesHelper::cms_boss_routes();
   });
 
-# Admin
+  # Admin
   Route::group([
     "middleware" => ["scopes:admin"],
   ], function () {

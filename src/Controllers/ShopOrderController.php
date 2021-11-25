@@ -4,11 +4,15 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Auth;
+use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
+use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
 
 /**
@@ -424,6 +428,78 @@ class ShopOrderController extends Controller
   public function destroy($id)
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
+  }
+
+  /**
+   * Export Pdf Signedurl
+   *
+   * @queryParam shop_orders  訂單ids No-example 1,2,3
+   */
+  public function export_pdf_signedurl(Request $request)
+  {
+    $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
+    return URL::temporarySignedRoute(
+      'shop_order_export_pdf',
+      now()->addMinutes(30),
+      ['shop_orders' => $shop_orders]
+    );
+  }
+
+  /**
+   * Export Pdf
+   *
+   */
+  public function export_pdf(Request $request)
+  {
+    $_shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
+    error_log(json_encode($_shop_orders));
+    if (!$_shop_orders) {
+      return response()->json([
+        'message' => 'required shop_orders;',
+      ], 400);
+    }
+    $shop_order_ids = array_map('intval', explode(',', $_shop_orders));
+    // $datas = [];
+    foreach ($shop_order_ids as $shop_order_id) {
+      //order data
+      $shop_order = ShopOrder::find($shop_order_id);
+      if (!$shop_order) {
+        return response()->json([
+          'message' => 'no shop_order;',
+        ], 400);
+      }
+      $delivery_time = Carbon::parse($shop_order->delivery_date)->format('Y-m-d') . '/' . $shop_order->ship_start_time . '-' . $shop_order->ship_end_time;
+      $orderer       = $shop_order->orderer . '/' . $shop_order->orderer_tel;
+      $order_data    = [
+        'id'              => $shop_order->id,
+        'delivery_time'   => $delivery_time,
+        'no'              => $shop_order->no,
+        'orderer'         => $orderer,
+        'activity'        => '',
+        'receiver'        => $shop_order->receiver,
+        'order_date'      => Carbon::parse($shop_order->created_at)->format('Y-m-d'),
+        'receiver_tel'    => $shop_order->receiver_tel,
+        'receive_address' => $shop_order->receive_address,
+        'receive_way'     => $shop_order->receive_way,
+        'receive_remark'  => $shop_order->receive_remark,
+      ];
+
+      //products in shop order
+      $shop_order_shop_products = [];
+      if ($shop_order->shop_order_shop_products) {
+        $shop_order_shop_products = ShopHelper::fetchShopOrderProduct($shop_order->shop_order_shop_products);
+      }
+      $order_data['shop_order_shop_products'] = $shop_order_shop_products;
+
+      // $datas[] = $order_data;
+      //pdf
+      $pdf = PDF::loadView('wasa.pdf.shop_order_picking_export', [
+        'export_time' => Carbon::now()->format('Y.m.d H:i:s'),
+        'shop_order'  => $order_data,
+      ]);
+      return $pdf->download('揀貨單.pdf');
+    }
+
   }
 
   /**

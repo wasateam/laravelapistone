@@ -44,7 +44,7 @@ class EmailHelper
 
   public static function notify_contact_request($contact_request, $mails)
   {
-    if (config('stone.mail.service') == 'stmp') {
+    if (config('stone.mail.service') == 'smtp') {
       Mail::to($mails)->send(new ContactRequestCreated($contact_request));
     } else if (config('stone.mail.service') == 'surenotify') {
       $recipients = [];

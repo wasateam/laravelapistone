@@ -48,6 +48,11 @@ class ServiceStore extends Model
     return $this->hasMany(Appointment::class, 'service_store_id')->where('date', '>', $target_day->format('Y-m-d'));
   }
 
+  public function area()
+  {
+    return $this->belongsTo(Area::class, 'area_id');
+  }
+
   protected $casts = [
     'cover_image'            => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
     'business_hours'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,

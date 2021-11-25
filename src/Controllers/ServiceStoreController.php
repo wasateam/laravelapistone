@@ -39,6 +39,7 @@ class ServiceStoreController extends Controller
     'work_on_holiday',
     'service_at_night',
   ];
+  public $belongs_to      = [];
   public $belongs_to_many = [
   ];
   public $search_fields = [
@@ -86,6 +87,11 @@ class ServiceStoreController extends Controller
 
     if (config('stone.appointment')) {
       $this->input_fields[] = 'appointment_availables';
+    }
+
+    if (config('stone.area')) {
+      $this->belongs_to[]        = 'area';
+      $this->filter_belongs_to[] = 'area';
     }
   }
 

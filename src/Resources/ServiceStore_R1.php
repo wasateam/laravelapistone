@@ -32,6 +32,10 @@ class ServiceStore_R1 extends JsonResource
     if (config('stone.appointment')) {
       $res['appointment_availables'] = $this->appointment_availables;
     }
+
+    if (config('stone.area')) {
+      $res['area'] = new Area_R1($this->area);
+    }
     return $res;
   }
 }

@@ -4,9 +4,11 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Wasateam\Laravelapistone\Mail\ContactRequestAutoReply;
 use Wasateam\Laravelapistone\Mail\ContactRequestCreated;
 use Wasateam\Laravelapistone\Mail\PasswordResetRequest;
 use Wasateam\Laravelapistone\Mail\Test;
+use Wasateam\Laravelapistone\Models\GeneralContent;
 
 class EmailHelper
 {
@@ -73,6 +75,33 @@ class EmailHelper
           ],
         ]
       );
+    }
+  }
+
+  public static function contact_request_auto_reply($contact_request)
+  {
+    $snap = GeneralContent::where('name', 'contact-request-auto-reply');
+    if ($contact_request->country_code) {
+      $snap = $snap->where('country_code', $contact_request->country_code);
+    } else {
+      $snap = $snap->whereNull('country_code');
+    }
+    $auto_reply = $snap->first();
+    if (!$auto_reply) {
+      return;
+    }
+
+    if (config('stone.mail.service') == 'smtp') {
+      Mail::to($contact_request->email)->send(new ContactRequestAutoReply($auto_reply));
+    } else if (config('stone.mail.service') == 'surenotify') {
+      $recipients = [
+        [
+          "address" => $contact_request->email,
+        ],
+      ];
+      self::mail_send_surenotify('wasa.mail.contact_request_auto_reply', [
+        'auto_reply'=>$auto_reply
+      ], '', config('mail.from.name'), config('mail.from.address'), $recipients);
     }
   }
 }

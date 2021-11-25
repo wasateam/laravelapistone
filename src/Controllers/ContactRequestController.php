@@ -104,6 +104,9 @@ class ContactRequestController extends Controller
           }
         }
         EmailHelper::notify_contact_request($model, $notify_emails);
+        if (config('stone.contact_request.auto_reply')) {
+          EmailHelper::contact_request_auto_reply($model);
+        }
       });
     }
   }

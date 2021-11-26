@@ -54,6 +54,11 @@ class UserMy extends JsonResource
     if (config('stone.user.address')) {
       $res['addresses'] = UserAddress::collection($this->addresses);
     }
+    if (config('stone.user.carriers')) {
+      $res['carrier_email']       = $this->carrier_email;
+      $res['carrier_phone']       = $this->carrier_phone;
+      $res['carrier_certificate'] = $this->carrier_certificate;
+    }
     return $res;
   }
 }

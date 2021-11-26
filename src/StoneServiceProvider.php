@@ -169,6 +169,10 @@ class StoneServiceProvider extends ServiceProvider
         }
       }
 
+      $this->publishes([
+        __DIR__ . '/../resources/views/wasa/pdf' => resource_path('views/wasa/pdf'),
+      ], 'views-shop-order-picking');
+
       # Publish
       $publishes                                         = [];
       $publishes[__DIR__ . '/../config/auth_admin.php']  = $this->app->configPath('auth.php');

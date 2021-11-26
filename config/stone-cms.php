@@ -48,6 +48,7 @@ return [
     'is_bad'              => true,
     'bonus_points'        => true,
     'reset_password_mail' => true,
+    'carriers'            => true,
     //如果地址無類別，改成true
     'address'             => [
       'delivery' => [
@@ -79,9 +80,10 @@ return [
   'pin_card'           => false,
   'calendar_highlight' => false,
   'shop'               => [
-    'uuid'      => true,
-    'pre_order' => true,
-    'current'   => true,
+    'uuid'         => true,
+    'pre_order'    => true,
+    'current'      => true,
+    'order_export' => true,
   ],
   // multiple layers
   'featured_class'     => true,

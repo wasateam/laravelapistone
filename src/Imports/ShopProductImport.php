@@ -25,6 +25,9 @@ class ShopProductImport implements ToCollection
         $import_record->stock_count     = $data[2];
         $import_record->storage_space   = $data[3];
         $import_record->save();
+        $shop_product->stock_count   = $data[2];
+        $shop_product->storage_space = $data[3];
+        $shop_product->save();
       }
 
     }

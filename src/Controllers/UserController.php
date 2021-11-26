@@ -13,9 +13,34 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 /**
  * @group User
  *
- * @authenticated
- *
  * APIs for user
+ *
+ * name
+ * email
+ * email_verified_at email認證時間
+ * password 密碼
+ * status
+ * avatar 頭像
+ * settings
+ * description
+ * scopes 權限
+ * tel 電話
+ * payload
+ * is_active 是否啟用
+ * sequence 排序
+ * updated_admin_at
+ * verified_at 認證時間
+ * byebye_at 刪除(實際上資料還在)
+ * mama_language 常用語言
+ * is_bad 黑名單 bad bad user
+ * bonus_points 紅利點數
+ * birthday 生日
+ * gender 性別
+ * carrier_email 信箱載具
+ * carrier_phone 電話載具
+ * carrier_certificate 自然人憑證載具
+ *
+ * @authenticated
  */
 class UserController extends Controller
 {
@@ -27,8 +52,9 @@ class UserController extends Controller
     'email.unique' => 'email has been token.',
   ];
   public $validation_rules = [
-    'email' => "required|string|email|unique:users",
-    'name'  => 'required|string|min:1|max:40',
+    'email'         => "required|string|email|unique:users",
+    'name'          => 'required|string|min:1|max:40',
+    'carrier_email' => 'email|string',
   ];
   public $input_fields = [
     'name',
@@ -91,6 +117,11 @@ class UserController extends Controller
     if (config('stone.user.bonus_points')) {
       $this->input_fields[] = 'bonus_points';
     }
+    if (config('stone.user.carriers')) {
+      $this->input_fields[] = 'carrier_email';
+      $this->input_fields[] = 'carrier_phone';
+      $this->input_fields[] = 'carrier_certificate';
+    }
   }
 
   /**
@@ -122,6 +153,9 @@ class UserController extends Controller
    * @bodyParam birthday date No-example
    * @bodyParam gender string Example:male,female
    * @bodyParam is_active boolean No-example
+   * @bodyParam carrier_email string Example:aa@aa.com
+   * @bodyParam carrier_phone string Example:0900000000
+   * @bodyParam carrier_certificate string Example:123456789
    */
   public function store(Request $request, $id = null)
   {
@@ -158,6 +192,9 @@ class UserController extends Controller
    * @bodyParam birthday date No-example
    * @bodyParam gender string Example:male,female
    * @bodyParam is_active boolean No-example
+   * @bodyParam carrier_email string Example:aa@aa.com
+   * @bodyParam carrier_phone string Example:0900000000
+   * @bodyParam carrier_certificate string Example:123456789
    */
   public function update(Request $request, $id)
   {

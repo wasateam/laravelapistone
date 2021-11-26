@@ -268,5 +268,8 @@ class ShopProductController extends Controller
   public function import_excel(Request $request)
   {
     Excel::import(new ShopProductImport, $request->file('file'));
+    return response()->json([
+      'message' => 'import success.',
+    ], 201);
   }
 }

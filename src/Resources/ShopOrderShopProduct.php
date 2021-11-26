@@ -29,7 +29,7 @@ class ShopOrderShopProduct extends JsonResource
       'cost'                => $this->cost,
       'count'               => $this->count,
       'discount_price'      => $this->discount_price,
-      'shop_order'          => new ShopOrder_R0($this->shop_order),
+      'shop_order'          => new ShopOrder_R1($this->shop_order),
       'shop_product'        => new ShopProduct_R0($this->shop_product),
       'shop_cart_product'   => new ShopCartProduct($this->shop_cart_product),
       'shop_return_records' => ShopReturnRecord_R0::collection($this->shop_return_records),

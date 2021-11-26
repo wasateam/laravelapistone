@@ -422,6 +422,9 @@ class RoutesHelper
       Route::resource('shop_order', ShopOrderController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      if (config('stone.shop.order_export')) {
+        Route::get('shop_order/export/pdf/signedurl', [ShopOrderController::class, 'export_pdf_signedurl']);
+      }
       # Shop Order Product
       Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
@@ -438,7 +441,7 @@ class RoutesHelper
       Route::resource('shop_return_record', ShopReturnRecordController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
-      Route::post('shop_return_record/return/all', [ShopProductController::class, 'return_all']);
+      Route::post('shop_return_record/return/all', [ShopReturnRecordController::class, 'return_all']);
       # Shop Free Shipping
       Route::resource('shop_free_shipping', ShopFreeShippingController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
@@ -491,6 +494,17 @@ class RoutesHelper
       ], function () {
         if (config('stone.user.export')) {
           Route::get('user/export/excel', [UserController::class, 'export_excel'])->name('user_export_excel');
+        }
+
+      });
+    }
+
+    if (config('stone.shop')) {
+      Route::group([
+        "middleware" => ["signed"],
+      ], function () {
+        if (config('stone.shop.order_export')) {
+          Route::get('shop_order/export/pdf', [ShopOrderController::class, 'export_pdf'])->name('shop_order_export_pdf');
         }
 
       });

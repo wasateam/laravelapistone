@@ -166,4 +166,21 @@ class ShopHelper
     error_log($model->shop_product->order_type);
     return $model->shop_product->order_type;
   }
+
+  //pdf 整理訂單裡的商品格式
+  public static function fetchShopOrderProduct($order_products)
+  {
+    $datas = [];
+    foreach ($order_products as $order_product) {
+      $datas[] = [
+        'id'              => $order_product->id,
+        'name'            => $order_product->name,
+        'spec'            => $order_product->spec,
+        'weight_capacity' => $order_product->weight_capacity,
+        'storage_space'   => $order_product->shop_product->storage_space,
+        'count'           => $order_product->count,
+      ];
+    }
+    return $datas;
+  }
 }

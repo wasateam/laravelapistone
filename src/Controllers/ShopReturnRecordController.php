@@ -182,7 +182,7 @@ class ShopReturnRecordController extends Controller
    */
   public function return_all(Request $request)
   {
-    if (!has($request->shop_orders) || count($request->shop_orders)) {
+    if (!$request->has('shop_orders') || count($request->shop_orders)) {
       return response()->json([
         'message' => 'need shop_orders',
       ], 400);

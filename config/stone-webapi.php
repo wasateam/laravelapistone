@@ -10,9 +10,10 @@ return [
     'acl'     => true,
   ],
   'mail'                => [
-    'service'    => env('gmail'), // gmail, surenotify
+    'service'    => env('MAIL_MAILER'), // gmail, surenotify
     'api_key'    => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
+    'test_mail'  => env('MAIL_API_DOMAIN', 'wasalearn@gmail.com'),
   ],
   'app_url'             => env('APP_URL'),
   'web_url'             => env('WEB_URL'),
@@ -47,7 +48,7 @@ return [
   'system_class'        => true,
   'contact_request'     => [
     // 'notify_mail' => 'hello@wasateam.com',
-    'fields' => [
+    'fields'     => [
       'name'         => true,
       'email'        => true,
       'tel'          => true,
@@ -55,6 +56,7 @@ return [
       'remark'       => true,
       'budget'       => false,
     ],
+    'auto_reply' => true,
   ],
   'locale'              => false,
   'service_store'       => false,

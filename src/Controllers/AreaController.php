@@ -9,7 +9,9 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 /**
  * @group Area
  *
- * @authenticated
+ * sequence 順序
+ * name 名稱
+ * country_code 國家代碼
  *
  * APIs for area
  */
@@ -30,6 +32,14 @@ class AreaController extends Controller
     'created_at',
   ];
 
+  public function __construct()
+  {
+    if (config('stone.country_code')) {
+      $this->input_fields[]  = 'country_code';
+      $this->filter_fields[] = 'country_code';
+    }
+  }
+
   /**
    * Index
    *
@@ -46,6 +56,7 @@ class AreaController extends Controller
    *
    * @bodyParam  sequence string Example:1
    * @bodyParam  name string Example:aaa
+   * @bodyParam country_code string No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -68,6 +79,7 @@ class AreaController extends Controller
    * @urlParam  area required The ID of area. Example: 1
    * @bodyParam  sequence string Example:1
    * @bodyParam  name string Example:aaa
+   * @bodyParam country_code string No-example
    */
   public function update(Request $request, $id)
   {

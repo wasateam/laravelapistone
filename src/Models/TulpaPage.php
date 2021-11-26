@@ -53,5 +53,6 @@ class TulpaPage extends Model
     'content'       => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
     'og_image'      => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
     'canonical_url' => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
+    'route' => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
   ];
 }

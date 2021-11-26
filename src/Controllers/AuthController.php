@@ -260,6 +260,18 @@ class AuthController extends Controller
     if ($request->has('description')) {
       $user->description = $request->description;
     }
+    if ($request->has('gender')) {
+      $user->gender = $request->gender;
+    }
+    if ($request->has('carrier_email')) {
+      $user->carrier_email = $request->carrier_email;
+    }
+    if ($request->has('carrier_phone')) {
+      $user->carrier_phone = $request->carrier_phone;
+    }
+    if ($request->has('carrier_certificate')) {
+      $user->carrier_certificate = $request->carrier_certificate;
+    }
     $user->save();
     return response()->json([
       'user' => new $resource($user),

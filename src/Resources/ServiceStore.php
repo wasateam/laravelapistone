@@ -52,6 +52,9 @@ class ServiceStore extends JsonResource
         $res['appointment_availables'] = $this->appointment_availables;
         $res['appointments']           = Appointment_R1::collection($this->appointments);
       }
+      if (config('stone.area')) {
+        $res['area'] = new Area_R1($this->area);
+      }
       return $res;
     } else if (config('stone.mode') == 'webapi') {
       $res = [
@@ -79,6 +82,9 @@ class ServiceStore extends JsonResource
       if (config('stone.appointment')) {
         $res['appointment_availables'] = $this->appointment_availables;
         $res['appointments']           = Appointment_R0::collection($this->appointments);
+      }
+      if (config('stone.area')) {
+        $res['area'] = new Area_R1($this->area);
       }
       return $res;
     }

@@ -441,7 +441,7 @@ class RoutesHelper
       Route::resource('shop_return_record', ShopReturnRecordController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
-      Route::post('shop_return_record/return/all', [ShopProductController::class, 'return_all']);
+      Route::post('shop_return_record/return/all', [ShopReturnRecordController::class, 'return_all']);
       # Shop Free Shipping
       Route::resource('shop_free_shipping', ShopFreeShippingController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',

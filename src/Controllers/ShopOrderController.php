@@ -167,11 +167,12 @@ class ShopOrderController extends Controller
       $this->uuid = true;
     }
     if (config('stone.mode') == 'cms') {
-      $this->input_fields[] = 'pay_status';
-      $this->input_fields[] = 'discounts';
-      $this->input_fields[] = 'freight';
-      $this->input_fields[] = 'products_price';
-      $this->input_fields[] = 'order_price';
+      $this->input_fields[]  = 'pay_status';
+      $this->input_fields[]  = 'discounts';
+      $this->input_fields[]  = 'freight';
+      $this->input_fields[]  = 'products_price';
+      $this->input_fields[]  = 'order_price';
+      $this->filter_fields[] = 'id';
     }
   }
 

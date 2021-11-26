@@ -47,7 +47,7 @@ class CommandStoneTest extends Command
       $tester->test();
     }
     if ($target == 'mail') {
-      EmailHelper::sending_test(config('stone.contact_request.notify_mail'));
+      EmailHelper::sending_test(config('stone.mail.test_mail'));
     }
     if ($target == 'fcm') {
       FcmHelper::sendMesssage('Test', '我是測試，安安', [

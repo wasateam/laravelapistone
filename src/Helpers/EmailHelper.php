@@ -64,6 +64,8 @@ class EmailHelper
   public static function sending_test($email)
   {
     if (config('stone.mail.service') == 'smtp') {
+      error_log('smtp ok');
+      error_log('send to '.$email);
       Mail::to($email)->send(new Test());
     } else if (config('stone.mail.service') == 'surenotify') {
       self::mail_send_surenotify('wasa.mail.test', [
@@ -100,7 +102,7 @@ class EmailHelper
         ],
       ];
       self::mail_send_surenotify('wasa.mail.contact_request_auto_reply', [
-        'auto_reply'=>$auto_reply
+        'auto_reply' => $auto_reply,
       ], '', config('mail.from.name'), config('mail.from.address'), $recipients);
     }
   }

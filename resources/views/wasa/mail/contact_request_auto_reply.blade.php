@@ -1,1 +1,1 @@
-{{$auto_reply->content}}
+{!!$content!!}

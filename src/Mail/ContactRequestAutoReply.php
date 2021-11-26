@@ -27,9 +27,8 @@ class ContactRequestAutoReply extends Mailable
    */
   public function build()
   {
-    $fields = config('stone.contact_request.fields');
-    return $this->subject($this->auto_reply->title)->view('wasa.mail.contact_request_auto_reply')->with([
-      'content' => $this->auto_reply->content,
+    return $this->subject($this->auto_reply->content['title'])->view('wasa.mail.contact_request_auto_reply')->with([
+      'content' => $this->auto_reply->content['content'],
     ]);
   }
 }

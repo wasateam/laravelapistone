@@ -29,7 +29,7 @@ class EmailHelper
 
   public static function password_reset_request($url, $email)
   {
-    if (config('stone.mail.service') == 'stmp') {
+    if (config('stone.mail.service') == 'smtp') {
       Mail::to($user->email)->send(new PasswordResetRequest($url));
     } else if (config('stone.mail.service') == 'surenotify') {
       self::mail_send_surenotify('wasa.mail.reset_password_request', [
@@ -63,7 +63,7 @@ class EmailHelper
 
   public static function sending_test($email)
   {
-    if (config('stone.mail.service') == 'stmp') {
+    if (config('stone.mail.service') == 'smtp') {
       Mail::to($email)->send(new Test());
     } else if (config('stone.mail.service') == 'surenotify') {
       self::mail_send_surenotify('wasa.mail.test', [

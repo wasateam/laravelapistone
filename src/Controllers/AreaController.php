@@ -31,6 +31,9 @@ class AreaController extends Controller
     'updated_at',
     'created_at',
   ];
+  public $order_by     = 'sequence';
+  public $order_way    = 'asc';
+  public $country_code = true;
 
   public function __construct()
   {

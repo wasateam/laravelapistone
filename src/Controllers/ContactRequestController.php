@@ -9,8 +9,9 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\ContactRequestNotifyMail;
 
 /**
- * @group  ContactRequest
- *
+ * @group  聯絡請求
+ * ### ContactRequest
+ * 
  * name 名稱
  * email 信箱
  * tel 電話
@@ -44,6 +45,7 @@ class ContactRequestController extends Controller
   public $filter_fields = [];
   public $order_by      = 'created_at';
   public $order_way     = 'desc';
+  public $country_code  = true;
 
   public function __construct()
   {

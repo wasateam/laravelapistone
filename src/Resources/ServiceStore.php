@@ -55,7 +55,9 @@ class ServiceStore extends JsonResource
       if (config('stone.area')) {
         $res['area'] = new Area_R1($this->area);
       }
-      return $res;
+      if (config('stone.country_code')) {
+        $res['country_code'] = $this->country_code;
+      }
     } else if (config('stone.mode') == 'webapi') {
       $res = [
         'id'                   => $this->id,
@@ -86,7 +88,10 @@ class ServiceStore extends JsonResource
       if (config('stone.area')) {
         $res['area'] = new Area_R1($this->area);
       }
-      return $res;
+      if (config('stone.country_code')) {
+        $res['country_code'] = $this->country_code;
+      }
     }
+    return $res;
   }
 }

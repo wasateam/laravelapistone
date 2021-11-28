@@ -15,7 +15,7 @@ class ContactRequest extends JsonResource
   public function toArray($request)
   {
     if (config('stone.mode') == 'cms') {
-      return [
+      $res = [
         'id'            => $this->id,
         'created_at'    => $this->created_at,
         'updated_at'    => $this->updated_at,
@@ -27,11 +27,13 @@ class ContactRequest extends JsonResource
         'company_name'  => $this->company_name,
         'budget'        => $this->budget,
         'payload'       => $this->payload,
-        'country_code'  => $this->country_code,
         'ip'            => $this->ip,
       ];
+      if (config('stone.country_code')) {
+        $res['country_code'] = $this->country_code;
+      }
     } else if (config('stone.mode') == 'webapi') {
-      return [
+      $res = [
         'id'           => $this->id,
         'created_at'   => $this->created_at,
         'updated_at'   => $this->updated_at,
@@ -42,8 +44,11 @@ class ContactRequest extends JsonResource
         'company_name' => $this->company_name,
         'budget'       => $this->budget,
         'payload'      => $this->payload,
-        'country_code' => $this->country_code,
       ];
+      if (config('stone.country_code')) {
+        $res['country_code'] = $this->country_code;
+      }
     }
+    return $res;
   }
 }

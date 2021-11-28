@@ -1146,7 +1146,7 @@ class ModelHelper
   {
     if (config('stone.country_code') && $setting->country_code) {
       $user = Auth::user();
-      if ($user->country_code) {
+      if ($user && $user->country_code) {
         $snap = $snap->where('country_code', $user->country_code);
       }
     }
@@ -1157,7 +1157,7 @@ class ModelHelper
   {
     if (config('stone.country_code') && $setting->country_code) {
       $user = Auth::user();
-      if ($user->country_code) {
+      if ($user && $user->country_code) {
         $model->country_code = $user->country_code;
         $model->save();
       }

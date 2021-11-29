@@ -36,6 +36,8 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * bonus_points 紅利點數
  * birthday 生日
  * gender 性別
+ * ~ female: 女森
+ * ~ male: 男森
  * carrier_email 信箱載具
  * carrier_phone 電話載具
  * carrier_certificate 自然人憑證載具

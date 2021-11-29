@@ -90,6 +90,7 @@ class RoutesHelper
     "passwordpatch",
     "avatarpatch",
     "forgetpassword",
+    "email_verify",
   ]) {
     $model_name = config('stone.auth.model_name');
     $auth_scope = config('stone.auth.auth_scope');
@@ -102,8 +103,25 @@ class RoutesHelper
       if (in_array('signup', $routes)) {
         Route::post('/signup', [AuthController::class, 'signup']);
       }
+      if (in_array('email_verify', $routes)) {
+        Route::post('/email/verify/resend', [AuthController::class, 'email_verify_resend']);
+        Route::group([
+          "middleware" => ["signed"],
+        ], function () {
+          Route::post('/email/verify/{user_id}', [AuthController::class, 'email_verify'])->name('email_verify');
+        });
+      }
+
+      $auth_middlewares = ["auth:{$model_name}", "scopes:{$auth_scope}"];
+      if (config('stone.auth.verify')) {
+        if (config('stone.auth.verify.email')) {
+          $auth_middlewares[] = 'verified';
+        }
+      }
+
       Route::group([
-        "middleware" => ["auth:{$model_name}", "scopes:{$auth_scope}"],
+        "middleware" => ["auth:{$model_name}", "scopes:{$auth_scope}", "verified"],
+        // "middleware" => $auth_middlewares,
       ], function () use ($routes) {
         if (in_array('signout', $routes)) {
           Route::post('/signout', [AuthController::class, 'signout']);

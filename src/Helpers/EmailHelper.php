@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Mail;
 use Wasateam\Laravelapistone\Mail\ContactRequestAutoReply;
 use Wasateam\Laravelapistone\Mail\ContactRequestCreated;
 use Wasateam\Laravelapistone\Mail\PasswordResetRequest;
+use Wasateam\Laravelapistone\Mail\EmailVerify;
 use Wasateam\Laravelapistone\Mail\Test;
 use Wasateam\Laravelapistone\Models\GeneralContent;
 
@@ -65,7 +66,7 @@ class EmailHelper
   {
     if (config('stone.mail.service') == 'smtp') {
       error_log('smtp ok');
-      error_log('send to '.$email);
+      error_log('send to ' . $email);
       Mail::to($email)->send(new Test());
     } else if (config('stone.mail.service') == 'surenotify') {
       self::mail_send_surenotify('wasa.mail.test', [
@@ -104,6 +105,13 @@ class EmailHelper
       self::mail_send_surenotify('wasa.mail.contact_request_auto_reply', [
         'auto_reply' => $auto_reply,
       ], '', config('mail.from.name'), config('mail.from.address'), $recipients);
+    }
+  }
+
+  public static function email_verify_request($url,$email)
+  {
+    if (config('stone.mail.service') == 'smtp') {
+      Mail::to($email)->send(new EmailVerify($url));
     }
   }
 }

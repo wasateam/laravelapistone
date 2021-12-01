@@ -37,6 +37,13 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * receive_remark 收件人備註
  * package_way 包裝方式
  * status 狀態
+ * ~ 成立 established
+ * ~ 未成立 not-established
+ * ~ 申請部分退訂 return-part-apply
+ * ~ 申請全部退訂 return-all-apply
+ * ~ 部分退訂完成 return-part-complete
+ * ~ 全部退訂完成 return-all-complete
+ * ~ 訂單完成 complete
  * status_remark 狀態備註
  * receive_way 收貨方式
  * ship_way 物流方式
@@ -54,9 +61,9 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * invoice_number 發票號碼
  * invoice_status 發票狀態
  * invoice_type 發票類型
- * - 電子發票 personal,電子三聯式發票 company
+ * ~ 電子發票 personal,電子三聯式發票 company
  * invoice_carrier_type 發票載具類型
- * - mobile,email,certificate
+ * ~ mobile,email,certificate
  * invoice_carrier_number 發票載具編號(載具內容)
  * invoice_tax_type 發票含稅狀態
  * invoice_title 發票抬頭
@@ -405,6 +412,8 @@ class ShopOrderController extends Controller
           ShopHelper::shopOrderProductChangeCount($new_order_product->id);
         }
         ShopHelper::changeShopOrderPrice($model->id);
+        $model->status = 'not-established';
+        $model->save();
 
         # Order Type
         if ($order_type) {

@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
+use Wasateam\Laravelapistone\Controllers\AdminFinancePaymentRequestController;
 use Wasateam\Laravelapistone\Controllers\AdminGroupController;
 use Wasateam\Laravelapistone\Controllers\AdminRoleController;
 use Wasateam\Laravelapistone\Controllers\AdminScopeController;
@@ -493,6 +494,15 @@ class RoutesHelper
         'index',
         'show',
       ])->shallow();
+    }
+
+    # Finance
+    if (config('stone.finance')) {
+      if (config('stone.finance.payment_request')) {
+        Route::resource('admin_finance_payment_request', AdminFinancePaymentRequestController::class)->only([
+          'index', 'show', 'store', 'update', 'destroy',
+        ])->shallow();
+      }
     }
   }
 

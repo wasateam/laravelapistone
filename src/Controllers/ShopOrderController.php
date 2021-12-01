@@ -14,6 +14,7 @@ use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
+use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
 
 /**
  * @group 訂單
@@ -143,10 +144,14 @@ class ShopOrderController extends Controller
   ];
   public $search_fields = [
     'no',
+    'receiver_tel',
   ];
   public $filter_fields = [
     'type',
     'order_type',
+    'ship_status',
+    'pay_status',
+    'invoice_status',
   ];
   public $belongs_to = [
     'user',
@@ -155,6 +160,11 @@ class ShopOrderController extends Controller
     'shop_ship_time_setting',
     'area',
     'area_section',
+  ];
+  public $filter_belongs_to = [
+    'area',
+    'area_section',
+    'shop_ship_time_setting',
   ];
   public $time_fields = [
     'created_at',
@@ -184,6 +194,20 @@ class ShopOrderController extends Controller
   /**
    * Index
    *
+   * @queryParam area int 地區 No-Example 1
+   * @queryParam area_section int 子地區 No-Example 1
+   * @queryParam shop_ship_time_setting int 配送時段 No-Example 1
+   * @queryParam ship_remark string  No-example null,not_null
+   * @queryParam type string  No-example type
+   * @queryParam order_type string  No-example order_type
+   * @queryParam ship_status string  No-example ship_status
+   * @queryParam pay_status string  No-example pay_status
+   * @queryParam invoice_status string  No-example invoice_status
+   * @queryParam order_by string  No-example created_at,updated_at
+   * @queryParam order_way string  No-example asc,desc
+   * @queryParam start_time string  No-example 2020-10-10
+   * @queryParam end_time string  No-example 2021-10-11
+   * @queryParam time_field string  No-example created_at,updated_at
    */
   public function index(Request $request, $id = null)
   {
@@ -193,6 +217,20 @@ class ShopOrderController extends Controller
   /**
    * Auth Shop Order Index
    *
+   * @queryParam area int 地區 No-Example 1
+   * @queryParam area_section int 子地區 No-Example 1
+   * @queryParam shop_ship_time_setting int 配送時段 No-Example 1
+   * @queryParam ship_remark string  No-example null,not_null
+   * @queryParam type string  No-example type
+   * @queryParam order_type string  No-example order_type
+   * @queryParam ship_status string  No-example ship_status
+   * @queryParam pay_status string  No-example pay_status
+   * @queryParam invoice_status string  No-example invoice_status
+   * @queryParam order_by string  No-example created_at,updated_at
+   * @queryParam order_way string  No-example asc,desc
+   * @queryParam start_time string  No-example 2020-10-10
+   * @queryParam end_time string  No-example 2021-10-11
+   * @queryParam time_field string  No-example created_at,updated_at
    */
   public function auth_shop_order_index(Request $request, $id = null)
   {
@@ -260,6 +298,17 @@ class ShopOrderController extends Controller
       if (!$request->has('shop_cart_products') || !is_array($request->shop_cart_products)) {
         return response()->json([
           'message' => 'products required.',
+        ], 400);
+      }
+      if (!$request->has('shop_ship_time_setting')) {
+        return response()->json([
+          'message' => 'shop_ship_time_setting required.',
+        ], 400);
+      }
+      $shop_ship_time_setting = ShopShipTimeSetting::where('id', $request->shop_ship_time_setting)->first();
+      if ($shop_ship_time_setting->max_count <= count($shop_ship_time_setting->today_shop_orders)) {
+        return response()->json([
+          'message' => 'shop_ship_time_setting is max today.',
         ], 400);
       }
       $my_cart_products  = $request->shop_cart_products;
@@ -458,7 +507,6 @@ class ShopOrderController extends Controller
   public function export_pdf(Request $request)
   {
     $_shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
-    error_log(json_encode($_shop_orders));
     if (!$_shop_orders) {
       return response()->json([
         'message' => 'required shop_orders;',

@@ -54,13 +54,16 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * invoice_number 發票號碼
  * invoice_status 發票狀態
  * invoice_type 發票類型
- * invoice_carrier_number 發票載具編號
+ * - 電子發票 personal,電子三聯式發票 company
+ * invoice_carrier_type 發票載具類型
+ * - mobile,email,certificate
+ * invoice_carrier_number 發票載具編號(載具內容)
  * invoice_tax_type 發票含稅狀態
  * invoice_title 發票抬頭
  * invoice_company_name 發票公司名稱
  * invoice_address 發票地址
- * invoice_uniform_number 發票統一編號
  * invoice_email 發票信箱
+ * invoice_uniform_number 發票統一編號
  * shop_cart_products 訂單商品
  * ecpay_merchant_id 綠界特店編號
  * ecpay_trade_no 綠界的交易編號
@@ -134,13 +137,14 @@ class ShopOrderController extends Controller
     // 'invoice_number',
     // 'invoice_status',
     'invoice_type',
+    'invoice_carrier_type',
     'invoice_carrier_number',
     'invoice_tax_type',
     'invoice_title',
     'invoice_company_name',
     'invoice_address',
-    'invoice_uniform_number',
     'invoice_email',
+    'invoice_uniform_number',
   ];
   public $search_fields = [
     'no',
@@ -276,11 +280,13 @@ class ShopOrderController extends Controller
    * @bodyParam products_price text  商品總金額 Example:products_price
    * @bodyParam order_price text 訂單金額  Example:order_price
    * @bodyParam invoice_type string 發票類型 No-example
+   * @bodyParam invoice_carrier_type string 發票載具類型 No-example
    * @bodyParam invoice_carrier_number string 發票載具編號 No-example
    * @bodyParam invoice_tax_type string 發票含稅狀態 No-example
    * @bodyParam invoice_title string 發票抬頭 Example: 山葵組設計股份有限公司
    * @bodyParam invoice_company_name 發票公司名稱 string Example: 山葵組設計股份有限公司
    * @bodyParam invoice_address string 發票地址 No-example
+   * @bodyParam invoice_email string 發票信箱 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
    * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1}]
    */
@@ -349,19 +355,22 @@ class ShopOrderController extends Controller
 
             try {
               $invoice_type           = $request->invoice_type;
+              $invoice_carrier_type   = $request->invoice_carrier_type;
               $invoice_carrier_number = $request->invoice_carrier_number;
               $order_amount           = ShopHelper::getOrderAmount($_my_cart_products);
               $items                  = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
-              if ($invoice_type == 'mobile') {
-                $post_data = EcpayHelper::getInvoicePostData([
-                  'CarrierType'  => 3,
-                  'CarrierNum'   => $invoice_carrier_number,
-                  'CustomerName' => $request->orderer,
-                  'TaxType'      => 1,
-                  'Print'        => 0,
-                  'Items'        => $items,
-                  'SalesAmount'  => $order_amount,
-                ]);
+              if ($invoice_type == 'persion') {
+                if ($invoice_carrier_type == 'mobile') {
+                  $post_data = EcpayHelper::getInvoicePostData([
+                    'CarrierType'  => 3,
+                    'CarrierNum'   => $invoice_carrier_number,
+                    'CustomerName' => $request->orderer,
+                    'TaxType'      => 1,
+                    'Print'        => 0,
+                    'Items'        => $items,
+                    'SalesAmount'  => $order_amount,
+                  ]);
+                }
               }
               $invoice_status = 'done';
               $invoice_number = EcpayHelper::createInvoice($post_data);
@@ -460,11 +469,13 @@ class ShopOrderController extends Controller
    * @bodyParam products_price text  商品總金額 Example:products_price
    * @bodyParam order_price text 訂單金額  Example:order_price
    * @bodyParam invoice_type string 發票類型 No-example
+   * @bodyParam invoice_carrier_type string 發票載具類型 No-example
    * @bodyParam invoice_carrier_number string 發票載具編號 No-example
    * @bodyParam invoice_tax_type string 發票含稅狀態 No-example
    * @bodyParam invoice_title string 發票抬頭 Example: 山葵組設計股份有限公司
    * @bodyParam invoice_company_name 發票公司名稱 string Example: 山葵組設計股份有限公司
    * @bodyParam invoice_address string 發票地址 No-example
+   * @bodyParam invoice_email string 發票信箱 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
    *
    */

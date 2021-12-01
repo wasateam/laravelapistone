@@ -26,6 +26,8 @@ class AdminMy extends JsonResource
       'updated_at'        => $this->updated_at,
       'email_verified_at' => $this->email_verified_at,
       'country_code'      => $this->country_code,
+      'color'             => $this->color,
+      'payload'           => $this->payload,
       'pocket_avatar'     => new PocketImage_R1($this->pocket_avatar),
     ];
 

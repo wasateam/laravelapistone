@@ -43,6 +43,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * carrier_certificate 自然人憑證載具
  * subscribe_start_at 訂閱開始時間
  * subscribe_end_at 訂閱結束時間
+ * color 顏色
  *
  * @authenticated
  */
@@ -84,6 +85,7 @@ class UserController extends Controller
     "gender",
     "subscribe_start_at",
     "subscribe_end_at",
+    "color",
   ];
   public $filter_fields = [
     'byebye_at',
@@ -164,6 +166,7 @@ class UserController extends Controller
    * @bodyParam carrier_certificate string Example:123456789
    * @bodyParam subscribe_start_at datetime No-example
    * @bodyParam subscribe_end_at datetime No-example
+   * @bodyParam color string #000000
    */
   public function store(Request $request, $id = null)
   {
@@ -205,6 +208,7 @@ class UserController extends Controller
    * @bodyParam carrier_certificate string Example:123456789
    * @bodyParam subscribe_start_at datetime No-example
    * @bodyParam subscribe_end_at datetime No-example
+   * @bodyParam color string #000000
    */
   public function update(Request $request, $id)
   {

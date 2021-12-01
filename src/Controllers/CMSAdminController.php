@@ -21,6 +21,8 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * is_active 是否啟用
  * sequence 排列順序設定值
  * country_code 國家代碼
+ * color 顏色
+ * payload
  *
  */
 class CMSAdminController extends Controller
@@ -52,6 +54,8 @@ class CMSAdminController extends Controller
     'scopes',
     'is_active',
     'sequence',
+    "color",
+    "payload",
   ];
   public $filter_fields = [
     'is_active',
@@ -119,6 +123,8 @@ class CMSAdminController extends Controller
    * @bodyParam cmser_groups object Example:1
    * @bodyParam scopes object Example:[]
    * @bodyParam country_code string Example:tw
+   * @bodyParam color string #000000
+   * @bodyParam payload object No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -152,6 +158,8 @@ class CMSAdminController extends Controller
    * @bodyParam cmser_groups object Example:1
    * @bodyParam scopes object Example:[]
    * @bodyParam country_code string Example:tw
+   * @bodyParam color string #000000
+   * @bodyParam payload object No-example
    */
   public function update(Request $request, $id)
   {

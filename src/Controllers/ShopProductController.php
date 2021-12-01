@@ -12,7 +12,9 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Im
  *
  * 商品列表API
  *
- * Import Excel 要使用 js const formData = new FormData();
+ * 商品庫存匯入 Import Excel
+ * excel 欄位順序 : 系統流水號、商品編號、主分類、次分類、商品名稱、規格、重量、成本、售價、庫存、儲位
+ * Import Excel 前端要使用 js 的 const formData = new FormData();
  * formData.append("file", file);
  * header 要帶 "Content-Type": "multipart/form-data",
  *

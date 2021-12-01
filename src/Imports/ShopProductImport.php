@@ -22,11 +22,11 @@ class ShopProductImport implements ToCollection
         $import_record->shop_product_id = $shop_product->id;
         $import_record->uuid            = $shop_product->uuid;
         $import_record->no              = $data[1];
-        $import_record->stock_count     = $data[2];
-        $import_record->storage_space   = $data[3];
+        $import_record->stock_count     = $data[7];
+        $import_record->storage_space   = $data[8];
         $import_record->save();
-        $shop_product->stock_count   = $data[2];
-        $shop_product->storage_space = $data[3];
+        $shop_product->stock_count   = $data[7];
+        $shop_product->storage_space = $data[8];
         $shop_product->save();
       }
 

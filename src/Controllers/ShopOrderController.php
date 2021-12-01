@@ -142,6 +142,7 @@ class ShopOrderController extends Controller
     'invoice_email',
   ];
   public $search_fields = [
+    'no',
   ];
   public $filter_fields = [
     'type',
@@ -154,6 +155,10 @@ class ShopOrderController extends Controller
     'shop_ship_time_setting',
     'area',
     'area_section',
+  ];
+  public $time_fields = [
+    'created_at',
+    'updated_at',
   ];
   public $order_fields = [
     'updated_at',

@@ -4,7 +4,9 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
+use Wasateam\Laravelapistone\Exports\ShopProductExport;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Imports\ShopProductImport;
 
 /**
@@ -279,5 +281,35 @@ class ShopProductController extends Controller
     return response()->json([
       'message' => 'import success.',
     ], 201);
+  }
+
+  /**
+   * Export Excel Signedurl
+   *
+   * @queryParam shop_classes ids 分類  No-example
+   * @queryParam shop_subclasses ids 子分類  No-example
+   * @queryParam is_active ids 上架  No-example
+   */
+  public function export_excel_signedurl(Request $request)
+  {
+    $shop_classes    = $request->has('shop_classes') ? $request->shop_classes : null;
+    $shop_subclasses = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
+    $is_active       = $request->has('is_active') ? $request->is_active : null;
+    return URL::temporarySignedRoute(
+      'shop_product_export_excel',
+      now()->addMinutes(30),
+      ['shop_classes' => $shop_classes, 'shop_subclasses' => $shop_subclasses, 'is_active' => $is_active]
+    );
+  }
+
+  /**
+   * Export Excel
+   */
+  public function export_excel(Request $request)
+  {
+    $shop_classes    = $request->has('shop_classes') ? $request->shop_classes : null;
+    $shop_subclasses = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
+    $is_active       = $request->has('is_active') ? $request->is_active : null;
+    return Excel::download(new ShopProductExport($shop_classes, $shop_subclasses, $is_active), 'shop_products.xlsx');
   }
 }

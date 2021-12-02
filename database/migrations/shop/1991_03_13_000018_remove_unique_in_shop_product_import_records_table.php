@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColorInAdminsTable extends Migration
+class RemoveUniqueInShopProductImportRecordsTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,8 +13,8 @@ class AddColorInAdminsTable extends Migration
    */
   public function up()
   {
-    Schema::table('admins', function (Blueprint $table) {
-      $table->string('color')->nullable();
+    Schema::table('shop_product_import_records', function (Blueprint $table) {
+      $table->dropColumn('uuid');
     });
   }
 
@@ -25,8 +25,8 @@ class AddColorInAdminsTable extends Migration
    */
   public function down()
   {
-    Schema::table('admins', function (Blueprint $table) {
-      $table->dropColumn('color');
+    Schema::table('shop_product_import_records', function (Blueprint $table) {
+      $table->uuid('uuid')->nullable()->unique();
     });
   }
 }

@@ -78,7 +78,7 @@ class ShopProductExport implements WithMapping, WithHeadings, FromCollection
     $ahop_subclasses = collect($shop_subclass_names)->implode(',');
     $weight          = $model->weight_capacity . $model->weight_capacity;
     $map             = [
-      $model->id,
+      $model->uuid,
       $model->no,
       $shop_classes,
       $ahop_subclasses,

@@ -15,7 +15,6 @@ class AddColorInAdminsTable extends Migration
   {
     Schema::table('admins', function (Blueprint $table) {
       $table->string('color')->nullable();
-      $table->text('payload')->nullable();
     });
   }
 
@@ -28,7 +27,6 @@ class AddColorInAdminsTable extends Migration
   {
     Schema::table('admins', function (Blueprint $table) {
       $table->dropColumn('color');
-      $table->dropColumn('payload');
     });
   }
 }

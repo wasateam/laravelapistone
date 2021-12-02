@@ -57,6 +57,8 @@ class TulpaPageController extends Controller
   public $scope_filter_belongs_to_many = [];
   public $user_record_field            = 'updated_admin_id';
   public $user_create_field            = 'created_admin_id';
+  public $order_by                     = 'updated_at';
+  public $order_way                    = 'desc';
   public $admin_group                  = true;
 
   public function __construct()
@@ -79,7 +81,7 @@ class TulpaPageController extends Controller
       }
     }
     if (config('stone.country_code')) {
-      $this->input_fields[] = 'country_code';
+      $this->input_fields[]  = 'country_code';
       $this->filter_fields[] = 'country_code';
     }
   }

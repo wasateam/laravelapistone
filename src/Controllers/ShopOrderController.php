@@ -26,8 +26,8 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * orderer_birthday 訂購人生日
  * orderer_email 訂購人信箱
  * orderer_gender 訂購人性別
- * ~ girl: 女森
- * ~ boy: 男森
+ * ~ female: 女森
+ * ~ male: 男森
  * receiver 收件人
  * receiver_tel 收件人電話
  * receiver_email 收件人信箱
@@ -52,6 +52,10 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * ship_remark 運送備註
  * ship_date 運送日期
  * ship_status 運送狀態
+ * ~ unfulfilled：待出貨
+ * ~ collected：準備出貨
+ * ~ shipped：已出貨
+ * ~ Pending：問題待解決
  * customer_service_remark 客戶服務備註
  * pay_type 付款類型
  * pay_status 付款狀態

@@ -91,4 +91,7 @@ return [
   'app'                => false,
   'privacy_terms'      => true,
   'country_code'       => true,
+  'finance'            => [
+    'payment_request' => true,
+  ],
 ];

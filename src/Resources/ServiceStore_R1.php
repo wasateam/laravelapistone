@@ -36,6 +36,11 @@ class ServiceStore_R1 extends JsonResource
     if (config('stone.area')) {
       $res['area'] = new Area_R1($this->area);
     }
+
+    if (config('stone.country_code')) {
+      $res['country_code'] = $this->country_code;
+    }
+
     return $res;
   }
 }

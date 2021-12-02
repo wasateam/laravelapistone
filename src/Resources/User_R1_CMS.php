@@ -20,6 +20,7 @@ class User_R1_CMS extends JsonResource
       'name'          => $this->name,
       'email'         => $this->email,
       'tel'           => $this->tel,
+      'color'         => $this->color,
       'pocket_avatar' => new PocketImage_R1($this->pocket_avatar),
       'locale'        => new Locale_R1($this->locale),
     ];

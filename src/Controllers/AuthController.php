@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
+use Wasateam\Laravelapistone\Helpers\EmailHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
 use Wasateam\Laravelapistone\Mail\PasswordResetRequest;
@@ -85,6 +86,14 @@ class AuthController extends Controller
     $user->save();
     if (config('stone.auth.signup_complete_action')) {
       config('stone.auth.signup_complete_action')::signup_complete_action($user);
+    }
+    if (config('stone.auth.verify')) {
+      if (config('stone.auth.verify.email')) {
+        $url = URL::temporarySignedRoute(
+          'email_verify', now()->addMinutes(60), ['user_id' => $user->id]
+        );
+        EmailHelper::email_verify_request($url, $user->email);
+      }
     }
     return new $resource($user);
   }
@@ -406,6 +415,54 @@ class AuthController extends Controller
     $user->save();
     return response()->json([
       'message' => 'password reset.',
+    ], 200);
+  }
+
+  /**
+   * Email Verify
+   *
+   * @bodyParam email No-example
+   *
+   */
+  public function email_verify($user_id)
+  {
+    $model                   = config('stone.auth.model');
+    $user                    = $model::find($user_id);
+    $user->email_verified_at = Carbon::now();
+    $user->save();
+    return response()->json([
+      'message' => 'user verified.',
+    ], 200);
+  }
+
+  /**
+   * Email Verify Resend
+   *
+   * @bodyParam email No-example
+   *
+   */
+  public function email_verify_resend(Request $request)
+  {
+    $rules = [
+      'email' => "required|string|email",
+    ];
+    $validator = Validator::make($request->all(), $rules);
+    if ($validator->fails()) {
+      return response()->json([
+        'message' => $validator->messages(),
+      ], 400);
+    }
+
+    $model = config('stone.auth.model');
+
+    $user = $model::where('email', $request->email)->first();
+
+    $url = URL::temporarySignedRoute(
+      'email_verify', now()->addMinutes(60), ['user_id' => $user->id]
+    );
+    EmailHelper::email_verify_request($url, $user->email);
+    return response()->json([
+      'message' => 'verify mail sent.',
     ], 200);
   }
 }

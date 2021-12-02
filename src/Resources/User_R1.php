@@ -18,6 +18,7 @@ class User_R1 extends JsonResource
       'id'            => $this->id,
       'uuid'          => $this->uuid,
       'name'          => $this->name,
+      'color'         => $this->color,
       'pocket_avatar' => new PocketImage_R1($this->pocket_avatar),
       'locale'        => new Locale_R1($this->locale),
     ];

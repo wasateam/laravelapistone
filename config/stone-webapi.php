@@ -27,6 +27,9 @@ return [
       'user',
     ],
     'active_check'   => true,
+    'verify'         => [
+      'email' => true,
+    ],
     // 'signup_complete_action' => '\App\Helpers\TestHelper',
   ],
   # Modules

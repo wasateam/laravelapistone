@@ -28,6 +28,8 @@ class Admin extends JsonResource
       'settings'          => $this->settings,
       'email_verified_at' => $this->email_verified_at,
       'country_code'      => $this->country_code,
+      'color'             => $this->color,
+      'payload'           => $this->payload,
       'updated_admin'     => new Admin_R1($this->updated_admin),
       'created_admin'     => new Admin_R1($this->created_admin),
     ];

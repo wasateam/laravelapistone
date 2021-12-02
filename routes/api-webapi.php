@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
   "passwordpatch",
   "avatarpatch",
   "forgetpassword",
+  "email_verify",
 ]);
 
 Route::group([

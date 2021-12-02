@@ -10,7 +10,6 @@ class StoneServiceProvider extends ServiceProvider
 {
   public function boot()
   {
-
     # Publishes
     # CMS
     $this->publishes([
@@ -177,6 +176,7 @@ class StoneServiceProvider extends ServiceProvider
       $publishes                                         = [];
       $publishes[__DIR__ . '/../config/auth_admin.php']  = $this->app->configPath('auth.php');
       $publishes[__DIR__ . '/../database/seeders/admin'] = database_path('seeders');
+      $publishes[__DIR__ . '/../resources/lang/']        = resource_path('lang/');
       $this->publishes($publishes, 'stone-setup-cms');
     }
 
@@ -188,6 +188,7 @@ class StoneServiceProvider extends ServiceProvider
       # Publish
       $publishes                                       = [];
       $publishes[__DIR__ . '/../config/auth_user.php'] = $this->app->configPath('auth.php');
+      $publishes[__DIR__ . '/../resources/lang/']      = resource_path('lang/');
       $this->publishes($publishes, 'stone-setup-webapi');
     }
 

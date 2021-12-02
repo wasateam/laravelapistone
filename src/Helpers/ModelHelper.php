@@ -37,11 +37,8 @@ class ModelHelper
       ], 403);
     }
 
-    // Filter User
+    // XXX Filter User
     $snap = self::userFilterSnap($snap, $setting);
-
-    // Filter Admin Group
-    $snap = self::adminGroupFilterSnap($snap, $setting);
 
     // Collection
     $collection = self::indexGetPaginate($setting, $snap, $request, $getall);
@@ -128,6 +125,9 @@ class ModelHelper
     // Admin Group
     self::adminGroupStoreHandler($model, $setting);
 
+    // CountryCode
+    self::countryCodeStoreHandler($model, $setting);
+
     // Locale Set
     try {
       self::setLocale($model, $setting, $request);
@@ -164,90 +164,6 @@ class ModelHelper
 
   }
 
-  public static function log_save($log_model, $record_model, $user, $user_id_name, $action, $controller, $user_uuid = true, $model_uuid = false)
-  {
-    if ($user_uuid) {
-      $user_id_key = 'uuid';
-    } else {
-      $user_id_key = 'id';
-    }
-    if ($model_uuid) {
-      $model_id_key = 'uuid';
-    } else {
-      $model_id_key = 'id';
-    }
-    $log = new $log_model;
-    if ($user) {
-      $user_id = $user->{$user_id_key};
-    } else if (Auth::user()) {
-      $user_id = Auth::user()->{$user_id_key};
-    } else {
-      $user_id = null;
-    }
-    $log->{$user_id_name} = $user_id;
-    $log->payload         = [
-      'user_id'   => $user_id,
-      'action'    => $action,
-      'target'    => $controller->name,
-      'target_id' => $record_model ? $record_model->{$model_id_key} : null,
-      'ip'        => \Request::ip(),
-    ];
-    $log->save();
-  }
-
-  public static function ws_Log($model, $controller, $action, $user = null)
-  {
-    if (!config('stone.log.is_active')) {
-      return;
-    }
-
-    $log_model = config('stone.log.model');
-    $log       = new $log_model;
-    $user_id   = null;
-    if ($user) {
-      $user_id = $user->id;
-    } else if (Auth::user()) {
-      $user_id = Auth::user()->id;
-    }
-    $log[config('stone.auth.model_name') . '_id'] = $user_id;
-    $log->payload                                 = [
-      'userModelName' => $user_id ? config('stone.auth.model_name') : null,
-      'user_id'       => $user_id,
-      'action'        => $action,
-      'target'        => $controller->name,
-      'target_id'     => $action === 'signin' || $action === 'signout' ? null : $model->id,
-      'ip'            => \Request::ip(),
-    ];
-    $log->save();
-
-  }
-
-  public static function ws_findByIds($controller, $request)
-  {
-    $ids = array_map('intval', explode(',', $request->ids));
-    return $controller->model::findMany($ids);
-  }
-
-  public static function ws_BatchStoreHandler($controller, $request, $id = null)
-  {
-    $result_data = [];
-    try {
-      foreach ($request->datas as $request_data) {
-        $request_data  = new Request($request_data);
-        $result_data[] = ModelHelper::ws_StoreHandler($controller, $request_data, $id);
-      }
-      return $result_data;
-      // return response()->json([
-      //   'message' => 'batch store complete.',
-      //   'data'    => $result_data,
-      // ], 200);
-    } catch (\Throwable $th) {
-      return response()->json([
-        'message' => 'batch store fail. but some have been created.',
-      ], 400);
-    }
-  }
-
   public static function ws_ShowHandler($controller, $request, $id = null, $custom_snap_handler = null, $custom_scope_handler = null)
   {
     // Setting
@@ -273,6 +189,9 @@ class ModelHelper
 
     // Filter Admin Group
     $snap = self::adminGroupFilterSnap($snap, $setting);
+
+    // Filter Country Code
+    $snap = self::countryCodeFilterSnap($snap, $setting);
 
     // Get
     try {
@@ -323,6 +242,9 @@ class ModelHelper
 
     // Filter Admin Group
     $snap = self::adminGroupFilterSnap($snap, $setting);
+
+    // Filter Country Code
+    $snap = self::countryCodeFilterSnap($snap, $setting);
 
     $model = $snap->first();
     if (!$model) {
@@ -422,6 +344,9 @@ class ModelHelper
     // Filter Admin Group
     $snap = self::adminGroupFilterSnap($snap, $setting);
 
+    // Filter Country Code
+    $snap = self::countryCodeFilterSnap($snap, $setting);
+
     $model = $snap->first();
     if (!$model) {
       return response()->json([
@@ -449,6 +374,90 @@ class ModelHelper
     } catch (\Throwable $th) {
       return response()->json([
         "message" => 'delete error.',
+      ], 400);
+    }
+  }
+
+  public static function log_save($log_model, $record_model, $user, $user_id_name, $action, $controller, $user_uuid = true, $model_uuid = false)
+  {
+    if ($user_uuid) {
+      $user_id_key = 'uuid';
+    } else {
+      $user_id_key = 'id';
+    }
+    if ($model_uuid) {
+      $model_id_key = 'uuid';
+    } else {
+      $model_id_key = 'id';
+    }
+    $log = new $log_model;
+    if ($user) {
+      $user_id = $user->{$user_id_key};
+    } else if (Auth::user()) {
+      $user_id = Auth::user()->{$user_id_key};
+    } else {
+      $user_id = null;
+    }
+    $log->{$user_id_name} = $user_id;
+    $log->payload         = [
+      'user_id'   => $user_id,
+      'action'    => $action,
+      'target'    => $controller->name,
+      'target_id' => $record_model ? $record_model->{$model_id_key} : null,
+      'ip'        => \Request::ip(),
+    ];
+    $log->save();
+  }
+
+  public static function ws_Log($model, $controller, $action, $user = null)
+  {
+    if (!config('stone.log.is_active')) {
+      return;
+    }
+
+    $log_model = config('stone.log.model');
+    $log       = new $log_model;
+    $user_id   = null;
+    if ($user) {
+      $user_id = $user->id;
+    } else if (Auth::user()) {
+      $user_id = Auth::user()->id;
+    }
+    $log[config('stone.auth.model_name') . '_id'] = $user_id;
+    $log->payload                                 = [
+      'userModelName' => $user_id ? config('stone.auth.model_name') : null,
+      'user_id'       => $user_id,
+      'action'        => $action,
+      'target'        => $controller->name,
+      'target_id'     => $action === 'signin' || $action === 'signout' ? null : $model->id,
+      'ip'            => \Request::ip(),
+    ];
+    $log->save();
+
+  }
+
+  public static function ws_findByIds($controller, $request)
+  {
+    $ids = array_map('intval', explode(',', $request->ids));
+    return $controller->model::findMany($ids);
+  }
+
+  public static function ws_BatchStoreHandler($controller, $request, $id = null)
+  {
+    $result_data = [];
+    try {
+      foreach ($request->datas as $request_data) {
+        $request_data  = new Request($request_data);
+        $result_data[] = ModelHelper::ws_StoreHandler($controller, $request_data, $id);
+      }
+      return $result_data;
+      // return response()->json([
+      //   'message' => 'batch store complete.',
+      //   'data'    => $result_data,
+      // ], 200);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'batch store fail. but some have been created.',
       ], 400);
     }
   }
@@ -533,6 +542,7 @@ class ModelHelper
     $setting->mocu_filters                    = isset($controller->mocu_filters) ? $controller->mocu_filters : [];
     $setting->order_by                        = isset($controller->order_by) ? $controller->order_by : "id";
     $setting->order_way                       = isset($controller->order_way) ? $controller->order_way : "desc";
+    $setting->country_code                    = isset($controller->country_code) ? $controller->country_code : null;
     return $setting;
   }
 
@@ -790,6 +800,13 @@ class ModelHelper
     if ($setting->parent_id_field && $parent_id) {
       $snap = $snap->where($setting->parent_id_field, $parent_id);
     }
+
+    // Filter Admin Group
+    $snap = self::adminGroupFilterSnap($snap, $setting);
+
+    // Filter Country Code
+    $snap = self::countryCodeFilterSnap($snap, $setting);
+
     return $snap;
   }
 
@@ -1123,5 +1140,27 @@ class ModelHelper
       $model->{$setting->uuid_key} = Str::uuid();
     }
     return $model;
+  }
+
+  public static function countryCodeFilterSnap($snap, $setting)
+  {
+    if (config('stone.country_code') && $setting->country_code) {
+      $user = Auth::user();
+      if ($user && $user->country_code) {
+        $snap = $snap->where('country_code', $user->country_code);
+      }
+    }
+    return $snap;
+  }
+
+  public static function countryCodeStoreHandler($model, $setting)
+  {
+    if (config('stone.country_code') && $setting->country_code) {
+      $user = Auth::user();
+      if ($user && $user->country_code) {
+        $model->country_code = $user->country_code;
+        $model->save();
+      }
+    }
   }
 }

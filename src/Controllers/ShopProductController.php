@@ -286,6 +286,9 @@ class ShopProductController extends Controller
   /**
    * Export Excel Signedurl
    *
+   * @queryParam shop_classes ids 分類  No-example
+   * @queryParam shop_subclasses ids 子分類  No-example
+   * @queryParam is_active ids 上架  No-example
    */
   public function export_excel_signedurl(Request $request)
   {

@@ -414,6 +414,7 @@ class RoutesHelper
           'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
       }
+      Route::get('shop_product/export/excel/signedurl', [ShopProductController::class, 'export_excel_signedurl']);
       // if (config('stone.shop.pre_order')) {
       //   Route::resource('shop_product_pre_order', ShopProductPreOrderController::class)->only([
       //     'index', 'show', 'store', 'update', 'destroy',
@@ -534,6 +535,7 @@ class RoutesHelper
         if (config('stone.shop.order_export')) {
           Route::get('shop_order/export/pdf', [ShopOrderController::class, 'export_pdf'])->name('shop_order_export_pdf');
         }
+        Route::get('shop_product/export/excel', [ShopProductController::class, 'export_excel'])->name('shop_product_export_excel');
 
       });
     }

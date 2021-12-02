@@ -21,7 +21,7 @@ class ShopShipTimeSetting extends JsonResource
         'start_time'             => $this->start_time,
         'end_time'               => $this->end_time,
         'max_count'              => $this->max_count,
-        'tpday_shop_order_count' => $this->today_shop_orders->count(),
+        'today_shop_order_count' => $this->today_shop_orders->count(),
       ];
     } else if (config('stone.mode') == 'webapi') {
       $res = [
@@ -30,7 +30,7 @@ class ShopShipTimeSetting extends JsonResource
         'start_time'             => $this->start_time,
         'end_time'               => $this->end_time,
         'max_count'              => $this->max_count,
-        'tpday_shop_order_count' => $this->today_shop_orders->count(),
+        'today_shop_order_count' => $this->today_shop_orders->count(),
       ];
     }
     return $res;

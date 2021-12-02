@@ -20,6 +20,9 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Im
  * formData.append("file", file);
  * header 要帶 "Content-Type": "multipart/form-data",
  *
+ * 商品匯出 Export Excel Signedurl
+ * get_all 可以直接取得所有商品
+ *
  * fields ----
  * type 類型
  * order_type 訂單類型 如要建立訂單，商品的訂單類型皆需一致，不然無法建立訂單
@@ -286,19 +289,21 @@ class ShopProductController extends Controller
   /**
    * Export Excel Signedurl
    *
-   * @queryParam shop_classes ids 分類  No-example
-   * @queryParam shop_subclasses ids 子分類  No-example
-   * @queryParam is_active ids 上架  No-example
+   * @queryParam shop_classes ids 分類  No-example 1,2,3
+   * @queryParam shop_subclasses ids 子分類  No-example 1,2,3
+   * @queryParam is_active number 上架  No-example : 1,0
+   * @queryParam get_all number 全抓  No-example : 1,0
    */
   public function export_excel_signedurl(Request $request)
   {
     $shop_classes    = $request->has('shop_classes') ? $request->shop_classes : null;
     $shop_subclasses = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
     $is_active       = $request->has('is_active') ? $request->is_active : null;
+    $get_all         = $request->has('get_all') ? $request->get_all : 0;
     return URL::temporarySignedRoute(
       'shop_product_export_excel',
       now()->addMinutes(30),
-      ['shop_classes' => $shop_classes, 'shop_subclasses' => $shop_subclasses, 'is_active' => $is_active]
+      ['shop_classes' => $shop_classes, 'shop_subclasses' => $shop_subclasses, 'is_active' => $is_active, 'get_all' => $get_all]
     );
   }
 
@@ -310,6 +315,7 @@ class ShopProductController extends Controller
     $shop_classes    = $request->has('shop_classes') ? $request->shop_classes : null;
     $shop_subclasses = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
     $is_active       = $request->has('is_active') ? $request->is_active : null;
-    return Excel::download(new ShopProductExport($shop_classes, $shop_subclasses, $is_active), 'shop_products.xlsx');
+    $get_all         = $request->has('get_all') ? $request->get_all : 0;
+    return Excel::download(new ShopProductExport($shop_classes, $shop_subclasses, $is_active, $get_all), 'shop_products.xlsx');
   }
 }

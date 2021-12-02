@@ -84,13 +84,16 @@ class EcpayController extends Controller
     if (isset($res->SimulatePaid)) {
       if ($res->SimulatePaid == 1) {
         $shop_order->pay_status = 'sumulate-paid';
+        $shop_order->status     = 'established';
       }
     }
     if (isset($res->OrderInfo->TradeStatus)) {
       if ($res->OrderInfo->TradeStatus == 1) {
         $shop_order->pay_status = 'paid';
+        $shop_order->status     = 'established';
       } else if ($res->OrderInfo->TradeStatus == 0) {
         $shop_order->pay_status = 'not-paid';
+        $shop_order->status     = 'not-established';
       }
     }
     $shop_order->ecpay_trade_no   = $res->OrderInfo->TradeNo;
@@ -102,11 +105,11 @@ class EcpayController extends Controller
       $shop_order->csv_payment_url = $res->CVSInfo->PaymentURL;
     }
     if (isset($res->BarcodeInfo)) {
-      $shop_order->barcode_pay_from          = $res->BarcodeInfo->PayFrom;
+      $shop_order->barcode_pay_from = $res->BarcodeInfo->PayFrom;
     }
     if (isset($res->ATMInfo)) {
-      $shop_order->atm_acc_bank              = $res->ATMInfo->ATMAccBank;
-      $shop_order->atm_acc_no                = $res->ATMInfo->ATMAccNo;
+      $shop_order->atm_acc_bank = $res->ATMInfo->ATMAccBank;
+      $shop_order->atm_acc_no   = $res->ATMInfo->ATMAccNo;
     }
     if (isset($res->CardInfo)) {
       $shop_order->card_auth_code            = $res->CardInfo->AuthCode;

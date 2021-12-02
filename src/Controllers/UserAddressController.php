@@ -118,8 +118,8 @@ class UserAddressController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_UpdateHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      $user_address = UserAddress::where('user_id', $id)->first();
-      if ($user_address->id != Auth::user()->id) {
+      $user_address = UserAddress::where('id', $id)->first();
+      if ($user_address->user_id != Auth::user()->id) {
         return response()->json([
           'message' => 'Invalid Scope(s)',
         ], 400);

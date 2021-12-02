@@ -12,7 +12,9 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Im
  *
  * 商品列表API
  *
- * Import Excel 要使用 js const formData = new FormData();
+ * 商品庫存匯入 Import Excel
+ * excel 欄位順序 : 系統流水號、商品編號、主分類、次分類、商品名稱、規格、重量、成本、售價、庫存、儲位
+ * Import Excel 前端要使用 js 的 const formData = new FormData();
  * formData.append("file", file);
  * header 要帶 "Content-Type": "multipart/form-data",
  *
@@ -29,6 +31,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Im
  * price 售價
  * discount_price 優惠價
  * weight_capacity 重量/容量
+ * weight_capacity_unit 重量/容量單位
  * tax
  * stock_count
  * stock_alert_count
@@ -68,6 +71,7 @@ class ShopProductController extends Controller
     'price',
     'discount_price',
     'weight_capacity',
+    'weight_capacity_unit',
     'tax',
     'stock_count',
     'stock_alert_count',
@@ -172,6 +176,7 @@ class ShopProductController extends Controller
   /**
    * Store
    *
+   * @bodyParam no string 商品編號 Example: Aa123
    * @bodyParam type string 類型 Example: 類型
    * @bodyParam order_type string 訂單類型 Example: 訂單類型
    * @bodyParam name string 商品名稱 Example: 商品名稱
@@ -183,7 +188,8 @@ class ShopProductController extends Controller
    * @bodyParam cost int 成本 Example: 200
    * @bodyParam price int 售價 Example: 300
    * @bodyParam discount_price int 優惠價 Example: 280
-   * @bodyParam weight_capacity 重量/容量 string Example: 100g
+   * @bodyParam weight_capacity 重量/容量 string Example: 100
+   * @bodyParam weight_capacity_unit 重量/容量單位 string Example: kg
    * @bodyParam tax string 應稅/免稅 Example: 10
    * @bodyParam stock_count string 庫存數量 Example: 100
    * @bodyParam stock_alert_count string 庫存預警數量 Example: 10
@@ -219,6 +225,7 @@ class ShopProductController extends Controller
    * Update
    *
    * @urlParam  shop_product required The ID of shop_product. Example: 1
+   * @bodyParam no string 商品編號 Example: Aa123
    * @bodyParam type string 類型 Example: 類型
    * @bodyParam order_type string 訂單類型 Example: 訂單類型
    * @bodyParam name string 商品名稱 Example: 商品名稱
@@ -231,6 +238,7 @@ class ShopProductController extends Controller
    * @bodyParam price int 售價 Example: 300
    * @bodyParam discount_price int 優惠價 Example: 280
    * @bodyParam weight_capacity 重量/容量 string Example: 100g
+   * @bodyParam weight_capacity_unit 重量/容量單位 string Example: kg
    * @bodyParam tax string 應稅/免稅 Example: 10
    * @bodyParam stock_count string 庫存數量 Example: 100
    * @bodyParam stock_alert_count string 庫存預警數量 Example: 10

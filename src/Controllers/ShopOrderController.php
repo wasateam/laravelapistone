@@ -14,6 +14,7 @@ use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
+use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
 
 /**
  * @group 訂單
@@ -36,6 +37,13 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * receive_remark 收件人備註
  * package_way 包裝方式
  * status 狀態
+ * ~ 成立 established
+ * ~ 未成立 not-established
+ * ~ 申請部分退訂 return-part-apply
+ * ~ 申請全部退訂 return-all-apply
+ * ~ 部分退訂完成 return-part-complete
+ * ~ 全部退訂完成 return-all-complete
+ * ~ 訂單完成 complete
  * status_remark 狀態備註
  * receive_way 收貨方式
  * ship_way 物流方式
@@ -57,13 +65,16 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
  * invoice_number 發票號碼
  * invoice_status 發票狀態
  * invoice_type 發票類型
- * invoice_carrier_number 發票載具編號
+ * ~ 電子發票 personal,電子三聯式發票 company
+ * invoice_carrier_type 發票載具類型
+ * ~ mobile,email,certificate
+ * invoice_carrier_number 發票載具編號(載具內容)
  * invoice_tax_type 發票含稅狀態
  * invoice_title 發票抬頭
  * invoice_company_name 發票公司名稱
  * invoice_address 發票地址
- * invoice_uniform_number 發票統一編號
  * invoice_email 發票信箱
+ * invoice_uniform_number 發票統一編號
  * shop_cart_products 訂單商品
  * ecpay_merchant_id 綠界特店編號
  * ecpay_trade_no 綠界的交易編號
@@ -137,19 +148,25 @@ class ShopOrderController extends Controller
     // 'invoice_number',
     // 'invoice_status',
     'invoice_type',
+    'invoice_carrier_type',
     'invoice_carrier_number',
     'invoice_tax_type',
     'invoice_title',
     'invoice_company_name',
     'invoice_address',
-    'invoice_uniform_number',
     'invoice_email',
+    'invoice_uniform_number',
   ];
   public $search_fields = [
+    'no',
+    'receiver_tel',
   ];
   public $filter_fields = [
     'type',
     'order_type',
+    'ship_status',
+    'pay_status',
+    'invoice_status',
   ];
   public $belongs_to = [
     'user',
@@ -158,6 +175,15 @@ class ShopOrderController extends Controller
     'shop_ship_time_setting',
     'area',
     'area_section',
+  ];
+  public $filter_belongs_to = [
+    'area',
+    'area_section',
+    'shop_ship_time_setting',
+  ];
+  public $time_fields = [
+    'created_at',
+    'updated_at',
   ];
   public $order_fields = [
     'updated_at',
@@ -183,6 +209,20 @@ class ShopOrderController extends Controller
   /**
    * Index
    *
+   * @queryParam area int 地區 No-Example 1
+   * @queryParam area_section int 子地區 No-Example 1
+   * @queryParam shop_ship_time_setting int 配送時段 No-Example 1
+   * @queryParam ship_remark string  No-example null,not_null
+   * @queryParam type string  No-example type
+   * @queryParam order_type string  No-example order_type
+   * @queryParam ship_status string  No-example ship_status
+   * @queryParam pay_status string  No-example pay_status
+   * @queryParam invoice_status string  No-example invoice_status
+   * @queryParam order_by string  No-example created_at,updated_at
+   * @queryParam order_way string  No-example asc,desc
+   * @queryParam start_time string  No-example 2020-10-10
+   * @queryParam end_time string  No-example 2021-10-11
+   * @queryParam time_field string  No-example created_at,updated_at
    */
   public function index(Request $request, $id = null)
   {
@@ -192,6 +232,20 @@ class ShopOrderController extends Controller
   /**
    * Auth Shop Order Index
    *
+   * @queryParam area int 地區 No-Example 1
+   * @queryParam area_section int 子地區 No-Example 1
+   * @queryParam shop_ship_time_setting int 配送時段 No-Example 1
+   * @queryParam ship_remark string  No-example null,not_null
+   * @queryParam type string  No-example type
+   * @queryParam order_type string  No-example order_type
+   * @queryParam ship_status string  No-example ship_status
+   * @queryParam pay_status string  No-example pay_status
+   * @queryParam invoice_status string  No-example invoice_status
+   * @queryParam order_by string  No-example created_at,updated_at
+   * @queryParam order_way string  No-example asc,desc
+   * @queryParam start_time string  No-example 2020-10-10
+   * @queryParam end_time string  No-example 2021-10-11
+   * @queryParam time_field string  No-example created_at,updated_at
    */
   public function auth_shop_order_index(Request $request, $id = null)
   {
@@ -237,11 +291,13 @@ class ShopOrderController extends Controller
    * @bodyParam products_price text  商品總金額 Example:products_price
    * @bodyParam order_price text 訂單金額  Example:order_price
    * @bodyParam invoice_type string 發票類型 No-example
+   * @bodyParam invoice_carrier_type string 發票載具類型 No-example
    * @bodyParam invoice_carrier_number string 發票載具編號 No-example
    * @bodyParam invoice_tax_type string 發票含稅狀態 No-example
    * @bodyParam invoice_title string 發票抬頭 Example: 山葵組設計股份有限公司
    * @bodyParam invoice_company_name 發票公司名稱 string Example: 山葵組設計股份有限公司
    * @bodyParam invoice_address string 發票地址 No-example
+   * @bodyParam invoice_email string 發票信箱 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
    * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1}]
    */
@@ -259,6 +315,17 @@ class ShopOrderController extends Controller
       if (!$request->has('shop_cart_products') || !is_array($request->shop_cart_products)) {
         return response()->json([
           'message' => 'products required.',
+        ], 400);
+      }
+      if (!$request->has('shop_ship_time_setting')) {
+        return response()->json([
+          'message' => 'shop_ship_time_setting required.',
+        ], 400);
+      }
+      $shop_ship_time_setting = ShopShipTimeSetting::where('id', $request->shop_ship_time_setting)->first();
+      if ($shop_ship_time_setting->max_count <= count($shop_ship_time_setting->today_shop_orders)) {
+        return response()->json([
+          'message' => 'shop_ship_time_setting is max today.',
         ], 400);
       }
       $my_cart_products  = $request->shop_cart_products;
@@ -299,19 +366,22 @@ class ShopOrderController extends Controller
 
             try {
               $invoice_type           = $request->invoice_type;
+              $invoice_carrier_type   = $request->invoice_carrier_type;
               $invoice_carrier_number = $request->invoice_carrier_number;
               $order_amount           = ShopHelper::getOrderAmount($_my_cart_products);
               $items                  = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
-              if ($invoice_type == 'mobile') {
-                $post_data = EcpayHelper::getInvoicePostData([
-                  'CarrierType'  => 3,
-                  'CarrierNum'   => $invoice_carrier_number,
-                  'CustomerName' => $request->orderer,
-                  'TaxType'      => 1,
-                  'Print'        => 0,
-                  'Items'        => $items,
-                  'SalesAmount'  => $order_amount,
-                ]);
+              if ($invoice_type == 'persion') {
+                if ($invoice_carrier_type == 'mobile') {
+                  $post_data = EcpayHelper::getInvoicePostData([
+                    'CarrierType'  => 3,
+                    'CarrierNum'   => $invoice_carrier_number,
+                    'CustomerName' => $request->orderer,
+                    'TaxType'      => 1,
+                    'Print'        => 0,
+                    'Items'        => $items,
+                    'SalesAmount'  => $order_amount,
+                  ]);
+                }
               }
               $invoice_status = 'done';
               $invoice_number = EcpayHelper::createInvoice($post_data);
@@ -346,6 +416,8 @@ class ShopOrderController extends Controller
           ShopHelper::shopOrderProductChangeCount($new_order_product->id);
         }
         ShopHelper::changeShopOrderPrice($model->id);
+        $model->status = 'not-established';
+        $model->save();
 
         # Order Type
         if ($order_type) {
@@ -410,11 +482,13 @@ class ShopOrderController extends Controller
    * @bodyParam products_price text  商品總金額 Example:products_price
    * @bodyParam order_price text 訂單金額  Example:order_price
    * @bodyParam invoice_type string 發票類型 No-example
+   * @bodyParam invoice_carrier_type string 發票載具類型 No-example
    * @bodyParam invoice_carrier_number string 發票載具編號 No-example
    * @bodyParam invoice_tax_type string 發票含稅狀態 No-example
    * @bodyParam invoice_title string 發票抬頭 Example: 山葵組設計股份有限公司
    * @bodyParam invoice_company_name 發票公司名稱 string Example: 山葵組設計股份有限公司
    * @bodyParam invoice_address string 發票地址 No-example
+   * @bodyParam invoice_email string 發票信箱 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
    *
    */
@@ -457,7 +531,6 @@ class ShopOrderController extends Controller
   public function export_pdf(Request $request)
   {
     $_shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
-    error_log(json_encode($_shop_orders));
     if (!$_shop_orders) {
       return response()->json([
         'message' => 'required shop_orders;',

@@ -182,7 +182,7 @@ class ShopReturnRecordController extends Controller
    */
   public function return_all(Request $request)
   {
-    if (!$request->has('shop_orders') || count($request->shop_orders)) {
+    if (!$request->has('shop_orders') || !count($request->shop_orders)) {
       return response()->json([
         'message' => 'need shop_orders',
       ], 400);
@@ -205,6 +205,7 @@ class ShopReturnRecordController extends Controller
           $shop_return_record                             = new ShopReturnRecord;
           $shop_return_record->user_id                    = $shop_order->user_id;
           $shop_return_record->shop_order_id              = $shop_order->id;
+          $shop_return_record->shop_product_id            = $shop_order_shop_product->shop_product_id;
           $shop_return_record->shop_order_shop_product_id = $shop_order_shop_product->id;
           $shop_return_record->count                      = $shop_order_shop_product->count;
           $shop_return_record->price                      = $shop_order_shop_product->price;

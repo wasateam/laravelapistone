@@ -10,9 +10,15 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 /**
  * @group 配送時間設定
  *
- * @authenticated
- *
  * APIs for shop_ship_time_setting
+ *
+ * today_shop_order_count 今日訂單配送數量
+ * start_time 開始時間
+ * end_time 結束時間
+ * max_count 配送訂單最大數量
+ * type 類別
+ *
+ * @authenticated
  */
 class ShopShipTimeSettingController extends Controller
 {

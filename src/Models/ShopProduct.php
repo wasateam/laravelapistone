@@ -2,6 +2,7 @@
 
 namespace Wasateam\Laravelapistone\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -53,6 +54,12 @@ class ShopProduct extends Model
   public function shop_order_shop_product()
   {
     return $this->hasMany(ShopOrderShopProduct::class, 'shop_product_id');
+  }
+
+  public function today_shop_order_shop_products()
+  {
+    $target_day = Carbon::today();
+    return $this->hasMany(ShopOrderShopProduct::class, 'shop_product_id')->whereDate('created_at', $target_day);
   }
 
   protected $casts = [

@@ -536,7 +536,6 @@ class RoutesHelper
           Route::get('shop_order/export/pdf', [ShopOrderController::class, 'export_pdf'])->name('shop_order_export_pdf');
         }
         Route::get('shop_product/export/excel', [ShopProductController::class, 'export_excel'])->name('shop_product_export_excel');
-
       });
     }
   }

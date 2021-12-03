@@ -3,12 +3,11 @@
 namespace Wasateam\Laravelapistone\Exports;
 
 use Maatwebsite\Excel\Concerns\FromArray;
-use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 
-class UserExport implements FromArray, WithHeadings, FromCollection, ShouldAutoSize
+class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
 {
 
   protected $shop_orders;
@@ -78,7 +77,8 @@ class UserExport implements FromArray, WithHeadings, FromCollection, ShouldAutoS
   {
     $shop_orders = [];
     if ($this->shop_orders) {
-      $shop_orders = ShopOrder::find($this->shop_orders);
+      $shop_order_ids = array_map('intval', explode(',', $this->shop_orders));
+      $shop_orders    = ShopOrder::whereIn('id', $shop_order_ids)->get();
     } else {
       $shop_orders = ShopOrder::all();
     }
@@ -88,27 +88,30 @@ class UserExport implements FromArray, WithHeadings, FromCollection, ShouldAutoS
       foreach ($order_products as $index => $order_product) {
         $shop_product = $order_product->shop_product;
         $price        = $order_product->discount_price ? $order_product->discount_price : $order_product->price;
+        $area         = $shop_order->area ? $shop_order->area->name : null;
+        $area_section = $shop_order->area_section ? $shop_order->area_section->name : null;
+        $ship_time    = $shop_order->ship_start_time . '-' . $shop_order->ship_end_time;
         if ($index == 0) {
           $array[] = [
             null,
             $shop_order->user->id,
             $shop_order->orderer,
+            $shop_order->orderer_tel,
+            $shop_order->orderer_email,
+            $shop_order->invoice_uniform_number,
+            $shop_order->invoice_title,
+            $shop_order->receiver,
+            $shop_order->receiver_tel,
+            $area,
+            $area_section,
+            $shop_order->receiver_address,
+            $shop_order->created_at,
+            $shop_order->ship_date,
+            $shop_order->delivery_date,
+            $ship_time,
+            $shop_order->order_type,
             null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
+            $shop_order->status,
             $shop_product->no,
             $order_product->name,
             $order_product->spec,
@@ -117,10 +120,9 @@ class UserExport implements FromArray, WithHeadings, FromCollection, ShouldAutoS
             $order_product->count,
             $price * $order_product->count,
             $order_product->cost * $order_product->count,
+            $shop_order->price,
             null,
-            null,
-            null,
-            null,
+            $shop_order->freight,
             null,
             null,
             null,

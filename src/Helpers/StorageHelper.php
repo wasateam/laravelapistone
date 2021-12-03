@@ -122,4 +122,14 @@ class StorageHelper
       return str_replace("/api/", "", $parse_url['path']);
     }
   }
+
+  public static function getLocalData($path)
+  {
+    // if(Storage::disk('local')->ex)
+    if (Storage::disk('local')->exists($path)) {
+      return Storage::disk('local')->get($path);
+    } else {
+      return null;
+    }
+  }
 }

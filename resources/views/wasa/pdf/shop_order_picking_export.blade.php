@@ -172,85 +172,51 @@
 
 </html>
 <style>
-   .page-break {
-      page-break-after: always;
-    }
+  .page-break {
+    page-break-after: always;
+}
 
-    * {
+* {
     font-family: TaipeiSansTCBeta;
-    }
-    .pdf-file {
-      padding: 72px;
-    }
-    .wrap {
-      border: 1px solid #eaedf1;
-    }
-    .header {
-      height: 32px;
-      background-color: #656d79;
-      color: #393d43;
-      padding: 8px 10px;
-    }
-    .item {
-      display: flex;
-    }
-    .title {
-      padding: 8px 10px;
-      font-size: 10px;
-      font-weight: 600;
-    }
-    .item .title {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 1px solid #eaedf1;
-    }
-    .table-item .title {
-      text-align: center;
-      vertical-align: middle;
-    }
-    .w-10per {
-      width: 10%;
-    }
-    .w-40per {
-      width: 40%;
-    }
-    .w-90per {
-      width: 90%;
-    }
-    .content {
-      padding: 8px 10px;
-      font-size: 10px;
-    }
-    .item .content {
-      display: flex;
-      align-items: center;
-      border: 1px solid #eaedf1;
-    }
-    .table-item {
-      border-collapse: collapse;
-    }
-    td {
-      border: 1px solid #eaedf1;
-    }
+}
 
-    tr td:nth-last-child(1) {
-      border-right: none;
-    }
-    tr td:nth-child(1) {
-      border-left: none;
-    }
-    table tr:nth-last-child(1) {
-      border-bottom: none;
-    }
-    .table-item .content:nth-child(1),
-    .table-item .content:nth-child(4) {
-      text-align: right;
-    }
-    h1 {
-      font-size: 12px;
-    }
-    h2 {
-      font-size: 10px;
-    }
+.pdf-file {
+    padding: 72px;
+}
+.wrap {
+    border: 1px solid #eaedf1;
+}
+.header {
+    height: 32px;
+    background-color: #656d79;
+    color: #393d43;
+    padding: 8px 10px;
+}
+.title {
+    padding: 8px 10px;
+    font-size: 10px;
+}
+.w-10per {
+    width: 10%;
+}
+.w-40per {
+    width: 40%;
+}
+.w-90per {
+    width: 90%;
+}
+.content {
+    padding: 8px 10px;
+    font-size: 10px;
+}
+td {
+    border: 1px solid #eaedf1;
+}
+h1 {
+    font-size: 12px;
+}
+h2 {
+    font-size: 10px;
+}
+
 </style>

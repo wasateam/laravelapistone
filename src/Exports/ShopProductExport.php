@@ -2,20 +2,19 @@
 
 namespace Wasateam\Laravelapistone\Exports;
 
-use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Wasateam\Laravelapistone\Models\ShopProduct;
 
-class ShopProductExport implements WithMapping, WithHeadings, FromCollection
+class ShopProductExport implements WithMapping, WithHeadings, FromCollection, ShouldAutoSize
 {
 
   protected $shop_classes;
   protected $shop_subclasses;
   protected $is_active;
   protected $get_all;
-  use Exportable;
 
   public function __construct($shop_classes, $shop_subclasses, $is_active, $get_all)
   {

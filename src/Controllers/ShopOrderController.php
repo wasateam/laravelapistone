@@ -8,6 +8,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
+use Wasateam\Laravelapistone\Exports\ShopOrderExport;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
@@ -583,24 +584,28 @@ class ShopOrderController extends Controller
   /**
    * Export Excel Signedurl
    *
+   * @queryParam shop_orders  訂單ids No-example 1,2,3
+   * @queryParam get_all  訂單ids No-example 0 or 1
    */
-  // public function export_excel_signedurl(Request $request)
-  // {
-  //   $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
-  //   return URL::temporarySignedRoute(
-  //     'user_export_excel',
-  //     now()->addMinutes(30),
-  //     ['shop_orders' => $shop_orders]
-  //   );
-  // }
+  public function export_excel_signedurl(Request $request)
+  {
+    $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
+    $get_all     = $request->has('get_all') ? $request->get_all : 0;
+    return URL::temporarySignedRoute(
+      'shop_order_export_excel',
+      now()->addMinutes(30),
+      ['shop_orders' => $shop_orders, 'get_all' => $get_all]
+    );
+  }
 
   /**
    * Export Excel
    *
    */
-  // public function export_excel(Request $request)
-  // {
-  //   $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
-  //   return Excel::download(new UserExport($shop_orders), 'shop_orders.xlsx');
-  // }
+  public function export_excel(Request $request)
+  {
+    $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
+    $get_all     = $request->has('get_all') ? $request->get_all : 0;
+    return Excel::download(new ShopOrderExport($shop_orders, $get_all), 'shop_orders.xlsx');
+  }
 }

@@ -2,25 +2,28 @@
 
 namespace Wasateam\Laravelapistone\Exports;
 
-use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Wasateam\Laravelapistone\Models\ShopProduct;
 
-class ShopProductExport implements WithMapping, WithHeadings, FromCollection
+class ShopProductExport implements WithMapping, WithHeadings, FromCollection, ShouldAutoSize
 {
 
   protected $shop_classes;
   protected $shop_subclasses;
   protected $is_active;
-  use Exportable;
+  protected $get_all;
+  protected $stock_level;
 
-  public function __construct($shop_classes, $shop_subclasses, $is_active)
+  public function __construct($shop_classes, $shop_subclasses, $is_active, $get_all, $stock_level)
   {
     $this->shop_classes    = $shop_classes;
     $this->shop_subclasses = $shop_subclasses;
     $this->is_active       = $is_active;
+    $this->get_all         = $get_all;
+    $this->stock_level     = $stock_level;
   }
 
   /**
@@ -28,21 +31,35 @@ class ShopProductExport implements WithMapping, WithHeadings, FromCollection
    */
   public function collection()
   {
-    $is_active     = $this->is_active ? 1 : 0;
-    $shop_products = ShopProduct::where('is_active', $is_active);
-    if ($this->shop_classes) {
-      $item_arr      = array_map('intval', explode(',', $this->shop_classes));
-      $shop_products = $shop_products->with('shop_classes')->whereHas('shop_classes', function ($query) use ($item_arr) {
-        return $query->whereIn('id', $item_arr);
-      });
+    if ($this->get_all) {
+      return ShopProduct::all();
+    } else {
+      $is_active     = $this->is_active ? 1 : 0;
+      $shop_products = ShopProduct::where('is_active', $is_active);
+      //select shop_classes
+      if ($this->shop_classes) {
+        $item_arr      = array_map('intval', explode(',', $this->shop_classes));
+        $shop_products = $shop_products->with('shop_classes')->whereHas('shop_classes', function ($query) use ($item_arr) {
+          return $query->whereIn('id', $item_arr);
+        });
+      }
+      // select shop_subclasses
+      if ($this->shop_subclasses) {
+        $item_arr      = array_map('intval', explode(',', $this->shop_subclasses));
+        $shop_products = $shop_products->with('shop_subclasses')->whereHas('shop_subclasses', function ($query) use ($item_arr) {
+          return $query->whereIn('id', $item_arr);
+        });
+      }
+      //select stock_level
+      if ($this->stock_level) {
+        if ($this->stock_level == 2) {
+          $shop_products = $shop_products->whereRaw('stock_count < stock_alert_count');
+        } else if ($this->stock_level == 1) {
+          $shop_products = $shop_products->whereRaw('stock_count >= stock_alert_count');
+        }
+      }
+      return $shop_products->get();
     }
-    if ($this->shop_subclasses) {
-      $item_arr      = array_map('intval', explode(',', $this->shop_subclasses));
-      $shop_products = $shop_products->with('shop_subclasses')->whereHas('shop_subclasses', function ($query) use ($item_arr) {
-        return $query->whereIn('id', $item_arr);
-      });
-    }
-    return $shop_products->get();
   }
 
   public function headings(): array

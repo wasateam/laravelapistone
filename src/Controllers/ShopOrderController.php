@@ -8,6 +8,8 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
+use Maatwebsite\Excel\Facades\Excel;
+use Wasateam\Laravelapistone\Exports\ShopOrderExport;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
@@ -51,6 +53,7 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * ship_end_time 運送結束時間
  * ship_remark 運送備註
  * ship_date 運送日期
+ * delivery_date 配送日期
  * ship_status 運送狀態
  * ~ unfulfilled：待出貨
  * ~ collected：準備出貨
@@ -202,6 +205,7 @@ class ShopOrderController extends Controller
       $this->input_fields[]  = 'freight';
       $this->input_fields[]  = 'products_price';
       $this->input_fields[]  = 'order_price';
+      $this->input_fields[]  = 'delivery_date';
       $this->filter_fields[] = 'id';
     }
   }
@@ -283,7 +287,8 @@ class ShopOrderController extends Controller
    * @bodyParam ship_start_time text 出貨開始時間 Example:10:10
    * @bodyParam ship_end_time text 出貨結束時間 Example:10:20
    * @bodyParam ship_remark text 出貨備註 Example:ship_remark
-   * @bodyParam ship_date text 出貨日期 Example:2021-10-11 21:00:00
+   * @bodyParam ship_date text 出貨日期 Example:2021-10-11
+   * @bodyParam delivery_date text 配送日期 Example:2021-10-11
    * @bodyParam ship_status text 出貨狀態 Example:ship_status
    * @bodyParam customer_service_remark text 客服備註 Example:customer_service_remark
    * @bodyParam discounts text  優惠活動 Example:discounts
@@ -474,7 +479,8 @@ class ShopOrderController extends Controller
    * @bodyParam ship_start_time text 出貨開始時間 Example:10:10
    * @bodyParam ship_end_time text 出貨結束時間 Example:10:20
    * @bodyParam ship_remark text 出貨備註 Example:ship_remark
-   * @bodyParam ship_date text 出貨日期 Example:2021-10-11 21:00:00
+   * @bodyParam ship_date text 出貨日期 Example:2021-10-11
+   * @bodyParam delivery_date text 配送日期 Example:2021-10-11
    * @bodyParam ship_status text 出貨狀態 Example:ship_status
    * @bodyParam customer_service_remark text 客服備註 Example:customer_service_remark
    * @bodyParam discounts text  優惠活動 Example:discounts
@@ -583,24 +589,28 @@ class ShopOrderController extends Controller
   /**
    * Export Excel Signedurl
    *
+   * @queryParam shop_orders  訂單ids No-example 1,2,3
+   * @queryParam get_all  訂單ids No-example 0 or 1
    */
-  // public function export_excel_signedurl(Request $request)
-  // {
-  //   $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
-  //   return URL::temporarySignedRoute(
-  //     'user_export_excel',
-  //     now()->addMinutes(30),
-  //     ['shop_orders' => $shop_orders]
-  //   );
-  // }
+  public function export_excel_signedurl(Request $request)
+  {
+    $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
+    $get_all     = $request->has('get_all') ? $request->get_all : 0;
+    return URL::temporarySignedRoute(
+      'shop_order_export_excel',
+      now()->addMinutes(30),
+      ['shop_orders' => $shop_orders, 'get_all' => $get_all]
+    );
+  }
 
   /**
    * Export Excel
    *
    */
-  // public function export_excel(Request $request)
-  // {
-  //   $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
-  //   return Excel::download(new UserExport($shop_orders), 'shop_orders.xlsx');
-  // }
+  public function export_excel(Request $request)
+  {
+    $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
+    $get_all     = $request->has('get_all') ? $request->get_all : 0;
+    return Excel::download(new ShopOrderExport($shop_orders, $get_all), 'shop_orders.xlsx');
+  }
 }

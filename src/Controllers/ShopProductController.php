@@ -14,11 +14,18 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Im
  *
  * 商品列表API
  *
+ * 商品庫存狀態篩選 stock_level
+ * ~ 1 => 商品庫存未達預警
+ * ~ 2 => 商品庫存已達預警
+ *
  * 商品庫存匯入 Import Excel
  * excel 欄位順序 : 系統流水號、商品編號、主分類、次分類、商品名稱、規格、重量、成本、售價、庫存、儲位
  * Import Excel 前端要使用 js 的 const formData = new FormData();
  * formData.append("file", file);
  * header 要帶 "Content-Type": "multipart/form-data",
+ *
+ * 商品匯出 Export Excel Signedurl
+ * get_all 可以直接取得所有商品
  *
  * fields ----
  * type 類型
@@ -151,12 +158,26 @@ class ShopProductController extends Controller
    * @queryParam area_sections ids 子地區  No-example
    * @queryParam type ids 類型  No-example
    * @queryParam order_type ids 訂單類型  No-example
+   * @queryParam stock_level ids 篩選庫存狀態  No-example 1,2
    *
    */
   public function index(Request $request, $id = null)
   {
     if (config('stone.mode') == 'cms') {
-      return ModelHelper::ws_IndexHandler($this, $request, $id);
+      return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($model) use ($request) {
+        $stock_level = $request->has('stock_level') ? $request->stock_level : null;
+        if ($stock_level) {
+          if ($stock_level == 2) {
+            return $model->whereRaw('stock_count < stock_alert_count');
+          } else if ($stock_level == 1) {
+            return $model->whereRaw('stock_count >= stock_alert_count');
+          } else {
+            return $model;
+          }
+        } else {
+          return $model;
+        }
+      });
     } else if (config('stone.mode') == 'webapi') {
       if (config('stone.featured_class') && $request->has('featured_classes')) {
         return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
@@ -286,19 +307,23 @@ class ShopProductController extends Controller
   /**
    * Export Excel Signedurl
    *
-   * @queryParam shop_classes ids 分類  No-example
-   * @queryParam shop_subclasses ids 子分類  No-example
-   * @queryParam is_active ids 上架  No-example
+   * @queryParam shop_classes ids 分類  No-example 1,2,3
+   * @queryParam shop_subclasses ids 子分類  No-example 1,2,3
+   * @queryParam is_active number 上架  No-example : 1,0
+   * @queryParam get_all number 全抓  No-example : 1,0
+   * @queryParam stock_level number 庫存狀態  No-example : 1,2
    */
   public function export_excel_signedurl(Request $request)
   {
     $shop_classes    = $request->has('shop_classes') ? $request->shop_classes : null;
     $shop_subclasses = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
     $is_active       = $request->has('is_active') ? $request->is_active : null;
+    $get_all         = $request->has('get_all') ? $request->get_all : 0;
+    $stock_level     = $request->has('stock_level') ? $request->stock_level : null;
     return URL::temporarySignedRoute(
       'shop_product_export_excel',
       now()->addMinutes(30),
-      ['shop_classes' => $shop_classes, 'shop_subclasses' => $shop_subclasses, 'is_active' => $is_active]
+      ['shop_classes' => $shop_classes, 'shop_subclasses' => $shop_subclasses, 'is_active' => $is_active, 'get_all' => $get_all, 'stock_level' => $stock_level]
     );
   }
 
@@ -310,6 +335,8 @@ class ShopProductController extends Controller
     $shop_classes    = $request->has('shop_classes') ? $request->shop_classes : null;
     $shop_subclasses = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
     $is_active       = $request->has('is_active') ? $request->is_active : null;
-    return Excel::download(new ShopProductExport($shop_classes, $shop_subclasses, $is_active), 'shop_products.xlsx');
+    $get_all         = $request->has('get_all') ? $request->get_all : 0;
+    $stock_level     = $request->has('stock_level') ? $request->stock_level : null;
+    return Excel::download(new ShopProductExport($shop_classes, $shop_subclasses, $is_active, $get_all, $stock_level), 'shop_products.xlsx');
   }
 }

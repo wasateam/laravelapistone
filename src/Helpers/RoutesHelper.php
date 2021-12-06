@@ -743,7 +743,7 @@ class RoutesHelper
       Route::resource('shop_order', ShopOrderController::class)->only([
         'store',
       ])->shallow();
-      // Route::get('/auth/shop_order', [ShopOrderController::class, 'auth_shop_order_index']);
+      Route::get('/auth/shop_order', [ShopOrderController::class, 'auth_shop_order_index']);
       # Shop Order Product
       Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
         'index', 'show', 'store',

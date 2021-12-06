@@ -180,6 +180,7 @@ class ShopOrderController extends Controller
     'area_section',
   ];
   public $filter_belongs_to = [
+    'user',
     'area',
     'area_section',
     'shop_ship_time_setting',
@@ -227,6 +228,7 @@ class ShopOrderController extends Controller
    * @queryParam start_time string  No-example 2020-10-10
    * @queryParam end_time string  No-example 2021-10-11
    * @queryParam time_field string  No-example created_at,updated_at
+   * @queryParam user number  No-example 1
    */
   public function index(Request $request, $id = null)
   {

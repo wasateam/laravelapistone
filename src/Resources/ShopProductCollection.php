@@ -39,6 +39,8 @@ class ShopProductCollection extends JsonResource
         'cover_image'                         => $this->cover_image,
         'description'                         => $this->description,
         'ranking_score'                       => $this->ranking_score,
+        'store_temperature'                   => $this->store_temperature,
+        'freight'                             => $this->freight,
         'today_shop_order_shop_product_count' => $this->today_shop_order_shop_products->count(),
       ];
       if (config('stone.shop.uuid')) {
@@ -67,6 +69,7 @@ class ShopProductCollection extends JsonResource
         'shop_product_cover_frame_id' => $this->shop_product_cover_frame_id,
         'description'                 => $this->description,
         'store_temperature'           => $this->store_temperature,
+        'freight'                     => $this->freight,
         'shop_classes'                => ShopClass_R0::collection($this->shop_classes),
         'shop_subclasses'             => ShopSubclass_R0::collection($this->shop_subclasses),
       ];

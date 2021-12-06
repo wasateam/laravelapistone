@@ -45,7 +45,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Im
  * stock_count
  * stock_alert_count
  * max_buyable_count
- * storage_space
+ * storage_space 儲位
  * cover_image
  * images
  * description
@@ -56,6 +56,8 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Im
  * shop_subclasses
  * areas
  * area_sections
+ * freight 運費
+ * store_temperature 溫層
  *
  * @authenticated
  */
@@ -92,6 +94,7 @@ class ShopProductController extends Controller
     'source',
     'store_temperature',
     'ranking_score',
+    'freight',
   ];
   public $search_fields = [
     'no',
@@ -216,6 +219,8 @@ class ShopProductController extends Controller
    * @bodyParam tax string 應稅/免稅 Example: 10
    * @bodyParam stock_count string 庫存數量 Example: 100
    * @bodyParam stock_alert_count string 庫存預警數量 Example: 10
+   * @bodyParam freight string 運費 Example: 10
+   * @bodyParam store_temperature string 溫層 Example: 10
    * @bodyParam max_buyable_count string 最大可購買數量 Example: 10
    * @bodyParam storage_space string 商品儲位 Example: AA
    * @bodyParam cover_image string 商品封面圖 Example:""
@@ -266,6 +271,8 @@ class ShopProductController extends Controller
    * @bodyParam stock_count string 庫存數量 Example: 100
    * @bodyParam stock_alert_count string 庫存預警數量 Example: 10
    * @bodyParam max_buyable_count string 最大可購買數量 Example: 10
+   * @bodyParam freight string 運費 Example: 10
+   * @bodyParam store_temperature string 溫層 Example: 10
    * @bodyParam storage_space string 商品儲位 Example: AA
    * @bodyParam cover_image string 商品封面圖 Example:""
    * @bodyParam images string 商品圖 Example:[]

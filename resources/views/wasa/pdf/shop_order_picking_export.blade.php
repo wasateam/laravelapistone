@@ -86,7 +86,7 @@
             <td class="content">{{$shop_order_shop_product['name']}}</td>
             <td class="content">{{$shop_order_shop_product['spec']}}</td>
             <td class="content ">{{$shop_order_shop_product['weight_capacity']}}</td>
-            <td class="content">{{$shop_order_shop_product->shop_product['storage_space']}}</td>
+            <td class="content">{{$shop_order_shop_product['storage_space']}}</td>
             <td class="content">{{$shop_order_shop_product['count']}}</td>
           </tr>
         @endforeach

@@ -11,7 +11,7 @@ return [
     'acl'     => true,
   ],
   'mail'               => [
-    'service'    => 'gmail', # gmail, surenotify
+    'service'    => 'gmail', # gmail, surenotify,smtp
     'api_key'    => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
     'test_mail'  => env('MAIL_API_DOMAIN', 'wasalearn@gmail.com'),

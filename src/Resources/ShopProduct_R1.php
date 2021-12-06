@@ -42,6 +42,7 @@ class ShopProduct_R1 extends JsonResource
         'source'               => $this->source,
         'store_temperature'    => $this->store_temperature,
         'ranking_score'        => $this->ranking_score,
+        'freight'              => $this->freight,
       ];
       if (config('stone.featured_class')) {
         $res['featured_classes'] = FeaturedClass_R1::collection($this->featured_classes);
@@ -71,6 +72,7 @@ class ShopProduct_R1 extends JsonResource
         'description'          => $this->description,
         'source'               => $this->source,
         'store_temperature'    => $this->store_temperature,
+        'freight'              => $this->freight,
       ];
       if (config('stone.featured_class')) {
         $res['featured_classes'] = FeaturedClass_R1::collection($this->featured_classes);

@@ -545,7 +545,7 @@ class ShopOrderController extends Controller
       ], 400);
     }
     $shop_order_ids = array_map('intval', explode(',', $_shop_orders));
-    // $datas = [];
+    $datas          = [];
     foreach ($shop_order_ids as $shop_order_id) {
       //order data
       $shop_order = ShopOrder::find($shop_order_id);
@@ -577,15 +577,14 @@ class ShopOrderController extends Controller
       }
       $order_data['shop_order_shop_products'] = $shop_order_shop_products;
 
-      // $datas[] = $order_data;
+      $datas[] = $order_data;
       //pdf
-      $pdf = PDF::loadView('wasa.pdf.shop_order_picking_export', [
-        'export_time' => Carbon::now()->format('Y.m.d H:i:s'),
-        'shop_order'  => $order_data,
-      ]);
-      return $pdf->download('揀貨單.pdf');
     }
-
+    $pdf = PDF::loadView('wasa.pdf.shop_order_picking_export', [
+      'export_time' => Carbon::now()->format('Y.m.d H:i:s'),
+      'shop_orders' => $datas,
+    ]);
+    return $pdf->stream('揀貨單.pdf');
   }
 
   /**

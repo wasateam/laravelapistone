@@ -122,4 +122,6 @@ return [
     'receive_mail' => env('STONE_TEST_RECEIVE_MAIL', 'hello@wasateam.com'),
   ],
   'country_code'        => true,
+  // multiple layers
+  'featured_class'      => true,
 ];

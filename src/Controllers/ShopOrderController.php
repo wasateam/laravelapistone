@@ -21,7 +21,8 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
 /**
  * @group 訂單
  *
- * type 訂單類型
+ * type 類型
+ * order_type 訂單類型
  * no 訂單編號
  * orderer 訂購人
  * orderer_tel 訂購人電話

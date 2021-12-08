@@ -765,6 +765,13 @@ class RoutesHelper
       ])->shallow();
     }
 
+    # FeaturedClass
+    if (config('stone.featured_class')) {
+      Route::resource('featured_class', FeaturedClassController::class)->only([
+        'index', 'show',
+      ])->shallow();
+    }
+
     if (config('stone.file_upload') == 'laravel_signed') {
       Route::group([
         "middleware" => ["signed"],

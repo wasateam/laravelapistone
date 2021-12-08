@@ -215,49 +215,11 @@ class EcpayHelper
           "ItemAmount"  => 50,
           "ItemRemark"  => "item01_desc",
         ],
-        [
-          "ItemSeq"     => 2,
-          "ItemName"    => "item02",
-          "ItemCount"   => 1,
-          "ItemWord"    => "個",
-          "ItemPrice"   => 20,
-          "ItemTaxType" => "1",
-          "ItemAmount"  => 20,
-          "ItemRemark"  => "item02_desc",
-        ],
-        [
-          "ItemSeq"     => 3,
-          "ItemName"    => "item03",
-          "ItemCount"   => 3,
-          "ItemWord"    => "粒",
-          "ItemPrice"   => 10,
-          "ItemTaxType" => "1",
-          "ItemAmount"  => 30,
-          "ItemRemark"  => "item03_desc",
-        ],
       ],
     ];
 
-    if (array_key_exists('CarrierType', $data)) {
-      $post_data['CarrierType'] = $data['CarrierType'];
-    }
-    if (array_key_exists('CarrierNum', $data)) {
-      $post_data['CarrierNum'] = $data['CarrierNum'];
-    }
-    if (array_key_exists('TaxType', $data)) {
-      $post_data['TaxType'] = $data['TaxType'];
-    }
-    if (array_key_exists('Items', $data)) {
-      $post_data['Items'] = $data['Items'];
-    }
-    if (array_key_exists('CustomerName', $data)) {
-      $post_data['CustomerName'] = $data['CustomerName'];
-    }
-    if (array_key_exists('Print', $data)) {
-      $post_data['Print'] = $data['Print'];
-    }
-    if (array_key_exists('SalesAmount', $data)) {
-      $post_data['SalesAmount'] = $data['SalesAmount'];
+    foreach ($data as $key => $value) {
+      $post_data[$key] = $data[$key];
     }
 
     return $post_data;

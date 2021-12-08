@@ -21,7 +21,8 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
 /**
  * @group 訂單
  *
- * type 訂單類型
+ * type 類型
+ * order_type 訂單類型
  * no 訂單編號
  * orderer 訂購人
  * orderer_tel 訂購人電話
@@ -355,7 +356,7 @@ class ShopOrderController extends Controller
             'message' => 'products not enough;',
           ], 400);
         }
-        if (isset($order_type) && $cart_product->shop_product->order_type != $order_type) {
+        if ($order_type && $cart_product->shop_product->order_type != $order_type) {
           return response()->json([
             'message' => 'product is not same order type.',
           ], 400);
@@ -369,29 +370,48 @@ class ShopOrderController extends Controller
       $invoice_number = null;
       if (config('stone.invoice')) {
         if (config('stone.invoice.service') == 'ecpay') {
-          if ($request->has('invoice_type') && $request->has('invoice_carrier_number')) {
-
+          if ($request->has('invoice_type')) {
             try {
-              $invoice_type           = $request->invoice_type;
-              $invoice_carrier_type   = $request->invoice_carrier_type;
-              $invoice_carrier_number = $request->invoice_carrier_number;
-              $order_amount           = ShopHelper::getOrderAmount($_my_cart_products);
-              $items                  = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
+              $invoice_type   = $request->invoice_type;
+              $customer_email = $request->orderer_email;
+              $customer_addr = $request->receive_address;
+              $order_amount   = ShopHelper::getOrderAmount($_my_cart_products);
+              $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
+              $post_data      = [
+                'Items'         => $items,
+                'SalesAmount'   => $order_amount,
+                'TaxType'       => 1,
+                'CustomerEmail' => $customer_email,
+                'CustomerAddr' => $customer_addr,
+              ];
               if ($invoice_type == 'persion') {
+                $invoice_carrier_type      = $request->invoice_carrier_type;
+                $invoice_carrier_number    = $request->invoice_carrier_number;
+                $post_data['Print']        = 0;
+                $post_data['CustomerName'] = $request->orderer;
                 if ($invoice_carrier_type == 'mobile') {
-                  $post_data = EcpayHelper::getInvoicePostData([
-                    'CarrierType'  => 3,
-                    'CarrierNum'   => $invoice_carrier_number,
-                    'CustomerName' => $request->orderer,
-                    'TaxType'      => 1,
-                    'Print'        => 0,
-                    'Items'        => $items,
-                    'SalesAmount'  => $order_amount,
-                  ]);
+                  $post_data['CarrierType'] = 3;
+                  $post_data['CarrierNum']  = $invoice_carrier_number;
+                } else if ($invoice_carrier_type == 'certificate') {
+                  $post_data['CarrierType'] = 2;
+                  $post_data['CarrierNum']  = $invoice_carrier_number;
+                } else if ($invoice_carrier_type == 'email') {
+                  $post_data['CarrierType'] = 1;
+                  $post_data['CarrierNum']  = '';
                 }
+              } else if ($invoice_type == 'triple') {
+                
+                $invoice_title          = $request->invoice_title;
+                $invoice_uniform_number = $request->invoice_uniform_number;
+                $post_data['CarrierType'] = '';
+                $post_data['Print']              = 1;
+                $post_data['CustomerName']       = $invoice_title;
+                $post_data['CustomerIdentifier'] = $invoice_uniform_number;
               }
-              $invoice_status = 'done';
+
+              $post_data      = EcpayHelper::getInvoicePostData($post_data);
               $invoice_number = EcpayHelper::createInvoice($post_data);
+              $invoice_status = 'done';
             } catch (\Throwable $th) {
               $invoice_status = 'fail';
             }
@@ -545,7 +565,7 @@ class ShopOrderController extends Controller
       ], 400);
     }
     $shop_order_ids = array_map('intval', explode(',', $_shop_orders));
-    // $datas = [];
+    $datas          = [];
     foreach ($shop_order_ids as $shop_order_id) {
       //order data
       $shop_order = ShopOrder::find($shop_order_id);
@@ -577,15 +597,14 @@ class ShopOrderController extends Controller
       }
       $order_data['shop_order_shop_products'] = $shop_order_shop_products;
 
-      // $datas[] = $order_data;
+      $datas[] = $order_data;
       //pdf
-      $pdf = PDF::loadView('wasa.pdf.shop_order_picking_export', [
-        'export_time' => Carbon::now()->format('Y.m.d H:i:s'),
-        'shop_order'  => $order_data,
-      ]);
-      return $pdf->download('揀貨單.pdf');
     }
-
+    $pdf = PDF::loadView('wasa.pdf.shop_order_picking_export', [
+      'export_time' => Carbon::now()->format('Y.m.d H:i:s'),
+      'shop_orders' => $datas,
+    ]);
+    return $pdf->stream('揀貨單.pdf');
   }
 
   /**

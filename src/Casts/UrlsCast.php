@@ -32,7 +32,6 @@ class UrlsCast implements CastsAttributes
   {
     if (config('stone.post_encode')) {
       $_value = base64_decode($value);
-      error_log($_value);
     } else {
       $_value = json_encode($value, JSON_UNESCAPED_UNICODE);
     }

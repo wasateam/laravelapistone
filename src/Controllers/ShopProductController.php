@@ -118,7 +118,6 @@ class ShopProductController extends Controller
     'suggests',
     'shop_classes',
     'shop_subclasses',
-    'featured_classes',
   ];
   public $filter_belongs_to_many = [
     'shop_classes',
@@ -143,7 +142,8 @@ class ShopProductController extends Controller
       $this->uuid = true;
     }
     if (config('stone.featured_class')) {
-      $this->belongs_to_many[] = 'featured_classes';
+      $this->belongs_to_many[]        = 'featured_classes';
+      $this->filter_belongs_to_many[] = 'featured_classes';
     }
     if (config('stone.area')) {
       $this->belongs_to_many[] = 'areas';

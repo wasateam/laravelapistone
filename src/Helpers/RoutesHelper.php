@@ -768,7 +768,7 @@ class RoutesHelper
     # FeaturedClass
     if (config('stone.featured_class')) {
       Route::resource('featured_class', FeaturedClassController::class)->only([
-        'index', 'show', 'store', 'update', 'destroy',
+        'index', 'show',
       ])->shallow();
     }
 

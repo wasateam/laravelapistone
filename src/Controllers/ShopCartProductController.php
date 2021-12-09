@@ -14,9 +14,19 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
 /**
  * @group 購物車商品
  *
- * @authenticated
- *
  * 購物車商品 API
+ *
+ * name 名稱
+ * subtitle 副標
+ * count 數量
+ * price 價格
+ * dicount_price 優惠價格
+ * order_type 訂單類型
+ * shop_cart 所屬購物車
+ * shop_porduct 所屬商品
+ *
+ *
+ * @authenticated
  */
 class ShopCartProductController extends Controller
 {
@@ -31,6 +41,7 @@ class ShopCartProductController extends Controller
   ];
   public $filter_fields = [
     'status',
+    'order_type',
   ];
   public $filter_belongs_to = [
     'shop_cart',
@@ -47,6 +58,7 @@ class ShopCartProductController extends Controller
       $this->input_fields[] = 'count';
       $this->input_fields[] = 'price';
       $this->input_fields[] = 'discount_price';
+      $this->input_fields[] = 'order_type';
       $this->belongs_to[]   = 'shop_cart';
       $this->belongs_to[]   = 'shop_product';
     }
@@ -57,6 +69,7 @@ class ShopCartProductController extends Controller
    * @queryParam search string 搜尋字串 No-example
    * @queryParam shop_cart ids 購物車  No-example
    * @queryParam status ids 狀態  No-example
+   * @queryParam order_type ids 訂單類型  No-example
    *
    */
   public function index(Request $request, $id = null)
@@ -135,6 +148,7 @@ class ShopCartProductController extends Controller
         $model->subtitle        = $shop_product->subtitle;
         $model->price           = $shop_product->price;
         $model->discount_price  = $shop_product->discount_price;
+        $model->order_type      = $shop_product->order_type;
         $model->count           = $count;
         $model->save();
       });
@@ -146,6 +160,7 @@ class ShopCartProductController extends Controller
         $model->subtitle        = $shop_product->subtitle;
         $model->price           = $shop_product->price;
         $model->discount_price  = $shop_product->discount_price;
+        $model->order_type      = $shop_product->order_type;
         $model->user_id         = Auth::user()->id;
         $model->save();
       });

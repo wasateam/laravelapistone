@@ -374,7 +374,7 @@ class ShopOrderController extends Controller
             try {
               $invoice_type   = $request->invoice_type;
               $customer_email = $request->orderer_email;
-              $customer_addr = $request->receive_address;
+              $customer_addr  = $request->receive_address;
               $order_amount   = ShopHelper::getOrderAmount($_my_cart_products);
               $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
               $post_data      = [
@@ -382,7 +382,7 @@ class ShopOrderController extends Controller
                 'SalesAmount'   => $order_amount,
                 'TaxType'       => 1,
                 'CustomerEmail' => $customer_email,
-                'CustomerAddr' => $customer_addr,
+                'CustomerAddr'  => $customer_addr,
               ];
               if ($invoice_type == 'persion') {
                 $invoice_carrier_type      = $request->invoice_carrier_type;
@@ -400,10 +400,10 @@ class ShopOrderController extends Controller
                   $post_data['CarrierNum']  = '';
                 }
               } else if ($invoice_type == 'triple') {
-                
-                $invoice_title          = $request->invoice_title;
-                $invoice_uniform_number = $request->invoice_uniform_number;
-                $post_data['CarrierType'] = '';
+
+                $invoice_title                   = $request->invoice_title;
+                $invoice_uniform_number          = $request->invoice_uniform_number;
+                $post_data['CarrierType']        = '';
                 $post_data['Print']              = 1;
                 $post_data['CustomerName']       = $invoice_title;
                 $post_data['CustomerIdentifier'] = $invoice_uniform_number;
@@ -433,6 +433,8 @@ class ShopOrderController extends Controller
           $new_order_product->spec                 = $shop_product->spec;
           $new_order_product->weight_capacity      = $shop_product->weight_capacity;
           $new_order_product->cover_image          = $shop_product->cover_image;
+          $new_order_product->order_type           = $shop_product->order_type;
+          $new_order_product->freight              = $shop_product->freight;
           $new_order_product->shop_product_id      = $shop_product->id;
           $new_order_product->cost                 = $shop_product->cost;
           $new_order_product->shop_cart_product_id = $my_cart_product['id'];
@@ -442,7 +444,7 @@ class ShopOrderController extends Controller
           $cart_product->save();
           ShopHelper::shopOrderProductChangeCount($new_order_product->id);
         }
-        ShopHelper::changeShopOrderPrice($model->id);
+        ShopHelper::changeShopOrderPrice($model->id, $order_type);
         $model->status = 'not-established';
         $model->save();
 

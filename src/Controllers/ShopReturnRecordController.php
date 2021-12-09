@@ -212,7 +212,7 @@ class ShopReturnRecordController extends Controller
           $shop_return_record->shop_product_id            = $shop_order_shop_product->shop_product_id;
           $shop_return_record->shop_order_shop_product_id = $shop_order_shop_product->id;
           $shop_return_record->count                      = $shop_order_shop_product->count;
-          $shop_return_record->price                      = $shop_order_shop_product->price;
+          $shop_return_record->price                      = $shop_order_shop_product->dicount_price ? $shop_order_shop_product->dicount_price : $shop_order_shop_product->price;
           $shop_return_record->remark                     = $request->remark ? $request->remark : null;
           $shop_return_record->return_reason              = $request->return_reason ? $request->return_reason : null;
           $shop_return_record->type                       = 'return-all';

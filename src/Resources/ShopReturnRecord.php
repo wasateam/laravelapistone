@@ -24,6 +24,9 @@ class ShopReturnRecord extends JsonResource
       "shop_product"            => new ShopProduct_R0($this->shop_product),
       "count"                   => $this->count,
       "remark"                  => $this->remark,
+      "return_reason"           => $this->return_reason,
+      "type"                    => $this->type,
+      "status"                  => $this->status,
       "price"                   => $this->price,
     ];
   }

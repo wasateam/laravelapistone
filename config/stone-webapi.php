@@ -86,6 +86,7 @@ return [
     'pre_order'         => true,
     'current'           => true,
     'custom_shop_order' => true,
+    'freight_default'   => 100,
   ],
   'file_upload'         => 'laravel_signed',
   'privacy_terms'       => true,

@@ -124,4 +124,5 @@ return [
   'country_code'        => true,
   // multiple layers
   'featured_class'      => true,
+  'acumatica'           => true,
 ];

@@ -166,6 +166,11 @@ class StoneServiceProvider extends ServiceProvider
         if (config('stone.featured_class')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/featured_class');
         }
+
+        # Acumatica
+        if (config('stone.acumatica')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/acumatica');
+        }
       }
 
       $this->publishes([

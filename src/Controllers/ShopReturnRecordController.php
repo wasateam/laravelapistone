@@ -23,6 +23,8 @@ use Wasateam\Laravelapistone\Models\ShopReturnRecord;
  * user 誰的訂單
  * shop_order 訂單
  * shop_order_shop_product 訂單商品
+ * type 類別
+ * status 退訂狀態
  * shop_product 商品(原始商品)
  *
  * return all 欄位
@@ -42,6 +44,8 @@ class ShopReturnRecordController extends Controller
     'count',
     'remark',
     'return_reason',
+    'status',
+    'type',
   ];
   public $belongs_to = [
     'user',
@@ -208,9 +212,10 @@ class ShopReturnRecordController extends Controller
           $shop_return_record->shop_product_id            = $shop_order_shop_product->shop_product_id;
           $shop_return_record->shop_order_shop_product_id = $shop_order_shop_product->id;
           $shop_return_record->count                      = $shop_order_shop_product->count;
-          $shop_return_record->price                      = $shop_order_shop_product->price;
+          $shop_return_record->price                      = $shop_order_shop_product->dicount_price ? $shop_order_shop_product->dicount_price : $shop_order_shop_product->price;
           $shop_return_record->remark                     = $request->remark ? $request->remark : null;
           $shop_return_record->return_reason              = $request->return_reason ? $request->return_reason : null;
+          $shop_return_record->type                       = 'return-all';
           $shop_return_record->save();
           ShopHelper::returnProductChangeCount($shop_return_record->id);
         }

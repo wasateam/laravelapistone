@@ -80,10 +80,11 @@ return [
   'pin_card'           => false,
   'calendar_highlight' => false,
   'shop'               => [
-    'uuid'         => true,
-    'pre_order'    => true,
-    'current'      => true,
-    'order_export' => true,
+    'uuid'            => true,
+    'pre_order'       => true,
+    'current'         => true,
+    'order_export'    => true,
+    'freight_default' => 100,
   ],
   // multiple layers
   'featured_class'     => true,

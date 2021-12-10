@@ -37,8 +37,9 @@ class ShopHelper
     $shop_product->save();
   }
 
-  public static function calculateShopOrderPrice($shop_order_id)
+  public static function calculateShopOrderPrice($shop_order_id, $order_type)
   {
+    //計算訂單金額
     $today      = Carbon::now();
     $today_date = $today->format('Y-m-d');
 
@@ -52,12 +53,21 @@ class ShopHelper
     $shop_product_price_total = Self::sum_price($shop_product_price_arr);
 
     //運費 default = 100
-    $free_freight_price = ShopFreeShipping::where('end_date', '>=', $today_date)->where('start_date', '<=', $today_date)->first();
-    $freight            = 100;
-    if ($free_freight_price) {
-      if ($shop_product_price_total >= $free_freight_price->price) {
-        $freight = 0;
+    $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
+    if ($order_type == 'next-day') {
+      //隔日配
+      $free_freight_price = ShopFreeShipping::where('end_date', '>=', $today_date)->where('start_date', '<=', $today_date)->first();
+      if ($free_freight_price) {
+        if ($shop_product_price_total >= $free_freight_price->price) {
+          $freight = 0;
+        }
       }
+    } else if ($order_type == 'pre-order') {
+      //預購
+      $all_product_freight_arr = $shop_order_shop_products->map(function ($item) {
+        return $item->freight ? $item->freight * $item->count : 0;
+      });
+      $freight = Self::sum_price($all_product_freight_arr);
     }
 
     $order_price = $shop_product_price_total + $freight;
@@ -70,11 +80,13 @@ class ShopHelper
 
   }
 
-  public static function changeShopOrderPrice($shop_order_id)
+  public static function changeShopOrderPrice($shop_order_id, $order_type = null)
   {
     //更新訂單價格
-    $shop_order                 = ShopOrder::where('id', $shop_order_id)->first();
-    $price_array                = Self::calculateShopOrderPrice($shop_order_id);
+    $shop_order = ShopOrder::where('id', $shop_order_id)->first();
+    //取得訂單類型
+    $_order_type                = $order_type ? $order_type : $shop_order->order_type;
+    $price_array                = Self::calculateShopOrderPrice($shop_order_id, $_order_type);
     $shop_order->products_price = $price_array['products_price'];
     $shop_order->freight        = $price_array['freight'];
     $shop_order->order_price    = $price_array['order_price'];

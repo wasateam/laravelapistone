@@ -12,9 +12,24 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
 /**
  * @group 訂單商品
  *
- * @authenticated
- *
  * 訂單商品 API
+ *
+ * name
+ * subtitle
+ * count
+ * price
+ * discount_price
+ * spec
+ * weight_capacity
+ * cost
+ * type
+ * order_type
+ * cover_image
+ * shop_product
+ * shop_cart_product
+ * shop_order
+ *
+ * @authenticated
  */
 class ShopOrderShopProductController extends Controller
 {
@@ -25,6 +40,7 @@ class ShopOrderShopProductController extends Controller
   public $input_fields            = [];
   public $filter_fields           = [
     'type',
+    'order_type',
   ];
   public $belongs_to        = [];
   public $filter_belongs_to = [
@@ -43,7 +59,9 @@ class ShopOrderShopProductController extends Controller
       $this->input_fields[]      = 'weight_capacity';
       $this->input_fields[]      = 'cost';
       $this->input_fields[]      = 'type';
+      $this->input_fields[]      = 'order_type';
       $this->input_fields[]      = 'cover_image';
+      $this->input_fields[]      = 'freight';
       $this->belongs_to[]        = 'shop_product';
       $this->belongs_to[]        = 'shop_cart_product';
       $this->belongs_to[]        = 'shop_order';
@@ -55,6 +73,7 @@ class ShopOrderShopProductController extends Controller
    * Index
    * @queryParam shop_product ids 購物車  No-example
    * @queryParam shop_order ids 購物車  No-example
+   * @queryParam order_type ids 訂單類型  No-example
    *
    */
   public function index(Request $request, $id = null)
@@ -113,6 +132,7 @@ class ShopOrderShopProductController extends Controller
       'weight_capacity' => $shop_product->weight_capacity,
       'cover_image'     => $shop_product->cover_image,
       'cost'            => $shop_product->cost,
+      'order_type'      => $shop_product->order_type,
     ]);
 
     if (config('stone.mode') == 'cms') {
@@ -173,6 +193,7 @@ class ShopOrderShopProductController extends Controller
       'weight_capacity' => $shop_product->weight_capacity,
       'cover_image'     => $shop_product->cover_image,
       'cost'            => $shop_product->cost,
+      'order_type'      => $shop_product->order_type,
     ]);
     return ModelHelper::ws_UpdateHandler($this, $request, $id);
   }

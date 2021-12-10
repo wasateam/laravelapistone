@@ -53,7 +53,7 @@ class ShopHelper
     $shop_product_price_total = Self::sum_price($shop_product_price_arr);
 
     //運費 default = 100
-    $freight = 100;
+    $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
     if ($order_type == 'next-day') {
       //隔日配
       $free_freight_price = ShopFreeShipping::where('end_date', '>=', $today_date)->where('start_date', '<=', $today_date)->first();

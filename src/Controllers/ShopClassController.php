@@ -16,10 +16,11 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  */
 class ShopClassController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Models\ShopClass';
-  public $name         = 'shop_class';
-  public $resource     = 'Wasateam\Laravelapistone\Resources\ShopClass';
-  public $input_fields = [
+  public $model              = 'Wasateam\Laravelapistone\Models\ShopClass';
+  public $name               = 'shop_class';
+  public $resource           = 'Wasateam\Laravelapistone\Resources\ShopClass';
+  public $resource_for_order = 'Wasateam\Laravelapistone\Resources\ShopClass_R_Order';
+  public $input_fields       = [
     'name',
     'sq',
     'type',
@@ -30,8 +31,14 @@ class ShopClassController extends Controller
   public $order_fields = [
     'sq',
   ];
-  public $order_by = 'sq';
-  public $uuid     = false;
+  public $order_layers_setting = [
+    [
+      'model' => 'Wasateam\Laravelapistone\Models\ShopSubclass',
+      'key'   => 'shop_subclasses',
+    ],
+  ];
+  public $order_by  = 'sq';
+  public $uuid      = false;
 
   public function __construct()
   {
@@ -98,5 +105,23 @@ class ShopClassController extends Controller
   public function destroy($id)
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
+  }
+
+  /**
+   * Order Get
+   *
+   */
+  public function order_get()
+  {
+    return ModelHelper::ws_OrderGetHandler($this);
+  }
+
+  /**
+   * Order Patch
+   *
+   */
+  public function order_patch(Request $request)
+  {
+    return ModelHelper::ws_OrderPatchHandler($this, $request);
   }
 }

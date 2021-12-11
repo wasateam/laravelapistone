@@ -34,8 +34,9 @@ class ShopSubclassController extends Controller
   public $order_fields = [
     'sq',
   ];
-  public $order_by = 'sq';
-  public $uuid     = false;
+  public $order_by  = 'sq';
+  public $order_way = 'desc';
+  public $uuid      = false;
 
   public function __construct()
   {

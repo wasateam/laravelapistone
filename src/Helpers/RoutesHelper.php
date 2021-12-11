@@ -426,6 +426,8 @@ class RoutesHelper
       Route::resource('shop_product_expect_ship', ShopProductExpectShipController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      Route::get('/shop_class/order', [ShopClassController::class, 'order_get']);
+      Route::patch('/shop_class/order', [ShopClassController::class, 'order_patch']);
       Route::resource('shop_class', ShopClassController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();

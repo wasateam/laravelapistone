@@ -10,9 +10,11 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 /**
  * @group 商品分類
  *
- * @authenticated
- *
- * APIs for shop_class
+ * name 分類名稱
+ * sq 排序設定值
+ * ~ 數值越低、排序越前
+ * type 類型
+ * icon Icon Url
  */
 class ShopClassController extends Controller
 {

@@ -22,6 +22,7 @@ use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
+use Wasateam\Laravelapistone\Controllers\NewsBannerController;
 use Wasateam\Laravelapistone\Controllers\NotificationController;
 use Wasateam\Laravelapistone\Controllers\PinCardController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
@@ -508,6 +509,13 @@ class RoutesHelper
         ])->shallow();
       }
     }
+
+    # News Banner
+    if (config('stone.news_banner')) {
+      Route::resource('news_banner', NewsBannerController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
   }
 
   public static function cms_public_routes()
@@ -805,6 +813,13 @@ class RoutesHelper
       if (config('stone.contact_request.auto_reply')) {
         Route::get('contact_request_auto_reply', [ContactRequestAutoReplyController::class, 'show']);
       }
+    }
+
+    # News Banner
+    if (config('stone.news_banner')) {
+      Route::resource('news_banner', NewsBannerController::class)->only([
+        'index', 'show',
+      ])->shallow();
     }
   }
 

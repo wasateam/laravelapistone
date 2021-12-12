@@ -102,4 +102,5 @@ return [
     'username'      => env('ACUMATICA_USERNAME'),
     'password'      => env('ACUMATICA_PASSWORD'),
   ],
+  'news_banner'        => true,
 ];

@@ -126,4 +126,5 @@ return [
   // multiple layers
   'featured_class'      => true,
   'acumatica'           => true,
+  'news_banner'         => true,
 ];

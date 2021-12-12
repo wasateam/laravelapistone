@@ -171,6 +171,11 @@ class StoneServiceProvider extends ServiceProvider
         if (config('stone.acumatica')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/acumatica');
         }
+
+        # News Banner
+        if (config('stone.news_banner')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/news_banner');
+        }
       }
 
       $this->publishes([

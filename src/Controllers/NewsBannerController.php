@@ -30,6 +30,7 @@ class NewsBannerController extends Controller
   public $resource           = 'Wasateam\Laravelapistone\Resources\NewsBanner';
   public $resource_for_order = 'Wasateam\Laravelapistone\Resources\NewsBanner_R_Order';
   public $input_fields       = [
+    'name',
     'sq',
     'bg_img_1440',
     'bg_img_768',
@@ -39,7 +40,6 @@ class NewsBannerController extends Controller
     'title_color',
     'des',
     'des_color',
-    'name',
   ];
   public $belongs_to = [
   ];

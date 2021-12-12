@@ -512,6 +512,8 @@ class RoutesHelper
 
     # News Banner
     if (config('stone.news_banner')) {
+      Route::get('/news_banner/order', [NewsBannerController::class, 'order_get']);
+      Route::patch('/news_banner/order', [NewsBannerController::class, 'order_patch']);
       Route::resource('news_banner', NewsBannerController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();

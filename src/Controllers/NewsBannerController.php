@@ -126,4 +126,22 @@ class NewsBannerController extends Controller
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
   }
+
+  /**
+   * Order Get
+   *
+   */
+  public function order_get()
+  {
+    return ModelHelper::ws_OrderGetHandler($this);
+  }
+
+  /**
+   * Order Patch
+   *
+   */
+  public function order_patch(Request $request)
+  {
+    return ModelHelper::ws_OrderPatchHandler($this, $request);
+  }
 }

@@ -128,4 +128,5 @@ return [
   'featured_class'      => true,
   'acumatica'           => true,
   'news_banner'         => true,
+  'news'                => true,
 ];

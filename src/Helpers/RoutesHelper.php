@@ -23,6 +23,7 @@ use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerController;
+use Wasateam\Laravelapistone\Controllers\NewsController;
 use Wasateam\Laravelapistone\Controllers\NotificationController;
 use Wasateam\Laravelapistone\Controllers\PinCardController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
@@ -491,6 +492,14 @@ class RoutesHelper
       ])->shallow();
     }
 
+    # News
+    if (config('stone.news')) {
+      Route::resource('news', NewsController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::get('/news/image/upload_url', [NewsController::class, 'image_get_upload_url']);
+    }
+
     # FeaturedClass
     if (config('stone.featured_class')) {
       Route::resource('featured_class', FeaturedClassController::class)->only([
@@ -801,6 +810,15 @@ class RoutesHelper
         'index',
         'show',
       ])->shallow();
+    }
+
+    # News
+    if (config('stone.news')) {
+      Route::resource('news', NewsController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+      Route::get('news/{id}/read', [NewsController::class, 'read']);
     }
 
     # FeaturedClass

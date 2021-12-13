@@ -9,7 +9,7 @@ use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group WsBlog
+ * @group ShopNotice購物須知
  *
  * @authenticated
  *

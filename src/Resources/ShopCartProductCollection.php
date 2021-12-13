@@ -24,6 +24,7 @@ class ShopCartProductCollection extends JsonResource
       'price'          => $this->price,
       'discount_price' => $this->discount_price,
       'count'          => $this->count,
+      'order_type'     => $this->order_type,
       'shop_product'   => new ShopProduct_R1($this->shop_product),
     ];
   }

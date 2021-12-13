@@ -91,6 +91,8 @@ return [
     'current'         => true,
     'order_export'    => true,
     'freight_default' => 100,
+    //購物須知
+    'notice'          => true,
   ],
   // multiple layers
   'featured_class'     => true,
@@ -110,4 +112,5 @@ return [
     'password'      => env('ACUMATICA_PASSWORD'),
   ],
   'news_banner'        => true,
+  'news'               => true,
 ];

@@ -63,6 +63,9 @@ class User extends JsonResource
       $res['carrier_phone']       = $this->carrier_phone;
       $res['carrier_certificate'] = $this->carrier_certificate;
     }
+    if (config('stone.user.acumatica_id')) {
+      $res['acumatica_id'] = $this->acumatica_id;
+    }
     return $res;
   }
 }

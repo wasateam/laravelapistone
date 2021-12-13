@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -95,7 +96,7 @@ class AuthHelper
 
     // All Scopes
     $all_scopes = Self::getScopesInApp($user, $app_id, $app_name, $auth_name, $model_id_name);
-    
+
     if (in_array('wall-passer', $all_scopes)) {
       return true;
     } else if (!$has_scope) {
@@ -123,5 +124,13 @@ class AuthHelper
       $has_scope = $custom_scope_handler($has_scope);
     }
     return $has_scope;
+  }
+
+  public static function getCustomerId($model, $customer_id_config)
+  {
+    if ($customer_id_config['logic'] == 'year-serial') {
+      $user_count = $model::whereYear('created_at', Carbon::now()->year)->count();
+      return $customer_id_config['prefix'] . Carbon::now()->year . str_pad($user_count + 1, 6, '0', STR_PAD_LEFT);
+    }
   }
 }

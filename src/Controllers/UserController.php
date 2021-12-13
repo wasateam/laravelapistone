@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Exports\UserExport;
+use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
@@ -44,6 +45,8 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * subscribe_start_at 訂閱開始時間
  * subscribe_end_at 訂閱結束時間
  * color 顏色
+ * customer_id 系統自動生成之客戶ID
+ * acumatica_id Acumatica ID
  *
  * @authenticated
  */
@@ -130,6 +133,9 @@ class UserController extends Controller
       $this->input_fields[] = 'carrier_phone';
       $this->input_fields[] = 'carrier_certificate';
     }
+    if (config('stone.user.acumatica_id')) {
+      $this->input_fields[] = 'acumatica_id';
+    }
   }
 
   /**
@@ -167,10 +173,17 @@ class UserController extends Controller
    * @bodyParam subscribe_start_at datetime No-example
    * @bodyParam subscribe_end_at datetime No-example
    * @bodyParam color string #000000
+   * @bodyParam acumatica_id string No-example
    */
   public function store(Request $request, $id = null)
   {
-    return ModelHelper::ws_StoreHandler($this, $request, $id);
+    $model = $this->model;
+    return ModelHelper::ws_StoreHandler($this, $request, $id, function ($user) use ($model) {
+      if (config('stone.auth.customer_id')) {
+        $user->customer_id = AuthHelper::getCustomerId($model, config('stone.auth.customer_id'));
+        $user->save();
+      }
+    });
   }
 
   /**
@@ -209,6 +222,7 @@ class UserController extends Controller
    * @bodyParam subscribe_start_at datetime No-example
    * @bodyParam subscribe_end_at datetime No-example
    * @bodyParam color string #000000
+   * @bodyParam acumatica_id string No-example
    */
   public function update(Request $request, $id)
   {

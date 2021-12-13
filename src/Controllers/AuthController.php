@@ -84,6 +84,10 @@ class AuthController extends Controller
     }
     $user->scopes = $default_scopes;
     $user->save();
+    if (config('stone.auth.customer_id')) {
+      $user->customer_id = AuthHelper::getCustomerId($model, config('stone.auth.customer_id'));
+      $user->save();
+    }
     if (config('stone.auth.signup_complete_action')) {
       config('stone.auth.signup_complete_action')::signup_complete_action($user);
     }

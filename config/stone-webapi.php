@@ -66,7 +66,9 @@ return [
   'notification'        => true,
   'appointment'         => false,
   'service_plan'        => false,
-  'pin_card'            => false,
+  // 'pin_card'            => [
+  //   'register_complete_action'=>
+  // ],
   'calendar_highlight'  => false,
   'user'                => [
     'export'              => true,
@@ -80,6 +82,12 @@ return [
         'limit' => 3,
       ],
     ],
+    'customer_id'         => [
+      'logic'              => 'year-serial',
+      'number_least_count' => 6,
+      'prefix'             => "HC",
+    ],
+    'acumatica_id'        => true,
   ],
   'shop'                => [
     'uuid'              => true,
@@ -125,6 +133,13 @@ return [
   'country_code'        => true,
   // multiple layers
   'featured_class'      => true,
-  'acumatica'           => true,
+  'acumatica'          => [
+    'token_url'     => env('ACUMATICA_TOKEN_URL'),
+    'api_url'       => env('ACUMATICA_API_URL'),
+    'client_id'     => env('ACUMATICA_CLIENT_ID'),
+    'client_secret' => env('ACUMATICA_CLIENT_SECRET'),
+    'username'      => env('ACUMATICA_USERNAME'),
+    'password'      => env('ACUMATICA_PASSWORD'),
+  ],
   'news_banner'         => true,
 ];

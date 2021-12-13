@@ -10,10 +10,8 @@ class AcumaticaHelper
 {
   public static function createEquipment($customerId, $pin, $type, $purchase_date, $serial_number)
   {
-    $token = self::getToken();
-    $mode  = config('stone.acumatica.mode');
-    // @Q@ 待補 PRD URL
-    $post_url  = $mode == 'prd' ? "https://dev02.clouderp.com.tw/HSN/entity/wasateam/20.200.001/FSEquipment" : "https://dev02.clouderp.com.tw/HSN/entity/wasateam/20.200.001/FSEquipment";
+    $token     = self::getToken();
+    $post_url  = config('stone.acumatica.api_url') . "/FSEquipment";
     $post_data = [
       'CustomerCustomerID' => [
         'value' => $customerId,
@@ -71,10 +69,8 @@ class AcumaticaHelper
 
   public static function createPINCode($customerId, $pin, $price_class)
   {
-    $token = self::getToken();
-    $mode  = config('stone.acumatica.mode');
-    // @Q@ 待補 PRD URL
-    $post_url  = $mode == 'prd' ? "https://dev02.clouderp.com.tw/HSN/entity/wasateam/20.200.001/CustomerPINCode" : "https://dev02.clouderp.com.tw/HSN/entity/wasateam/20.200.001/CustomerPINCode";
+    $token     = self::getToken();
+    $post_url  = config('stone.acumatica.api_url') . "/CustomerPINCode";
     $post_data = [
       'CustomerID' => [
         'value' => $customerId,
@@ -96,10 +92,8 @@ class AcumaticaHelper
 
   public static function getCustomer($customerId)
   {
-    $token = self::getToken();
-    $mode  = config('stone.acumatica.mode');
-    // @Q@ 待補 PRD URL
-    $post_url = $mode == 'prd' ? "https://uat-hsnerp.hsnservice.com/HSN_UAT/entity/Default/20.200.001/Customer?\$filter=CustomerID eq '{$customerId}'&\$expand=PrimaryContact" : "https://uat-hsnerp.hsnservice.com/HSN_UAT/entity/Default/20.200.001/Customer?\$filter=CustomerID eq '{$customerId}'&\$expand=PrimaryContact";
+    $token    = self::getToken();
+    $post_url = config('stone.acumatica.api_url') . "/Customer?\$filter=CustomerID eq '{$customerId}'&\$expand=PrimaryContact";
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",
     ])->get($post_url);
@@ -108,10 +102,8 @@ class AcumaticaHelper
 
   public static function createCustomer($name, $class, $price_class, $email, $birth)
   {
-    $token = self::getToken();
-    $mode  = config('stone.acumatica.mode');
-    // @Q@ 待補 PRD URL
-    $post_url  = $mode == 'prd' ? "https://dev02.clouderp.com.tw/HSN/entity/wasateam/20.200.001/Customer" : "https://dev02.clouderp.com.tw/HSN/entity/wasateam/20.200.001/Customer";
+    $token     = self::getToken();
+    $post_url  = config('stone.acumatica.api_url') . "/Customer";
     $post_data = [
       'CustomerName'   => [
         'value' => $name,
@@ -148,10 +140,8 @@ class AcumaticaHelper
   public static function changeCustomerId($id, $customerId)
   {
 
-    $token = self::getToken();
-    $mode  = config('stone.acumatica.mode');
-    // @Q@ 待補 PRD URL
-    $post_url  = $mode == 'prd' ? "https://dev02.clouderp.com.tw/HSN/entity/wasateam/20.200.001/Customer/ChangeID" : "https://dev02.clouderp.com.tw/HSN/entity/wasateam/20.200.001/Customer/ChangeID";
+    $token     = self::getToken();
+    $post_url  = config('stone.acumatica.api_url') . "/Customer/ChangeID";
     $post_data = [
       "entity"     => [
         "id" => $id,
@@ -170,10 +160,8 @@ class AcumaticaHelper
 
   public static function getServiceOrder($order_no)
   {
-    $token = self::getToken();
-    $mode  = config('stone.acumatica.mode');
-    // @Q@ 待補 PRD URL
-    $post_url = $mode == 'prd' ? 'https://uat-hsnerp.hsnservice.com/HSN_UAT/entity/Default/20.200.001/ServiceOrder?$filter=ServiceOrderNbr eq ' : 'https://uat-hsnerp.hsnservice.com/HSN_UAT/entity/Default/20.200.001/ServiceOrder?$filter=ServiceOrderNbr eq ';
+    $token    = self::getToken();
+    $post_url = config('stone.acumatica.api_url') . '/ServiceOrder?$filter=ServiceOrderNbr eq ';
 
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",
@@ -197,7 +185,7 @@ class AcumaticaHelper
       }
     }
     // @Q@ 待補 PRD URL
-    $post_url = $mode == 'prd' ? 'https://uat-hsnerp.hsnservice.com/HSN_UAT/identity/connect/token' : 'https://uat-hsnerp.hsnservice.com/HSN_UAT/identity/connect/token';
+    $post_url = config('stone.acumatica.token_url');
     try {
       $response = Http::withBody("grant_type=password&client_id=" . $client_id . "&client_secret=" . $client_secret . "&username=" . $username . "&password=" . $password . "&scope=api", 'application/x-www-form-urlencoded')
         ->post($post_url);

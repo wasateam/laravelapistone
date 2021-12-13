@@ -55,6 +55,12 @@ return [
         'limit' => 3,
       ],
     ],
+    'customer_id'         => [
+      'logic'              => 'year-serial',
+      'number_least_count' => 6,
+      'prefix'             => "HC",
+    ],
+    'acumatica_id'        => true,
   ],
   'user_device_token'  => true,
   'socialite'          => [
@@ -96,7 +102,8 @@ return [
     'payment_request' => true,
   ],
   'acumatica'          => [
-    'mode'          => env('ACUMATICA_MODE', 'uat'),
+    'token_url'     => env('ACUMATICA_TOKEN_URL'),
+    'api_url'       => env('ACUMATICA_API_URL'),
     'client_id'     => env('ACUMATICA_CLIENT_ID'),
     'client_secret' => env('ACUMATICA_CLIENT_SECRET'),
     'username'      => env('ACUMATICA_USERNAME'),

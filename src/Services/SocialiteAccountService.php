@@ -56,6 +56,10 @@ class SocialiteAccountService
         $default_scopes = config('stone.auth.default_scopes');
         $user->scopes   = $default_scopes;
         $user->save();
+        if (config('stone.auth.customer_id')) {
+          $user->customer_id = AuthHelper::getCustomerId(User, config('stone.auth.customer_id'));
+          $user->save();
+        }
         $user->markEmailAsVerified();
       }
       $account->user()->associate($user);

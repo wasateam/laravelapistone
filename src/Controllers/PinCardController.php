@@ -184,6 +184,9 @@ class PinCardController extends Controller
         $user_service_item->save();
       }
     }
+    if (config('stone.pin_card.register_complete_action')) {
+      config('stone.pin_card.register_complete_action')::register_complete_action($model, $user);
+    }
     LogHelper::createWebLog($user->id, 'register', 'service_plan', $model->service_plan_id, \Request::ip(), $request->pin);
     return response()->json([
       'message' => 'successful registed.',

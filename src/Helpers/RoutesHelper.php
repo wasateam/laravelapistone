@@ -22,6 +22,7 @@ use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
+use Wasateam\Laravelapistone\Controllers\NewsBannerController;
 use Wasateam\Laravelapistone\Controllers\NotificationController;
 use Wasateam\Laravelapistone\Controllers\PinCardController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
@@ -426,6 +427,8 @@ class RoutesHelper
       Route::resource('shop_product_expect_ship', ShopProductExpectShipController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      Route::get('/shop_class/order', [ShopClassController::class, 'order_get']);
+      Route::patch('/shop_class/order', [ShopClassController::class, 'order_patch']);
       Route::resource('shop_class', ShopClassController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
@@ -505,6 +508,15 @@ class RoutesHelper
           'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
       }
+    }
+
+    # News Banner
+    if (config('stone.news_banner')) {
+      Route::get('/news_banner/order', [NewsBannerController::class, 'order_get']);
+      Route::patch('/news_banner/order', [NewsBannerController::class, 'order_patch']);
+      Route::resource('news_banner', NewsBannerController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
     }
   }
 
@@ -803,6 +815,13 @@ class RoutesHelper
       if (config('stone.contact_request.auto_reply')) {
         Route::get('contact_request_auto_reply', [ContactRequestAutoReplyController::class, 'show']);
       }
+    }
+
+    # News Banner
+    if (config('stone.news_banner')) {
+      Route::resource('news_banner', NewsBannerController::class)->only([
+        'index', 'show',
+      ])->shallow();
     }
   }
 

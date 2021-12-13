@@ -378,6 +378,53 @@ class ModelHelper
     }
   }
 
+  public static function ws_OrderGetHandler($controller)
+  {
+
+    // Setting
+    $setting = self::getSetting($controller);
+
+    $collection = $setting->model::orderBy('sq')->get();
+
+    return $setting->resource_for_order::collection($collection);
+  }
+
+  public static function ws_OrderPatchHandler($controller, $request)
+  {
+    if (!$request->has('order')) {
+      return response()->json([
+        'message' => 'field order is required.',
+      ], 400);
+    }
+
+    // Setting
+    $setting = self::getSetting($controller);
+
+    $order = $request->order;
+    foreach ($order as $order_key => $order_value) {
+      $model     = $setting->model::find($order_value['id']);
+      $model->sq = $order_value['sq'];
+      $model->save();
+      $current_layer = $order_value;
+      foreach ($setting->order_layers_setting as $order_layers_setting_value) {
+        $current_layer = $current_layer[$order_layers_setting_value['key']];
+        if (!$current_layer) {
+          continue;
+        }
+        foreach ($current_layer as $current_layer_value) {
+          $sequence_key = isset($order_layers_setting_value['sequence_key']) ? $order_layers_setting_value['sequence_key'] : 'sq';
+          $submodel                  = $order_layers_setting_value['model']::find($current_layer_value['id']);
+          $submodel->{$sequence_key} = $current_layer_value[$sequence_key];
+          $submodel->save();
+        }
+      }
+    }
+
+    return response()->json([
+      'message' => 'order updated.',
+    ], 200);
+  }
+
   public static function log_save($log_model, $record_model, $user, $user_id_name, $action, $controller, $user_uuid = true, $model_uuid = false)
   {
     if ($user_uuid) {
@@ -543,6 +590,8 @@ class ModelHelper
     $setting->order_by                        = isset($controller->order_by) ? $controller->order_by : "id";
     $setting->order_way                       = isset($controller->order_way) ? $controller->order_way : "desc";
     $setting->country_code                    = isset($controller->country_code) ? $controller->country_code : null;
+    $setting->resource_for_order              = isset($controller->resource_for_order) ? $controller->resource_for_order : $controller->resource;
+    $setting->order_layers_setting            = isset($controller->order_layers_setting) ? $controller->order_layers_setting : [];
     return $setting;
   }
 

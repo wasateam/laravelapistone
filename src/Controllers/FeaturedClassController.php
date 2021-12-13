@@ -27,7 +27,9 @@ class FeaturedClassController extends Controller
   public $order_fields = [
     'sequence',
   ];
-  public $uuid = false;
+  public $order_by  = "sequence";
+  public $order_way = "asc";
+  public $uuid      = false;
 
   public function __construct()
   {

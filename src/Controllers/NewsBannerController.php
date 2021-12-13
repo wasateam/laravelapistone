@@ -8,45 +8,48 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group 商品分類
+ * @group 最新消息Banner
  *
- * name 分類名稱
+ * name 後台管理識別用途
  * sq 排序設定值
  * ~ 數值越低、排序越前
- * type 類型
- * icon Icon Url
+ * bg_img_1440 底圖1440
+ * bg_img_768 底圖768
+ * bg_img_320 底圖320
+ * link 連結
+ * title 標題
+ * title_color 標題顏色
+ * des 說明
+ * des_color 說明顏色
+ * 
  */
-class ShopClassController extends Controller
+class NewsBannerController extends Controller
 {
-  public $model              = 'Wasateam\Laravelapistone\Models\ShopClass';
-  public $name               = 'shop_class';
-  public $resource           = 'Wasateam\Laravelapistone\Resources\ShopClass';
-  public $resource_for_order = 'Wasateam\Laravelapistone\Resources\ShopClass_R_Order';
+  public $model              = 'Wasateam\Laravelapistone\Models\NewsBanner';
+  public $name               = 'news_banner';
+  public $resource           = 'Wasateam\Laravelapistone\Resources\NewsBanner';
+  public $resource_for_order = 'Wasateam\Laravelapistone\Resources\NewsBanner_R_Order';
   public $input_fields       = [
     'name',
     'sq',
-    'type',
-    'icon',
+    'bg_img_1440',
+    'bg_img_768',
+    'bg_img_320',
+    'link',
+    'title',
+    'title_color',
+    'des',
+    'des_color',
   ];
   public $belongs_to = [
   ];
   public $order_fields = [
     'sq',
   ];
-  public $order_layers_setting = [
-    [
-      'model' => 'Wasateam\Laravelapistone\Models\ShopSubclass',
-      'key'   => 'shop_subclasses',
-    ],
-  ];
-  public $order_by  = 'sq';
-  public $uuid      = false;
+  public $order_by = 'sq';
 
   public function __construct()
   {
-    if (config('stone.shop.uuid')) {
-      $this->uuid = true;
-    }
   }
 
   /**
@@ -68,8 +71,16 @@ class ShopClassController extends Controller
    * Store
    *
    * @bodyParam name string 名稱 No-example
-   * @bodyParam sq string 順序設定 No-example
-   * @bodyParam type string 類型(current現貨,pre_order預購) No-example
+   * @bodyParam sq 排序設定值 Example:1
+   * @bodyParam bg_img_1440  底圖1440 No-example
+   * @bodyParam bg_img_768 底圖768 No-example
+   * @bodyParam bg_img_320 底圖320 No-example
+   * @bodyParam link 連結 No-example
+   * @bodyParam title 標題 Example:Title
+   * @bodyParam title_color 標題顏色 Example:#000
+   * @bodyParam des 說明 Example:DesDesDes
+   * @bodyParam des_color 說明顏色 Example:#000
+
    */
   public function store(Request $request, $id = null)
   {
@@ -79,7 +90,7 @@ class ShopClassController extends Controller
   /**
    * Show
    *
-   * @urlParam  shop_class required The ID of shop_class. Example: 1
+   * @urlParam  news_banner required The ID of news_banner. Example: 1
    */
   public function show(Request $request, $id = null)
   {
@@ -89,10 +100,17 @@ class ShopClassController extends Controller
   /**
    * Update
    *
-   * @urlParam  shop_class required The ID of shop_class. Example: 1
+   * @urlParam  news_banner required The ID of news_banner. Example: 1
    * @bodyParam name string 名稱 No-example
-   * @bodyParam sq string 順序設定 No-example
-   * @bodyParam type string 類型(current現貨,pre_order預購) No-example
+   * @bodyParam sq 排序設定值 Example:1
+   * @bodyParam bg_img_1440  底圖1440 No-example
+   * @bodyParam bg_img_768 底圖768 No-example
+   * @bodyParam bg_img_320 底圖320 No-example
+   * @bodyParam link 連結 No-example
+   * @bodyParam title 標題 Example:Title
+   * @bodyParam title_color 標題顏色 Example:#000
+   * @bodyParam des 說明 Example:DesDesDes
+   * @bodyParam des_color 說明顏色 Example:#000
    */
   public function update(Request $request, $id)
   {
@@ -102,7 +120,7 @@ class ShopClassController extends Controller
   /**
    * Delete
    *
-   * @urlParam  shop_class required The ID of shop_class. Example: 2
+   * @urlParam  news_banner required The ID of news_banner. Example: 2
    */
   public function destroy($id)
   {

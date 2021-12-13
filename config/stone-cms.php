@@ -95,4 +95,12 @@ return [
   'finance'            => [
     'payment_request' => true,
   ],
+  'acumatica'          => [
+    'mode'          => env('ACUMATICA_MODE', 'uat'),
+    'client_id'     => env('ACUMATICA_CLIENT_ID'),
+    'client_secret' => env('ACUMATICA_CLIENT_SECRET'),
+    'username'      => env('ACUMATICA_USERNAME'),
+    'password'      => env('ACUMATICA_PASSWORD'),
+  ],
+  'news_banner'        => true,
 ];

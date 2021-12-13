@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group Wsshop_notice_classClass
+ * @group ShopNoticeClass
  *
  * @authenticated
  *
@@ -38,7 +38,7 @@ class ShopNoticeClassController extends Controller
   /**
    * Store
    *
-   * @bodyParam name string No-example
+   * @bodyParam name string Example:name
    *
    */
   public function store(Request $request, $id = null)
@@ -60,7 +60,7 @@ class ShopNoticeClassController extends Controller
    * Update
    *
    * @urlParam  shop_notice_class required The ID of shop_notice_class. Example: 1
-   * @bodyParam name string No-example
+   * @bodyParam name string Example:name
    *
    */
   public function update(Request $request, $id)

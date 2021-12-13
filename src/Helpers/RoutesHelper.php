@@ -23,6 +23,7 @@ use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerController;
+use Wasateam\Laravelapistone\Controllers\NewsController;
 use Wasateam\Laravelapistone\Controllers\NotificationController;
 use Wasateam\Laravelapistone\Controllers\PinCardController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
@@ -37,6 +38,8 @@ use Wasateam\Laravelapistone\Controllers\ShopCartController;
 use Wasateam\Laravelapistone\Controllers\ShopCartProductController;
 use Wasateam\Laravelapistone\Controllers\ShopClassController;
 use Wasateam\Laravelapistone\Controllers\ShopFreeShippingController;
+use Wasateam\Laravelapistone\Controllers\ShopNoticeClassController;
+use Wasateam\Laravelapistone\Controllers\ShopNoticeController;
 use Wasateam\Laravelapistone\Controllers\ShopOrderController;
 use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductController;
@@ -478,6 +481,25 @@ class RoutesHelper
 
     }
 
+    # Shop Notice
+    if (config('stone.shop.notice')) {
+      Route::resource('shop_notice', ShopNoticeController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::get('/shop_notice/image/upload_url', [ShopNoticeController::class, 'image_get_upload_url']);
+      Route::resource('shop_notice_class', ShopNoticeClassController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
+
+    # News
+    if (config('stone.news')) {
+      Route::resource('news', NewsController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::get('/news/image/upload_url', [NewsController::class, 'image_get_upload_url']);
+    }
+
     # FeaturedClass
     if (config('stone.featured_class')) {
       Route::resource('featured_class', FeaturedClassController::class)->only([
@@ -775,6 +797,28 @@ class RoutesHelper
       Route::resource('shop_free_shipping', ShopFreeShippingController::class)->only([
         'index', 'show',
       ])->shallow();
+    }
+
+    # Shop Notice
+    if (config('stone.shop.notice')) {
+      Route::resource('shop_notice', ShopNoticeController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+      Route::get('shop_notice/{id}/read', [ShopNoticeController::class, 'read']);
+      Route::resource('shop_notice_class', ShopNoticeController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+    }
+
+    # News
+    if (config('stone.news')) {
+      Route::resource('news', NewsController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+      Route::get('news/{id}/read', [NewsController::class, 'read']);
     }
 
     # FeaturedClass

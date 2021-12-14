@@ -40,6 +40,7 @@ class ShopClassController extends Controller
     ],
   ];
   public $order_by  = 'sq';
+  public $order_way = 'asc';
   public $uuid      = false;
 
   public function __construct()

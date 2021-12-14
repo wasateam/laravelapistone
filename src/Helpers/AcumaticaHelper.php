@@ -8,7 +8,7 @@ use Wasateam\Laravelapistone\Models\AcumaticaAccessToken;
 
 class AcumaticaHelper
 {
-  public static function createEquipment($customerId, $pin, $type, $purchase_date, $serial_number)
+  public static function createEquipment($customerId, $pin, $type, $purchase_date, $serial_number, $app = null)
   {
     $token     = self::getToken();
     $post_url  = config('stone.acumatica.api_url') . "/FSEquipment";
@@ -158,9 +158,9 @@ class AcumaticaHelper
     return $response->json();
   }
 
-  public static function getServiceOrder($order_no)
+  public static function getServiceOrder($order_no, $acu_app = null)
   {
-    $token    = self::getToken();
+    $token    = self::getToken($acu_app);
     $post_url = config('stone.acumatica.api_url') . '/ServiceOrder?$filter=ServiceOrderNbr eq ';
 
     $response = Http::withHeaders([
@@ -169,14 +169,22 @@ class AcumaticaHelper
     return $response->json();
   }
 
-  public static function getToken()
+  public static function getToken($acu_app = null)
   {
-    $client_id     = config('stone.acumatica.client_id');
-    $client_secret = config('stone.acumatica.client_secret');
-    $username      = config('stone.acumatica.username');
-    $password      = config('stone.acumatica.password');
-    $mode          = config('stone.acumatica.mode');
-    $last_token    = AcumaticaAccessToken::latest()->first();
+    if ($acu_app) {
+      $client_id     = $acu_app->client_id;
+      $client_secret = $acu_app->client_secret;
+    } else {
+      $client_id     = config('stone.acumatica.client_id');
+      $client_secret = config('stone.acumatica.client_secret');
+    }
+    $username = config('stone.acumatica.username');
+    $password = config('stone.acumatica.password');
+    if ($acu_app) {
+      $last_token = AcumaticaAccessToken::where('acumatica_app_id', $acu_app->id)->orderBy('created_at', 'desc')->first();
+    } else {
+      $last_token = AcumaticaAccessToken::latest()->first();
+    }
     if ($last_token) {
       $expires_in = $last_token->expires_in ? $last_token->expires_in : 3600;
       $due        = Carbon::parse($last_token->created_at)->addSeconds($expires_in - 60);
@@ -189,7 +197,10 @@ class AcumaticaHelper
     try {
       $response = Http::withBody("grant_type=password&client_id=" . $client_id . "&client_secret=" . $client_secret . "&username=" . $username . "&password=" . $password . "&scope=api", 'application/x-www-form-urlencoded')
         ->post($post_url);
-      $last_token               = new AcumaticaAccessToken;
+      $last_token = new AcumaticaAccessToken;
+      if ($acu_app) {
+        $last_token->acumatica_app_id = $acu_app->id;
+      }
       $last_token->access_token = $response->json()['access_token'];
       $last_token->expires_in   = $response->json()['expires_in'];
       $last_token->token_type   = $response->json()['token_type'];

@@ -104,6 +104,7 @@ return [
     'payment_request' => true,
   ],
   'acumatica'          => [
+    'app_mode'      => true,
     'token_url'     => env('ACUMATICA_TOKEN_URL'),
     'api_url'       => env('ACUMATICA_API_URL'),
     'client_id'     => env('ACUMATICA_CLIENT_ID'),

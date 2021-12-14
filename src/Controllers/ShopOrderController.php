@@ -365,6 +365,9 @@ class ShopOrderController extends Controller
         $_my_cart_products[] = $cart_product;
       }
 
+      # Update User Info
+      ShopHelper::updateUserInfoFromShopOrderRequest(Auth::user(), $request);
+
       # invoice
       $invoice_status = null;
       $invoice_number = null;
@@ -374,17 +377,21 @@ class ShopOrderController extends Controller
             try {
               $invoice_type   = $request->invoice_type;
               $customer_email = $request->orderer_email;
+              $customer_tel   = $request->orderer_tel;
               $customer_addr  = $request->receive_address;
               $order_amount   = ShopHelper::getOrderAmount($_my_cart_products);
               $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
+              $customer_id    = Auth::user()->id;
               $post_data      = [
                 'Items'         => $items,
                 'SalesAmount'   => $order_amount,
                 'TaxType'       => 1,
                 'CustomerEmail' => $customer_email,
                 'CustomerAddr'  => $customer_addr,
+                'CustomerPhone' => $customer_tel,
+                'CustomerID'    => $customer_id,
               ];
-              if ($invoice_type == 'persion') {
+              if ($invoice_type == 'personal') {
                 $invoice_carrier_type      = $request->invoice_carrier_type;
                 $invoice_carrier_number    = $request->invoice_carrier_number;
                 $post_data['Print']        = 0;
@@ -396,11 +403,11 @@ class ShopOrderController extends Controller
                   $post_data['CarrierType'] = 2;
                   $post_data['CarrierNum']  = $invoice_carrier_number;
                 } else if ($invoice_carrier_type == 'email') {
-                  $post_data['CarrierType'] = 1;
-                  $post_data['CarrierNum']  = '';
+                  $post_data['CarrierType']   = 1;
+                  $post_data['CarrierNum']    = '';
+                  $post_data['CustomerEmail'] = $invoice_carrier_number;
                 }
               } else if ($invoice_type == 'triple') {
-
                 $invoice_title                   = $request->invoice_title;
                 $invoice_uniform_number          = $request->invoice_uniform_number;
                 $post_data['CarrierType']        = '';
@@ -408,7 +415,6 @@ class ShopOrderController extends Controller
                 $post_data['CustomerName']       = $invoice_title;
                 $post_data['CustomerIdentifier'] = $invoice_uniform_number;
               }
-
               $post_data      = EcpayHelper::getInvoicePostData($post_data);
               $invoice_number = EcpayHelper::createInvoice($post_data);
               $invoice_status = 'done';

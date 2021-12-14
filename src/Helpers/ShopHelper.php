@@ -4,12 +4,15 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Wasateam\Laravelapistone\Models\Area;
+use Wasateam\Laravelapistone\Models\AreaSection;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopFreeShipping;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
 use Wasateam\Laravelapistone\Models\ShopProduct;
 use Wasateam\Laravelapistone\Models\ShopReturnRecord;
+use Wasateam\Laravelapistone\Models\UserAddress;
 
 class ShopHelper
 {
@@ -194,5 +197,93 @@ class ShopHelper
       ];
     }
     return $datas;
+  }
+
+  public static function createUserAddress($user, $area_id, $area_section_id, $address, $type = 'delevery')
+  {
+    $user_address = UserAddress::
+      where('user_id', $user->id)
+      ->where('area_id', $area_id)
+      ->where('area_section_id', $area_section_id)
+      ->where('address', $address)
+      ->where('type', $type)
+      ->first();
+    if (!$user_address) {
+      $create_check       = true;
+      $user_address_count = UserAddress::
+        where('user_id', $user->id)
+        ->where('area_id', $area_id)
+        ->where('area_section_id', $area_section_id)
+        ->where('address', $address)
+        ->where('type', $type)
+        ->count();
+      if (config('user.address.' . $type)) {
+        if (config('user.address.' . $type . '.limit')) {
+          if ($user_address_count >= config('user.address.' . $type . '.limit')) {
+            $create_check = false;
+          }
+        }
+        if ($create_check) {
+          $user_address                  = new UserAddress();
+          $user_address->user_id         = $user->id;
+          $user_address->area_id         = $area_id;
+          $user_address->area_section_id = $area_section_id;
+          $user_address->address         = $address;
+          $user_address->type            = $type;
+          $user_address->save();
+        }
+      }
+
+    }
+    return $user_address;
+  }
+
+  public static function getAddressWithoutArea($address, $area_id, $area_section_id)
+  {
+    $area         = Area::find($area_id);
+    $area_section = AreaSection::find($area_section_id);
+    $_address     = $address;
+    $_address     = Str::replaceFirst($area->name, '', $_address);
+    $_address     = Str::replaceFirst($area_section->name, '', $_address);
+    return $_address;
+  }
+
+  public static function updateUserInfoFromShopOrderRequest($user, $request)
+  {
+    # User Address
+    if (config('stone.user.address')) {
+      if (config('stone.user.address.delivery')) {
+        self::createUserAddress($user, $request->area, $request->area_section, self::getAddressWithoutArea($request->receive_address, $request->area, $request->area_section), 'delivery');
+      }
+    }
+
+    # User
+    if ($request->has('orderer_tel')) {
+      $user->tel = $request->orderer_tel;
+      $user->save();
+    }
+    if ($request->has('orderer_birthday')) {
+      $user->birthday = $request->orderer_birthday;
+      $user->save();
+    }
+
+    # carrier
+    if (config('stone.invoice')) {
+      if ($request->has('invoice_type')) {
+        $invoice_type = $request->invoice_type;
+        if ($invoice_type == 'persion') {
+          $invoice_carrier_type   = $request->invoice_carrier_type;
+          $invoice_carrier_number = $request->invoice_carrier_number;
+          if ($invoice_carrier_type == 'mobile') {
+            $user->carrier_phone = $request->invoice_carrier_number;
+          } else if ($invoice_carrier_type == 'certificate') {
+            $user->carrier_certificate = $request->invoice_carrier_number;
+          } else if ($invoice_carrier_type == 'email') {
+            $user->carrier_email = $request->invoice_carrier_number;
+          }
+          $user->save();
+        }
+      }
+    }
   }
 }

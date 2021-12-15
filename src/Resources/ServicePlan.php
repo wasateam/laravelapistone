@@ -19,6 +19,7 @@ class ServicePlan extends JsonResource
       'created_at'    => $this->created_at,
       'updated_at'    => $this->updated_at,
       'name'          => $this->name,
+      'code'          => $this->code,
       'remark'        => $this->remark,
       'payload'       => $this->payload,
       'period_month'  => $this->period_month,

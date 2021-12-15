@@ -17,6 +17,7 @@ class ServicePlan_R1 extends JsonResource
     return [
       'id'            => $this->id,
       'name'          => $this->name,
+      'code'          => $this->code,
       'remark'        => $this->remark,
       'payload'       => $this->payload,
       'period_month'  => $this->period_month,

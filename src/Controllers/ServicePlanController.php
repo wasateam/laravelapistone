@@ -8,11 +8,17 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\ServicePlan;
 
 /**
- * @group ServicePlan
+ * @group 服務方案
  *
- * @authenticated
  *
- * APIs for service_plan
+ * name 名稱
+ * code 代碼(識別用)
+ * remark 備註
+ * payload
+ * period_month 時間(月)
+ * total_price  總價
+ * annual_price  年費
+ * monthly_price  月費
  */
 class ServicePlanController extends Controller
 {
@@ -21,6 +27,7 @@ class ServicePlanController extends Controller
   public $resource     = 'Wasateam\Laravelapistone\Resources\ServicePlan';
   public $input_fields = [
     'name',
+    'code',
     'remark',
     'payload',
     'period_month',
@@ -30,6 +37,7 @@ class ServicePlanController extends Controller
   ];
   public $search_fields = [
     'name',
+    'code',
   ];
   public $order_fields = [
     'updated_at',
@@ -51,6 +59,7 @@ class ServicePlanController extends Controller
    * Store
    *
    * @bodyParam name string Example: Plan A
+   * @bodyParam code string Example: AAA
    * @bodyParam remark string Example: hahahaha
    * @bodyParam payload string No-example
    * @bodyParam period_month int No-example
@@ -78,6 +87,7 @@ class ServicePlanController extends Controller
    *
    * @urlParam  service_plan required The ID of service_plan. Example: 1
    * @bodyParam name string Example: Plan A
+   * @bodyParam code string Example: AAA
    * @bodyParam remark string Example: hahahaha
    * @bodyParam payload string No-example
    * @bodyParam period_month int No-example

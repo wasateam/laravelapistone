@@ -51,7 +51,7 @@ class ShopProduct extends Model
     return $this->belongsToMany(ShopSubclass::class, 'shop_product_shop_subclass', 'shop_product_id', 'shop_subclass_id');
   }
 
-  public function shop_order_shop_product()
+  public function shop_order_shop_products()
   {
     return $this->hasMany(ShopOrderShopProduct::class, 'shop_product_id');
   }

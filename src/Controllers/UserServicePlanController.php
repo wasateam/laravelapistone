@@ -8,11 +8,12 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\UserServicePlan;
 
 /**
- * @group UserServicePlan
+ * @group 使用者綁定方案
  *
- * @authenticated
- *
- * APIs for user_service_plan
+ * service_plan 方案 ID
+ * user 使用者 ID
+ * pin_card PinCard ID
+ * 
  */
 class UserServicePlanController extends Controller
 {
@@ -44,14 +45,12 @@ class UserServicePlanController extends Controller
   public function __construct()
   {
     if (config('stone.mode') == 'cms') {
-      $this->belongs_to = [
-        'user',
-        'service_plan',
-      ];
-      $this->filter_belongs_to = [
-        'user',
-        'service_plan',
-      ];
+      $this->belongs_to[]        = 'user';
+      $this->filter_belongs_to[] = 'user';
+    }
+    if (config('stone.pin_card')) {
+      $this->belongs_to[]        = 'pin_card';
+      $this->filter_belongs_to[] = 'pin_card';
     }
   }
 
@@ -70,6 +69,7 @@ class UserServicePlanController extends Controller
    *
    * @bodyParam user string Example: 1
    * @bodyParam service_plan string Example: 1
+   * @bodyParam pin_card string Example: 1
    */
   public function store(Request $request, $id = null)
   {
@@ -92,6 +92,7 @@ class UserServicePlanController extends Controller
    * @urlParam  user_service_plan required The ID of user_service_plan. Example: 1
    * @bodyParam user string Example: 1
    * @bodyParam service_plan string Example: 1
+   * @bodyParam pin_card string Example: 1
    */
   public function update(Request $request, $id)
   {

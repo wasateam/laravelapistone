@@ -24,4 +24,9 @@ class UserServicePlan extends Model
   {
     return $this->hasMany(UserServicePlanItem::class, 'user_service_plan_id');
   }
+
+  public function pin_card()
+  {
+    return $this->belongsTo(PinCard::class, 'pin_card_id');
+  }
 }

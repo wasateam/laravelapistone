@@ -4,14 +4,29 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Wasateam\Laravelapistone\Exceptions\FindNoUserServicePlanException;
 use Wasateam\Laravelapistone\Models\AcumaticaAccessToken;
+use Wasateam\Laravelapistone\Models\UserServicePlan;
 
 class AcumaticaHelper
 {
-  public static function createEquipment($customerId, $pin, $type, $purchase_date, $serial_number, $app = null)
+  public static function createEquipment($user, $type = null, $brand = null, $serial_number = null, $purchase_date = null, $app = null)
   {
-    $token     = self::getToken();
-    $post_url  = config('stone.acumatica.api_url') . "/FSEquipment";
+    $pin               = null;
+    $token             = self::getToken($app);
+    $post_url          = config('stone.acumatica.api_url') . "/FSEquipment";
+    $customerId        = $user->customer_id;
+    $user_service_plan = UserServicePlan
+      ::wherer('user_id', $user->id)
+      ->where('2022-12-15 01:08:18', '>=', \Carbon::now())
+      ->first();
+    if (!$user_service_plan) {
+      throw new FindNoUserServicePlanException;
+    }
+    if ($user_service_plan->pin_card) {
+      $pin = $user_service_plan->pin_card->pin;
+    }
+
     $post_data = [
       'CustomerCustomerID' => [
         'value' => $customerId,
@@ -30,7 +45,7 @@ class AcumaticaHelper
       ],
       "General"            => [
         "Manufacturer" => [
-          "value" => "ACER",
+          "value" => $brand,
         ],
       ],
       "LocationType"       => [
@@ -100,13 +115,13 @@ class AcumaticaHelper
     return $response->json();
   }
 
-  public static function createCustomer($name, $class, $price_class, $email, $birth)
+  public static function createCustomer($class, $price_class, $user)
   {
     $token     = self::getToken();
     $post_url  = config('stone.acumatica.api_url') . "/Customer";
     $post_data = [
       'CustomerName'   => [
-        'value' => $name,
+        'value' => $user->name,
       ],
       'CustomerClass'  => [
         'value' => $class,
@@ -116,39 +131,40 @@ class AcumaticaHelper
       ],
       'MainContact'    => [
         'Email' => [
-          'value' => $email,
+          'value' => $user->email,
         ],
       ],
       'PrimaryContact' => [
         'DateOfBirth' => [
-          'value' => $birth,
+          'value' => $user->birth,
         ],
         'LastName'    => [
-          'value' => $name,
+          'value' => $user->name,
         ],
         'Email'       => [
-          'value' => $email,
+          'value' => $user->email,
         ],
       ],
     ];
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",
     ])->put($post_url, $post_data);
+
+    # @Q@ 回存acu id
     return $response->json();
   }
 
-  public static function changeCustomerId($id, $customerId)
+  public static function updateUserCustomerId($user)
   {
-
     $token     = self::getToken();
     $post_url  = config('stone.acumatica.api_url') . "/Customer/ChangeID";
     $post_data = [
       "entity"     => [
-        "id" => $id,
+        "id" => $user->acumatica_id,
       ],
       "parameters" => [
         "CustomerID" => [
-          "value" => $customerId,
+          "value" => $user->customer_id,
         ],
       ],
     ];

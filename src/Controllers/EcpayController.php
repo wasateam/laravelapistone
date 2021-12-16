@@ -83,17 +83,20 @@ class EcpayController extends Controller
     $shop_order->ecpay_merchant_id = $res->MerchantID;
     if (isset($res->SimulatePaid)) {
       if ($res->SimulatePaid == 1) {
-        $shop_order->pay_status = 'sumulate-paid';
-        $shop_order->status     = 'established';
+        $shop_order->pay_status  = 'sumulate-paid';
+        $shop_order->status      = 'established';
+        $shop_order->ship_status = 'unfulfilled';
       }
     }
     if (isset($res->OrderInfo->TradeStatus)) {
       if ($res->OrderInfo->TradeStatus == 1) {
-        $shop_order->pay_status = 'paid';
-        $shop_order->status     = 'established';
+        $shop_order->pay_status  = 'paid';
+        $shop_order->status      = 'established';
+        $shop_order->ship_status = 'unfulfilled';
       } else if ($res->OrderInfo->TradeStatus == 0) {
-        $shop_order->pay_status = 'not-paid';
-        $shop_order->status     = 'not-established';
+        $shop_order->pay_status  = 'not-paid';
+        $shop_order->status      = 'not-established';
+        $shop_order->ship_status = null;
       }
     }
     $shop_order->ecpay_trade_no   = $res->OrderInfo->TradeNo;

@@ -17,6 +17,7 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * name
  * subtitle
  * count
+ * original_count
  * price
  * discount_price
  * spec
@@ -53,6 +54,7 @@ class ShopOrderShopProductController extends Controller
       $this->input_fields[]      = 'name';
       $this->input_fields[]      = 'subtitle';
       $this->input_fields[]      = 'count';
+      $this->input_fields[]      = 'original_count';
       $this->input_fields[]      = 'price';
       $this->input_fields[]      = 'discount_price';
       $this->input_fields[]      = 'spec';
@@ -133,6 +135,7 @@ class ShopOrderShopProductController extends Controller
       'cover_image'     => $shop_product->cover_image,
       'cost'            => $shop_product->cost,
       'order_type'      => $shop_product->order_type,
+      'original_count'  => $request->count,
     ]);
 
     if (config('stone.mode') == 'cms') {
@@ -194,6 +197,7 @@ class ShopOrderShopProductController extends Controller
       'cover_image'     => $shop_product->cover_image,
       'cost'            => $shop_product->cost,
       'order_type'      => $shop_product->order_type,
+      'original_count'  => $request->count,
     ]);
     return ModelHelper::ws_UpdateHandler($this, $request, $id);
   }

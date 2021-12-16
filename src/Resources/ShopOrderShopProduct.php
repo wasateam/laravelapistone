@@ -28,6 +28,7 @@ class ShopOrderShopProduct extends JsonResource
       'cover_image'         => $this->cover_image,
       'cost'                => $this->cost,
       'count'               => $this->count,
+      'original_count'      => $this->original_count,
       'discount_price'      => $this->discount_price,
       'order_type'          => $this->order_type,
       'freight'             => $this->freight,

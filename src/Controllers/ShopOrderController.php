@@ -434,6 +434,7 @@ class ShopOrderController extends Controller
           $new_order_product->name                 = $shop_product->name;
           $new_order_product->subtitle             = $shop_product->subtitle;
           $new_order_product->count                = $cart_product->count;
+          $new_order_product->original_count       = $cart_product->count;
           $new_order_product->price                = $shop_product->price;
           $new_order_product->discount_price       = $shop_product->discount_price;
           $new_order_product->spec                 = $shop_product->spec;

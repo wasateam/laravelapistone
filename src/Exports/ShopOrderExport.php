@@ -5,16 +5,21 @@ namespace Wasateam\Laravelapistone\Exports;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Wasateam\Laravelapistone\Helpers\TimeHelper;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 
 class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
 {
 
   protected $shop_orders;
+  protected $get_all;
+  protected $country_code;
 
-  public function __construct($shop_orders)
+  public function __construct($shop_orders, $get_all, $country_code)
   {
-    $this->shop_orders = $shop_orders;
+    $this->shop_orders  = $shop_orders;
+    $this->get_all      = $get_all;
+    $this->country_code = $country_code;
   }
 
   public function headings(): array
@@ -79,6 +84,8 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
     if ($this->shop_orders) {
       $shop_order_ids = array_map('intval', explode(',', $this->shop_orders));
       $shop_orders    = ShopOrder::whereIn('id', $shop_order_ids)->get();
+    } else if ($this->get_all) {
+      $shop_orders = ShopOrder::all();
     } else {
       $shop_orders = ShopOrder::all();
     }
@@ -91,6 +98,7 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
         $area         = $shop_order->area ? $shop_order->area->name : null;
         $area_section = $shop_order->area_section ? $shop_order->area_section->name : null;
         $ship_time    = $shop_order->ship_start_time . '-' . $shop_order->ship_end_time;
+        $timezone     = TimeHelper::getTimeZone($this->country_code);
         if ($index == 0) {
           $array[] = [
             null,
@@ -105,9 +113,9 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
             $area,
             $area_section,
             $shop_order->receiver_address,
-            $shop_order->created_at,
+            $shop_order->created_at->timezone($timezone),
             $shop_order->ship_date,
-            $shop_order->delivery_date,
+            // $shop_order->delivery_date,
             $ship_time,
             $shop_order->order_type,
             null,
@@ -143,7 +151,6 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
           ];
         } else {
           $array[] = [
-            null,
             null,
             null,
             null,

@@ -41,6 +41,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Im
  * discount_price 優惠價
  * weight_capacity 重量/容量
  * weight_capacity_unit 重量/容量單位
+ * show_weight_capacity 重量/容量 前台是否顯示
  * tax
  * stock_count
  * stock_alert_count
@@ -83,6 +84,7 @@ class ShopProductController extends Controller
     'discount_price',
     'weight_capacity',
     'weight_capacity_unit',
+    'show_weight_capacity',
     'tax',
     'stock_count',
     'stock_alert_count',
@@ -216,6 +218,7 @@ class ShopProductController extends Controller
    * @bodyParam discount_price int 優惠價 Example: 280
    * @bodyParam weight_capacity 重量/容量 string Example: 100
    * @bodyParam weight_capacity_unit 重量/容量單位 string Example: kg
+   * @bodyParam show_weight_capacity 重量/容量前台是否顯示 string Example: 1
    * @bodyParam tax string 應稅/免稅 Example: 10
    * @bodyParam stock_count string 庫存數量 Example: 100
    * @bodyParam stock_alert_count string 庫存預警數量 Example: 10
@@ -267,6 +270,7 @@ class ShopProductController extends Controller
    * @bodyParam discount_price int 優惠價 Example: 280
    * @bodyParam weight_capacity 重量/容量 string Example: 100g
    * @bodyParam weight_capacity_unit 重量/容量單位 string Example: kg
+   * @bodyParam show_weight_capacity 重量/容量前台是否顯示 string Example: 1
    * @bodyParam tax string 應稅/免稅 Example: 10
    * @bodyParam stock_count string 庫存數量 Example: 100
    * @bodyParam stock_alert_count string 庫存預警數量 Example: 10

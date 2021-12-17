@@ -434,6 +434,7 @@ class ShopOrderController extends Controller
           $new_order_product->name                 = $shop_product->name;
           $new_order_product->subtitle             = $shop_product->subtitle;
           $new_order_product->count                = $cart_product->count;
+          $new_order_product->original_count       = $cart_product->count;
           $new_order_product->price                = $shop_product->price;
           $new_order_product->discount_price       = $shop_product->discount_price;
           $new_order_product->spec                 = $shop_product->spec;
@@ -620,15 +621,17 @@ class ShopOrderController extends Controller
    *
    * @queryParam shop_orders  訂單ids No-example 1,2,3
    * @queryParam get_all  訂單ids No-example 0 or 1
+   * @queryParam country_code code 國家  No-example : tw
    */
   public function export_excel_signedurl(Request $request)
   {
-    $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
-    $get_all     = $request->has('get_all') ? $request->get_all : 0;
+    $shop_orders  = $request->has('shop_orders') ? $request->shop_orders : null;
+    $get_all      = $request->has('get_all') ? $request->get_all : 0;
+    $country_code = $request->has('country_code') ? $request->country_code : null;
     return URL::temporarySignedRoute(
       'shop_order_export_excel',
       now()->addMinutes(30),
-      ['shop_orders' => $shop_orders, 'get_all' => $get_all]
+      ['shop_orders' => $shop_orders, 'get_all' => $get_all, 'country_code' => $country_code]
     );
   }
 
@@ -638,8 +641,9 @@ class ShopOrderController extends Controller
    */
   public function export_excel(Request $request)
   {
-    $shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
-    $get_all     = $request->has('get_all') ? $request->get_all : 0;
-    return Excel::download(new ShopOrderExport($shop_orders, $get_all), 'shop_orders.xlsx');
+    $shop_orders  = $request->has('shop_orders') ? $request->shop_orders : null;
+    $get_all      = $request->has('get_all') ? $request->get_all : 0;
+    $country_code = $request->has('country_code') ? $request->country_code : null;
+    return Excel::download(new ShopOrderExport($shop_orders, $get_all, $country_code), 'shop_orders.xlsx');
   }
 }

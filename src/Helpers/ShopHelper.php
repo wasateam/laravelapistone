@@ -53,7 +53,7 @@ class ShopHelper
     $shop_product_price_arr   = $shop_order_shop_products->map(function ($item) {
       return $item->discount_price ? $item->discount_price * $item->count : $item->price * $item->count;
     });
-    $shop_product_price_total = Self::sum_price($shop_product_price_arr);
+    $shop_product_price_total = Self::sum_total($shop_product_price_arr);
 
     //運費 default = 100
     $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
@@ -70,7 +70,7 @@ class ShopHelper
       $all_product_freight_arr = $shop_order_shop_products->map(function ($item) {
         return $item->freight ? $item->freight * $item->count : 0;
       });
-      $freight = Self::sum_price($all_product_freight_arr);
+      $freight = Self::sum_total($all_product_freight_arr);
     }
 
     $order_price = $shop_product_price_total + $freight;
@@ -96,7 +96,7 @@ class ShopHelper
     $shop_order->save();
   }
 
-  public static function sum_price($price_array)
+  public static function sum_total($price_array)
   {
     $total = 0;
     foreach ($price_array as $price) {

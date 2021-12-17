@@ -41,6 +41,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Im
  * discount_price 優惠價
  * weight_capacity 重量/容量
  * weight_capacity_unit 重量/容量單位
+ * show_weight_capacity 重量/容量 前台是否顯示
  * tax
  * stock_count
  * stock_alert_count
@@ -83,6 +84,7 @@ class ShopProductController extends Controller
     'discount_price',
     'weight_capacity',
     'weight_capacity_unit',
+    'show_weight_capacity',
     'tax',
     'stock_count',
     'stock_alert_count',
@@ -216,6 +218,7 @@ class ShopProductController extends Controller
    * @bodyParam discount_price int 優惠價 Example: 280
    * @bodyParam weight_capacity 重量/容量 string Example: 100
    * @bodyParam weight_capacity_unit 重量/容量單位 string Example: kg
+   * @bodyParam show_weight_capacity 重量/容量前台是否顯示 string Example: 1
    * @bodyParam tax string 應稅/免稅 Example: 10
    * @bodyParam stock_count string 庫存數量 Example: 100
    * @bodyParam stock_alert_count string 庫存預警數量 Example: 10
@@ -267,6 +270,7 @@ class ShopProductController extends Controller
    * @bodyParam discount_price int 優惠價 Example: 280
    * @bodyParam weight_capacity 重量/容量 string Example: 100g
    * @bodyParam weight_capacity_unit 重量/容量單位 string Example: kg
+   * @bodyParam show_weight_capacity 重量/容量前台是否顯示 string Example: 1
    * @bodyParam tax string 應稅/免稅 Example: 10
    * @bodyParam stock_count string 庫存數量 Example: 100
    * @bodyParam stock_alert_count string 庫存預警數量 Example: 10
@@ -319,6 +323,8 @@ class ShopProductController extends Controller
    * @queryParam is_active number 上架  No-example : 1,0
    * @queryParam get_all number 全抓  No-example : 1,0
    * @queryParam stock_level number 庫存狀態  No-example : 1,2
+   * @queryParam start_date date  開始日期  No-example : 1,2
+   * @queryParam end_date date 結束日期  No-example : 1,2
    */
   public function export_excel_signedurl(Request $request)
   {
@@ -327,10 +333,12 @@ class ShopProductController extends Controller
     $is_active       = $request->has('is_active') ? $request->is_active : null;
     $get_all         = $request->has('get_all') ? $request->get_all : 0;
     $stock_level     = $request->has('stock_level') ? $request->stock_level : null;
+    $start_date      = $request->has('start_date') ? $request->start_date : null;
+    $end_date        = $request->has('end_date') ? $request->end_date : null;
     return URL::temporarySignedRoute(
       'shop_product_export_excel',
       now()->addMinutes(30),
-      ['shop_classes' => $shop_classes, 'shop_subclasses' => $shop_subclasses, 'is_active' => $is_active, 'get_all' => $get_all, 'stock_level' => $stock_level]
+      ['shop_classes' => $shop_classes, 'shop_subclasses' => $shop_subclasses, 'is_active' => $is_active, 'get_all' => $get_all, 'stock_level' => $stock_level, 'start_date' => $start_date, 'end_date' => $end_date]
     );
   }
 
@@ -344,6 +352,8 @@ class ShopProductController extends Controller
     $is_active       = $request->has('is_active') ? $request->is_active : null;
     $get_all         = $request->has('get_all') ? $request->get_all : 0;
     $stock_level     = $request->has('stock_level') ? $request->stock_level : null;
-    return Excel::download(new ShopProductExport($shop_classes, $shop_subclasses, $is_active, $get_all, $stock_level), 'shop_products.xlsx');
+    $start_date      = $request->has('start_date') ? $request->start_date : null;
+    $end_date        = $request->has('end_date') ? $request->end_date : null;
+    return Excel::download(new ShopProductExport($shop_classes, $shop_subclasses, $is_active, $get_all, $stock_level, $start_date, $end_date), 'shop_products.xlsx');
   }
 }

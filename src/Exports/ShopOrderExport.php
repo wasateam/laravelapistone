@@ -5,6 +5,7 @@ namespace Wasateam\Laravelapistone\Exports;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Helpers\TimeHelper;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 
@@ -92,13 +93,25 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
     $array = [];
     foreach ($shop_orders as $shop_order) {
       $order_products = $shop_order->shop_order_shop_products;
+      //area
+      $area = $shop_order->area ? $shop_order->area->name : null;
+      //area_section
+      $area_section = $shop_order->area_section ? $shop_order->area_section->name : null;
+      //ship_time
+      $ship_time = $shop_order->ship_start_time . '-' . $shop_order->ship_end_time;
+      //time_zone
+      $timezone = TimeHelper::getTimeZone($this->country_code);
+      //order_count
+      $order_count = ShopHelper::getOrderCost($order_products);
+      //order_original_count
+      $order_original_count = ShopHelper::getOrderCost($order_products);
+
       foreach ($order_products as $index => $order_product) {
         $shop_product = $order_product->shop_product;
-        $price        = $order_product->discount_price ? $order_product->discount_price : $order_product->price;
-        $area         = $shop_order->area ? $shop_order->area->name : null;
-        $area_section = $shop_order->area_section ? $shop_order->area_section->name : null;
-        $ship_time    = $shop_order->ship_start_time . '-' . $shop_order->ship_end_time;
-        $timezone     = TimeHelper::getTimeZone($this->country_code);
+        //product price
+        $product_price = $order_product->discount_price ? $order_product->discount_price : $order_product->price;
+        //return_count
+        $return_count = ShopHelper::getProductReturnCount($order_product);
         if ($index == 0) {
           $array[] = [
             null,
@@ -112,28 +125,26 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
             $shop_order->receiver_tel,
             $area,
             $area_section,
-            $shop_order->receiver_address,
+            $shop_order->receive_address,
             $shop_order->created_at->timezone($timezone),
             $shop_order->ship_date,
-            // $shop_order->delivery_date,
             $ship_time,
             $shop_order->order_type,
-            null,
+            $shop_order->ship_status,
             $shop_order->status,
+            $shop_order->no,
             $shop_product->no,
             $order_product->name,
             $order_product->spec,
-            $price,
+            $product_price,
             $order_product->cost,
-            $order_product->count,
-            $price * $order_product->count,
-            $order_product->cost * $order_product->count,
-            $shop_order->price,
-            null,
-            $shop_order->freight,
-            null,
-            null,
-            null,
+            $order_product->original_count, //原始數量
+            $product_price * $order_product->original_count, //售價小計
+            $order_product->cost * $order_product->original_count, //原始成本小計
+            100, //訂單原始金額
+            $order_original_count, //訂單原始成本
+            100, //訂單運費
+            !$shop_order->freight ? 100 : 0, //免運折抵
             null,
             null,
             null,
@@ -141,13 +152,17 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
             null,
             null,
             null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
+            null, //實收金額（原發票金額
+            $return_count, //退刷數量
+            $return_count * $order_product->price, //退刷售價小計
+            $return_count * $order_product->cost, //退刷成本小計
+            null, //訂單退刷金額
+            null, //訂單退刷成本
+            null, //退訂原因
+            $shop_order->order_price, //退刷後訂單實收金額
+            $shop_order->order_price, //重開發票金額
+            $shop_order->order_price, //最終訂單實收金額
+            $order_count, //最終訂單成本
           ];
         } else {
           $array[] = [
@@ -169,14 +184,19 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
             null,
             null,
             null,
+            null,
             $shop_product->no,
             $order_product->name,
             $order_product->spec,
-            $price,
+            $product_price,
             $order_product->cost,
-            $order_product->count,
-            $price * $order_product->count,
-            $order_product->cost * $order_product->count,
+            $order_product->original_count, //原始數量
+            $product_price * $order_product->original_count, //售價小計
+            $order_product->cost * $order_product->original_count, //原始成本小計
+            null, //訂單原始金額
+            null, //訂單原始成本
+            null, //訂單運費
+            null, //免運折抵
             null,
             null,
             null,
@@ -184,20 +204,17 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
             null,
             null,
             null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
+            null, //實收金額（原發票金額
+            $return_count, //退刷數量
+            $return_count * $order_product->price, //退刷售價小計
+            $return_count * $order_product->cost, //退刷成本小計
+            null, //訂單退刷金額
+            null, //訂單退刷成本
+            null, //退訂原因
+            null, //退刷後訂單實收金額
+            null, //重開發票金額
+            null, //最終訂單實收金額
+            null, //最終訂單成本
           ];
         }
 

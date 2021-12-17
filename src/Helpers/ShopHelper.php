@@ -286,4 +286,40 @@ class ShopHelper
       }
     }
   }
+
+  public static function getOrderCost($order_products)
+  {
+    //扣掉退訂後的訂單成本
+    $all_products_cost = $order_products->map(function ($product) {
+      return $product->cost * $product->count;
+    });
+    $total_cost = Self::sum_total($all_products_cost);
+
+    return $total_cost;
+  }
+
+  public static function getOrderOriginalCost($order_products)
+  {
+    //加上退訂後的訂單成本
+    $all_products_cost = $order_products->map(function ($product) {
+      return $product->cost * $product->original_count;
+    });
+    $total_cost = Self::sum_total($all_products_cost);
+
+    return $total_cost;
+  }
+
+  public static function getProductReturnCount($order_product)
+  {
+    if (!$order_product->shop_return_records) {
+      return 0;
+    }
+    $count_arr = $order_product->shop_return_records->map(function ($return_record) {
+      return $return_record->count;
+    });
+    $count = Self::sum_total($count_arr);
+
+    return $count;
+  }
+
 }

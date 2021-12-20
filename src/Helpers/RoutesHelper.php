@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Illuminate\Support\Facades\Route;
+use Wasateam\Laravelapistone\Controllers\AcumaticaAppController;
 use Wasateam\Laravelapistone\Controllers\AdminFinancePaymentRequestController;
 use Wasateam\Laravelapistone\Controllers\AdminGroupController;
 use Wasateam\Laravelapistone\Controllers\AdminRoleController;
@@ -537,6 +538,13 @@ class RoutesHelper
       Route::get('/news_banner/order', [NewsBannerController::class, 'order_get']);
       Route::patch('/news_banner/order', [NewsBannerController::class, 'order_patch']);
       Route::resource('news_banner', NewsBannerController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
+
+    # Acumatica
+    if (config('stone.acumatica')) {
+      Route::resource('acumatica_app', AcumaticaAppController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }

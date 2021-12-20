@@ -412,12 +412,49 @@ class ModelHelper
           continue;
         }
         foreach ($current_layer as $current_layer_value) {
-          $sequence_key = isset($order_layers_setting_value['sequence_key']) ? $order_layers_setting_value['sequence_key'] : 'sq';
+          $sequence_key              = isset($order_layers_setting_value['sequence_key']) ? $order_layers_setting_value['sequence_key'] : 'sq';
           $submodel                  = $order_layers_setting_value['model']::find($current_layer_value['id']);
           $submodel->{$sequence_key} = $current_layer_value[$sequence_key];
           $submodel->save();
         }
       }
+    }
+
+    return response()->json([
+      'message' => 'order updated.',
+    ], 200);
+  }
+
+  public static function ws_BelongsToManyOrderGetHandler($id, $controller, $target, $resource)
+  {
+    // Setting
+    $setting = self::getSetting($controller);
+
+    $model = $setting->model::find($id);
+
+    return $resource::collection($model->{$target});
+  }
+
+  public static function ws_BelongsToManyOrderPatchHandler($id, $controller, $target, $request)
+  {
+    if (!$request->has('order')) {
+      return response()->json([
+        'message' => 'field order is required.',
+      ], 400);
+    }
+
+    $order = $request->order;
+
+    // Setting
+    $setting = self::getSetting($controller);
+
+    $model = $setting->model::find($id);
+
+    foreach ($order as $order_index => $order_item) {
+      $model->{$target}()->detach($order_item['id']);
+      $model->{$target}()->attach($order_item['id'], [
+        'sq' => $order_index,
+      ]);
     }
 
     return response()->json([

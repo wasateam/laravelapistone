@@ -101,4 +101,22 @@ class ShopSubclassController extends Controller
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
   }
+
+  /**
+   * Shop Product Order Get
+   *
+   */
+  public function shop_product_order_get($id)
+  {
+    return ModelHelper::ws_BelongsToManyOrderGetHandler($id, $this, 'shop_products', 'Wasateam\Laravelapistone\Resources\ShopProduct_R_Order_ShopSubclass');
+  }
+
+  /**
+   * Shop Product Order Patch
+   *
+   */
+  public function shop_product_order_patch($id, Request $request)
+  {
+    return ModelHelper::ws_BelongsToManyOrderPatchHandler($id, $this, 'shop_products', $request);
+  }
 }

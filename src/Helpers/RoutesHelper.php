@@ -439,6 +439,8 @@ class RoutesHelper
       Route::resource('shop_subclass', ShopSubclassController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      Route::get('shop_subclass/{id}/shop_product/order', [ShopSubclassController::class, 'shop_product_order_get']);
+      Route::patch('shop_subclass/{id}/shop_product/order', [ShopSubclassController::class, 'shop_product_order_patch']);
       Route::resource('shop_ship_area_setting', ShopShipAreaSettingController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();

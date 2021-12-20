@@ -16,18 +16,29 @@ use Wasateam\Laravelapistone\Models\UserAddress;
 
 class ShopHelper
 {
-  public static function returnProductChangeCount($return_record_id)
+  public static function returnProductChangeCount($return_record_id, $type = 'store')
   {
     //商品退訂->商品庫存、訂單商品數量重新計算
     $return_record      = ShopReturnRecord::where('id', $return_record_id)->first();
     $shop_product       = ShopProduct::where('id', $return_record->shop_product_id)->first();
     $shop_order_product = ShopOrderShopProduct::where('id', $return_record->shop_order_shop_product_id)->first();
-    //加商品庫存
-    $shop_product->stock_count = $shop_product->stock_count + $return_record->count;
-    $shop_product->save();
-    //減少訂單商品數量
-    $shop_order_product->count = $shop_order_product->count - $return_record->count;
-    $shop_order_product->save();
+    //訂單商品原始數量
+    $shop_order_orginal_count = $shop_order_product->original_count;
+    if ($type == 'store') {
+      // 商品庫存
+      $shop_product->stock_count = $shop_product->stock_count + $return_record->count;
+      $shop_product->save();
+      // 訂單商品數量
+      $shop_order_product->count = $shop_order_product->count - $return_record->count;
+      $shop_order_product->save();
+    } else if ($type == 'update') {
+      // 商品庫存
+      $shop_product->stock_count = $shop_product->stock_count - $shop_order_orginal_count + $shop_product->count + $return_record->count;
+      $shop_product->save();
+      // 訂單商品數量
+      $shop_order_product->count = $shop_order_orginal_count - $return_record->count;
+      $shop_order_product->save();
+    }
   }
 
   public static function shopOrderProductChangeCount($shop_order_product_id)
@@ -320,6 +331,18 @@ class ShopHelper
     $count = Self::sum_total($count_arr);
 
     return $count;
+  }
+
+  public static function destroyReturnRecord($return_record)
+  {
+    $shop_product       = ShopProduct::where('id', $return_record->shop_product_id)->first();
+    $shop_order_product = ShopOrderShopProduct::where('id', $return_record->shop_order_shop_product_id)->first();
+    // 商品庫存
+    $shop_product->stock_count = $shop_product->stock_count - $shop_order_product->original_count + $shop_order_product->count;
+    $shop_product->save();
+    // 訂單商品數量
+    $shop_order_product->count = $shop_order_product->original_count;
+    $shop_order_product->save();
   }
 
 }

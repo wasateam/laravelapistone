@@ -115,7 +115,7 @@ class ShopReturnRecordController extends Controller
     return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
       $model->price = $model->shop_order_shop_product->discount_price ? $model->shop_order_shop_product->discount_price * $model->count : $model->shop_order_shop_product->price * $model->count;
       $model->save();
-      ShopHelper::returnProductChangeCount($model->id);
+      ShopHelper::returnProductChangeCount($model->id, 'store');
       ShopHelper::changeShopOrderPrice($model->shop_order->id);
     });
   }
@@ -162,7 +162,7 @@ class ShopReturnRecordController extends Controller
   public function update(Request $request, $id)
   {
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) {
-      ShopHelper::returnProductChangeCount($model->id);
+      ShopHelper::returnProductChangeCount($model->id, 'update');
       ShopHelper::changeShopOrderPrice($model->shop_order->id);
     });
   }
@@ -174,7 +174,10 @@ class ShopReturnRecordController extends Controller
    */
   public function destroy($id)
   {
-    return ModelHelper::ws_DestroyHandler($this, $id);
+    return ModelHelper::ws_DestroyHandler($this, $id, function ($model) {
+      ShopHelper::destroyReturnRecord($model);
+      ShopHelper::changeShopOrderPrice($model->shop_order->id);
+    });
   }
 
   /**
@@ -217,7 +220,7 @@ class ShopReturnRecordController extends Controller
           $shop_return_record->return_reason              = $request->return_reason ? $request->return_reason : null;
           $shop_return_record->type                       = 'return-all';
           $shop_return_record->save();
-          ShopHelper::returnProductChangeCount($shop_return_record->id);
+          ShopHelper::returnProductChangeCount($shop_return_record->id, 'store');
         }
       }
       // refresh shop order price

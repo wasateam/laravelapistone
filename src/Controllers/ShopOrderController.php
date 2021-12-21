@@ -68,6 +68,8 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * ~ not-paid: 未付款
  * invoice_number 發票號碼
  * invoice_status 發票狀態
+ * ~ done: 完成
+ * ~ fail: 失敗
  * invoice_type 發票類型
  * ~ 電子發票 personal,電子三聯式發票 company
  * invoice_carrier_type 發票載具類型

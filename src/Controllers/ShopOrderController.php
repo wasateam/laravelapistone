@@ -71,7 +71,7 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * ~ done: 完成
  * ~ fail: 失敗
  * invoice_type 發票類型
- * ~ 電子發票 personal,電子三聯式發票 company
+ * ~ 電子發票 personal,電子三聯式發票 triple
  * invoice_carrier_type 發票載具類型
  * ~ phone,email,certificate
  * invoice_carrier_number 發票載具編號(載具內容)

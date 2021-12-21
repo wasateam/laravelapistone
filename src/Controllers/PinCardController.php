@@ -148,16 +148,10 @@ class PinCardController extends Controller
     $user  = Auth::user();
     $model = $this->model::where('pin', $request->pin)->where('status', 0)->first();
     if (!$model) {
-      return response()->json([
-        'message' => 'no card.',
-      ], 400);
+      throw new FindNoPinCardException;
     }
     if (config('stone.pin_card.register_before_action')) {
-      try {
-        config('stone.pin_card.register_before_action')::register_before_action($model, $user);
-      } catch (\Throwable $th) {
-        throw new FindNoPinCardException;
-      }
+      config('stone.pin_card.register_before_action')::register_before_action($model, $user);
     }
     $model->status  = 1;
     $model->user_id = $user->id;

@@ -18,7 +18,7 @@ class AcumaticaHelper
     $customerId        = $user->customer_id;
     $user_service_plan = UserServicePlan
       ::where('user_id', $user->id)
-      ->where('2022-12-15 01:08:18', '>=', Carbon::now())
+      ->where('expired_at', '>=', Carbon::now())
       ->first();
     if (!$user_service_plan) {
       throw new FindNoUserServicePlanException;

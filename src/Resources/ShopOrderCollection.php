@@ -54,6 +54,7 @@ class ShopOrderCollection extends JsonResource
         'invoice_number'            => $this->invoice_number,
         'invoice_status'            => $this->invoice_status,
         'invoice_type'              => $this->invoice_type,
+        'reinvoice_at'              => $this->reinvoice_at,
         'invoice_carrier_number'    => $this->invoice_carrier_number,
         'invoice_tax_type'          => $this->invoice_tax_type,
         'invoice_title'             => $this->invoice_title,

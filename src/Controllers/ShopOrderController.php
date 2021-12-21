@@ -67,6 +67,7 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * ~ paid: 已付款
  * ~ not-paid: 未付款
  * invoice_number 發票號碼
+ * reinvoice_at 發票重新開立時間
  * invoice_status 發票狀態
  * ~ done: 完成
  * ~ fail: 失敗
@@ -212,6 +213,7 @@ class ShopOrderController extends Controller
       $this->input_fields[]  = 'order_price';
       $this->input_fields[]  = 'delivery_date';
       $this->filter_fields[] = 'id';
+      $this->filter_fields[] = 'reinvoice_at';
     }
   }
 
@@ -648,5 +650,73 @@ class ShopOrderController extends Controller
     $get_all      = $request->has('get_all') ? $request->get_all : 0;
     $country_code = $request->has('country_code') ? $request->country_code : null;
     return Excel::download(new ShopOrderExport($shop_orders, $get_all, $country_code), 'shop_orders.xlsx');
+  }
+
+  /**
+   * ReInvoice
+   *
+   */
+  public function re_invoice(Request $request, $id)
+  {
+    $shop_order = ShopOrder::where('id', $id)->first();
+    if (!$shop_order) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
+    }
+    # invoice
+    $invoice_status = null;
+    $invoice_number = null;
+    $user           = $shop_order->user;
+    if (config('stone.invoice')) {
+      if (config('stone.invoice.service') == 'ecpay') {
+        try {
+          //統一載具變成會員個人email
+          $invoice_type   = 'personal';
+          $customer_email = $shop_order->orderer_email; //fix
+          $customer_tel   = $shop_order->orderer_tel; //fix
+          $customer_addr  = $shop_order->receive_address;
+          $order_amount   = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
+          $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($shop_order->shop_order_shop_products);
+          $customer_id    = $user->id;
+          $post_data      = [
+            'Items'         => $items,
+            'SalesAmount'   => $order_amount,
+            'TaxType'       => 1,
+            'CustomerEmail' => $customer_email,
+            'CustomerAddr'  => $customer_addr,
+            'CustomerPhone' => $customer_tel,
+            'CustomerID'    => $customer_id,
+          ];
+          if ($invoice_type == 'personal') {
+            $invoice_carrier_type       = 'email';
+            $invoice_carrier_number     = $shop_order->orderer_email;
+            $post_data['Print']         = 0;
+            $post_data['CustomerName']  = $shop_order->orderer; //fix
+            $post_data['CarrierType']   = 1;
+            $post_data['CarrierNum']    = '';
+            $post_data['CustomerEmail'] = $invoice_carrier_number;
+          }
+          $post_data      = EcpayHelper::getInvoicePostData($post_data);
+          $invoice_number = EcpayHelper::createInvoice($post_data);
+          $invoice_status = 'done';
+        } catch (\Throwable $th) {
+          $invoice_status = 'fail';
+        }
+      }
+    }
+
+    if ($invoice_status) {
+      $shop_order->invoice_status = $invoice_status;
+      if ($invoice_status == 'done') {
+        $shop_order->invoice_number = $invoice_number;
+        //取代原本訂單的發票載具資料
+        $shop_order->invoice_carrier_type   = 'email';
+        $shop_order->invoice_type           = 'personal';
+        $shop_order->invoice_carrier_number = $shop_order->orderer_email;
+      }
+      $shop_order->reinvoice_at = Carbon::now();
+      $shop_order->save();
+    }
   }
 }

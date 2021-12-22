@@ -112,6 +112,9 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * card_period_amount 信用卡或銀聯卡_訂單建立時的每次要授權金額
  * card_total_success_times 信用卡或銀聯卡_目前已成功授權的次數
  * card_total_success_amount 信用卡或銀聯卡_目前已成功授權的金額合計
+ *
+ * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立
+ *
  * @authenticated
  *
  */
@@ -718,5 +721,42 @@ class ShopOrderController extends Controller
       $shop_order->reinvoice_at = Carbon::now();
       $shop_order->save();
     }
+  }
+
+  /**
+   * ReCreate
+   *
+   * @bodyParam no string 訂單編號 No-example
+   */
+  public function re_create(Request $request, $id)
+  {
+    //FIXME ಠ_ಠ
+    $shop_order = ShopOrder::where('id', $id)->first();
+    if (!$shop_order) {
+      return response()->json([
+        'message' => 'no data.',
+      ], 400);
+    }
+    if (!$request->no || !isset($request->no)) {
+      return response()->json([
+        'message' => 'no is required.',
+      ], 400);
+    }
+    //new shop order
+    $new_shop_order       = $shop_order->replicate();
+    $new_shop_order->no   = $request->no;
+    $new_shop_order->uuid = null;
+    $new_shop_order->save();
+
+    //new shop order shop product
+    $shop_order_shop_products = $shop_order->shop_order_shop_products;
+    foreach ($shop_order_shop_products as $shop_order_shop_product) {
+      $new_product                = $shop_order_shop_product->replicate();
+      $new_product->shop_order_id = $new_shop_order->id;
+      $new_product->save();
+    }
+
+    $shop_order->repay_shop_order_id = $new_shop_order->id;
+    $shop_order->save();
   }
 }

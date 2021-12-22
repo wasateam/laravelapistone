@@ -455,7 +455,7 @@ class RoutesHelper
         Route::get('shop_order/export/pdf/signedurl', [ShopOrderController::class, 'export_pdf_signedurl']);
       }
       Route::get('shop_order/export/excel/signedurl', [ShopOrderController::class, 'export_excel_signedurl']);
-      Route::post('shop_order/{shop_order_id}/re_invoice', [ShopReturnRecordController::class, 're_invoice']);
+      Route::post('shop_order/{shop_order_id}/re_invoice', [ShopOrderController::class, 're_invoice']);
       # Shop Order Product
       Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',

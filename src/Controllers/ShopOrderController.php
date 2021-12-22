@@ -217,6 +217,7 @@ class ShopOrderController extends Controller
       $this->input_fields[]  = 'delivery_date';
       $this->filter_fields[] = 'id';
       $this->filter_fields[] = 'reinvoice_at';
+      $this->filter_fields[] = 'status';
     }
   }
 

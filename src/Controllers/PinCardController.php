@@ -151,7 +151,7 @@ class PinCardController extends Controller
       throw new FindNoPinCardException;
     }
     if (config('stone.pin_card.register_before_action')) {
-      config('stone.pin_card.register_before_action')::register_before_action($model, $user);
+      config('stone.pin_card.register_before_action')::pin_card_register_before_action($model, $user);
     }
     $model->status  = 1;
     $model->user_id = $user->id;
@@ -187,7 +187,7 @@ class PinCardController extends Controller
       }
     }
     if (config('stone.pin_card.register_complete_action')) {
-      config('stone.pin_card.register_complete_action')::register_complete_action($model, $user);
+      config('stone.pin_card.register_complete_action')::pin_card_register_complete_action($model, $user);
     }
     LogHelper::createWebLog($user->id, 'register', 'service_plan', $model->service_plan_id, \Request::ip(), $request->pin);
     return response()->json([

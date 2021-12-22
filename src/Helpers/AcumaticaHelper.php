@@ -151,6 +151,8 @@ class AcumaticaHelper
     ])->put($post_url, $post_data);
 
     # @Q@ 回存acu id
+    $user->acumatica_id = $response->json()['id'];
+    $user->save();
     return $response->json();
   }
 

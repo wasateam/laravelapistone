@@ -20,6 +20,8 @@ use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestAutoReplyController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
+use Wasateam\Laravelapistone\Controllers\DocumentClassController;
+use Wasateam\Laravelapistone\Controllers\DocumentController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
@@ -548,6 +550,16 @@ class RoutesHelper
     # Acumatica
     if (config('stone.acumatica')) {
       Route::resource('acumatica_app', AcumaticaAppController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
+
+    # Document
+    if (config('stone.document')) {
+      Route::resource('document', DocumentController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('document_class', DocumentClassController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }

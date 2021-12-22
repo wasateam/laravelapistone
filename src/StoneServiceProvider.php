@@ -186,6 +186,11 @@ class StoneServiceProvider extends ServiceProvider
         if (config('stone.news_banner')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/news_banner');
         }
+
+        # Document
+        if (config('stone.document')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/document');
+        }
       }
 
       $this->publishes([

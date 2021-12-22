@@ -31,7 +31,7 @@ class ShopNotice extends Model
 
   public function shop_notice_classes()
   {
-    return $this->belongsToMany(WsBlogClass::class, 'shop_notice_shop_notice_class', 'shop_notice_id', 'shop_notice_class_id');
+    return $this->belongsToMany(ShopNoticeClass::class, 'shop_notice_shop_notice_class', 'shop_notice_id', 'shop_notice_class_id');
   }
 
   protected $casts = [

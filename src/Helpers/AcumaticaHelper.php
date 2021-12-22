@@ -74,7 +74,6 @@ class AcumaticaHelper
       "Vehicle"            => [
         "value" => false,
       ],
-      "custom"             => [],
     ];
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",

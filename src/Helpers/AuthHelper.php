@@ -6,6 +6,7 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class AuthHelper
@@ -132,5 +133,14 @@ class AuthHelper
       $user_count = $model::whereYear('created_at', Carbon::now()->year)->count();
       return $customer_id_config['prefix'] . Carbon::now()->year . str_pad($user_count + 1, 6, '0', STR_PAD_LEFT);
     }
+  }
+
+  public static function getEmailVerifyUrl($user)
+  {
+    $api_url = URL::temporarySignedRoute(
+      'email_verify', now()->addMinutes(60), ['user_id' => $user->id]
+    );
+    $url = Str::replace(config('stone.app_url') . '/api', config('stone.web_url'), $api_url);
+    return $url;
   }
 }

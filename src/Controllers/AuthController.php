@@ -93,9 +93,7 @@ class AuthController extends Controller
     }
     if (config('stone.auth.verify')) {
       if (config('stone.auth.verify.email')) {
-        $url = URL::temporarySignedRoute(
-          'email_verify', now()->addMinutes(60), ['user_id' => $user->id]
-        );
+        $url = AuthHelper::getEmailVerifyUrl($user);
         EmailHelper::email_verify_request($url, $user->email);
       }
     }
@@ -461,9 +459,7 @@ class AuthController extends Controller
 
     $user = $model::where('email', $request->email)->first();
 
-    $url = URL::temporarySignedRoute(
-      'email_verify', now()->addMinutes(60), ['user_id' => $user->id]
-    );
+    $url = AuthHelper::getEmailVerifyUrl($user);
     EmailHelper::email_verify_request($url, $user->email);
     return response()->json([
       'message' => 'verify mail sent.',

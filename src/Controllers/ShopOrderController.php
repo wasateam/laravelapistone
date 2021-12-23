@@ -62,8 +62,13 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * ~ Pending：問題待解決
  * customer_service_remark 客戶服務備註
  * pay_type 付款類型
+ * ~ Credit: 信用卡
+ * ~ CVS: CVS
+ * ~ ATM: ATM
+ * ~ BARCODE: 超商條碼
  * pay_status 付款狀態
  * ~ sumulate-paid: 模擬測試付款
+ * ~ waiting: 待付款
  * ~ paid: 已付款
  * ~ not-paid: 未付款
  * invoice_number 發票號碼
@@ -461,7 +466,8 @@ class ShopOrderController extends Controller
           ShopHelper::shopOrderProductChangeCount($new_order_product->id);
         }
         ShopHelper::changeShopOrderPrice($model->id, $order_type);
-        $model->status = 'not-established';
+        $model->status     = 'not-established';
+        $model->pay_status = 'waiting';
         $model->save();
 
         # Order Type

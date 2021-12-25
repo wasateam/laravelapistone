@@ -69,7 +69,7 @@ class AcumaticaHelper
         "value" => "Active",
       ],
       "TargetEquipment"    => [
-        "value" => "Active",
+        "value" => true,
       ],
       "Vehicle"            => [
         "value" => false,
@@ -228,5 +228,4 @@ class AcumaticaHelper
       throw $th;
     }
   }
-
 }

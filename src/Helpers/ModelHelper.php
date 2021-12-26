@@ -40,6 +40,9 @@ class ModelHelper
     // XXX Filter User
     $snap = self::userFilterSnap($snap, $setting);
 
+    # IDs Filter
+    $snap = self::idsFilterSnap($snap, $request);
+
     // Collection
     $collection = self::indexGetPaginate($setting, $snap, $request, $getall);
     try {
@@ -1248,5 +1251,14 @@ class ModelHelper
         $model->save();
       }
     }
+  }
+
+  public static function idsFilterSnap($snap, $request)
+  {
+    if ($request->has('ids')) {
+      $ids_arr = array_map('intval', explode(',', $request->ids));
+      $snap    = $snap->whereIn('id', $ids_arr);
+    }
+    return $snap;
   }
 }

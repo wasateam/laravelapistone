@@ -119,21 +119,21 @@ class AcumaticaHelper
     $token     = self::getToken();
     $post_url  = config('stone.acumatica.api_url') . "/Customer";
     $post_data = [
-      'CustomerName'   => [
+      'CustomerName'  => [
         'value' => $user->name,
       ],
-      'CustomerClass'  => [
+      'CustomerClass' => [
         'value' => $class,
       ],
-      'PriceClass'     => [
+      'PriceClass'    => [
         'value' => $price_class,
       ],
-      'MainContact'    => [
+      'MainContact'   => [
         'Email' => [
           'value' => $user->email,
         ],
       ],
-      'PrimaryContact' => [
+      'PrimayContact' => [
         'DateOfBirth' => [
           'value' => $user->birth,
         ],

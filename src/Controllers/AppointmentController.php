@@ -4,16 +4,25 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\TimeHelper;
 use Wasateam\Laravelapistone\Models\Appointment;
 
 /**
  * @group Appointment
  *
- * @authenticated
- *
- * APIs for appointment
+ * start_time 起始時間 (單純時間四位)
+ * end_time 結束時間 (單純時間四位)
+ * date 日期
+ * tel 電話
+ * email 信箱
+ * type 類型
+ * remark 備註
+ * user 使用者
+ * service_store 服務據點
+ * country_code 國家代碼
  */
 class AppointmentController extends Controller
 {
@@ -38,6 +47,14 @@ class AppointmentController extends Controller
     'created_at',
     'date',
   ];
+
+  public function __construct()
+  {
+    if (config('stone.country_code')) {
+      $this->input_fields[]  = 'country_code';
+      $this->filter_fields[] = 'country_code';
+    }
+  }
 
   /**
    * Index
@@ -78,6 +95,19 @@ class AppointmentController extends Controller
       return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
         $user           = Auth::user();
         $model->user_id = $user->id;
+        $datetime       = Carbon::parse($model->date);
+        if (config('stone.country_code')) {
+          $timezone = TimeHelper::getTimeZone($model->country_code);
+          $datetime = $datetime->timezone($timezone);
+        }
+        $start_at = TimeHelper::setTimeFromHrMinStr($datetime, $model->start_time);
+        $end_at   = TimeHelper::setTimeFromHrMinStr($datetime, $model->end_time);
+        if (config('stone.country_code')) {
+          $start_at->timezone(config('app.timezone'));
+          $end_at->timezone(config('app.timezone'));
+        }
+        $model->start_at = $start_at;
+        $model->end_at   = $end_at;
         $model->save();
       });
     }

@@ -19,4 +19,9 @@ class Appointment extends Model
   {
     return $this->belongsTo(ServiceStore::class, 'service_store_id');
   }
+
+  protected $casts = [
+    'start_at' => 'datetime',
+    'end_at'   => 'datetime',
+  ];
 }

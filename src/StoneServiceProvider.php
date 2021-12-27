@@ -5,6 +5,7 @@ namespace Wasateam\Laravelapistone;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Wasateam\Laravelapistone\Commands\CommandStoneTest;
+use Wasateam\Laravelapistone\Commands\CommandStoneWork;
 
 class StoneServiceProvider extends ServiceProvider
 {
@@ -217,6 +218,9 @@ class StoneServiceProvider extends ServiceProvider
       $this->publishes($publishes, 'stone-setup-webapi');
     }
 
+    #
+    $this->loadViewsFrom(__DIR__ . '/../resources/views', 'wasateam');
+
     // OLD 2021-10
     $this->publishes([
       __DIR__ . '/../config/stone.php' => $this->app->configPath('stone.php'),
@@ -341,6 +345,7 @@ class StoneServiceProvider extends ServiceProvider
     if ($this->app->runningInConsole()) {
       $this->commands([
         CommandStoneTest::class,
+        CommandStoneWork::class,
       ]);
     }
   }

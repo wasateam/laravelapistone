@@ -14,12 +14,14 @@ class Appointment_R1 extends JsonResource
    */
   public function toArray($request)
   {
-    return [
+    $res = [
       'id'         => $this->id,
       'created_at' => $this->created_at,
       'updated_at' => $this->updated_at,
       'start_time' => $this->start_time,
       'end_time'   => $this->end_time,
+      'start_at'   => $this->start_at,
+      'end_at'     => $this->end_at,
       'date'       => $this->date,
       'tel'        => $this->tel,
       'email'      => $this->email,
@@ -27,5 +29,11 @@ class Appointment_R1 extends JsonResource
       'remark'     => $this->remark,
       'user'       => new User_R1($this->user),
     ];
+
+    if (config('stone.country_code')) {
+      $res['country_code'] = $this->country_code;
+    }
+
+    return $res;
   }
 }

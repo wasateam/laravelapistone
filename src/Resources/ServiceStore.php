@@ -38,6 +38,7 @@ class ServiceStore extends JsonResource
         'transportation_info'  => $this->transportation_info,
         'work_on_holiday'      => $this->work_on_holiday,
         'service_at_night'     => $this->service_at_night,
+        'notify_emails'        => $this->notify_emails,
         'service_store_closes' => ServiceStoreClose_R1::collection($this->service_store_closes),
         'service_store_notis'  => ServiceStoreNoti_R1::collection($this->service_store_notis),
       ];

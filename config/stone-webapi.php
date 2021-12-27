@@ -64,7 +64,12 @@ return [
   'locale'              => false,
   'service_store'       => false,
   'notification'        => true,
-  'appointment'         => false,
+  'appointment'         => [
+    'notify' => [
+      'email'         => true,
+      'before_houres' => 1,
+    ],
+  ],
   'service_plan'        => false,
   // 'pin_card'            => [
   //   'register_complete_action'=>

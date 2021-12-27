@@ -30,6 +30,7 @@ use Wasateam\Laravelapistone\Models\ServiceStore;
  * work_on_holiday 是否週末營業
  * service_at_night 是否夜間服務
  * country_code 國家代碼
+ * notify_emails 通知mail陣列
  *
  * APIs for service_store
  */
@@ -57,6 +58,7 @@ class ServiceStoreController extends Controller
     'transportation_info',
     'work_on_holiday',
     'service_at_night',
+    'notify_emails',
   ];
   public $belongs_to      = [];
   public $belongs_to_many = [
@@ -168,6 +170,7 @@ class ServiceStoreController extends Controller
    * @bodyParam work_on_holiday boolean No-example
    * @bodyParam service_at_night boolean No-example
    * @bodyParam country_code string No-example
+   * @bodyParam notify_emails string No-example
    */
   public function store(Request $request, $id = null)
   {
@@ -215,6 +218,7 @@ class ServiceStoreController extends Controller
    * @bodyParam work_on_holiday boolean No-example
    * @bodyParam service_at_night boolean No-example
    * @bodyParam country_code string No-example
+   * @bodyParam notify_emails string No-example
    */
   public function update(Request $request, $id)
   {

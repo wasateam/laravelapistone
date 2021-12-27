@@ -81,7 +81,7 @@ return [
     'notifiable_type_user' => 'Wasateam\Laravelapistone\Models\Admin',
   ],
   'service_store'      => false,
-  'appointment'        => false,
+  'appointment'        => true,
   'service_plan'       => false,
   'pin_card'           => false,
   'calendar_highlight' => false,

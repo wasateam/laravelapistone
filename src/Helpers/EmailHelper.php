@@ -114,4 +114,7 @@ class EmailHelper
       Mail::to($email)->send(new EmailVerify($url));
     }
   }
+
+  # 發送預約通知
+  // public 
 }

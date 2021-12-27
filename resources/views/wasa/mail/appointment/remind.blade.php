@@ -1,0 +1,1 @@
+提醒您 {{ $time }} 有預約維修服務，請攜帶您的裝置至下列門市：{{ $service_store_name }}/地址：{{ $service_store_address }}

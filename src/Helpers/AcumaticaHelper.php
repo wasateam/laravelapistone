@@ -90,11 +90,13 @@ class AcumaticaHelper
         'value' => $customerId,
       ],
       'Details'    => [
-        "PIN"        => [
-          'value' => $pin,
-        ],
-        'PriceClass' => [
-          'value' => $price_class,
+        [
+          "PIN"        => [
+            'value' => $pin,
+          ],
+          'PriceClass' => [
+            'value' => $price_class,
+          ],
         ],
       ],
     ];

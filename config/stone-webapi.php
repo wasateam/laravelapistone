@@ -33,10 +33,7 @@ return [
     // 'signup_complete_action' => '\App\Helpers\TestHelper',
   ],
   # Modules
-  'log'                 => [
-    'is_active' => true,
-    'model'     => '\Wasateam\Laravelapistone\Models\WebLog',
-  ],
+  'log'                 => true,
   'post_encode'         => false,
   'tulpa'               => true,
   'socialite'           => [

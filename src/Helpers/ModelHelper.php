@@ -498,13 +498,17 @@ class ModelHelper
 
   public static function ws_Log($model, $controller, $action, $user = null)
   {
-    if (!config('stone.log.is_active')) {
+    if (!config('stone.log')) {
       return;
     }
 
-    $log_model = config('stone.log.model');
-    $log       = new $log_model;
-    $user_id   = null;
+    if (config('stone.mode') == 'cms') {
+      $log_model = '\Wasateam\Laravelapistone\Models\CmsLog';
+    } else {
+      $log_model = '\Wasateam\Laravelapistone\Models\WebLog';
+    }
+    $log     = new $log_model;
+    $user_id = null;
     if ($user) {
       $user_id = $user->id;
     } else if (Auth::user()) {

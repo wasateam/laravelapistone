@@ -36,10 +36,7 @@ return [
   'admin_role'         => true,
   'admin_group'        => true,
   'admin_system_class' => true,
-  'log'                => [
-    'is_active' => true,
-    'model'     => '\Wasateam\Laravelapistone\Models\CmsLog',
-  ],
+  'log'                => true,
   'post_encode'        => false,
   'pocket'             => true,
   'tulpa'              => true,

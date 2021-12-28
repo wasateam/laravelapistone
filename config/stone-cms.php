@@ -49,7 +49,6 @@ return [
     'bonus_points'        => true,
     'reset_password_mail' => true,
     'carriers'            => true,
-    //如果地址無類別，改成true
     'address'             => [
       'delivery' => [
         'limit' => 3,
@@ -61,6 +60,9 @@ return [
       'prefix'             => "HC",
     ],
     'acumatica_id'        => true,
+    'device'              => [
+      'acumatica' => true,
+    ],
   ],
   'user_device_token'  => true,
   'socialite'          => [

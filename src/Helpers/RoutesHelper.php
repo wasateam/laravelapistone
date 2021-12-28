@@ -69,6 +69,7 @@ use Wasateam\Laravelapistone\Controllers\TulpaSectionController;
 use Wasateam\Laravelapistone\Controllers\UserAddressController;
 use Wasateam\Laravelapistone\Controllers\UserAppInfoController;
 use Wasateam\Laravelapistone\Controllers\UserController;
+use Wasateam\Laravelapistone\Controllers\UserDeviceController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanItemController;
@@ -89,6 +90,7 @@ class RoutesHelper
     return $routes;
   }
 
+  # Auth 相關 (CMS, Webapi皆可用)
   public static function auth_routes($routes = [
     "signin",
     "signup",
@@ -163,6 +165,7 @@ class RoutesHelper
     });
   }
 
+  # CMS 系統管理員
   public static function cms_boss_routes()
   {
 
@@ -217,6 +220,7 @@ class RoutesHelper
     ])->shallow();
   }
 
+  # CMS 管理員
   public static function cms_admin_routes()
   {
     # Pocket
@@ -236,27 +240,36 @@ class RoutesHelper
 
     # User
     if (config('stone.user')) {
+      Route::resource('user', UserController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # 黑名單
       if (config('stone.user.is_bad')) {
         Route::post('user/{id}/bad', [UserController::class, 'bad']);
         Route::post('user/{id}/notbad', [UserController::class, 'notbad']);
       }
+      # Reset Passsword Mail
       if (config('stone.user.reset_password_mail')) {
         Route::post('user/{id}/reset_password_mail', [UserController::class, 'reset_password_mail']);
       }
+      # Export
       if (config('stone.user.export')) {
         Route::get('user/export/excel/signedurl', [UserController::class, 'export_excel_signedurl']);
       }
-      Route::resource('user', UserController::class)->only([
-        'index', 'show', 'store', 'update', 'destroy',
-      ])->shallow();
+      # UserAddress
       if (config('stone.user.address')) {
-        # UserAddress
         Route::resource('user_address', UserAddressController::class)->only([
           'index',
           'show',
           'store',
           'update',
           'destroy',
+        ])->shallow();
+      }
+      # UserDevice
+      if (config('stone.user.device')) {
+        Route::resource('user_device', UserDeviceController::class)->only([
+          'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
       }
     }
@@ -566,6 +579,7 @@ class RoutesHelper
     }
   }
 
+  # CMS 公開
   public static function cms_public_routes()
   {
     if (config('stone.pin_card')) {
@@ -600,6 +614,7 @@ class RoutesHelper
     }
   }
 
+  # Web 需登入
   public static function webapi_auth_routes()
   {
     # Pincard
@@ -623,8 +638,18 @@ class RoutesHelper
         Route::post('ecpay/inpay/create_payment', [EcpayController::class, 'inpay_create_payment']);
       }
     }
+
+    # UserDevice
+    if (config('stone.user.device')) {
+      Route::post('user_device/register', [UserDeviceController::class, 'register']);
+      Route::get('user_device/info/binding_status', [UserDeviceController::class, 'get_info_user_binding_status']);
+      Route::resource('user_device', UserDeviceController::class)->only([
+        'index', 'show',
+      ])->shallow();
+    }
   }
 
+  # Web 需符合對應使用者之
   public static function webapi_isuser_routes()
   {
 
@@ -633,6 +658,7 @@ class RoutesHelper
       'index',
       'show',
     ])->shallow();
+    Route::get('user_service_plan/my_current_plan', [UserServicePlanController::class, 'my_current_plan']);
     Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only([
       'index',
       'show',
@@ -666,6 +692,7 @@ class RoutesHelper
     }
   }
 
+  # Web 不需登入
   public static function webapi_public_routes()
   {
 
@@ -893,6 +920,7 @@ class RoutesHelper
     }
   }
 
+  # 以下準備拉進垃圾車
   public static function admin_routes($routes = [
     'index',
     'show',

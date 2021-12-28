@@ -29,6 +29,7 @@ class StoneServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/../routes/api-cms.php');
       });
 
+      # Migrations
       if (config('stone.migration')) {
 
         # GeneralContent
@@ -36,6 +37,7 @@ class StoneServiceProvider extends ServiceProvider
 
         # Admin
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin');
+
         # AdminRole
         if (config('stone.admin_role')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_role');
@@ -73,6 +75,16 @@ class StoneServiceProvider extends ServiceProvider
         # User
         if (config('stone.user')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user');
+
+          # User Address
+          if (config('stone.user.address')) {
+            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user_address');
+          }
+
+          # User Device
+          if (config('stone.user.device')) {
+            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user_device');
+          }
         }
 
         # UserDeviceToken
@@ -131,11 +143,6 @@ class StoneServiceProvider extends ServiceProvider
         # Appointment
         if (config('stone.appointment')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/appointment');
-        }
-
-        # User Address
-        if (config('stone.user.address')) {
-          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/user_address');
         }
 
         # ServicePlan

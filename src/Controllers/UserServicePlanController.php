@@ -5,7 +5,7 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
-use Wasateam\Laravelapistone\Models\UserServicePlan;
+use Wasateam\Laravelapistone\Resources\UserServicePlan;
 
 /**
  * @group 使用者綁定方案
@@ -13,7 +13,7 @@ use Wasateam\Laravelapistone\Models\UserServicePlan;
  * service_plan 方案 ID
  * user 使用者 ID
  * pin_card PinCard ID
- * 
+ *
  */
 class UserServicePlanController extends Controller
 {
@@ -107,5 +107,20 @@ class UserServicePlanController extends Controller
   public function destroy($id)
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
+  }
+
+  /**
+   * My Current Plan
+   *
+   */
+  public function my_current_plan()
+  {
+    $user              = Auth::user();
+    $user_service_plan = $this->model::where('user_id', $user->id)
+      ->where('expired_at', '>=', Carbon::now())
+      ->orderBy('created_at', 'desc')
+      ->first();
+
+    return response()->json(new UserServicePlan($user_service_plan), 200);
   }
 }

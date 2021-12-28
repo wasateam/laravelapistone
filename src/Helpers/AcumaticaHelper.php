@@ -19,6 +19,7 @@ class AcumaticaHelper
     $user_service_plan = UserServicePlan
       ::where('user_id', $user->id)
       ->where('expired_at', '>=', Carbon::now())
+      ->orderBy('created_at', 'desc')
       ->first();
     if (!$user_service_plan) {
       throw new FindNoUserServicePlanException;

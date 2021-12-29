@@ -66,6 +66,9 @@ class User extends JsonResource
     if (config('stone.user.acumatica_id')) {
       $res['acumatica_id'] = $this->acumatica_id;
     }
+    if (config('stone.user.customer_id')) {
+      $res['customer_id'] = $this->customer_id;
+    }
     return $res;
   }
 }

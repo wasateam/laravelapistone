@@ -647,6 +647,11 @@ class RoutesHelper
       ])->shallow();
       Route::post('user_device/register', [UserDeviceController::class, 'register']);
     }
+
+    # UserServicePlan
+    if (config('stone.service_plan')) {
+      Route::get('user_service_plan/my_current_plan', [UserServicePlanController::class, 'my_current_plan']);
+    }
   }
 
   # Web 需符合對應使用者之
@@ -654,18 +659,19 @@ class RoutesHelper
   {
 
     # UserServicePlan
-    Route::resource('user_service_plan', UserServicePlanController::class)->only([
-      'index',
-      'show',
-    ])->shallow();
-    Route::get('user_service_plan/my_current_plan', [UserServicePlanController::class, 'my_current_plan']);
-    Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only([
-      'index',
-      'show',
-    ])->shallow();
-    Route::resource('user_service_plan_record', UserServicePlanRecordController::class)->only([
-      'index', 'show',
-    ])->shallow();
+    if (config('stone.service_plan')) {
+      Route::resource('user_service_plan', UserServicePlanController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+      Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only([
+        'index',
+        'show',
+      ])->shallow();
+      Route::resource('user_service_plan_record', UserServicePlanRecordController::class)->only([
+        'index', 'show',
+      ])->shallow();
+    }
 
     # UserAddress
     Route::resource('user_address', UserAddressController::class)->only([

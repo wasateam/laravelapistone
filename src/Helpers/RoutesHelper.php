@@ -641,11 +641,11 @@ class RoutesHelper
 
     # UserDevice
     if (config('stone.user.device')) {
-      Route::post('user_device/register', [UserDeviceController::class, 'register']);
       Route::get('user_device/info/binding_status', [UserDeviceController::class, 'get_info_user_binding_status']);
       Route::resource('user_device', UserDeviceController::class)->only([
         'index', 'show',
       ])->shallow();
+      Route::post('user_device/register', [UserDeviceController::class, 'register']);
     }
   }
 

@@ -163,12 +163,27 @@ class UserDeviceController extends Controller
   public function register(Request $request)
   {
     try {
+
+      $limit = 0;
+      if (config('stone.user.device.limit')) {
+        $limit = config('stone.user.device.limit');
+      }
+
+      $active_user_devices_count = $this->model::where('user_id', $user->id)
+        ->where('status', 'active')->count();
+
+      if ($active_user_devices_count >= $limit) {
+        return response()->json([
+          'message' => 'no more device quota.',
+        ], 403);
+      }
+
       $user                 = Auth::user();
       $uuid                 = Str::uuid();
       $type                 = $request->type;
-      $brand                = $request->brand;
+      $brand                = $request->brand ? $request->brand : 'DIY';
       $is_diy               = $request->is_diy;
-      $serial_number        = $request->serial_number;
+      $serial_number        = $request->serial_number ? $request->serial_number : $uuid;
       $product_code         = $is_diy ? $uuid : $request->product_code;
       $model                = new $this->model;
       $model->type          = $type;

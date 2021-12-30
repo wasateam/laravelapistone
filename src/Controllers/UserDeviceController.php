@@ -164,6 +164,7 @@ class UserDeviceController extends Controller
   {
     try {
 
+      $user                 = Auth::user();
       $limit = 0;
       if (config('stone.user.device.limit')) {
         $limit = config('stone.user.device.limit');
@@ -178,7 +179,6 @@ class UserDeviceController extends Controller
         ], 403);
       }
 
-      $user                 = Auth::user();
       $uuid                 = Str::uuid();
       $type                 = $request->type;
       $brand                = $request->brand ? $request->brand : 'DIY';

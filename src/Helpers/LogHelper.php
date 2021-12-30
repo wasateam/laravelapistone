@@ -8,7 +8,7 @@ class LogHelper
 {
   public static function createWebLog($user_id = null, $action = null, $target = null, $target_id = null, $ip = null, $remark = null)
   {
-    if (!config('stone.log.is_active')) {
+    if (!config('stone.log')) {
       return;
     }
     $log          = new WebLog;

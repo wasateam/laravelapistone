@@ -33,10 +33,7 @@ return [
     // 'signup_complete_action' => '\App\Helpers\TestHelper',
   ],
   # Modules
-  'log'                 => [
-    'is_active' => true,
-    'model'     => '\Wasateam\Laravelapistone\Models\WebLog',
-  ],
+  'log'                 => true,
   'post_encode'         => false,
   'tulpa'               => true,
   'socialite'           => [
@@ -70,7 +67,7 @@ return [
       'before_houres' => 1,
     ],
   ],
-  'service_plan'        => false,
+  'service_plan'        => true,
   // 'pin_card'            => [
   //   'register_complete_action'=>
   // ],
@@ -81,7 +78,6 @@ return [
     'bonus_points'        => true,
     'reset_password_mail' => true,
     'carriers'            => true,
-    //如果地址無類別，改成true
     'address'             => [
       'delivery' => [
         'limit' => 3,
@@ -93,6 +89,11 @@ return [
       'prefix'             => "HC",
     ],
     'acumatica_id'        => true,
+    'device'              => [
+      'limit'                  => 2,
+      'acumatica'              => true,
+      'register_before_action' => '\App\Helpers\AppHelper',
+    ],
   ],
   'shop'                => [
     'uuid'              => true,

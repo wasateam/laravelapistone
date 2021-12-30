@@ -36,11 +36,12 @@ class SocialiteAccountService
       $account                   = new $socialiteModel;
       $account->provider_user_id = $providerUser->getId();
       $account->provider         = $provider;
+      if (!$providerUser->email) {
+        $providerUser->email = $providerUser->id . $providerUser->name . '@' . $provider;
+      }
       $user                      = User::whereEmail($providerUser->getEmail())->first();
+
       if (!$user) {
-        if (!$providerUser->email) {
-          $providerUser->email = $providerUser->id . $providerUser->name . '@' . $provider;
-        }
         $user           = new User;
         $user->email    = $providerUser->getEmail();
         $user->name     = $providerUser->getName();
@@ -57,7 +58,7 @@ class SocialiteAccountService
         $user->scopes   = $default_scopes;
         $user->save();
         if (config('stone.auth.customer_id')) {
-          $user->customer_id = AuthHelper::getCustomerId(User, config('stone.auth.customer_id'));
+          $user->customer_id = AuthHelper::getCustomerId('Wasateam\Laravelapistone\Models\User', config('stone.auth.customer_id'));
           $user->save();
         }
         $user->markEmailAsVerified();

@@ -37,6 +37,8 @@ use Wasateam\Laravelapistone\Controllers\ServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreCloseController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
+use Wasateam\Laravelapistone\Controllers\ShopCampaignController;
+use Wasateam\Laravelapistone\Controllers\ShopCampaignShopOrderController;
 use Wasateam\Laravelapistone\Controllers\ShopCartController;
 use Wasateam\Laravelapistone\Controllers\ShopCartProductController;
 use Wasateam\Laravelapistone\Controllers\ShopClassController;
@@ -485,6 +487,14 @@ class RoutesHelper
         'index', 'show',
       ])->shallow();
       Route::post('shop_product/import/excel', [ShopProductController::class, 'import_excel']);
+      # Shop Campaign
+      Route::resource('shop_campaign', ShopCampaignController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Campaign Shop Order
+      Route::resource('shop_campaign_shop_order', ShopCampaignShopOrderController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
 
     }
 
@@ -819,6 +829,14 @@ class RoutesHelper
       ])->shallow();
       # Shop Free Shipping
       Route::resource('shop_free_shipping', ShopFreeShippingController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      # Shop Campaign
+      Route::resource('shop_campaign', ShopCampaignController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      # Shop Campaign Shop Order
+      Route::resource('shop_campaign_shop_order', ShopCampaignShopOrderController::class)->only([
         'index', 'show',
       ])->shallow();
     }

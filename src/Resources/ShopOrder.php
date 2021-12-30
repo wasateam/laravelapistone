@@ -94,6 +94,7 @@ class ShopOrder extends JsonResource
         'card_period_amount'        => $this->card_period_amount,
         'card_total_success_times'  => $this->card_total_success_times,
         'card_total_success_amount' => $this->card_total_success_amount,
+        'shop_campaign_shop_orders' => ShopCampaignShopOrder::collection($this->shop_campaign_shop_orders),
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
@@ -177,6 +178,7 @@ class ShopOrder extends JsonResource
         'card_period_amount'        => $this->card_period_amount,
         'card_total_success_times'  => $this->card_total_success_times,
         'card_total_success_amount' => $this->card_total_success_amount,
+        'shop_campaign_shop_orders' => ShopCampaignShopOrder::collection($this->shop_campaign_shop_orders),
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;

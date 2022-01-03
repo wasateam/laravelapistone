@@ -54,6 +54,11 @@ class ShopOrder extends Model
     return $this->belongsTo(ShopOrder::class, 'repay_shop_order_id');
   }
 
+  public function shop_campaign_shop_orders()
+  {
+    return $this->hasMany(ShopCampaignShopOrder::class);
+  }
+
   protected $casts = [
     'discounts'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'orderer_birthday'  => 'datetime',

@@ -154,6 +154,9 @@ class ShopHelper
 
   public static function getOrderAmount($shop_cart_products)
   {
+    if (!$shop_cart_products) {
+      return 0;
+    }
     $order_amount = 0;
     foreach ($shop_cart_products as $shop_cart_product) {
       $count = $shop_cart_product['count'];

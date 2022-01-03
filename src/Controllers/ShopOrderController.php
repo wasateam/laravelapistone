@@ -674,6 +674,11 @@ class ShopOrderController extends Controller
         'message' => 'no data.',
       ], 400);
     }
+    if (!$shop_order->shop_order_shop_products) {
+      return response()->json([
+        'message' => 'shop_order_shop_products required.',
+      ], 400);
+    }
     # invoice
     $invoice_status = null;
     $invoice_number = null;

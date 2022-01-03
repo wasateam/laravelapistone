@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group ShopCampaignShopOrder
+ * @group ShopCampaignShopOrder 促銷活動訂單
  *
- * ShopCampaignShopOrder API
+ * ShopCampaignShopOrder 促銷活動訂單 API
  *
- * user
- * shop_campaign
- * shop_order
+ * user 會員
+ * shop_campaign 促銷活動
+ * shop_order 訂單
  *
  * @authenticated
  */

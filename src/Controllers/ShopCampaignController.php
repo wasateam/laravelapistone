@@ -23,7 +23,9 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * 滿額限制(金額) full_amount
  * 打折折數 discount_percent
  * 折抵金額 discount_amount
- *
+ * 是否啟用 is_active
+ * 數量 limit
+ *ㄋ
  * Index 篩選
  * status
  * ~ 1 進行中 2 未開始 3 已結束

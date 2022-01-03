@@ -15,13 +15,14 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  *
  * type 類型
  * is_diy 是否為自組
- * serial_number 序號
+ * serial_number 型號
  * brand 品牌
- * product_code 產品流水號
+ * product_code 序號
  * country_code 國家代碼
  * status 狀態
  * ~ active 啟用中
  * ~ deactive 非啟用
+ * acumatica_id 串接Acumatica時存放ID
  */
 class UserDeviceController extends Controller
 {
@@ -35,6 +36,9 @@ class UserDeviceController extends Controller
     'brand',
     'product_code',
     'country_code',
+    'status',
+  ];
+  public $filter_fields = [
     'status',
   ];
   public $belongs_to = [
@@ -164,7 +168,7 @@ class UserDeviceController extends Controller
   {
     try {
 
-      $user                 = Auth::user();
+      $user  = Auth::user();
       $limit = 0;
       if (config('stone.user.device.limit')) {
         $limit = config('stone.user.device.limit');
@@ -226,5 +230,82 @@ class UserDeviceController extends Controller
       'limit'                     => $limit,
       'active_user_devices_count' => $active_user_devices_count,
     ], 200);
+  }
+
+  /**
+   * Active
+   *
+   */
+  public function active($id)
+  {
+    $limit = 0;
+    if (config('stone.user.device.limit')) {
+      $limit = config('stone.user.device.limit');
+    }
+    $user                      = Auth::user();
+    $active_user_devices_count = $this->model::where('user_id', $user->id)
+      ->where('status', 'active')->count();
+    $model = $this->model::find($id);
+
+    if (!$model) {
+      return response()->json([
+        'message' => 'no device.',
+      ], 403);
+    }
+
+    if ($model->$user->id != $user->id) {
+      return response()->json([
+        'message' => 'no device.',
+      ], 403);
+    }
+
+    if ($active_user_devices_count >= $limit) {
+      return response()->json([
+        'message' => 'no more device quota.',
+      ], 403);
+    }
+
+    $model->status = 'active';
+    if (config('stone.user.device.active_before_action')) {
+      $model = config('stone.user.device.active_before_action')::device_active_before_action($model, $user);
+    }
+    $model->save();
+
+    if ($model->$user->id != $user->id) {
+      return response()->json([
+        'message' => 'activated',
+      ], 200);
+    }
+  }
+
+  /**
+   * Deactive
+   *
+   */
+  public function deactive($id)
+  {
+    $user        = Auth::user();
+    $user_device = $this->model::find($id);
+    if (!$user_device) {
+      return response()->json([
+        'message' => 'no device.',
+      ], 403);
+    }
+    if ($model->$user->id != $user->id) {
+      return response()->json([
+        'message' => 'no device.',
+      ], 403);
+    }
+    $model->status = 'deactive';
+    if (config('stone.user.device.deactive_before_action')) {
+      $model = config('stone.user.device.deactive_before_action')::device_deactive_before_action($model, $user);
+    }
+    $model->save();
+
+    if ($model->$user->id != $user->id) {
+      return response()->json([
+        'message' => 'deactivated',
+      ], 200);
+    }
   }
 }

@@ -646,6 +646,8 @@ class RoutesHelper
         'index', 'show',
       ])->shallow();
       Route::post('user_device/register', [UserDeviceController::class, 'register']);
+      Route::post('user_device/active', [UserDeviceController::class, 'active']);
+      Route::post('user_device/deactive', [UserDeviceController::class, 'deactive']);
     }
 
     # UserServicePlan
@@ -673,14 +675,20 @@ class RoutesHelper
       ])->shallow();
     }
 
-    # UserAddress
-    Route::resource('user_address', UserAddressController::class)->only([
-      'index',
-      'show',
-      'store',
-      'update',
-      'destroy',
-    ])->shallow();
+    # User
+    if (config('stone.user')) {
+
+      # UserAddress
+      if (config('stone.user.address')) {
+        Route::resource('user_address', UserAddressController::class)->only([
+          'index',
+          'show',
+          'store',
+          'update',
+          'destroy',
+        ])->shallow();
+      }
+    }
 
     # Appointment
     if (config('stone.appointment')) {

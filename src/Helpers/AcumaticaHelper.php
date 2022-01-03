@@ -82,6 +82,44 @@ class AcumaticaHelper
     return $response->json();
   }
 
+  public static function deactiveEquipment($equipment_id, $serial_number)
+  {
+    $post_url          = config('stone.acumatica.api_url') . "/FSEquipment";
+    $post_data = [
+      'id'        => $equipment_id,
+      'SerialNbr' => [
+        'value' => $serial_number,
+      ],
+      'Status'    => [
+        'value' => 'Suspended',
+      ],
+    ];
+
+    $response = Http::withHeaders([
+      'Authorization' => "Bearer {$token}",
+    ])->put($post_url, $post_data);
+    return $response->json();
+  }
+
+  public static function activeEquipment($equipment_id, $serial_number)
+  {
+    $post_url          = config('stone.acumatica.api_url') . "/FSEquipment";
+    $post_data = [
+      'id'        => $equipment_id,
+      'SerialNbr' => [
+        'value' => $serial_number,
+      ],
+      'Status'    => [
+        'value' => 'Active',
+      ],
+    ];
+
+    $response = Http::withHeaders([
+      'Authorization' => "Bearer {$token}",
+    ])->put($post_url, $post_data);
+    return $response->json();
+  }
+
   public static function createPINCode($customerId, $pin, $price_class)
   {
     $token     = self::getToken();

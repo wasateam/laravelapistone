@@ -93,6 +93,8 @@ return [
       'limit'                  => 2,
       'acumatica'              => true,
       'register_before_action' => '\App\Helpers\AppHelper',
+      'active_before_action'   => '\App\Helpers\AppHelper',
+      'deactive_before_action' => '\App\Helpers\AppHelper',
     ],
   ],
   'shop'                => [
@@ -152,4 +154,5 @@ return [
   'news_banner'         => true,
   'news'                => true,
   'document'            => true,
+  'excute_class'        => true,
 ];

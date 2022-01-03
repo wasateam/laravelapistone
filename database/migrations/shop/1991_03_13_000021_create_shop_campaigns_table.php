@@ -21,7 +21,7 @@ class CreateShopCampaignsTable extends Migration
       $table->text('name')->nullable();
       $table->date('start_date')->nullable();
       $table->date('end_date')->nullable();
-      $table->text('discount_code')->nullable()->unique();
+      $table->string('discount_code')->nullable()->unique();
       $table->string('condition')->nullable();
       $table->integer('full_amount')->nullable();
       $table->integer('discount_percent')->nullable();

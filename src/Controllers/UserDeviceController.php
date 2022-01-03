@@ -74,7 +74,6 @@ class UserDeviceController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_IndexHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
@@ -183,12 +182,18 @@ class UserDeviceController extends Controller
         ], 403);
       }
 
-      $uuid                 = Str::uuid();
-      $type                 = $request->type;
-      $brand                = $request->brand ? $request->brand : 'DIY';
-      $is_diy               = $request->is_diy;
-      $serial_number        = $request->serial_number ? $request->serial_number : $uuid;
-      $product_code         = $is_diy ? $uuid : $request->product_code;
+      $uuid          = Str::uuid();
+      $type          = $request->type;
+      $brand         = $request->brand ? $request->brand : 'DIY';
+      $is_diy        = $request->is_diy;
+      $serial_number = $request->serial_number ? $request->serial_number : $uuid;
+      $product_code  = $is_diy ? $uuid : $request->product_code;
+      $exist         = $this->model::where('serial_number', $serial_number)->first();
+      if ($exist) {
+        return response()->json([
+          'message' => 'existed.',
+        ], 400);
+      }
       $model                = new $this->model;
       $model->type          = $type;
       $model->brand         = $brand;

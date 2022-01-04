@@ -159,7 +159,7 @@ class UserDeviceController extends Controller
   }
 
   /**
-   * Register
+   * Register 註冊
    * @bodyParam user string Example: 1
    *
    */
@@ -238,8 +238,9 @@ class UserDeviceController extends Controller
   }
 
   /**
-   * Active
+   * Active 啟用
    *
+   * @urlParam  user_device required The ID of user_device. Example: 1
    */
   public function active($id)
   {
@@ -284,8 +285,9 @@ class UserDeviceController extends Controller
   }
 
   /**
-   * Deactive
+   * Deactive 停用
    *
+   * @urlParam  user_device required The ID of user_device. Example: 1
    */
   public function deactive($id)
   {

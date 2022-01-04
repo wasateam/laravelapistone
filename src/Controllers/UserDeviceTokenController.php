@@ -8,11 +8,17 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group UserDeviceToken
+ * @group 使用者裝置 Token 管理
  *
  * @authenticated
+ * device_token Token
+ * is_active 狀態
+ * ~ 1 啟用中
+ * ~ 0 非啟用
+ * remark 備註
+ * user 使用者
  *
- * APIs for user_device_token
+ * 常用於APP通知功能
  */
 class UserDeviceTokenController extends Controller
 {

@@ -656,8 +656,8 @@ class RoutesHelper
         'index', 'show',
       ])->shallow();
       Route::post('user_device/register', [UserDeviceController::class, 'register']);
-      Route::post('user_device/active', [UserDeviceController::class, 'active']);
-      Route::post('user_device/deactive', [UserDeviceController::class, 'deactive']);
+      Route::post('user_device/active/{id}', [UserDeviceController::class, 'active']);
+      Route::post('user_device/deactive/{id}', [UserDeviceController::class, 'deactive']);
     }
 
     # UserServicePlan

@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group 使用者綁定裝置
+ * @group UserDevice 使用者綁定裝置
  *
  * @authenticated
  *
@@ -258,8 +258,12 @@ class UserDeviceController extends Controller
         'message' => 'no device.',
       ], 403);
     }
-
-    if ($model->$user->id != $user->id) {
+    if (!$model->user) {
+      return response()->json([
+        'message' => 'no device.',
+      ], 403);
+    }
+    if ($model->user->id != $user->id) {
       return response()->json([
         'message' => 'no device.',
       ], 403);
@@ -277,11 +281,9 @@ class UserDeviceController extends Controller
     }
     $model->save();
 
-    if ($model->$user->id != $user->id) {
-      return response()->json([
-        'message' => 'activated',
-      ], 200);
-    }
+    return response()->json([
+      'message' => 'activated',
+    ], 200);
   }
 
   /**
@@ -291,14 +293,19 @@ class UserDeviceController extends Controller
    */
   public function deactive($id)
   {
-    $user        = Auth::user();
-    $user_device = $this->model::find($id);
-    if (!$user_device) {
+    $user  = Auth::user();
+    $model = $this->model::find($id);
+    if (!$model) {
       return response()->json([
         'message' => 'no device.',
       ], 403);
     }
-    if ($model->$user->id != $user->id) {
+    if (!$model->user) {
+      return response()->json([
+        'message' => 'no device.',
+      ], 403);
+    }
+    if ($model->user->id != $user->id) {
       return response()->json([
         'message' => 'no device.',
       ], 403);
@@ -309,10 +316,8 @@ class UserDeviceController extends Controller
     }
     $model->save();
 
-    if ($model->$user->id != $user->id) {
-      return response()->json([
-        'message' => 'deactivated',
-      ], 200);
-    }
+    return response()->json([
+      'message' => 'deactivated',
+    ], 200);
   }
 }

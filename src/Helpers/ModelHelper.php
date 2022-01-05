@@ -496,7 +496,7 @@ class ModelHelper
     $log->save();
   }
 
-  public static function ws_Log($model, $controller, $action, $user = null)
+  public static function ws_Log($model, $controller, $action, $user = null, $name = null)
   {
     if (!config('stone.log')) {
       return;
@@ -515,11 +515,14 @@ class ModelHelper
       $user_id = Auth::user()->id;
     }
     $log[config('stone.auth.model_name') . '_id'] = $user_id;
+    if(!$name && $controller->name){
+      $name = $controller->name;
+    }
     $log->payload                                 = [
       'userModelName' => $user_id ? config('stone.auth.model_name') : null,
       'user_id'       => $user_id,
       'action'        => $action,
-      'target'        => $controller->name,
+      'target'        => $name,
       'target_id'     => $action === 'signin' || $action === 'signout' ? null : $model->id,
       'ip'            => \Request::ip(),
     ];

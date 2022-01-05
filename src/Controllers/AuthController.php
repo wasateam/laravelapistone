@@ -436,7 +436,7 @@ class AuthController extends Controller
 
     $tokenResult = $user->createToken('Personal Access Token', AuthHelper::getUserScopes($user));
     $token       = $tokenResult->token;
-    ModelHelper::ws_Log($model, $this, 'email_verify', $user);
+    ModelHelper::ws_Log($user, $this, 'email_verify', $user, 'user');
 
     return response()->json([
       'access_token'  => $tokenResult->accessToken,

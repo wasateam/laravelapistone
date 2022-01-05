@@ -429,11 +429,22 @@ class AuthController extends Controller
   public function email_verify($user_id)
   {
     $model                   = config('stone.auth.model');
+    $model_name              = config('stone.auth.model_name');
     $user                    = $model::find($user_id);
     $user->email_verified_at = Carbon::now();
     $user->save();
+
+    $tokenResult = $user->createToken('Personal Access Token', AuthHelper::getUserScopes($user));
+    $token       = $tokenResult->token;
+    ModelHelper::ws_Log($model, $this, 'email_verify', $user);
+
     return response()->json([
-      'message' => 'user verified.',
+      'access_token'  => $tokenResult->accessToken,
+      'expires_at'    => Carbon::parse(
+        $tokenResult->token->expires_at
+      )->toDateTimeString(),
+      "{$model_name}" => $user,
+      'message'       => 'user email verified.',
     ], 200);
   }
 

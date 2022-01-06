@@ -104,6 +104,13 @@ return [
     'custom_shop_order' => true,
     'freight_default'   => 100,
     'notice'            => true,
+    'shop_campaign'     => [
+      'items' => [ //活動類型分別設定
+        'bonus_point_feedback' => [
+          'no_repeat' => true, //日期是否重複
+        ],
+      ],
+    ],
   ],
   'file_upload'         => 'laravel_signed',
   'privacy_terms'       => true,

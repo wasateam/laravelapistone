@@ -348,4 +348,44 @@ class ShopHelper
     $shop_order_product->save();
   }
 
+  public static function sameCampaignDuration($start_date, $end_date, $id = null, $type)
+  {
+    //是否有重複區間的免運門檻
+    $snap = null;
+    if (isset($start_date) && isset($end_date)) {
+      $snap = Self::filterDuration('Wasateam\Laravelapistone\Models\ShopCampaign', $start_date, $end_date);
+    }
+    if ($id) {
+      $snap = $snap->where('id', '!=', $id);
+    }
+    if (isset($type)) {
+      $snap = $snap->where('type', $type);
+    }
+    $snap = $snap->first();
+    if (isset($snap)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public static function filterDuration($model, $start_date, $end_date)
+  {
+    $snap = $model;
+    if (isset($start_date) && isset($end_date)) {
+      $snap = $snap::where(function ($query) use ($start_date, $end_date) {
+        $query->where(function ($query) use ($start_date, $end_date) {
+          $query->where('start_date', '<=', Carbon::parse($start_date))->where('end_date', '>=', Carbon::parse($end_date));
+        })->orWhere(function ($query) use ($start_date, $end_date) {
+          $query->where('start_date', '<=', Carbon::parse($start_date))->where('end_date', '>=', Carbon::parse($start_date));
+        })->orWhere(function ($query) use ($start_date, $end_date) {
+          $query->where('start_date', '>=', Carbon::parse($start_date))->where('end_date', '<=', Carbon::parse($end_date));
+        })->orWhere(function ($query) use ($start_date, $end_date) {
+          $query->where('start_date', '<=', Carbon::parse($end_date))->where('end_date', '>=', Carbon::parse($end_date));
+        });
+      });
+    }
+    return $snap;
+  }
+
 }

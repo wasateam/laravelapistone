@@ -92,6 +92,14 @@ return [
     'freight_default' => 100,
     //購物須知
     'notice'          => true,
+    //促銷活動
+    'shop_campaign'   => [
+      'items' => [ //活動類型分別設定
+        'bonus_point_feedback' => [
+          'no_repeat' => true, //日期是否重複
+        ],
+      ],
+    ],
   ],
   // multiple layers
   'featured_class'     => true,

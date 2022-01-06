@@ -35,6 +35,7 @@ class AuthController extends Controller
    * @bodyParam  password_confirmation string required Check Password match  Example: 123123
    * @bodyParam  name string User Name  Example: wasa
    * @bodyParam  tel string
+   * @bodyParam  birthday date
    * @response
    * {
    * "data": {
@@ -75,6 +76,9 @@ class AuthController extends Controller
     ]);
     if ($request->has('tel')) {
       $user->tel = $request->tel;
+    }
+    if ($request->has('birthday')) {
+      $user->birthday = $request->birthday;
     }
     if (config('stone.auth.active_check')) {
       $user->is_active = 1;

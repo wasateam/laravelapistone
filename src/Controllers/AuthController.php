@@ -257,6 +257,10 @@ class AuthController extends Controller
     if ($request->has('name')) {
       $user->name = $request->name;
     }
+    if ($request->has('email')) {
+      $user->email             = $request->email;
+      $user->email_verified_at = null;
+    }
     if ($request->has('password')) {
       $user->password = $request->password;
     }

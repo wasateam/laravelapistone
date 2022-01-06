@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Wasateam\Laravelapistone\Models\ShopCampaign;
+use Wasateam\Laravelapistone\Models\ShopCampaignShopOrder;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 
 class BonusPointFeedbackJob implements ShouldQueue
@@ -47,6 +48,20 @@ class BonusPointFeedbackJob implements ShouldQueue
         $user              = $shop_order->user;
         $user->bonus_point = $user->bonus_point + $bonus_point_feedback;
         $user->save();
+        //create shop_campaign_shop_order
+        $shop_campaign_shop_order                   = new ShopCampaignShopOrder;
+        $shop_campaign_shop_order->type             = $today_bonus_campaign->type;
+        $shop_campaign_shop_order->name             = $today_bonus_campaign->name;
+        $shop_campaign_shop_order->full_amount      = $today_bonus_campaign->full_amount;
+        $shop_campaign_shop_order->discount_percent = $today_bonus_campaign->discount_percent;
+        $shop_campaign_shop_order->discount_amount  = $today_bonus_campaign->discount_amount;
+        $shop_campaign_shop_order->condition        = $today_bonus_campaign->condition;
+        $shop_campaign_shop_order->feedback_rate    = $today_bonus_campaign->feedback_rate;
+        $shop_campaign_shop_order->shop_campaign_id = $today_bonus_campaign->id;
+        $shop_campaign_shop_order->shop_campaign_id = $today_bonus_campaign->id;
+        $shop_campaign_shop_order->shop_order_id    = $this->shop_order_id;
+        $shop_campaign_shop_order->user_id          = $user->id;
+
       }
     }
   }

@@ -61,7 +61,9 @@ class SocialiteAccountService
           $user->customer_id = AuthHelper::getCustomerId('Wasateam\Laravelapistone\Models\User', config('stone.auth.customer_id'));
           $user->save();
         }
-        $user->markEmailAsVerified();
+        if($providerUser->email){
+          $user->markEmailAsVerified();
+        }
       }
       $account->user()->associate($user);
       $account->save();

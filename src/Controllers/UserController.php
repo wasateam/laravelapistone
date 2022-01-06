@@ -16,11 +16,13 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  *
  * APIs for user
  *
- * name
- * email
+ * name 名稱
+ * email Email
  * email_verified_at email認證時間
  * password 密碼
- * status
+ * status 狀態
+ * ~ 0 停用
+ * ~ 1 啟用
  * avatar 頭像
  * settings
  * description

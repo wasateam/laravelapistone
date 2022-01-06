@@ -107,7 +107,8 @@ return [
     'shop_campaign'     => [
       'items' => [ //活動類型分別設定
         'bonus_point_feedback' => [
-          'no_repeat' => true, //日期是否重複
+          'feedback_day' => 3, //開立發票後多久發紅利
+          'no_repeat'    => true, //日期是否重複
         ],
       ],
     ],

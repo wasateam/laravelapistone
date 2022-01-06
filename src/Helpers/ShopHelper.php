@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Wasateam\Laravelapistone\Jobs\BonusPointFeedbackJob;
 use Wasateam\Laravelapistone\Models\Area;
 use Wasateam\Laravelapistone\Models\AreaSection;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
@@ -388,4 +389,11 @@ class ShopHelper
     return $snap;
   }
 
+  public static function createBonusPointFeedbackJob($shop_order_id)
+  {
+    $stone_feedback_day = config('stone.shop_campaign.items.bonus_point_feedback.feedback_day');
+    $feedback_day       = $stone_feedback_day ? $stone_feedback_day : 3;
+    BonusPointFeedbackJob::dispatch($shop_order_id)
+      ->delay(Carbon::now()->addDays($feedback_day));
+  }
 }

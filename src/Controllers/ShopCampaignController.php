@@ -153,8 +153,8 @@ class ShopCampaignController extends Controller
       $has_key  = array_key_exists($req_type, $types);
       if ($has_key) {
         $type = $types[$req_type] ? $types[$req_type] : null;
-        //no_repeat
-        if (isset($type['no_repeat'])) {
+        //date_no_repeat
+        if (isset($type['date_no_repeat'])) {
           $has_repeat = ShopHelper::sameCampaignDuration($request->start_date, $request->end_date, null, $request->type);
           if ($has_repeat) {
             return response()->json([
@@ -208,8 +208,8 @@ class ShopCampaignController extends Controller
       $has_key  = array_key_exists($req_type, $types);
       if ($has_key) {
         $type = $types[$req_type] ? $types[$req_type] : null;
-        //no_repeat
-        if (isset($type['no_repeat'])) {
+        //date_no_repeat
+        if (isset($type['date_no_repeat'])) {
           $has_repeat = ShopHelper::sameCampaignDuration($request->start_date, $request->end_date, $id, $request->type);
           if ($has_repeat) {
             return response()->json([

@@ -391,9 +391,9 @@ class ShopHelper
 
   public static function createBonusPointFeedbackJob($shop_order_id)
   {
-    $stone_feedback_day = config('stone.shop_campaign.items.bonus_point_feedback.feedback_day');
-    $feedback_day       = $stone_feedback_day ? $stone_feedback_day : 3;
+    $stone_feedback_after_invoice_days = config('stone.shop_campaign.items.bonus_point_feedback.feedback_after_invoice_days');
+    $feedback_after_invoice_days       = $stone_feedback_after_invoice_days ? $stone_feedback_after_invoice_days : 3;
     BonusPointFeedbackJob::dispatch($shop_order_id)
-      ->delay(Carbon::now()->addDays($feedback_day));
+      ->delay(Carbon::now()->addDays($feedback_after_invoice_days));
   }
 }

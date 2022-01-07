@@ -112,6 +112,8 @@ return [
         ],
       ],
     ],
+    //我的最愛
+    'favorite'          => true,
   ],
   'file_upload'         => 'laravel_signed',
   'privacy_terms'       => true,

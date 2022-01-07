@@ -62,6 +62,11 @@ class ShopProduct extends Model
     return $this->hasMany(ShopOrderShopProduct::class, 'shop_product_id')->whereDate('created_at', $target_day);
   }
 
+  public function users()
+  {
+    return $this->belongsToMany(User::class, 'user_shop_product', 'shop_product_id', 'user_id');
+  }
+
   protected $casts = [
     'cover_image' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
     'images'      => \Wasateam\Laravelapistone\Casts\UrlsCast::class,

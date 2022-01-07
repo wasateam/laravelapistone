@@ -82,6 +82,11 @@ class User extends Authenticatable
     return $this->hasMany(UserAddress::class, 'user_id');
   }
 
+  public function shop_products()
+  {
+    return $this->belongsToMany(ShopProduct::class, 'user_shop_product', 'user_id', 'shop_product_id');
+  }
+
   /**
    * The attributes that are mass assignable.
    *
@@ -112,7 +117,7 @@ class User extends Authenticatable
     'email_verified_at' => 'datetime',
     'password'          => \Wasateam\Laravelapistone\Casts\PasswordCast::class,
     'scopes'            => \Wasateam\Laravelapistone\Casts\JsonCast::class,
-    'payload'            => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'payload'           => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     // 'avatar'            => \Wasateam\Laravelapistone\Casts\SignedUrlAuthCast::class,
     // '',
   ];

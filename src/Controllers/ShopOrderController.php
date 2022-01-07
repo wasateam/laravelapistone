@@ -13,6 +13,7 @@ use Wasateam\Laravelapistone\Exports\ShopOrderExport;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
+use Wasateam\Laravelapistone\Jobs\BonusPointFeedbackJob;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
@@ -480,6 +481,7 @@ class ShopOrderController extends Controller
           $model->invoice_status = $invoice_status;
           if ($invoice_status == 'done') {
             $model->invoice_number = $invoice_number;
+            ShopHelper::createBonusPointFeedbackJob($model->id);
           }
           $model->save();
         }
@@ -729,6 +731,7 @@ class ShopOrderController extends Controller
         $shop_order->invoice_carrier_type   = 'email';
         $shop_order->invoice_type           = 'personal';
         $shop_order->invoice_carrier_number = $shop_order->orderer_email;
+        ShopHelper::createBonusPointFeedbackJob($shop_order->id);
       }
       $shop_order->reinvoice_at = Carbon::now();
       $shop_order->save();

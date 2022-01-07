@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Wasateam\Laravelapistone\Jobs\BonusPointFeedbackJob;
 use Wasateam\Laravelapistone\Models\Area;
 use Wasateam\Laravelapistone\Models\AreaSection;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
@@ -348,4 +349,51 @@ class ShopHelper
     $shop_order_product->save();
   }
 
+  public static function sameCampaignDuration($start_date, $end_date, $id = null, $type)
+  {
+    //是否有重複區間的免運門檻
+    $snap = null;
+    if (isset($start_date) && isset($end_date)) {
+      $snap = Self::filterDuration('Wasateam\Laravelapistone\Models\ShopCampaign', $start_date, $end_date);
+    }
+    if ($id) {
+      $snap = $snap->where('id', '!=', $id);
+    }
+    if (isset($type)) {
+      $snap = $snap->where('type', $type);
+    }
+    $snap = $snap->first();
+    if (isset($snap)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public static function filterDuration($model, $start_date, $end_date)
+  {
+    $snap = $model;
+    if (isset($start_date) && isset($end_date)) {
+      $snap = $snap::where(function ($query) use ($start_date, $end_date) {
+        $query->where(function ($query) use ($start_date, $end_date) {
+          $query->where('start_date', '<=', Carbon::parse($start_date))->where('end_date', '>=', Carbon::parse($end_date));
+        })->orWhere(function ($query) use ($start_date, $end_date) {
+          $query->where('start_date', '<=', Carbon::parse($start_date))->where('end_date', '>=', Carbon::parse($start_date));
+        })->orWhere(function ($query) use ($start_date, $end_date) {
+          $query->where('start_date', '>=', Carbon::parse($start_date))->where('end_date', '<=', Carbon::parse($end_date));
+        })->orWhere(function ($query) use ($start_date, $end_date) {
+          $query->where('start_date', '<=', Carbon::parse($end_date))->where('end_date', '>=', Carbon::parse($end_date));
+        });
+      });
+    }
+    return $snap;
+  }
+
+  public static function createBonusPointFeedbackJob($shop_order_id)
+  {
+    $stone_feedback_after_invoice_days = config('stone.shop_campaign.items.bonus_point_feedback.feedback_after_invoice_days');
+    $feedback_after_invoice_days       = $stone_feedback_after_invoice_days ? $stone_feedback_after_invoice_days : 3;
+    BonusPointFeedbackJob::dispatch($shop_order_id)
+      ->delay(Carbon::now()->addDays($feedback_after_invoice_days));
+  }
 }

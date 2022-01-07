@@ -633,12 +633,14 @@ class RoutesHelper
     }
 
     # Appointment
-    Route::resource('appointment', AppointmentController::class)->only([
-      'index',
-      'show',
-      'store',
-      'update',
-    ])->shallow();
+    if (config('stone.appointment')) {
+      Route::resource('appointment', AppointmentController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+      ])->shallow();
+    }
 
     # Third Party Payment
     if (config('stone.thrid_party_payment')) {

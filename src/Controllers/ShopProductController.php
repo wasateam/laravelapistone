@@ -38,8 +38,8 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * on_time 上架時間
  * off_time 下架時間
  * is_active 商品狀態
- * ~0 未上架
- * ~1 上架
+ * ~ 0 未上架
+ * ~ 1 上架
  * spec 商品規格
  * cost 成本
  * price 售價

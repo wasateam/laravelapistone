@@ -82,7 +82,7 @@ class ShopProductController extends Controller
     'status',
     'on_time',
     'off_time',
-    'is_shop_productive',
+    'is_active',
     'spec',
     'cost',
     'price',
@@ -114,7 +114,7 @@ class ShopProductController extends Controller
   ];
   public $filter_fields = [
     'tax',
-    'is_shop_productive',
+    'is_active',
     'status',
     'type',
     'order_type',
@@ -191,7 +191,7 @@ class ShopProductController extends Controller
     } else if (config('stone.mode') == 'webapi') {
       if (config('stone.featured_class') && $request->has('featured_classes')) {
         return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
-          $snap = $snap->where('is_shop_productive', 1);
+          $snap = $snap->where('is_active', 1);
           return $snap;
         });
       } else if (!$request->has('shop_classes') && !$request->has('shop_subclasses')) {
@@ -200,7 +200,7 @@ class ShopProductController extends Controller
         ], 400);
       }
       return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
-        $snap = $snap->where('is_shop_productive', 1);
+        $snap = $snap->where('is_active', 1);
         return $snap;
       });
     }
@@ -216,7 +216,7 @@ class ShopProductController extends Controller
    * @bodyParam subtitle string 商品副標 Example: 商品副標
    * @bodyParam on_time datetime 上架時間 Example: 2021-10-10
    * @bodyParam off_time datetime 下架時間 Example: 2021-10-20
-   * @bodyParam is_shop_productive boolean 商品狀態 Example: 1
+   * @bodyParam is_active boolean 商品狀態 Example: 1
    * @bodyParam spec string 商品規格 Example: 五顆裝
    * @bodyParam cost int 成本 Example: 200
    * @bodyParam price int 售價 Example: 300
@@ -268,7 +268,7 @@ class ShopProductController extends Controller
    * @bodyParam subtitle string 商品副標 Example: 商品副標
    * @bodyParam on_time datetime 上架時間 Example: 2021-10-10
    * @bodyParam off_time datetime 下架時間 Example: 2021-10-20
-   * @bodyParam is_shop_productive boolean 商品狀態 Example: 1
+   * @bodyParam is_active boolean 商品狀態 Example: 1
    * @bodyParam spec string 商品規格 Example: 五顆裝
    * @bodyParam cost int 成本 Example: 200
    * @bodyParam price int 售價 Example: 300
@@ -325,7 +325,7 @@ class ShopProductController extends Controller
    *
    * @queryParam shop_classes ids 分類  No-example 1,2,3
    * @queryParam shop_subclasses ids 子分類  No-example 1,2,3
-   * @queryParam is_shop_productive number 上架  No-example : 1,0
+   * @queryParam is_active number 上架  No-example : 1,0
    * @queryParam get_all number 全抓  No-example : 1,0
    * @queryParam stock_level number 庫存狀態  No-example : 1,2
    * @queryParam start_date date  開始日期  No-example : 1,2
@@ -333,17 +333,17 @@ class ShopProductController extends Controller
    */
   public function export_excel_signedurl(Request $request)
   {
-    $shop_classes       = $request->has('shop_classes') ? $request->shop_classes : null;
-    $shop_subclasses    = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
-    $is_shop_productive = $request->has('is_shop_productive') ? $request->is_shop_productive : null;
-    $get_all            = $request->has('get_all') ? $request->get_all : 0;
-    $stock_level        = $request->has('stock_level') ? $request->stock_level : null;
-    $start_date         = $request->has('start_date') ? $request->start_date : null;
-    $end_date           = $request->has('end_date') ? $request->end_date : null;
+    $shop_classes    = $request->has('shop_classes') ? $request->shop_classes : null;
+    $shop_subclasses = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
+    $is_active       = $request->has('is_active') ? $request->is_active : null;
+    $get_all         = $request->has('get_all') ? $request->get_all : 0;
+    $stock_level     = $request->has('stock_level') ? $request->stock_level : null;
+    $start_date      = $request->has('start_date') ? $request->start_date : null;
+    $end_date        = $request->has('end_date') ? $request->end_date : null;
     return URL::temporarySignedRoute(
       'shop_product_export_excel',
       now()->addMinutes(30),
-      ['shop_classes' => $shop_classes, 'shop_subclasses' => $shop_subclasses, 'is_shop_productive' => $is_shop_productive, 'get_all' => $get_all, 'stock_level' => $stock_level, 'start_date' => $start_date, 'end_date' => $end_date]
+      ['shop_classes' => $shop_classes, 'shop_subclasses' => $shop_subclasses, 'is_active' => $is_active, 'get_all' => $get_all, 'stock_level' => $stock_level, 'start_date' => $start_date, 'end_date' => $end_date]
     );
   }
 
@@ -352,14 +352,14 @@ class ShopProductController extends Controller
    */
   public function export_excel(Request $request)
   {
-    $shop_classes       = $request->has('shop_classes') ? $request->shop_classes : null;
-    $shop_subclasses    = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
-    $is_shop_productive = $request->has('is_shop_productive') ? $request->is_shop_productive : null;
-    $get_all            = $request->has('get_all') ? $request->get_all : 0;
-    $stock_level        = $request->has('stock_level') ? $request->stock_level : null;
-    $start_date         = $request->has('start_date') ? $request->start_date : null;
-    $end_date           = $request->has('end_date') ? $request->end_date : null;
-    return Excel::download(new ShopProductExport($shop_classes, $shop_subclasses, $is_shop_productive, $get_all, $stock_level, $start_date, $end_date), 'shop_products.xlsx');
+    $shop_classes    = $request->has('shop_classes') ? $request->shop_classes : null;
+    $shop_subclasses = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
+    $is_active       = $request->has('is_active') ? $request->is_active : null;
+    $get_all         = $request->has('get_all') ? $request->get_all : 0;
+    $stock_level     = $request->has('stock_level') ? $request->stock_level : null;
+    $start_date      = $request->has('start_date') ? $request->start_date : null;
+    $end_date        = $request->has('end_date') ? $request->end_date : null;
+    return Excel::download(new ShopProductExport($shop_classes, $shop_subclasses, $is_active, $get_all, $stock_level, $start_date, $end_date), 'shop_products.xlsx');
   }
 
   /**

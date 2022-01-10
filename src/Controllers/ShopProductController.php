@@ -37,7 +37,7 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * subtitle 商品副標
  * on_time 上架時間
  * off_time 下架時間
- * is_shop_productive 商品狀態
+ * is_active 商品狀態
  * spec 商品規格
  * cost 成本
  * price 售價

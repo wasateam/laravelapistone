@@ -210,6 +210,11 @@ class StoneServiceProvider extends ServiceProvider
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/page_setting');
         }
 
+        # Page Cover
+        if (config('stone.page_cover')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/page_cover');
+        }
+
         # XcWorkType
         if (config('stone.ex_work_type')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/ex_work_type');

@@ -595,6 +595,13 @@ class RoutesHelper
       ])->shallow();
     }
 
+    # Page Setting
+    if (config('stone.page_cover')) {
+      Route::resource('page_cover', PageSettingController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
+
     # Acumatica
     if (config('stone.acumatica')) {
       Route::resource('acumatica_app', AcumaticaAppController::class)->only([
@@ -1014,6 +1021,13 @@ class RoutesHelper
     # Page Setting
     if (config('stone.page_setting')) {
       Route::resource('page_setting', PageSettingController::class)->only([
+        'index', 'show',
+      ])->shallow();
+    }
+
+    # Page Setting
+    if (config('stone.page_cover')) {
+      Route::resource('page_cover', PageSettingController::class)->only([
         'index', 'show',
       ])->shallow();
     }

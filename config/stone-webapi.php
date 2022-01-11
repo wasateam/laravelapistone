@@ -161,9 +161,14 @@ return [
     'username'      => env('ACUMATICA_USERNAME'),
     'password'      => env('ACUMATICA_PASSWORD'),
   ],
+  //banner
   'news_banner'         => true,
+  //banner 群組
   'news_banner_group'   => true,
   'news'                => true,
+  //頁面設定
   'page_setting'        => true,
+  //頁面彈跳視窗
+  'page_cover'          => true,
   'excute_class'        => true,
 ];

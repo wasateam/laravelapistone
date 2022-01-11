@@ -351,7 +351,7 @@ class ShopHelper
 
   public static function sameCampaignDuration($start_date, $end_date, $id = null, $type)
   {
-    //是否有重複區間的免運門檻
+    //是否有重複區間的促銷活動
     $snap = null;
     if (isset($start_date) && isset($end_date)) {
       $snap = Self::filterDuration('Wasateam\Laravelapistone\Models\ShopCampaign', $start_date, $end_date);
@@ -395,5 +395,29 @@ class ShopHelper
     $feedback_after_invoice_days       = $stone_feedback_after_invoice_days ? $stone_feedback_after_invoice_days : 3;
     BonusPointFeedbackJob::dispatch($shop_order_id)
       ->delay(Carbon::now()->addDays($feedback_after_invoice_days));
+  }
+
+  public static function samePageCoverDuration($start_date, $end_date, $id = null, $page_settings)
+  {
+    //是否有重複區間的頁面彈跳穿
+    $snap = null;
+    if (isset($start_date) && isset($end_date)) {
+      $snap = Self::filterDuration('Wasateam\Laravelapistone\Models\PageCover', $start_date, $end_date);
+    }
+    if ($id) {
+      $snap = $snap->where('id', '!=', $id);
+    }
+    if (isset($page_settings)) {
+      $item_arr = array_map('intval', explode(',', $page_settings));
+      $snap     = $snap->whereHas('page_settings', function ($query) use ($item_arr) {
+        return $query->whereIn('id', $item_arr);
+      });
+    }
+    $snap = $snap->first();
+    if (isset($snap)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

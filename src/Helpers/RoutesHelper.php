@@ -70,6 +70,7 @@ use Wasateam\Laravelapistone\Controllers\UserAddressController;
 use Wasateam\Laravelapistone\Controllers\UserAppInfoController;
 use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceController;
+use Wasateam\Laravelapistone\Controllers\UserDeviceModifyRecordController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanItemController;
@@ -79,6 +80,7 @@ use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
 use Wasateam\Laravelapistone\Controllers\XcMilestoneController;
 use Wasateam\Laravelapistone\Controllers\XcTaskController;
+use Wasateam\Laravelapistone\Controllers\XcTaskTemplateController;
 use Wasateam\Laravelapistone\Controllers\XcWorkTypeController;
 
 class RoutesHelper
@@ -272,6 +274,9 @@ class RoutesHelper
       # UserDevice
       if (config('stone.user.device')) {
         Route::resource('user_device', UserDeviceController::class)->only([
+          'index', 'show', 'store', 'update', 'destroy',
+        ])->shallow();
+        Route::resource('user_device_modify_record', UserDeviceModifyRecordController::class)->only([
           'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
       }
@@ -589,6 +594,9 @@ class RoutesHelper
     # XcTask
     if (config('stone.xc_task')) {
       Route::resource('xc_task', XcTaskController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('xc_task_template', XcTaskTemplateController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }

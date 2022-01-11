@@ -45,8 +45,14 @@ class AcumaticaHelper
         "value" => $type,
       ],
       "General"            => [
-        "Manufacturer" => [
+        "Manufacturer"   => [
           "value" => $brand,
+        ],
+        "RegisteredDate" => [
+          "value" => $purchase_date,
+        ],
+        "SalesDate"      => [
+          "value" => $purchase_date,
         ],
       ],
       "LocationType"       => [
@@ -84,7 +90,7 @@ class AcumaticaHelper
 
   public static function deactiveEquipment($equipment_id, $serial_number)
   {
-    $post_url          = config('stone.acumatica.api_url') . "/FSEquipment";
+    $post_url  = config('stone.acumatica.api_url') . "/FSEquipment";
     $post_data = [
       'id'        => $equipment_id,
       'SerialNbr' => [
@@ -103,7 +109,7 @@ class AcumaticaHelper
 
   public static function activeEquipment($equipment_id, $serial_number)
   {
-    $post_url          = config('stone.acumatica.api_url') . "/FSEquipment";
+    $post_url  = config('stone.acumatica.api_url') . "/FSEquipment";
     $post_data = [
       'id'        => $equipment_id,
       'SerialNbr' => [

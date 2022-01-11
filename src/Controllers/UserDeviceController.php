@@ -7,6 +7,7 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\UserDeviceHelper;
 
 /**
  * @group UserDevice 使用者綁定裝置
@@ -207,6 +208,10 @@ class UserDeviceController extends Controller
         $model = config('stone.user.device.register_before_action')::device_register_before_action($model, $user);
       }
       $model->save();
+
+      # UserDeviceModifyRecord
+      UserDeviceHelper::user_device_record('register', $model, $user);
+
       return response()->json([
         'message' => 'registerd.',
       ], 200);
@@ -281,6 +286,9 @@ class UserDeviceController extends Controller
     }
     $model->save();
 
+    # UserDeviceModifyRecord
+    UserDeviceHelper::user_device_record('active', $model, $user);
+
     return response()->json([
       'message' => 'activated',
     ], 200);
@@ -315,6 +323,9 @@ class UserDeviceController extends Controller
       $model = config('stone.user.device.deactive_before_action')::device_deactive_before_action($model, $user);
     }
     $model->save();
+
+    # UserDeviceModifyRecord
+    UserDeviceHelper::user_device_record('deactive', $model, $user);
 
     return response()->json([
       'message' => 'deactivated',

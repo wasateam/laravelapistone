@@ -32,6 +32,7 @@ class CreateXcTasksTable extends Migration
       $table->boolean('is_adjust')->nullable();
       $table->boolean('is_rd')->nullable();
       $table->boolean('is_not_complete')->nullable();
+      $table->string('xc_task_template_id')->nullable();
     });
   }
 

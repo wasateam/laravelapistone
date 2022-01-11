@@ -18,6 +18,7 @@ class ShopProductCollection extends JsonResource
       $res = [
         'id'                                  => $this->id,
         'type'                                => $this->type,
+        'order_type'                          => $this->order_type,
         'no'                                  => $this->no,
         'name'                                => $this->name,
         'subtitle'                            => $this->subtitle,
@@ -54,6 +55,7 @@ class ShopProductCollection extends JsonResource
       $res = [
         'id'                          => $this->id,
         'type'                        => $this->type,
+        'order_type'                  => $this->order_type,
         'no'                          => $this->no,
         'name'                        => $this->name,
         'subtitle'                    => $this->subtitle,

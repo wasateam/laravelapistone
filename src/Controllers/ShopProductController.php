@@ -3,11 +3,14 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Exports\ShopProductExport;
-use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Imports\ShopProductImport;
+use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Imports\ShopProductImport;
+use Wasateam\Laravelapistone\Models\ShopProduct;
 
 /**
  * @group 商品
@@ -35,6 +38,8 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;use Wasateam\Laravelapistone\Im
  * on_time 上架時間
  * off_time 下架時間
  * is_active 商品狀態
+ * ~ 0 未上架
+ * ~ 1 上架
  * spec 商品規格
  * cost 成本
  * price 售價
@@ -355,5 +360,95 @@ class ShopProductController extends Controller
     $start_date      = $request->has('start_date') ? $request->start_date : null;
     $end_date        = $request->has('end_date') ? $request->end_date : null;
     return Excel::download(new ShopProductExport($shop_classes, $shop_subclasses, $is_active, $get_all, $stock_level, $start_date, $end_date), 'shop_products.xlsx');
+  }
+
+  /**
+   * Collect ShopProduct 加入我的最愛
+   *
+   * @urlParam shop_product_id int
+   *
+   * @authenticated
+   *
+   */
+  public function collect_shop_product($shop_product_id)
+  {
+    $user = Auth::user();
+    try {
+      if (!$user->shop_products->contains($shop_product_id)) {
+        $user->shop_products()->attach($shop_product_id);
+      }
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'shop_product attach error.',
+      ], 400);
+    }
+    return response()->json([
+      'message' => 'shop_product attach ok.',
+    ]);
+  }
+
+  /**
+   * Uncollect ShopProduct 移除我的最愛
+   *
+   * @urlParam shop_product_id int
+   *
+   * @authenticated
+   *
+   */
+  public function uncollect_shop_procut($shop_product_id)
+  {
+    $user = Auth::user();
+    try {
+      $user->shop_products()->detach($shop_product_id);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'message' => 'shop_product detach error.',
+      ], 400);
+    }
+    return response()->json([
+      'message' => 'shop_product detach ok.',
+    ]);
+  }
+
+  /**
+   * Collected ShopProduct Index 我的最愛列表
+   *
+   * @queryParam order_type ids 訂單類型  No-example next-day,pre-order
+   *
+   * @authenticated
+   */
+  public function collected_shop_product_index(Request $request)
+  {
+    $user = Auth::user();
+    return ModelHelper::ws_IndexHandler($this, $request, null, $request->get_all, function ($snap) use ($user) {
+      $snap
+        ->whereHas('users', function ($query) use ($user) {
+          $query->where('users.id', $user->id);
+        });
+      return $snap;
+    });
+  }
+
+  /**
+   * Collected ShopProduct Ids 我的最愛列表ids
+   *
+   * @authenticated
+   *
+   */
+  public function collected_shop_product_ids(Request $request)
+  {
+    $user = Auth::user();
+
+    $my_shop_products = ShopProduct::whereHas('users', function ($query) use ($user) {
+      $query->where('users.id', $user->id);
+    })->get();
+
+    $my_shop_product_ids = $my_shop_products->map(function ($item) {
+      return $item->id;
+    });
+
+    return response()->json([
+      'data' => $my_shop_product_ids,
+    ], 200);
   }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\ShopHelper;
 
 /**
  * @group 促銷活動 ShopCampaign
@@ -13,23 +14,31 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * 促銷活動 API
  *
  * 類型 type
+ * ~紅利點數回饋 bonus_point_feedback
+ * ~折扣碼 discount_code
  * 活動名稱 name
  * 啟用狀態 is_active
  * 起始時間 start_date
  * 結束時間 end_date
  * 折扣碼 discount_code
  * 活動內容 condition
- * ~首購
+ * ~首購 first-purchase
  * ~不限 null
+ * ~紅利點數回饋 比例 rate
  * 滿額限制(金額) full_amount
  * 打折折數 discount_percent
  * 折抵金額 discount_amount
+ * 回饋比例 feedback_rate
  * 是否啟用 is_active
  * 數量 limit
- *ㄋ
+ *
  * Index 篩選
  * status
  * ~ 1 進行中 2 未開始 3 已結束
+ *
+ * Store,Update相關補充
+ * 需要送condition，condition要送什麼會依據type而不同
+ * ex.紅利點數回饋如果是用比例的話，condition送rate
  *
  * @authenticated
  */
@@ -52,6 +61,7 @@ class ShopCampaignController extends Controller
     'discount_amount',
     'limit',
     'is_active',
+    'feedback_rate',
   ];
   public $search_fields = [
     'name',
@@ -88,12 +98,14 @@ class ShopCampaignController extends Controller
   public function index(Request $request, $id = null)
   {
     return ModelHelper::ws_IndexHandler($this, $request, $id, $request->get_all, function ($snap) use ($request) {
+      //篩選日期區間
       $date = ($request != null) && $request->filled('date') ? Carbon::parse($request->date) : null;
       if (isset($date)) {
         $snap = $snap->where(function ($query) use ($date) {
           $query->where('end_date', '>=', $date)->where('start_date', '<=', $date);
         });
       }
+      //篩選狀態
       $status = ($request != null) && $request->filled('status') ? $request->status : null;
       if (isset($status)) {
         $today = Carbon::now()->format('Y-m-d');
@@ -125,9 +137,33 @@ class ShopCampaignController extends Controller
    * @bodyParam discount_amount int Example:100
    * @bodyParam is_active int Example:1
    * @bodyParam limit int Example:100
+   * @bodyParam feedback_rate float Example:0.001
    */
   public function store(Request $request, $id = null)
   {
+    if (!$request->type) {
+      return response()->json([
+        'message' => 'type is required.',
+      ], 400);
+    }
+    if ($request->has('type')) {
+      //get types from stone.php
+      $types    = config('stone.shop.shop_campaign.items');
+      $req_type = str_replace('-', '_', $request->type);
+      $has_key  = array_key_exists($req_type, $types);
+      if ($has_key) {
+        $type = $types[$req_type] ? $types[$req_type] : null;
+        //date_no_repeat
+        if (isset($type['date_no_repeat'])) {
+          $has_repeat = ShopHelper::sameCampaignDuration($request->start_date, $request->end_date, null, $request->type);
+          if ($has_repeat) {
+            return response()->json([
+              'message' => 'this date already exist.',
+            ], 400);
+          }
+        }
+      }
+    }
     return ModelHelper::ws_StoreHandler($this, $request, $id);
   }
 
@@ -156,9 +192,33 @@ class ShopCampaignController extends Controller
    * @bodyParam discount_amount int Example:100
    * @bodyParam is_active int Example:1
    * @bodyParam limit int Example:100
+   * @bodyParam feedback_rate float Example:0.001
    */
   public function update(Request $request, $id)
   {
+    if (!$request->type) {
+      return response()->json([
+        'message' => 'type is required.',
+      ], 400);
+    }
+    if ($request->has('type')) {
+      //get types from stone.php
+      $types    = config('stone.shop.shop_campaign.items');
+      $req_type = str_replace('-', '_', $request->type);
+      $has_key  = array_key_exists($req_type, $types);
+      if ($has_key) {
+        $type = $types[$req_type] ? $types[$req_type] : null;
+        //date_no_repeat
+        if (isset($type['date_no_repeat'])) {
+          $has_repeat = ShopHelper::sameCampaignDuration($request->start_date, $request->end_date, $id, $request->type);
+          if ($has_repeat) {
+            return response()->json([
+              'message' => 'this date already exist.',
+            ], 400);
+          }
+        }
+      }
+    }
     return ModelHelper::ws_UpdateHandler($this, $request, $id);
   }
 

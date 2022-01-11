@@ -484,4 +484,5 @@ class AuthController extends Controller
       'message' => 'verify mail sent.',
     ], 200);
   }
+
 }

@@ -652,12 +652,14 @@ class RoutesHelper
     }
 
     # Appointment
-    Route::resource('appointment', AppointmentController::class)->only([
-      'index',
-      'show',
-      'store',
-      'update',
-    ])->shallow();
+    if (config('stone.appointment')) {
+      Route::resource('appointment', AppointmentController::class)->only([
+        'index',
+        'show',
+        'store',
+        'update',
+      ])->shallow();
+    }
 
     # Third Party Payment
     if (config('stone.thrid_party_payment')) {
@@ -849,6 +851,12 @@ class RoutesHelper
       //     'index', 'show',
       //   ])->shallow();
       // }
+      if (config('stone.shop.favorite')) {
+        Route::get('/auth/shop_product/{shop_product_id}/collect', [ShopProductController::class, 'collect_shop_product']);
+        Route::get('/auth/shop_product/{shop_product_id}/uncollect', [ShopProductController::class, 'uncollect_shop_procut']);
+        Route::get('/auth/collected_shop_product/index', [ShopProductController::class, 'collected_shop_product_index']);
+        Route::get('/auth/collected_shop_product/ids', [ShopProductController::class, 'collected_shop_product_ids']);
+      }
       Route::resource('shop_product_cover_frame', ShopProductCoverFrameController::class)->only([
         'index', 'show',
       ])->shallow();

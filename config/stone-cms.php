@@ -123,6 +123,7 @@ return [
   'news_banner'        => true,
   'news_banner_group'  => true,
   'news'               => true,
+  'page_setting'       => true,
   'xc_work_type'       => true,
   'xc_task'            => true,
   'xc_milestone'       => true,

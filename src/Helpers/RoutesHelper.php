@@ -27,6 +27,7 @@ use Wasateam\Laravelapistone\Controllers\NewsBannerController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerGroupController;
 use Wasateam\Laravelapistone\Controllers\NewsController;
 use Wasateam\Laravelapistone\Controllers\NotificationController;
+use Wasateam\Laravelapistone\Controllers\PageSettingController;
 use Wasateam\Laravelapistone\Controllers\PinCardController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
 use Wasateam\Laravelapistone\Controllers\PocketImageController;
@@ -587,6 +588,13 @@ class RoutesHelper
       Route::patch('news_banner_group/{id}/news_banner/order', [NewsBannerGroupController::class, 'news_banner_order_patch']);
     }
 
+    # Page Setting
+    if (config('stone.page_setting')) {
+      Route::resource('page_setting', PageSettingController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
+
     # Acumatica
     if (config('stone.acumatica')) {
       Route::resource('acumatica_app', AcumaticaAppController::class)->only([
@@ -999,6 +1007,13 @@ class RoutesHelper
     # News Banner Group
     if (config('stone.news_banner_group')) {
       Route::resource('news_banner', NewsBannerGroupController::class)->only([
+        'index', 'show',
+      ])->shallow();
+    }
+
+    # Page Setting
+    if (config('stone.page_setting')) {
+      Route::resource('page_setting', PageSettingController::class)->only([
         'index', 'show',
       ])->shallow();
     }

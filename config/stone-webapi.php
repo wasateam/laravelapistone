@@ -164,5 +164,6 @@ return [
   'news_banner'         => true,
   'news_banner_group'   => true,
   'news'                => true,
+  'page_setting'        => true,
   'excute_class'        => true,
 ];

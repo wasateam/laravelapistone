@@ -25,13 +25,15 @@ class NewsBannerGroupController extends Controller
   public $order_fields = [
     'sq',
   ];
-  public $belongs_to_many = [
-    'page_settings',
-  ];
-  public $filter_belongs_to_many = [
-    'page_settings',
-  ];
   public $order_by = 'sq';
+
+  public function __contrust()
+  {
+    if (config('stone.page_setting')) {
+      $this->belongs_to_many[]        = 'page_settings';
+      $this->filter_belongs_to_many[] = 'page_settings';
+    }
+  }
 
   /**
    * Index

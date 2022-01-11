@@ -20,8 +20,6 @@ use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestAutoReplyController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
-use Wasateam\Laravelapistone\Controllers\DocumentClassController;
-use Wasateam\Laravelapistone\Controllers\DocumentController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
@@ -79,6 +77,9 @@ use Wasateam\Laravelapistone\Controllers\UserServicePlanRecordController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
+use Wasateam\Laravelapistone\Controllers\XcMilestoneController;
+use Wasateam\Laravelapistone\Controllers\XcTaskController;
+use Wasateam\Laravelapistone\Controllers\XcWorkTypeController;
 
 class RoutesHelper
 {
@@ -578,12 +579,30 @@ class RoutesHelper
       ])->shallow();
     }
 
-    # Document
-    if (config('stone.document')) {
-      Route::resource('document', DocumentController::class)->only([
+    # XcWorkType
+    if (config('stone.xc_work_type')) {
+      Route::resource('xc_work_type', XcWorkTypeController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
-      Route::resource('document_class', DocumentClassController::class)->only([
+    }
+
+    # XcTask
+    if (config('stone.xc_task')) {
+      Route::resource('xc_task', XcTaskController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
+
+    # XcMilestone
+    if (config('stone.xc_milestone')) {
+      Route::resource('xc_milestone', XcMilestoneController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
+
+    # XcProject
+    if (config('stone.xc_project')) {
+      Route::resource('xc_project', XcProjectController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }

@@ -122,5 +122,8 @@ return [
   ],
   'news_banner'        => true,
   'news'               => true,
-  'document'           => true,
+  'xc_work_type'       => true,
+  'xc_task'            => true,
+  'xc_milestone'       => true,
+  'xc_project'         => true,
 ];

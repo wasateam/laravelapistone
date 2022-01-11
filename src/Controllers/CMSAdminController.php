@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group Admin
+ * @group Admin 管理員
  *
  * @authenticated
  ** name 名稱
@@ -22,7 +22,9 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * sequence 排列順序設定值
  * country_code 國家代碼
  * color 顏色
- * payload
+ * payload Payload
+ * xc_projects 專案 (管理系統)
+ * manage_xc_projects 管理的專案 (管理系統)
  *
  */
 class CMSAdminController extends Controller
@@ -65,9 +67,15 @@ class CMSAdminController extends Controller
     'name',
     'email',
   ];
-  public $belongs_to_many        = [];
-  public $filter_belongs_to_many = [];
-  public $order_fields           = [
+  public $belongs_to_many = [
+    'xc_projects',
+    'manage_xc_projects',
+  ];
+  public $filter_belongs_to_many = [
+    'xc_projects',
+    'manage_xc_projects',
+  ];
+  public $order_fields = [
     'id',
     'updated_at',
     'created_at',
@@ -100,6 +108,8 @@ class CMSAdminController extends Controller
   /**
    * Index
    * @queryParam search string No-example
+   * @queryParam xc_projects ids No-example
+   * @queryParam manage_xc_projects ids No-example
    *
    */
   public function index(Request $request, $id = null)

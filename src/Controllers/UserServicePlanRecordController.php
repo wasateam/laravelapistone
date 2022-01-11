@@ -8,11 +8,18 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\UserServicePlanRecord;
 
 /**
- * @group UserServicePlanRecord
+ * @group UserServicePlanRecord 使用者方案綁定紀錄
  *
  * @authenticated
  *
- * APIs for user_service_plan_record
+ * count 數量
+ * remark 備註
+ * user 使用者
+ * service_plan 方案
+ * service_plan_item 方案項目
+ * user_service_plan 會員綁定方案
+ * user_service_plan_item 會員綁定方案項目
+ * 
  */
 class UserServicePlanRecordController extends Controller
 {

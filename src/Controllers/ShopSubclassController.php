@@ -117,6 +117,6 @@ class ShopSubclassController extends Controller
    */
   public function shop_product_order_patch($id, Request $request)
   {
-    return ModelHelper::ws_BelongsToManyOrderPatchHandler($id, $this, 'shop_products', $request);
+    return ModelHelper::ws_BelongsToManyOrderPatchHandler($id, $this, 'shop_products', $request, 'sq');
   }
 }

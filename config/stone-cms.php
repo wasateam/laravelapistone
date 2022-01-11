@@ -121,6 +121,7 @@ return [
     'password'      => env('ACUMATICA_PASSWORD'),
   ],
   'news_banner'        => true,
+  'news_banner_group'  => true,
   'news'               => true,
   'xc_work_type'       => true,
   'xc_task'            => true,

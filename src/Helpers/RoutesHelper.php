@@ -24,6 +24,7 @@ use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerController;
+use Wasateam\Laravelapistone\Controllers\NewsBannerGroupController;
 use Wasateam\Laravelapistone\Controllers\NewsController;
 use Wasateam\Laravelapistone\Controllers\NotificationController;
 use Wasateam\Laravelapistone\Controllers\PinCardController;
@@ -577,6 +578,15 @@ class RoutesHelper
       ])->shallow();
     }
 
+    # News Banner Group
+    if (config('stone.news_banner_group')) {
+      Route::resource('news_banner_group', NewsBannerGroupController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::get('news_banner_group/{id}/news_banner/order', [NewsBannerGroupController::class, 'news_banner_order_get']);
+      Route::patch('news_banner_group/{id}/news_banner/order', [NewsBannerGroupController::class, 'news_banner_order_patch']);
+    }
+
     # Acumatica
     if (config('stone.acumatica')) {
       Route::resource('acumatica_app', AcumaticaAppController::class)->only([
@@ -982,6 +992,13 @@ class RoutesHelper
     # News Banner
     if (config('stone.news_banner')) {
       Route::resource('news_banner', NewsBannerController::class)->only([
+        'index', 'show',
+      ])->shallow();
+    }
+
+    # News Banner Group
+    if (config('stone.news_banner_group')) {
+      Route::resource('news_banner', NewsBannerGroupController::class)->only([
         'index', 'show',
       ])->shallow();
     }

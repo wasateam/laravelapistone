@@ -70,6 +70,7 @@ use Wasateam\Laravelapistone\Controllers\UserAddressController;
 use Wasateam\Laravelapistone\Controllers\UserAppInfoController;
 use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceController;
+use Wasateam\Laravelapistone\Controllers\UserDeviceModifyRecordController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanItemController;
@@ -273,6 +274,9 @@ class RoutesHelper
       # UserDevice
       if (config('stone.user.device')) {
         Route::resource('user_device', UserDeviceController::class)->only([
+          'index', 'show', 'store', 'update', 'destroy',
+        ])->shallow();
+        Route::resource('user_device_modify_record', UserDeviceModifyRecordController::class)->only([
           'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
       }

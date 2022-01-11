@@ -42,6 +42,16 @@ class Admin extends Authenticatable
     return $this->belongsToMany(AdminGroup::class, 'admin_group_admin', 'admin_id', 'admin_group_id');
   }
 
+  public function xc_projects()
+  {
+    return $this->belongsToMany(XcProject::class, 'xc_project_member', 'member_id', 'xc_project_id');
+  }
+
+  public function manage_xc_projects()
+  {
+    return $this->belongsToMany(AdminGroup::class, 'xc_project_manager', 'manager_id', 'xc_project_id');
+  }
+
   /**
    * The attributes that are mass assignable.
    *

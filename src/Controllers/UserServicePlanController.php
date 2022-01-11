@@ -8,7 +8,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Resources\UserServicePlan;
 
 /**
- * @group 使用者綁定方案
+ * @group UserServicePlan 使用者綁定方案
  *
  * service_plan 方案 ID
  * user 使用者 ID

@@ -38,14 +38,19 @@ class StoneServiceProvider extends ServiceProvider
         # Admin
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin');
 
+        # QueueJob
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/queuejob');
+
         # AdminRole
         if (config('stone.admin_role')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_role');
         }
+
         # AdminGroup
         if (config('stone.admin_group')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_group');
         }
+
         # AdminSystemClass
         if (config('stone.admin_system_class')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/admin_system_class');
@@ -195,9 +200,24 @@ class StoneServiceProvider extends ServiceProvider
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/news_banner');
         }
 
-        # Document
-        if (config('stone.document')) {
-          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/document');
+        # XcWorkType
+        if (config('stone.ex_work_type')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/ex_work_type');
+        }
+
+        # XcTask
+        if (config('stone.xc_task')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/xc_task');
+        }
+
+        # XcProject
+        if (config('stone.xc_project')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/xc_project');
+        }
+
+        # XcMilestone
+        if (config('stone.xc_milestone')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/xc_milestone');
         }
       }
 

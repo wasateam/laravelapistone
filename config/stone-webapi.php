@@ -153,6 +153,5 @@ return [
   ],
   'news_banner'         => true,
   'news'                => true,
-  'document'            => true,
   'excute_class'        => true,
 ];

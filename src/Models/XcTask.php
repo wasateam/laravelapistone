@@ -30,6 +30,11 @@ class XcTask extends Model
     return $this->belongsTo(Admin::class, 'taker_id');
   }
 
+  public function xc_task_template()
+  {
+    return $this->belongsTo(XcTaskTemplate::class, 'xc_task_template_id');
+  }
+
   protected $casts = [
     'start_at'    => 'datetime',
     'reviewed_at' => 'datetime',

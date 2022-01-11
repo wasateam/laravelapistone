@@ -5,68 +5,40 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
-use Wasateam\Laravelapistone\Models\XcTask;
+use Wasateam\Laravelapistone\Models\XcTaskTemplate;
 
 /**
- * @group XcTask 任務 (管理後台)
+ * @group XcTaskTemplate 任務 (管理後台)
  *
  * @authenticated
  *
  * name 名稱
- * start_at 開始時間
- * reviewed_at 覆核時間
- * status 狀態
- * ~ open 待執行
- * ~ done 已完成
- * ~ closed 已覆核
  * hour 預估時數
- * finish_hour 完成回報時數
- * creator_remark 建立人備註
- * taker_remark 執行人備註
  * is_adjust 是否為調整 Task
  * is_rd 是否為開發 Task
  * is_not_complete 是否尚有項目未完成
+ * remark 備註
  * xc_work_type 執行類型 (管理後台)
- * xc_project 專案 (管理後台)
- * creator 建立人
- * taker 執行人
- * xc_task_template Task 公版
  *
  */
-class XcTaskController extends Controller
+class XcTaskTemplateController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Models\XcTask';
-  public $name         = 'xc_task';
-  public $resource     = 'Wasateam\Laravelapistone\Resources\XcTask';
+  public $model        = 'Wasateam\Laravelapistone\Models\XcTaskTemplate';
+  public $name         = 'xc_task_template';
+  public $resource     = 'Wasateam\Laravelapistone\Resources\XcTaskTemplate';
   public $input_fields = [
     'name',
-    'start_at',
-    'reviewed_at',
-    'status',
-    'open',
-    'done',
-    'closed',
     'hour',
-    'finish_hour',
-    'creator_remark',
-    'taker_remark',
     'is_adjust',
     'is_rd',
     'is_not_complete',
+    'remark',
   ];
   public $belongs_to = [
     'xc_work_type',
-    'xc_project',
-    'creator',
-    'taker',
-    'xc_task_template',
   ];
   public $filter_belongs_to = [
     'xc_work_type',
-    'xc_project',
-    'creator',
-    'taker',
-    'xc_task_template',
   ];
   public $order_fields = [
     'updated_at',
@@ -91,21 +63,12 @@ class XcTaskController extends Controller
    * Store
    *
    * name 名稱
-   * start_at 開始時間
-   * reviewed_at 覆核時間
-   * status 狀態
    * hour 預估時數
-   * finish_hour 完成回報時數
-   * creator_remark 建立人備註
-   * taker_remark 執行人備註
    * is_adjust 是否為調整
    * is_rd 是否為開發
    * is_not_complete 是否尚有項目未完成
+   * remark 備註
    * xc_work_type 執行類型
-   * xc_project 專案
-   * creator 建立人
-   * taker 執行人
-   * xc_task_template Task 公版
    *
    */
   public function store(Request $request, $id = null)
@@ -128,21 +91,12 @@ class XcTaskController extends Controller
    *
    * @urlParam  task required The ID of task. Example: 1
    * name 名稱
-   * start_at 開始時間
-   * reviewed_at 覆核時間
-   * status 狀態
    * hour 預估時數
-   * finish_hour 完成回報時數
-   * creator_remark 建立人備註
-   * taker_remark 執行人備註
    * is_adjust 是否為調整
    * is_rd 是否為開發
    * is_not_complete 是否尚有項目未完成
+   * remark 備註
    * xc_work_type 執行類型
-   * xc_project 專案
-   * creator 建立人
-   * taker 執行人
-   * xc_task_template Task 公版
    */
   public function update(Request $request, $id)
   {

@@ -79,6 +79,7 @@ use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
 use Wasateam\Laravelapistone\Controllers\XcMilestoneController;
 use Wasateam\Laravelapistone\Controllers\XcTaskController;
+use Wasateam\Laravelapistone\Controllers\XcTaskTemplateController;
 use Wasateam\Laravelapistone\Controllers\XcWorkTypeController;
 
 class RoutesHelper
@@ -589,6 +590,9 @@ class RoutesHelper
     # XcTask
     if (config('stone.xc_task')) {
       Route::resource('xc_task', XcTaskController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      Route::resource('xc_task_template', XcTaskTemplateController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }

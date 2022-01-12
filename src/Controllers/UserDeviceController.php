@@ -216,9 +216,7 @@ class UserDeviceController extends Controller
         'message' => 'registerd.',
       ], 200);
     } catch (\Throwable $th) {
-      return response()->json([
-        'message' => 'register fail.',
-      ], 400);
+      throw $th;
     }
   }
 

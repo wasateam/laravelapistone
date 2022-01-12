@@ -13,7 +13,6 @@ use Wasateam\Laravelapistone\Exports\ShopOrderExport;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
-use Wasateam\Laravelapistone\Jobs\BonusPointFeedbackJob;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
@@ -323,6 +322,8 @@ class ShopOrderController extends Controller
    * @bodyParam invoice_email string 發票信箱 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
    * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1}]
+   * @bodyParam bonus_points int 紅利點數 Example:30
+   * @bodyParam discount_code string 折扣碼 Example:SEXYAPPLE
    */
 
   public function store(Request $request, $id = null)
@@ -340,6 +341,8 @@ class ShopOrderController extends Controller
           'message' => 'products required.',
         ], 400);
       }
+
+      # ShopShipTimeSetting
       if (!$request->has('shop_ship_time_setting')) {
         return response()->json([
           'message' => 'shop_ship_time_setting required.',
@@ -351,6 +354,8 @@ class ShopOrderController extends Controller
           'message' => 'shop_ship_time_setting is max today.',
         ], 400);
       }
+
+      # 購物車商品+訂單類型
       $my_cart_products  = $request->shop_cart_products;
       $_my_cart_products = [];
       $order_type        = "";
@@ -378,6 +383,27 @@ class ShopOrderController extends Controller
         }
         $order_type          = $cart_product->shop_product->order_type;
         $_my_cart_products[] = $cart_product;
+      }
+
+      # User's bonus_points is enough or not
+      if ($request->has('bonus_points')) {
+        $is_bonus_point_enough = ShopHelper::adjustBonusPointEnough($request->user, $request->bonus_points);
+        if (!$is_bonus_point_enough) {
+          return response()->json([
+            'message' => 'bonus_points is not enough.',
+          ], 400);
+        }
+      }
+
+      # Discount_code adjust can use or not
+      $today_dicount_decode_campaign = null;
+      if ($request->has('discount_code')) {
+        $today_dicount_decode_campaign = ShopHelper::getTodayDiscountCodeCampaign($request->discount_code);
+        if (!$today_dicount_decode_campaign) {
+          return response()->json([
+            'message' => 'Invalid dicount_code.',
+          ], 400);
+        }
       }
 
       # Update User Info
@@ -440,8 +466,8 @@ class ShopOrderController extends Controller
         }
       }
 
-      # Shop Order Shop Product
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($my_cart_products, $invoice_status, $invoice_number, $order_type) {
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($my_cart_products, $invoice_status, $invoice_number, $order_type, $today_dicount_decode_campaign) {
+        # Shop Order Shop Product
         foreach ($my_cart_products as $my_cart_product) {
           $new_order_product                       = new ShopOrderShopProduct;
           $cart_product                            = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->first();
@@ -476,6 +502,12 @@ class ShopOrderController extends Controller
           $model->order_type = $order_type;
           $model->save();
         }
+
+        # Create Discount Code Shop Campaign
+        if ($today_dicount_decode_campaign) {
+          ShopHelper::createShopCampaignShopOrder($model, $today_dicount_decode_campaign);
+        }
+
         # Invoice
         if ($invoice_status) {
           $model->invoice_status = $invoice_status;

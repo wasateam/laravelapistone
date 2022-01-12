@@ -14,12 +14,20 @@ class NewsBannerGroup extends JsonResource
    */
   public function toArray($request)
   {
-    return [
-      "id"         => $this->id,
-      "created_at" => $this->created_at,
-      "updated_at" => $this->updated_at,
-      "type"       => $this->type,
-      "name"       => $this->name,
-    ];
+    if (config('stone.mode') == 'cms') {
+      $res = [
+        "id"         => $this->id,
+        "created_at" => $this->created_at,
+        "updated_at" => $this->updated_at,
+        "name"       => $this->name,
+        "sq"         => $this->sq,
+      ];
+    } else if (config('stone.mode') == 'webapi') {
+      $res = [
+        "id"   => $this->id,
+        "name" => $this->name,
+      ];
+    }
+    return $res;
   }
 }

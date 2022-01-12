@@ -17,6 +17,8 @@ class ShopProductCoverFrame_R1 extends JsonResource
     if (config('stone.mode') == 'cms') {
       $res = [
         'id'         => $this->id,
+        'updated_at' => $this->updated_at,
+        'created_at' => $this->created_at,
         'name'       => $this->name,
         'url'        => $this->url,
         'start_date' => $this->start_date,

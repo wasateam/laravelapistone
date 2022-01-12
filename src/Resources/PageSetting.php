@@ -14,12 +14,21 @@ class PageSetting extends JsonResource
    */
   public function toArray($request)
   {
-    return [
-      "id"         => $this->id,
-      "created_at" => $this->created_at,
-      "updated_at" => $this->updated_at,
-      "route"      => $this->route,
-      "name"       => $this->name,
-    ];
+    if (config('stone.mode') == 'cms') {
+      $res = [
+        "id"         => $this->id,
+        "created_at" => $this->created_at,
+        "updated_at" => $this->updated_at,
+        "route"      => $this->route,
+        "name"       => $this->name,
+      ];
+    } else if (config('stone.mode') == 'webapi') {
+      $res = [
+        "id"    => $this->id,
+        "route" => $this->route,
+        "name"  => $this->name,
+      ];
+    }
+    return $res;
   }
 }

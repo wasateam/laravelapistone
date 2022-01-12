@@ -14,14 +14,27 @@ class PageCover extends JsonResource
    */
   public function toArray($request)
   {
-    return [
-      'id'         => $this->id,
-      'name'       => $this->name,
-      'start_date' => $this->start_date,
-      'end_date'   => $this->end_date,
-      'is_active'  => $this->is_active,
-      'link'       => $this->link,
-      'image'      => $this->image,
-    ];
+
+    if (config('stone.mode') == 'cms') {
+      $res = [
+        'id'         => $this->id,
+        'updated_at' => $this->updated_at,
+        'created_at' => $this->created_at,
+        'name'       => $this->name,
+        'start_date' => $this->start_date,
+        'end_date'   => $this->end_date,
+        'is_active'  => $this->is_active,
+        'link'       => $this->link,
+        'image'      => $this->image,
+      ];
+    } else if (config('stone.mode') == 'webapi') {
+      $res = [
+        'id'    => $this->id,
+        'name'  => $this->name,
+        'link'  => $this->link,
+        'image' => $this->image,
+      ];
+    }
+    return $res;
   }
 }

@@ -10,7 +10,10 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * @group NewsBannerGroup Banner群組
  *
  * APIs for news_banner_group
- *
+ * 
+ * name 名稱
+ * sq 排序
+ * 
  * @authenticated
  */
 class NewsBannerGroupController extends Controller

@@ -428,13 +428,13 @@ class ShopHelper
     }
   }
 
-  public static function adjustBonusPointEnough($user_id, $bonus_points)
+  public static function adjustBonusPointEnough($user_id, $bonus_points_deduct)
   {
     //紅利點數是否足夠
     $user = User::find($user_id);
 
-    if ($bonus_points) {
-      if ($bonus_points > $user->bonus_points) {
+    if ($bonus_points_deduct) {
+      if ($bonus_points_deduct > $user->bonus_points) {
         return false;
       }
     }

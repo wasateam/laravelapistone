@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddBonusPointsInShopOrdersTable extends Migration
+class AddBonusPointsDeductInShopOrdersTable extends Migration
 {
   /**
    * Run the migrations.
@@ -14,7 +14,7 @@ class AddBonusPointsInShopOrdersTable extends Migration
   public function up()
   {
     Schema::table('shop_orders', function (Blueprint $table) {
-      $table->integer('bonus_points')->nullable();
+      $table->integer('bonus_points_deduct')->nullable();
     });
   }
 
@@ -26,7 +26,7 @@ class AddBonusPointsInShopOrdersTable extends Migration
   public function down()
   {
     Schema::table('shop_orders', function (Blueprint $table) {
-      $table->dropColumn('bonus_points');
+      $table->dropColumn('bonus_points_deduct');
     });
   }
 }

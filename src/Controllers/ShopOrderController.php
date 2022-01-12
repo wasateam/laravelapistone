@@ -322,7 +322,7 @@ class ShopOrderController extends Controller
    * @bodyParam invoice_email string 發票信箱 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
    * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1}]
-   * @bodyParam bonus_points int 紅利點數 Example:30
+   * @bodyParam bonus_points_deduct int 紅利點數 Example:30
    * @bodyParam discount_code string 折扣碼 Example:SEXYAPPLE
    */
 
@@ -386,8 +386,8 @@ class ShopOrderController extends Controller
       }
 
       # User's bonus_points is enough or not
-      if ($request->has('bonus_points')) {
-        $is_bonus_point_enough = ShopHelper::adjustBonusPointEnough($request->user, $request->bonus_points);
+      if ($request->has('bonus_points_deduct')) {
+        $is_bonus_point_enough = ShopHelper::adjustBonusPointEnough($request->user, $request->bonus_points_deduct);
         if (!$is_bonus_point_enough) {
           return response()->json([
             'message' => 'bonus_points is not enough.',

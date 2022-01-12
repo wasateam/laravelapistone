@@ -7,12 +7,15 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Jobs\BonusPointFeedbackJob;
 use Wasateam\Laravelapistone\Models\Area;
 use Wasateam\Laravelapistone\Models\AreaSection;
+use Wasateam\Laravelapistone\Models\ShopCampaign;
+use Wasateam\Laravelapistone\Models\ShopCampaignShopOrder;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopFreeShipping;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
 use Wasateam\Laravelapistone\Models\ShopProduct;
 use Wasateam\Laravelapistone\Models\ShopReturnRecord;
+use Wasateam\Laravelapistone\Models\User;
 use Wasateam\Laravelapistone\Models\UserAddress;
 
 class ShopHelper
@@ -52,6 +55,7 @@ class ShopHelper
     $shop_product->save();
   }
 
+  //取得訂單金額、運費、商品總金額
   public static function calculateShopOrderPrice($shop_order_id, $order_type)
   {
     //計算訂單金額
@@ -84,8 +88,11 @@ class ShopHelper
       });
       $freight = Self::sum_total($all_product_freight_arr);
     }
-
-    $order_price = $shop_product_price_total + $freight;
+    //紅利點數
+    $bonus_points = $shop_order->bonus_points;
+    //折扣碼
+    //訂單金額 產品總和+運費
+    $order_price = $shop_product_price_total + $freight - $bonus_points;
 
     return [
       "products_price" => $shop_product_price_total,
@@ -351,7 +358,7 @@ class ShopHelper
 
   public static function sameCampaignDuration($start_date, $end_date, $id = null, $type)
   {
-    //是否有重複區間的免運門檻
+    //是否有重複區間的促銷活動
     $snap = null;
     if (isset($start_date) && isset($end_date)) {
       $snap = Self::filterDuration('Wasateam\Laravelapistone\Models\ShopCampaign', $start_date, $end_date);
@@ -396,4 +403,79 @@ class ShopHelper
     BonusPointFeedbackJob::dispatch($shop_order_id)
       ->delay(Carbon::now()->addDays($feedback_after_invoice_days));
   }
+
+  public static function samePageCoverDuration($start_date, $end_date, $id = null, $page_settings)
+  {
+    //是否有重複區間的頁面彈跳穿
+    $snap = null;
+    if (isset($start_date) && isset($end_date)) {
+      $snap = Self::filterDuration('Wasateam\Laravelapistone\Models\PageCover', $start_date, $end_date);
+    }
+    if ($id) {
+      $snap = $snap->where('id', '!=', $id);
+    }
+    if (isset($page_settings)) {
+      $item_arr = array_map('intval', explode(',', $page_settings));
+      $snap     = $snap->whereHas('page_settings', function ($query) use ($item_arr) {
+        return $query->whereIn('id', $item_arr);
+      });
+    }
+    $snap = $snap->first();
+    if (isset($snap)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public static function adjustBonusPointEnough($user_id, $bonus_points_deduct)
+  {
+    //紅利點數是否足夠
+    $user = User::find($user_id);
+
+    if ($bonus_points_deduct) {
+      if ($bonus_points_deduct > $user->bonus_points) {
+        return false;
+      }
+    }
+  }
+
+  public static function getTodayDiscountCodeCampaign($dicount_code)
+  {
+    //取得折扣碼活動
+    $today_date                   = Carbon::now()->format('Y-m-d');
+    $today_discount_code_campaign = ShopCampaign::whereDate('start_date', '<=', $today_date)->whereDate('end_date', '>=', $today_date)->where('type', 'discount_code')->where('is_active', 1)->where('discount_code', $dicount_code)->first();
+
+    if (!$today_discount_code_campaign) {
+      return false;
+    }
+    // shop_campaign limit is enought or not
+    if ($today_discount_code_campaign->limit) {
+      $shop_campaign_shop_product_count = $today_discount_code_campaign->shop_campaign_shop_products->count;
+      if ($shop_campaign_shop_product_count >= $today_discount_code_campaign->limit) {
+        return false;
+      }
+    }
+
+    return $today_discount_code_campaign;
+  }
+
+  public static function createShopCampaignShopOrder($shop_order, $shop_campaign)
+  {
+    //建立訂單促銷活動紀錄
+    $shop_campaign_shop_order                   = new ShopCampaignShopOrder;
+    $shop_campaign_shop_order->shop_camapign_id = $shop_campaign->id;
+    $shop_campaign_shop_order->shop_order_id    = $shop_order->id;
+    $shop_campaign_shop_order->user_id          = $shop_order->user->id;
+    $shop_campaign_shop_order->type             = $shop_campaign->type;
+    $shop_campaign_shop_order->name             = $shop_campaign->name;
+    $shop_campaign_shop_order->condition        = $shop_campaign->condition;
+    $shop_campaign_shop_order->full_amount      = $shop_campaign->full_amount;
+    $shop_campaign_shop_order->discount_percent = $shop_campaign->discount_percent;
+    $shop_campaign_shop_order->discount_amount  = $shop_campaign->discount_amount;
+    $shop_campaign_shop_order->feedback_rate    = $shop_campaign->feedback_rate;
+
+    $shop_campaign_shop_order->save();
+  }
+
 }

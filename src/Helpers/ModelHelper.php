@@ -438,7 +438,7 @@ class ModelHelper
     return $resource::collection($model->{$target});
   }
 
-  public static function ws_BelongsToManyOrderPatchHandler($id, $controller, $target, $request)
+  public static function ws_BelongsToManyOrderPatchHandler($id, $controller, $target, $request, $sq_key = null)
   {
     if (!$request->has('order')) {
       return response()->json([
@@ -453,10 +453,12 @@ class ModelHelper
 
     $model = $setting->model::find($id);
 
+    $sq_key = $sq_key ? $sq_key : "{$target}_sq";
+
     foreach ($order as $order_index => $order_item) {
       $model->{$target}()->detach($order_item['id']);
       $model->{$target}()->attach($order_item['id'], [
-        'sq' => $order_index,
+        $sq_key => $order_index,
       ]);
     }
 
@@ -515,10 +517,10 @@ class ModelHelper
       $user_id = Auth::user()->id;
     }
     $log[config('stone.auth.model_name') . '_id'] = $user_id;
-    if(!$name && $controller->name){
+    if (!$name && $controller->name) {
       $name = $controller->name;
     }
-    $log->payload                                 = [
+    $log->payload = [
       'userModelName' => $user_id ? config('stone.auth.model_name') : null,
       'user_id'       => $user_id,
       'action'        => $action,

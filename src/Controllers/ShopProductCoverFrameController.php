@@ -8,11 +8,22 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group ShopProductCoverFrame
- *
- * @authenticated
+ * @group ShopProductCoverFrame 活動圖框
  *
  * APIs for shop_product_cover_frame
+ *
+ * name 活動名稱
+ * url 圖框圖片連結
+ * start_date 開始時間
+ * end_date 結束時間
+ * is_active
+ * ~ 0 未上架
+ * ~ 1 已上架
+ * order_type 管別 -> 搭配商品、訂單類別
+ * ~ next-day 隔日配
+ * ~ pro-order 預購
+ *
+ * @authenticated
  */
 class ShopProductCoverFrameController extends Controller
 {
@@ -22,6 +33,10 @@ class ShopProductCoverFrameController extends Controller
   public $input_fields = [
     'name',
     'url',
+    'start_date',
+    'end_date',
+    'is_active',
+    'order_type',
   ];
   public $uuid = false;
 
@@ -45,8 +60,12 @@ class ShopProductCoverFrameController extends Controller
   /**
    * Store
    *
-   * @bodyParam name string No-example
-   * @bodyParam url string No-example
+   * @bodyParam name string Example:name
+   * @bodyParam url string Example:""
+   * @bodyParam start_date date Example:2022-02-10
+   * @bodyParam end_date date Example:2022-05-10
+   * @bodyParam is_active boolean Example:1
+   * @bodyParam order_type string Example:next-day
    */
   public function store(Request $request, $id = null)
   {
@@ -67,8 +86,12 @@ class ShopProductCoverFrameController extends Controller
    * Update
    *
    * @urlParam  shop_product_cover_frame required The ID of shop_product_cover_frame. Example: 1
-   * @bodyParam name string No-example
-   * @bodyParam url string No-example
+   * @bodyParam name string Example:name
+   * @bodyParam url string Example:""
+   * @bodyParam start_date date Example:2022-02-10
+   * @bodyParam end_date date Example:2022-05-10
+   * @bodyParam is_active boolean Example:1
+   * @bodyParam order_type string Example:next-day
    */
   public function update(Request $request, $id)
   {

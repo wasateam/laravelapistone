@@ -4,35 +4,35 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ShopProductCoverFrame_R1 extends JsonResource
+class PageCover extends JsonResource
 {
   /**
    * Transform the resource into an array.
    *
    * @param  \Illuminate\Http\Request  $request
-   * @return array
+   * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
    */
   public function toArray($request)
   {
+
     if (config('stone.mode') == 'cms') {
       $res = [
         'id'         => $this->id,
         'updated_at' => $this->updated_at,
         'created_at' => $this->created_at,
         'name'       => $this->name,
-        'url'        => $this->url,
         'start_date' => $this->start_date,
         'end_date'   => $this->end_date,
-        'ordre_type' => $this->order_type,
+        'is_active'  => $this->is_active,
+        'link'       => $this->link,
+        'image'      => $this->image,
       ];
-      if (config('stone.shop.uuid')) {
-        $res['uuid'] = $this->uuid;
-      }
     } else if (config('stone.mode') == 'webapi') {
       $res = [
-        'uuid' => $this->uuid,
-        'url'  => $this->url,
-        'name' => $this->name,
+        'id'    => $this->id,
+        'name'  => $this->name,
+        'link'  => $this->link,
+        'image' => $this->image,
       ];
     }
     return $res;

@@ -117,6 +117,8 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * card_period_amount 信用卡或銀聯卡_訂單建立時的每次要授權金額
  * card_total_success_times 信用卡或銀聯卡_目前已成功授權的次數
  * card_total_success_amount 信用卡或銀聯卡_目前已成功授權的金額合計
+ * bonus_points_deduct 訂單所使用(扣除)的紅利點數
+ * discount_code 折扣碼
  *
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立
  *

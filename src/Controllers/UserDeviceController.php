@@ -280,7 +280,7 @@ class UserDeviceController extends Controller
 
     $model->status = 'active';
     if (config('stone.user.device.active_before_action')) {
-      $model = config('stone.user.device.active_before_action')::device_active_before_action($model, $user);
+      config('stone.user.device.active_before_action')::device_active_before_action($model, $user);
     }
     $model->save();
 
@@ -318,7 +318,7 @@ class UserDeviceController extends Controller
     }
     $model->status = 'deactive';
     if (config('stone.user.device.deactive_before_action')) {
-      $model = config('stone.user.device.deactive_before_action')::device_deactive_before_action($model, $user);
+      config('stone.user.device.deactive_before_action')::device_deactive_before_action($model, $user);
     }
     $model->save();
 

@@ -98,8 +98,9 @@ class AcumaticaHelper
     return $response->json();
   }
 
-  public static function deactiveEquipment($equipment_id, $serial_number)
+  public static function deactiveEquipment($equipment_id, $serial_number, $app = null)
   {
+    $token = self::getToken($app);
     $post_url  = config('stone.acumatica.api_url') . "/FSEquipment";
     $post_data = [
       'id'        => $equipment_id,
@@ -110,15 +111,16 @@ class AcumaticaHelper
         'value' => 'Suspended',
       ],
     ];
-
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",
     ])->put($post_url, $post_data);
+    error_log($response->body());
     return $response->json();
   }
 
-  public static function activeEquipment($equipment_id, $serial_number)
+  public static function activeEquipment($equipment_id, $serial_number, $app = null)
   {
+    $token = self::getToken($app);
     $post_url  = config('stone.acumatica.api_url') . "/FSEquipment";
     $post_data = [
       'id'        => $equipment_id,
@@ -205,7 +207,6 @@ class AcumaticaHelper
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",
     ])->put($post_url, $post_data);
-
     # @Q@ 回存acu id
     $user->acumatica_id = $response->json()['id'];
     $user->save();

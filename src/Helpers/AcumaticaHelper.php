@@ -49,10 +49,10 @@ class AcumaticaHelper
           "value" => $brand,
         ],
         "RegisteredDate" => [
-          "value" => $purchase_date,
+          "value" => $user_service_plan->created_at,
         ],
         "SalesDate"      => [
-          "value" => $purchase_date,
+          "value" => $user_service_plan->created_at,
         ],
       ],
       "LocationType"       => [
@@ -63,7 +63,7 @@ class AcumaticaHelper
       ],
       "PurchaseInfo"       => [
         "PurchaseDate" => [
-          "value" => $purchase_date,
+          "value" => $user_service_plan->created_at,
         ],
       ],
       "ResourceEquipment"  => [

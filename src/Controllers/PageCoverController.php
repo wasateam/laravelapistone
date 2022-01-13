@@ -20,6 +20,7 @@ use Wasateam\Laravelapistone\Helpers\ShopHelper;
  * ~ 0 未上架
  * link 連結
  * image 圖片
+ * page_settings 所屬頁面id
  * @authenticated
  */
 class PageCoverController extends Controller

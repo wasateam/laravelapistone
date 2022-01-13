@@ -27,6 +27,7 @@ use Wasateam\Laravelapistone\Controllers\NewsBannerController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerGroupController;
 use Wasateam\Laravelapistone\Controllers\NewsController;
 use Wasateam\Laravelapistone\Controllers\NotificationController;
+use Wasateam\Laravelapistone\Controllers\PageCoverController;
 use Wasateam\Laravelapistone\Controllers\PageSettingController;
 use Wasateam\Laravelapistone\Controllers\PinCardController;
 use Wasateam\Laravelapistone\Controllers\PocketFileController;
@@ -597,7 +598,7 @@ class RoutesHelper
 
     # Page Setting
     if (config('stone.page_cover')) {
-      Route::resource('page_cover', PageSettingController::class)->only([
+      Route::resource('page_cover', PageCoverController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
@@ -1027,7 +1028,7 @@ class RoutesHelper
 
     # Page Setting
     if (config('stone.page_cover')) {
-      Route::resource('page_cover', PageSettingController::class)->only([
+      Route::resource('page_cover', PageCoverController::class)->only([
         'index', 'show',
       ])->shallow();
     }

@@ -130,7 +130,7 @@ class ShopCampaignController extends Controller
    * @bodyParam name string 活動名稱 Example:name
    * @bodyParam start_date string 開始日期 Example:2021-10-10
    * @bodyParam end_date string 結束日期 Example:2021-10-20
-   * @bodyParam dicount_code string 折扣碼 Example:134CODE
+   * @bodyParam discount_code string 折扣碼 Example:134CODE
    * @bodyParam condition string Example:first purchase
    * @bodyParam full_amount int Example:100
    * @bodyParam discount_percent string Example:0-100
@@ -185,7 +185,7 @@ class ShopCampaignController extends Controller
    * @bodyParam name string 活動名稱 Example:name
    * @bodyParam start_date string 開始日期 Example:2021-10-10
    * @bodyParam end_date string 結束日期 Example:2021-10-20
-   * @bodyParam dicount_code string 折扣碼 Example:134CODE
+   * @bodyParam discount_code string 折扣碼 Example:134CODE
    * @bodyParam condition string Example:first purchase
    * @bodyParam full_amount int Example:100
    * @bodyParam discount_percent string Example:0-100

@@ -28,7 +28,12 @@ class ShopProduct extends Model
 
   public function shop_product_cover_frame()
   {
-    return $this->belongsTo(ShopProductCoverFrame::class, 'shop_product_cover_frame_id');
+    $today_date = Carbon::today();
+    if (config('stone.mode') == 'cms') {
+      return $this->belongsTo(ShopProductCoverFrame::class, 'shop_product_cover_frame_id');
+    } else if (config('stone.mode') == 'webapi') {
+      return $this->belongsTo(ShopProductCoverFrame::class, 'shop_product_cover_frame_id')->where('is_active', 1)->whereDate('end_date', '>=', $today_date)->whereDate('start_date', '<=', $today_date);
+    }
   }
 
   public function shop_product_expect_ships()

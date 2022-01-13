@@ -16,9 +16,14 @@ class ShopProductCoverFrame_R1 extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       $res = [
-        'id'   => $this->id,
-        'name' => $this->name,
-        'url'  => $this->url,
+        'id'         => $this->id,
+        'updated_at' => $this->updated_at,
+        'created_at' => $this->created_at,
+        'name'       => $this->name,
+        'url'        => $this->url,
+        'start_date' => $this->start_date,
+        'end_date'   => $this->end_date,
+        'order_type' => $this->order_type,
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
@@ -27,6 +32,7 @@ class ShopProductCoverFrame_R1 extends JsonResource
       $res = [
         'uuid' => $this->uuid,
         'url'  => $this->url,
+        'name' => $this->name,
       ];
     }
     return $res;

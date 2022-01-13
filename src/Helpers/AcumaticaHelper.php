@@ -39,7 +39,7 @@ class AcumaticaHelper
         'value' => $pin,
       ],
       "Description"        => [
-        "value" => "AOI",
+        "value" => $brand . " " . $serial_number,
       ],
       "EquipmentType"      => [
         "value" => $type,

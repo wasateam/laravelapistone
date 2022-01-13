@@ -517,6 +517,18 @@ class RoutesHelper
       Route::resource('shop_campaign_shop_order', ShopCampaignShopOrderController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      # Shop Product Spec
+      Route::resource('shop_product_spec', ShopProductSpecController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Product Spec Setting
+      Route::resource('shop_product_spec_setting', ShopProductSpecSettingController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Product Spec
+      Route::resource('shop_product_spec_setting_item', ShopProductSpecSettingItemController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
 
     }
 
@@ -939,6 +951,19 @@ class RoutesHelper
       ])->shallow();
       # Shop Campaign Shop Order
       Route::resource('shop_campaign_shop_order', ShopCampaignShopOrderController::class)->only([
+        'index', 'show',
+      ])->shallow();
+
+      # Shop Product Spec
+      Route::resource('shop_product_spec', ShopProductSpecController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      # Shop Product Spec Setting
+      Route::resource('shop_product_spec_setting', ShopProductSpecSettingController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      # Shop Product Spec
+      Route::resource('shop_product_spec_setting_item', ShopProductSpecSettingItemController::class)->only([
         'index', 'show',
       ])->shallow();
     }

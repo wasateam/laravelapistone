@@ -404,7 +404,7 @@ class ShopHelper
       ->delay(Carbon::now()->addDays($feedback_after_invoice_days));
   }
 
-  public static function samePageCoverDuration($start_date, $end_date, $id = null, $page_settings)
+  public static function samePageCoverDuration($start_date, $end_date, $id = null, $page_settings = null)
   {
     //是否有重複區間的頁面彈跳穿
     $snap = null;
@@ -415,9 +415,8 @@ class ShopHelper
       $snap = $snap->where('id', '!=', $id);
     }
     if (isset($page_settings)) {
-      $item_arr = array_map('intval', explode(',', $page_settings));
-      $snap     = $snap->whereHas('page_settings', function ($query) use ($item_arr) {
-        return $query->whereIn('id', $item_arr);
+      $snap = $snap->whereHas('page_settings', function ($query) use ($page_settings) {
+        return $query->whereIn('id', $page_settings);
       });
     }
     $snap = $snap->first();

@@ -81,6 +81,16 @@ class AcumaticaHelper
       "Vehicle"            => [
         "value" => false,
       ],
+      "Attributes"         => [
+        [
+          "AttributeID" => [
+            "value" => "MODEL",
+          ],
+          "Value"       => [
+            "value" => $serial_number,
+          ],
+        ],
+      ],
     ];
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",

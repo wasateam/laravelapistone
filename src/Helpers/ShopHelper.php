@@ -436,7 +436,11 @@ class ShopHelper
     if ($bonus_points_deduct) {
       if ($bonus_points_deduct > $user->bonus_points) {
         return false;
+      } else {
+        return true;
       }
+    } else {
+      return true;
     }
   }
 

@@ -403,7 +403,7 @@ class ShopOrderController extends Controller
         $today_dicount_decode_campaign = ShopHelper::getTodayDiscountCodeCampaign($request->discount_code);
         if (!$today_dicount_decode_campaign) {
           return response()->json([
-            'message' => 'Invalid dicount_code.',
+            'message' => 'Invalid discount_code.',
           ], 400);
         }
       }

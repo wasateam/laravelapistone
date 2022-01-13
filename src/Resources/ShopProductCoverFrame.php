@@ -24,7 +24,7 @@ class ShopProductCoverFrame extends JsonResource
         'start_date' => $this->start_date,
         'end_date'   => $this->end_date,
         'is_active'  => $this->is_active,
-        'ordre_type' => $this->order_type,
+        'order_type' => $this->order_type,
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
@@ -36,7 +36,7 @@ class ShopProductCoverFrame extends JsonResource
         'url'        => $this->url,
         'start_date' => $this->start_date,
         'end_date'   => $this->end_date,
-        'ordre_type' => $this->order_type,
+        'order_type' => $this->order_type,
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;

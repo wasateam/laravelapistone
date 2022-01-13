@@ -440,11 +440,11 @@ class ShopHelper
     }
   }
 
-  public static function getTodayDiscountCodeCampaign($dicount_code)
+  public static function getTodayDiscountCodeCampaign($discount_code)
   {
     //取得折扣碼活動
     $today_date                   = Carbon::now()->format('Y-m-d');
-    $today_discount_code_campaign = ShopCampaign::whereDate('start_date', '<=', $today_date)->whereDate('end_date', '>=', $today_date)->where('type', 'discount_code')->where('is_active', 1)->where('discount_code', $dicount_code)->first();
+    $today_discount_code_campaign = ShopCampaign::whereDate('start_date', '<=', $today_date)->whereDate('end_date', '>=', $today_date)->where('type', 'discount_code')->where('is_active', 1)->where('discount_code', $discount_code)->first();
 
     if (!$today_discount_code_campaign) {
       return false;

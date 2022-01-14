@@ -16,9 +16,9 @@ use Wasateam\Laravelapistone\Helpers\UserDeviceHelper;
  *
  * type 類型
  * is_diy 是否為自組
- * serial_number 型號
+ * model_number 型號
+ * serial_number 序號
  * brand 品牌
- * product_code 序號
  * country_code 國家代碼
  * status 狀態
  * ~ active 啟用中
@@ -35,7 +35,7 @@ class UserDeviceController extends Controller
     'is_diy',
     'serial_number',
     'brand',
-    'product_code',
+    'model_number',
     'country_code',
     'status',
   ];
@@ -51,7 +51,7 @@ class UserDeviceController extends Controller
   public $search_fields = [
     'serial_number',
     'brand',
-    'product_code',
+    'model_number',
   ];
   public $order_fields = [
     'updated_at',
@@ -94,7 +94,7 @@ class UserDeviceController extends Controller
    * @bodyParam type string No-example
    * @bodyParam is_diy string No-example
    * @bodyParam brand string No-example
-   * @bodyParam product_code string No-example
+   * @bodyParam model_number string No-example
    * @bodyParam country_code string No-example
    * @bodyParam status string No-example
    */
@@ -138,7 +138,7 @@ class UserDeviceController extends Controller
    * @bodyParam serial_number string Example: FK1FA0I0Zg90
    * @bodyParam user string Example: 1
    * @bodyParam brand string No-example
-   * @bodyParam product_code string No-example
+   * @bodyParam model_number string No-example
    * @bodyParam country_code string No-example
    * @bodyParam status string No-example
    */
@@ -188,7 +188,7 @@ class UserDeviceController extends Controller
       $brand         = $request->brand ? $request->brand : 'DIY';
       $is_diy        = $request->is_diy;
       $serial_number = $request->serial_number ? $request->serial_number : $uuid;
-      $product_code  = $is_diy ? $uuid : $request->product_code;
+      $model_number  = $is_diy ? $uuid : $request->model_number;
       $exist         = $this->model::where('serial_number', $serial_number)->first();
       if ($exist) {
         return response()->json([
@@ -200,7 +200,7 @@ class UserDeviceController extends Controller
       $model->brand         = $brand;
       $model->is_diy        = $is_diy;
       $model->serial_number = $serial_number;
-      $model->product_code  = $product_code;
+      $model->model_number  = $model_number;
       $model->user_id       = $user->id;
       $model->uuid          = $uuid;
       $model->status        = 'active';

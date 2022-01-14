@@ -37,9 +37,10 @@ return [
   'post_encode'         => false,
   'tulpa'               => true,
   'socialite'           => [
-    'facebook' => true,
-    'google'   => true,
-    'line'     => true,
+    'disable_auto_verify' => true,
+    'facebook'            => true,
+    'google'              => true,
+    'line'                => true,
   ],
   'user_device_token'   => true,
   'ws_blog'             => true,

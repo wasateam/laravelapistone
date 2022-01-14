@@ -100,27 +100,23 @@ class AcumaticaHelper
 
   public static function deactiveEquipment($equipment_id, $serial_number, $app = null)
   {
-    $token = self::getToken($app);
+    $token     = self::getToken($app);
     $post_url  = config('stone.acumatica.api_url') . "/FSEquipment";
     $post_data = [
-      'id'        => $equipment_id,
-      'SerialNbr' => [
-        'value' => $serial_number,
-      ],
-      'Status'    => [
+      'id'     => $equipment_id,
+      'Status' => [
         'value' => 'Suspended',
       ],
     ];
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",
     ])->put($post_url, $post_data);
-    error_log($response->body());
     return $response->json();
   }
 
   public static function activeEquipment($equipment_id, $serial_number, $app = null)
   {
-    $token = self::getToken($app);
+    $token     = self::getToken($app);
     $post_url  = config('stone.acumatica.api_url') . "/FSEquipment";
     $post_data = [
       'id'        => $equipment_id,

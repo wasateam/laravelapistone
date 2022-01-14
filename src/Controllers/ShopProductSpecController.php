@@ -12,7 +12,8 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * ShopProductSpec API
  *
  * shop_product 綁定之商品
- *  on_time 上架時間
+ * no 編號
+ * on_time 上架時間
  * off_time 下架時間
  * cost 成本
  * price 售價
@@ -34,6 +35,7 @@ class ShopProductSpecController extends Controller
   public $resource      = 'Wasateam\Laravelapistone\Resources\ShopProductSpec';
   public $input_fields  = [];
   public $filter_fields = [
+    'no',
     'on_time',
     'off_time',
     'cost',
@@ -45,7 +47,8 @@ class ShopProductSpecController extends Controller
     'storage_space',
     'max_buyable_count',
   ];
-  public $belongs_to = [
+  public $search_fields = ['no'];
+  public $belongs_to    = [
     'shop_product',
   ];
   public $filter_belongs_to = [
@@ -69,6 +72,7 @@ class ShopProductSpecController extends Controller
    * @queryParam shop_product ids 商品  No-example 1
    * @queryParam shop_product_spec_settings ids 商品  No-example 1
    * @queryParam shop_product_spec_setting_items ids 商品  No-example 1
+   * @queryParam search ids 搜尋  No-example no
    *
    */
   public function index(Request $request, $id = null)
@@ -83,6 +87,7 @@ class ShopProductSpecController extends Controller
   /**
    * Store
    *
+   * @bodyParam no string 編號 Example: SexyOrange
    * @bodyParam cost int 成本 Example: 200
    * @bodyParam price int 售價 Example: 300
    * @bodyParam discount_price int 優惠價 Example: 280
@@ -116,6 +121,7 @@ class ShopProductSpecController extends Controller
    * Update
    *
    * @urlParam  shop_product_spec required The ID of shop_product_spec. Example: 1
+   * @bodyParam no string 編號 Example: SexyOrange
    * @bodyParam cost int 成本 Example: 200
    * @bodyParam price int 售價 Example: 300
    * @bodyParam discount_price int 優惠價 Example: 280

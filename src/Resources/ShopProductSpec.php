@@ -19,6 +19,7 @@ class ShopProductSpec extends JsonResource
         'id'                              => $this->id,
         'updated_at'                      => $this->updated_at,
         'created_at'                      => $this->created_at,
+        'no'                              => $this->no,
         'on_time'                         => $this->on_time,
         'off_time'                        => $this->off_time,
         'cost'                            => $this->cost,
@@ -36,6 +37,7 @@ class ShopProductSpec extends JsonResource
     } else if (config('stone.mode') == 'webapi') {
       $res = [
         'id'                              => $this->id,
+        'no'                              => $this->no,
         'price'                           => $this->price,
         'discount_price'                  => $this->discount_price,
         'freight'                         => $this->freight,

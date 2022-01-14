@@ -10,8 +10,12 @@ use Wasateam\Laravelapistone\Models\UserServicePlan;
 
 class AcumaticaHelper
 {
-  public static function createEquipment($user, $type = null, $brand = null, $serial_number = null, $purchase_date = null, $app = null)
+  public static function createEquipment($user, $user_device, $app = null)
   {
+    $type              = $user_device->type;
+    $brand             = $user_device->brand;
+    $serial_number     = $user_device->serial_number;
+    $model_number      = $user_device->model_number;
     $pin               = null;
     $token             = self::getToken($app);
     $post_url          = config('stone.acumatica.api_url') . "/FSEquipment";
@@ -39,7 +43,7 @@ class AcumaticaHelper
         'value' => $pin,
       ],
       "Description"        => [
-        "value" => $brand . " " . $serial_number,
+        "value" => $brand . " " . $model_number,
       ],
       "EquipmentType"      => [
         "value" => $type,
@@ -87,7 +91,7 @@ class AcumaticaHelper
             "value" => "MODEL",
           ],
           "Value"       => [
-            "value" => $serial_number,
+            "value" => $model_number,
           ],
         ],
       ],
@@ -119,11 +123,8 @@ class AcumaticaHelper
     $token     = self::getToken($app);
     $post_url  = config('stone.acumatica.api_url') . "/FSEquipment";
     $post_data = [
-      'id'        => $equipment_id,
-      'SerialNbr' => [
-        'value' => $serial_number,
-      ],
-      'Status'    => [
+      'id'     => $equipment_id,
+      'Status' => [
         'value' => 'Active',
       ],
     ];

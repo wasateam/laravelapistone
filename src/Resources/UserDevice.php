@@ -23,7 +23,7 @@ class UserDevice extends JsonResource
       'is_diy'        => $this->is_diy,
       'serial_number' => $this->serial_number,
       'brand'         => $this->brand,
-      'product_code'  => $this->product_code,
+      'serial_number' => $this->serial_number,
       'country_code'  => $this->country_code,
       'uuid'          => $this->uuid,
       'status'        => $this->status,

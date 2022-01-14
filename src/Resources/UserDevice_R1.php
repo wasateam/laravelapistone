@@ -3,7 +3,6 @@
 namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Wasateam\Laravelapistone\Resources\User_R1;
 
 class UserDevice_R1 extends JsonResource
 {
@@ -21,7 +20,7 @@ class UserDevice_R1 extends JsonResource
       'is_diy'        => $this->is_diy,
       'serial_number' => $this->serial_number,
       'brand'         => $this->brand,
-      'product_code'  => $this->product_code,
+      'model_number'  => $this->model_number,
       'country_code'  => $this->country_code,
       'uuid'          => $this->uuid,
       'status'        => $this->status,

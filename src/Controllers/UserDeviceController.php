@@ -187,8 +187,8 @@ class UserDeviceController extends Controller
       $type          = $request->type;
       $brand         = $request->brand ? $request->brand : 'DIY';
       $is_diy        = $request->is_diy;
-      $serial_number = $request->serial_number ? $request->serial_number : $uuid;
-      $model_number  = $is_diy ? $uuid : $request->model_number;
+      $model_number  = $request->model_number ? $request->model_number : $uuid;
+      $serial_number = $is_diy ? $uuid : $request->serial_number;
       $exist         = $this->model::where('serial_number', $serial_number)->first();
       if ($exist) {
         return response()->json([

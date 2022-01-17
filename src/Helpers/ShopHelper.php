@@ -486,19 +486,31 @@ class ShopHelper
 
   public static function shopProductCreateSpec($shop_product_spec_settings, $shop_product_specs, $shop_product_id)
   {
-    // create shop_product_spec,shop_product_spec_setting,shop_product_spec_setting_item when shop_product created
+    // create/update shop_product_spec,shop_product_spec_setting,shop_product_spec_setting_item when shop_product created
     $shop_product_spec_setting_ids = [];
     foreach ($shop_product_spec_settings as $shop_product_spec_setting) {
+
       //shop_product_spec_setting
-      $new_shop_product_spec_setting                  = new ShopProductSpecSetting;
+      $new_shop_product_spec_setting = null;
+      if (!isset($shop_product_spec_setting['id'])) {
+        $new_shop_product_spec_setting = new ShopProductSpecSetting;
+      } else {
+        $new_shop_product_spec_setting = ShopProductSpecSetting::find($shop_product_spec_setting['id']);
+      }
       $new_shop_product_spec_setting->name            = $shop_product_spec_setting['name'];
       $new_shop_product_spec_setting->sq              = $shop_product_spec_setting['sq'];
       $new_shop_product_spec_setting->shop_product_id = $shop_product_id;
       $new_shop_product_spec_setting->save();
+
       //shop_product_spec_setting_item
       $item_ids = [];
       foreach ($shop_product_spec_setting['shop_product_spec_setting_items'] as $shop_product_spec_setting_item) {
-        $new_shop_product_spec_setting_item                               = new ShopProductSpecSettingItem;
+        $new_shop_product_spec_setting_item = null;
+        if (!isset($shop_product_spec_setting_item['id'])) {
+          $new_shop_product_spec_setting_item = new ShopProductSpecSettingItem;
+        } else {
+          $new_shop_product_spec_setting_item = ShopProductSpecSettingItem::find($shop_product_spec_setting_item['id']);
+        }
         $new_shop_product_spec_setting_item->name                         = $shop_product_spec_setting_item['name'];
         $new_shop_product_spec_setting_item->sq                           = $shop_product_spec_setting_item['sq'];
         $new_shop_product_spec_setting_item->shop_product_id              = $shop_product_id;
@@ -528,7 +540,11 @@ class ShopHelper
       $new_shop_product_spec['shop_product']                    = $shop_product_id;
       $new_shop_product_spec['shop_product_spec_settings']      = $shop_product_spec_settings;
       $new_shop_product_spec['shop_product_spec_setting_items'] = $shop_product_spec_setting_items;
-      ModelHelper::ws_StoreHandler(new \Wasateam\Laravelapistone\Controllers\ShopProductSpecController, new Request($new_shop_product_spec));
+      if (isset($shop_product_spec['id'])) {
+        ModelHelper::ws_UpdateHandler(new \Wasateam\Laravelapistone\Controllers\ShopProductSpecController, new Request($new_shop_product_spec), $shop_product_spec['id']);
+      } else {
+        ModelHelper::ws_StoreHandler(new \Wasateam\Laravelapistone\Controllers\ShopProductSpecController, new Request($new_shop_product_spec));
+      }
     }
   }
 }

@@ -65,6 +65,13 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * area_sections
  * freight 運費
  * store_temperature 溫層
+ * shop_product_spec_settings 商品規格設定
+ * shop_product_specs 商品規格
+ *
+ * Store/Update
+ * shop_product_spec_settings 底下需要帶 shop_product_spec_setting_items
+ * 順序要跟 shop_product_specs的順序一樣，如果是尚未建立的規格跟規格設定不用帶id，
+ * 如果是已經建立過的要記得帶規格、規格設定本身的id
  *
  * @authenticated
  */
@@ -301,10 +308,17 @@ class ShopProductController extends Controller
    * @bodyParam shop_subclasses ids 子分類 Example: [1,2]
    * @bodyParam areas ids 地區 Example: [1,2]
    * @bodyParam area_sections ids 子地區 Example: [1,2]
+   * @bodyParam shop_product_spec_settings object 商品規格設定 Example:[{"name":"name","sq":"1","shop_product_spec_setting_items":[{"name":"name","sq":"1"}]}]
+   * @bodyParam shop_product_specs object 商品規格 Example: [{"no":"SexyMonkey","cost":"100","price":"1000","discount_price":"900","on_time":"2021-10-10","off_time":"2021-10-20","freight":"100","max_buyable_count":"100","storage_space":"AA","stock_count":"1000","stock_alert_count":"100"}]
    */
   public function update(Request $request, $id)
   {
-    return ModelHelper::ws_UpdateHandler($this, $request, $id);
+    return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($request) {
+      //shop_product_spec_settings
+      if ($request->has('shop_product_spec_settings') && $request->has('shop_product_specs')) {
+        ShopHelper::shopProductCreateSpec($request->shop_product_spec_settings, $request->shop_product_specs, $model->id);
+      }
+    });
   }
 
   /**

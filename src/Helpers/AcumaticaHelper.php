@@ -10,6 +10,8 @@ use Wasateam\Laravelapistone\Models\UserServicePlan;
 
 /**
  * 用來串接 Acumatica 服務的動作
+ * 呼叫 API 前都要先呼叫 getToken 取得 Token
+ * 再拿 Token 進行後續 API 動作
  *
  */
 class AcumaticaHelper

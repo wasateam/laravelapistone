@@ -8,8 +8,18 @@ use Wasateam\Laravelapistone\Exceptions\FindNoUserServicePlanException;
 use Wasateam\Laravelapistone\Models\AcumaticaAccessToken;
 use Wasateam\Laravelapistone\Models\UserServicePlan;
 
+/**
+ * 用來串接 Acumatica 服務的動作
+ *
+ */
 class AcumaticaHelper
 {
+  /**
+   * 建立裝置
+   * user 使用者物件
+   * user_devie 使用者裝置
+   * app AcumaticaApp 沒傳送會抓 .env的設定
+   */
   public static function createEquipment($user, $user_device, $app = null)
   {
     $type              = $user_device->type;
@@ -102,6 +112,12 @@ class AcumaticaHelper
     return $response->json();
   }
 
+  /**
+   * 停用裝置
+   * equipment_id 使用者裝置 Acumatica ID
+   * serial_number 序號
+   * app AcumaticaApp 沒傳送會抓 .env的設定
+   */
   public static function deactiveEquipment($equipment_id, $serial_number, $app = null)
   {
     $token     = self::getToken($app);
@@ -118,6 +134,12 @@ class AcumaticaHelper
     return $response->json();
   }
 
+  /**
+   * 啟用裝置
+   * equipment_id 使用者裝置 Acumatica ID
+   * serial_number 序號
+   * app AcumaticaApp 沒傳送會抓 .env的設定
+   */
   public static function activeEquipment($equipment_id, $serial_number, $app = null)
   {
     $token     = self::getToken($app);
@@ -135,6 +157,12 @@ class AcumaticaHelper
     return $response->json();
   }
 
+  /**
+   * 建立 PINCode
+   * customerId 使用者 Customer ID
+   * pin PIN碼,由後台產生
+   * price_class 方案金額-Acumatica提供可輸入值 EX: HC199
+   */
   public static function createPINCode($customerId, $pin, $price_class)
   {
     $token     = self::getToken();
@@ -160,6 +188,10 @@ class AcumaticaHelper
     return $response->json();
   }
 
+  /**
+   * 取得使用者資訊
+   * customerId 使用者 Customer ID
+   */
   public static function getCustomer($customerId)
   {
     $token    = self::getToken();
@@ -170,6 +202,12 @@ class AcumaticaHelper
     return $response->json();
   }
 
+  /**
+   * 建立使用者
+   * customerId 使用者 Customer ID
+   * class 類型
+   * price_class 方案金額-Acumatica提供可輸入值 EX: HC199
+   */
   public static function createCustomer($class, $price_class, $user)
   {
     $token     = self::getToken();
@@ -210,6 +248,10 @@ class AcumaticaHelper
     return $response->json();
   }
 
+  /**
+   * 更新使用者資訊
+   * user 使用者
+   */
   public static function updateUserCustomerId($user)
   {
     $token     = self::getToken();
@@ -230,9 +272,14 @@ class AcumaticaHelper
     return $response->json();
   }
 
-  public static function getServiceOrder($order_no, $acu_app = null)
+  /**
+   * 取得訂單資訊
+   * order_no 訂單名稱
+   * app AcumaticaApp 沒傳送會抓 .env的設定
+   */
+  public static function getServiceOrder($order_no, $app = null)
   {
-    $token    = self::getToken($acu_app);
+    $token    = self::getToken($app);
     $post_url = config('stone.acumatica.api_url') . '/ServiceOrder?$filter=ServiceOrderNbr eq ';
 
     $response = Http::withHeaders([
@@ -241,19 +288,24 @@ class AcumaticaHelper
     return $response->json();
   }
 
-  public static function getToken($acu_app = null)
+  /**
+   * 取得 Acumatica Token
+   * 取得 Token 後才能做後續 API 動作
+   * app AcumaticaApp 沒傳送會抓 .env的設定
+   */
+  public static function getToken($app = null)
   {
-    if ($acu_app) {
-      $client_id     = $acu_app->client_id;
-      $client_secret = $acu_app->client_secret;
+    if ($app) {
+      $client_id     = $app->client_id;
+      $client_secret = $app->client_secret;
     } else {
       $client_id     = config('stone.acumatica.client_id');
       $client_secret = config('stone.acumatica.client_secret');
     }
     $username = config('stone.acumatica.username');
     $password = config('stone.acumatica.password');
-    if ($acu_app) {
-      $last_token = AcumaticaAccessToken::where('acumatica_app_id', $acu_app->id)->orderBy('created_at', 'desc')->first();
+    if ($app) {
+      $last_token = AcumaticaAccessToken::where('acumatica_app_id', $app->id)->orderBy('created_at', 'desc')->first();
     } else {
       $last_token = AcumaticaAccessToken::latest()->first();
     }
@@ -271,8 +323,8 @@ class AcumaticaHelper
         ->post($post_url);
       \Log::info($response->body());
       $last_token = new AcumaticaAccessToken;
-      if ($acu_app) {
-        $last_token->acumatica_app_id = $acu_app->id;
+      if ($app) {
+        $last_token->acumatica_app_id = $app->id;
       }
       $last_token->access_token = $response->json()['access_token'];
       $last_token->expires_in   = $response->json()['expires_in'];

@@ -901,8 +901,8 @@ class RoutesHelper
       //   ])->shallow();
       // }
       if (config('stone.shop.favorite')) {
-        Route::get('/auth/shop_product/{shop_product_id}/collect', [ShopProductController::class, 'collect_shop_product']);
-        Route::get('/auth/shop_product/{shop_product_id}/uncollect', [ShopProductController::class, 'uncollect_shop_procut']);
+        Route::post('/auth/shop_product/{shop_product_id}/collect', [ShopProductController::class, 'collect_shop_product']);
+        Route::post('/auth/shop_product/{shop_product_id}/uncollect', [ShopProductController::class, 'uncollect_shop_procut']);
         Route::get('/auth/collected_shop_product/index', [ShopProductController::class, 'collected_shop_product_index']);
         Route::get('/auth/collected_shop_product/ids', [ShopProductController::class, 'collected_shop_product_ids']);
       }

@@ -68,6 +68,7 @@ class ShopCampaignController extends Controller
   ];
   public $filter_fields = [
     'is_active',
+    'type',
   ];
   public $order_fields = [
     "start_date",

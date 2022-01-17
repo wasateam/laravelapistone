@@ -99,8 +99,8 @@ class ShopProductSpecController extends Controller
    * @bodyParam stock_count string 庫存數量 Example: 100
    * @bodyParam stock_alert_count string 庫存預警數量 Example: 10
    * @bodyParam shop_product int 商品 Example: 1
-   * @bodyParam shop_product_spec_setting int 商品規格設定 Example: 1
-   * @bodyParam shop_product_spec_setting_item int 商品規格設定項目 Example: 1
+   * @bodyParam shop_product_spec_settings object 商品規格設定 Example: [1,2,3]
+   * @bodyParam shop_product_spec_setting_items object 商品規格設定項目 Example: [1,2,3]
    */
   public function store(Request $request, $id = null)
   {
@@ -133,8 +133,8 @@ class ShopProductSpecController extends Controller
    * @bodyParam stock_count string 庫存數量 Example: 100
    * @bodyParam stock_alert_count string 庫存預警數量 Example: 10
    * @bodyParam shop_product int 商品 Example: 1
-   * @bodyParam shop_product_spec_setting int 商品規格設定 Example: 1
-   * @bodyParam shop_product_spec_setting_item int 商品規格設定項目 Example: 1
+   * @bodyParam shop_product_spec_settings object 商品規格設定 Example: [1,2,3]
+   * @bodyParam shop_product_spec_setting_items object 商品規格設定項目 Example: [1,2,3]
    */
   public function update(Request $request, $id)
   {

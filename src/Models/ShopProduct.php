@@ -72,6 +72,21 @@ class ShopProduct extends Model
     return $this->belongsToMany(User::class, 'user_shop_product', 'shop_product_id', 'user_id');
   }
 
+  public function shop_product_specs()
+  {
+    return $this->hasMany(ShopProductSpec::class, 'shop_product_id');
+  }
+
+  public function shop_product_spec_settings()
+  {
+    return $this->hasMany(ShopProductSpecSetting::class, 'shop_product_id');
+  }
+
+  public function shop_product_spec_setting_items()
+  {
+    return $this->hasMany(ShopProductSpecSettingItem::class, 'shop_product_id');
+  }
+
   protected $casts = [
     'cover_image' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
     'images'      => \Wasateam\Laravelapistone\Casts\UrlsCast::class,

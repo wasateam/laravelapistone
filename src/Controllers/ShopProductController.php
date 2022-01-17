@@ -316,6 +316,7 @@ class ShopProductController extends Controller
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($request) {
       //shop_product_spec_settings
       if ($request->has('shop_product_spec_settings') && $request->has('shop_product_specs')) {
+        ShopHelper::shopProductDeleteSpec($request->shop_product_spec_settings, $request->shop_product_specs, $model->id);
         ShopHelper::shopProductCreateSpec($request->shop_product_spec_settings, $request->shop_product_specs, $model->id);
       }
     });

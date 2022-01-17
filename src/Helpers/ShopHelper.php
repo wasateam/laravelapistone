@@ -486,7 +486,7 @@ class ShopHelper
 
   public static function shopProductCreateSpec($shop_product_spec_settings, $shop_product_specs, $shop_product_id)
   {
-    // create/update shop_product_spec,shop_product_spec_setting,shop_product_spec_setting_item when shop_product created
+    // create/update shop_product_spec,shop_product_spec_setting,shop_product_spec_setting_item when shop_product created/updated
     $shop_product_spec_setting_ids = [];
     foreach ($shop_product_spec_settings as $shop_product_spec_setting) {
 
@@ -547,4 +547,44 @@ class ShopHelper
       }
     }
   }
+
+  public static function shopProductDeleteSpec($shop_product_spec_settings, $shop_product_specs, $shop_product_id)
+  {
+    // delete shop_product_spec,shop_product_spec_setting,shop_product_spec_setting_item when shop_product updated
+    $shop_product                        = ShopProduct::find($shop_product_id);
+    $shop_product_spec_ids               = Self::getItemsIdArray($shop_product_specs);
+    $shop_product_spec_setting_ids       = [];
+    $shop_product_spec_settting_item_ids = [];
+    foreach ($shop_product_spec_settings as $shop_product_spec_setting) {
+      if (isset($shop_product_spec_setting['id'])) {
+        $shop_product_spec_setting_ids[] = $shop_product_spec_setting['id'];
+      }
+      $shop_product_spec_settting_item_ids = Self::getItemsIdArray($shop_product_spec_setting['shop_product_spec_setting_items'], $shop_product_spec_settting_item_ids);
+    }
+    //delete
+    Self::deleteItemByIdArray($shop_product->shop_product_specs, $shop_product_spec_ids);
+    Self::deleteItemByIdArray($shop_product->shop_product_spec_settings, $shop_product_spec_setting_ids);
+    Self::deleteItemByIdArray($shop_product->shop_product_spec_setting_items, $shop_product_spec_settting_item_ids);
+  }
+
+  public static function getItemsIdArray($items, $id_array = [])
+  {
+    $ids = $id_array;
+    foreach ($items as $item) {
+      if (isset($item['id'])) {
+        $ids[] = $item['id'];
+      }
+    }
+    return $ids;
+  }
+
+  public static function deleteItemByIdArray($items, $id_array)
+  {
+    foreach ($items as $item) {
+      if (!in_array($item->id, $id_array)) {
+        $item->delete();
+      }
+    }
+  }
+
 }

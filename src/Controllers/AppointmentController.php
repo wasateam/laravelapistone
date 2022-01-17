@@ -12,6 +12,7 @@ use Wasateam\Laravelapistone\Models\Appointment;
 
 /**
  * @group Appointment
+ * @authenticated
  *
  * start_time 起始時間 (單純時間四位)
  * end_time 結束時間 (單純時間四位)

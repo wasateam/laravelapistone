@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Exports\ShopProductExport;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Imports\ShopProductImport;
 use Wasateam\Laravelapistone\Models\ShopProduct;
 
@@ -241,10 +242,17 @@ class ShopProductController extends Controller
    * @bodyParam shop_subclasses ids 子分類 Example: [1,2]
    * @bodyParam areas ids 地區 Example: [1,2]
    * @bodyParam area_sections ids 子地區 Example: [1,2]
+   * @bodyParam shop_product_spec_settings object 商品規格設定 Example:[{"name":"name","sq":"1","shop_product_spec_setting_items":[{"name":"name","sq":"1"}]}]
+   * @bodyParam shop_product_specs object 商品規格 Example: [{"no":"SexyMonkey","cost":"100","price":"1000","discount_price":"900","on_time":"2021-10-10","off_time":"2021-10-20","freight":"100","max_buyable_count":"100","storage_space":"AA","stock_count":"1000","stock_alert_count":"100"}]
    */
   public function store(Request $request, $id = null)
   {
-    return ModelHelper::ws_StoreHandler($this, $request, $id);
+    return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($request) {
+      //shop_product_spec_settings
+      if ($request->has('shop_product_spec_settings') && $request->has('shop_product_specs')) {
+        ShopHelper::shopProductCreateSpec($request->shop_product_spec_settings, $request->shop_product_specs, $model->id);
+      }
+    });
   }
 
   /**

@@ -30,11 +30,10 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  */
 class ShopProductSpecController extends Controller
 {
-  public $model         = 'Wasateam\Laravelapistone\Models\ShopProductSpec';
-  public $name          = 'shop_product_spec';
-  public $resource      = 'Wasateam\Laravelapistone\Resources\ShopProductSpec';
-  public $input_fields  = [];
-  public $filter_fields = [
+  public $model        = 'Wasateam\Laravelapistone\Models\ShopProductSpec';
+  public $name         = 'shop_product_spec';
+  public $resource     = 'Wasateam\Laravelapistone\Resources\ShopProductSpec';
+  public $input_fields = [
     'no',
     'on_time',
     'off_time',
@@ -46,6 +45,8 @@ class ShopProductSpecController extends Controller
     'stock_alert_count',
     'storage_space',
     'max_buyable_count',
+  ];
+  public $filter_fields = [
   ];
   public $search_fields = ['no'];
   public $belongs_to    = [

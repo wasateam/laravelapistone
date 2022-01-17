@@ -20,4 +20,9 @@ class ShopCartProduct extends Model
   {
     return $this->belongsTo(ShopCart::class, 'shop_cart_id');
   }
+
+  public function shop_product_spec()
+  {
+    return $this->belongsTo(ShopProductSpec::class, 'shop_product_spec_id');
+  }
 }

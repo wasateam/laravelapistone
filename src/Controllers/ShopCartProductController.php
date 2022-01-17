@@ -5,11 +5,11 @@ namespace Wasateam\Laravelapistone\Controllers;
 use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\ShopCart;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopProduct;
+use Wasateam\Laravelapistone\Models\ShopProductSpec;
 
 /**
  * @group 購物車商品
@@ -24,6 +24,7 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * order_type 訂單類型
  * shop_cart 所屬購物車
  * shop_porduct 所屬商品
+ * shop_porduct_sepc 所屬商品規格
  *
  *
  * @authenticated
@@ -61,6 +62,7 @@ class ShopCartProductController extends Controller
       $this->input_fields[] = 'order_type';
       $this->belongs_to[]   = 'shop_cart';
       $this->belongs_to[]   = 'shop_product';
+      $this->belongs_to[]   = 'shop_product_spec';
     }
   }
 
@@ -113,6 +115,7 @@ class ShopCartProductController extends Controller
    * Add Auth Cart
    *
    * @bodyParam shop_product int 商品id Example:1
+   * @bodyParam shop_product_spec int 商品規格id Example:1
    * @bodyParam count int 數量 Example:1
    */
   public function product_store_auth_cart(Request $request, $id = null)
@@ -140,28 +143,43 @@ class ShopCartProductController extends Controller
         'message' => 'products not enough.',
       ], 400);
     }
+    //shop_product_spec
+    if (!$request->has('shop_product_spec')) {
+      return response()->json([
+        'message' => 'shop_product_spec is required.',
+      ], 400);
+    }
+    $shop_product_spec = ShopProductSpec::find($request->shop_product_spec);
+    if (!$shop_product_spec) {
+      return response()->json([
+        'message' => 'no spec.',
+      ], 400);
+    }
+
     if ($shop_cart_product) {
-      return ModelHelper::ws_UpdateHandler($this, $request, $shop_cart_product->id, [], function ($model) use ($shop_product, $auth_shop_cart, $count) {
-        $model->shop_cart_id    = $auth_shop_cart->id;
-        $model->shop_product_id = $shop_product->id;
-        $model->name            = $shop_product->name;
-        $model->subtitle        = $shop_product->subtitle;
-        $model->price           = $shop_product->price;
-        $model->discount_price  = $shop_product->discount_price;
-        $model->order_type      = $shop_product->order_type;
-        $model->count           = $count;
+      return ModelHelper::ws_UpdateHandler($this, $request, $shop_cart_product->id, [], function ($model) use ($shop_product, $auth_shop_cart, $count, $shop_product_spec) {
+        $model->shop_cart_id         = $auth_shop_cart->id;
+        $model->shop_product_id      = $shop_product->id;
+        $model->shop_product_spec_id = $shop_product_spec->id;
+        $model->name                 = $shop_product->name;
+        $model->subtitle             = $shop_product->subtitle;
+        $model->price                = $shop_product->price;
+        $model->discount_price       = $shop_product->discount_price;
+        $model->order_type           = $shop_product->order_type;
+        $model->count                = $count;
         $model->save();
       });
     } else {
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($shop_product, $auth_shop_cart) {
-        $model->shop_cart_id    = $auth_shop_cart->id;
-        $model->shop_product_id = $shop_product->id;
-        $model->name            = $shop_product->name;
-        $model->subtitle        = $shop_product->subtitle;
-        $model->price           = $shop_product->price;
-        $model->discount_price  = $shop_product->discount_price;
-        $model->order_type      = $shop_product->order_type;
-        $model->user_id         = Auth::user()->id;
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($shop_product, $auth_shop_cart, $shop_product_spec) {
+        $model->shop_cart_id         = $auth_shop_cart->id;
+        $model->shop_product_id      = $shop_product->id;
+        $model->shop_product_spec_id = $shop_product_spec->id;
+        $model->name                 = $shop_product->name;
+        $model->subtitle             = $shop_product->subtitle;
+        $model->price                = $shop_product->price;
+        $model->discount_price       = $shop_product->discount_price;
+        $model->order_type           = $shop_product->order_type;
+        $model->user_id              = Auth::user()->id;
         $model->save();
       });
 

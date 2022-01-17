@@ -8,6 +8,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
  * @group Area
+ * @authenticated
  *
  * sequence 順序
  * name 名稱

@@ -19,8 +19,8 @@ class CreateShopProductSpecsTable extends Migration
       $table->softDeletes();
       $table->string('no')->nullable();
       $table->integer('shop_product_id')->nullable();
-      $table->datetime('on_time')->nullable();
-      $table->datetime('off_time')->nullable();
+      $table->datetime('start_at')->nullable();
+      $table->datetime('end_at')->nullable();
       $table->integer('cost')->nullable();
       $table->integer('price')->nullable();
       $table->integer('discount_price')->nullable();

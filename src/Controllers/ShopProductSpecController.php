@@ -13,8 +13,8 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  *
  * shop_product 綁定之商品
  * no 編號
- * on_time 上架時間
- * off_time 下架時間
+ * start_at 上架時間
+ * end_at 下架時間
  * cost 成本
  * price 售價
  * discount_price 優惠價格
@@ -35,8 +35,8 @@ class ShopProductSpecController extends Controller
   public $resource     = 'Wasateam\Laravelapistone\Resources\ShopProductSpec';
   public $input_fields = [
     'no',
-    'on_time',
-    'off_time',
+    'start_at',
+    'end_at',
     'cost',
     'price',
     'discount_price',
@@ -92,8 +92,8 @@ class ShopProductSpecController extends Controller
    * @bodyParam cost int 成本 Example: 200
    * @bodyParam price int 售價 Example: 300
    * @bodyParam discount_price int 優惠價 Example: 280
-   * @bodyParam on_time datetime 上架時間 Example: 2021-10-10
-   * @bodyParam off_time datetime 下架時間 Example: 2021-10-20
+   * @bodyParam start_at datetime 上架時間 Example: 2021-10-10
+   * @bodyParam end_at datetime 下架時間 Example: 2021-10-20
    * @bodyParam freight string 運費 Example: 10
    * @bodyParam max_buyable_count string 最大可購買數量 Example: 10
    * @bodyParam storage_space string 商品儲位 Example: AA
@@ -126,8 +126,8 @@ class ShopProductSpecController extends Controller
    * @bodyParam cost int 成本 Example: 200
    * @bodyParam price int 售價 Example: 300
    * @bodyParam discount_price int 優惠價 Example: 280
-   * @bodyParam on_time datetime 上架時間 Example: 2021-10-10
-   * @bodyParam off_time datetime 下架時間 Example: 2021-10-20
+   * @bodyParam start_at datetime 上架時間 Example: 2021-10-10
+   * @bodyParam end_at datetime 下架時間 Example: 2021-10-20
    * @bodyParam freight string 運費 Example: 10
    * @bodyParam max_buyable_count string 最大可購買數量 Example: 10
    * @bodyParam storage_space string 商品儲位 Example: AA

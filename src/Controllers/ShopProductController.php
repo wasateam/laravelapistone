@@ -250,7 +250,7 @@ class ShopProductController extends Controller
    * @bodyParam areas ids 地區 Example: [1,2]
    * @bodyParam area_sections ids 子地區 Example: [1,2]
    * @bodyParam shop_product_spec_settings object 商品規格設定 Example:[{"name":"name","sq":"1","shop_product_spec_setting_items":[{"name":"name","sq":"1"}]}]
-   * @bodyParam shop_product_specs object 商品規格 Example: [{"no":"SexyMonkey","cost":"100","price":"1000","discount_price":"900","on_time":"2021-10-10","off_time":"2021-10-20","freight":"100","max_buyable_count":"100","storage_space":"AA","stock_count":"1000","stock_alert_count":"100"}]
+   * @bodyParam shop_product_specs object 商品規格 Example: [{"no":"SexyMonkey","cost":"100","price":"1000","discount_price":"900","start_at":"2021-10-10","end_at":"2021-10-20","freight":"100","max_buyable_count":"100","storage_space":"AA","stock_count":"1000","stock_alert_count":"100"}]
    */
   public function store(Request $request, $id = null)
   {
@@ -309,7 +309,7 @@ class ShopProductController extends Controller
    * @bodyParam areas ids 地區 Example: [1,2]
    * @bodyParam area_sections ids 子地區 Example: [1,2]
    * @bodyParam shop_product_spec_settings object 商品規格設定 Example:[{"name":"name","sq":"1","shop_product_spec_setting_items":[{"name":"name","sq":"1"}]}]
-   * @bodyParam shop_product_specs object 商品規格 Example: [{"no":"SexyMonkey","cost":"100","price":"1000","discount_price":"900","on_time":"2021-10-10","off_time":"2021-10-20","freight":"100","max_buyable_count":"100","storage_space":"AA","stock_count":"1000","stock_alert_count":"100"}]
+   * @bodyParam shop_product_specs object 商品規格 Example: [{"no":"SexyMonkey","cost":"100","price":"1000","discount_price":"900","start_at":"2021-10-10","end_at":"2021-10-20","freight":"100","max_buyable_count":"100","storage_space":"AA","stock_count":"1000","stock_alert_count":"100"}]
    */
   public function update(Request $request, $id)
   {

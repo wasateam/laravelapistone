@@ -14,21 +14,41 @@ class ShopCampaign extends JsonResource
    */
   public function toArray($request)
   {
-    return [
-      "id"               => $this->id,
-      "created_at"       => $this->created_at,
-      "updated_at"       => $this->updated_at,
-      "name"             => $this->name,
-      "type"             => $this->type,
-      "start_date"       => $this->start_date,
-      "end_date"         => $this->end_date,
-      "discount_code"    => $this->discount_code,
-      "condition"        => $this->condition,
-      "full_amount"      => $this->full_amount,
-      "discount_percent" => $this->discount_percent,
-      "discount_amount"  => $this->discount_amount,
-      "limit"            => $this->limit,
-      "is_active"        => $this->is_active,
-    ];
+    if (config('stone.mode') == 'cms') {
+      $res = [
+        "id"               => $this->id,
+        "created_at"       => $this->created_at,
+        "updated_at"       => $this->updated_at,
+        "name"             => $this->name,
+        "type"             => $this->type,
+        "start_date"       => $this->start_date,
+        "end_date"         => $this->end_date,
+        "discount_code"    => $this->discount_code,
+        "condition"        => $this->condition,
+        "full_amount"      => $this->full_amount,
+        "discount_percent" => $this->discount_percent,
+        "discount_amount"  => $this->discount_amount,
+        "limit"            => $this->limit,
+        "is_active"        => $this->is_active,
+        "discount_way"     => $this->discount_way,
+      ];
+    } else if (config('stone.mode') == 'webapi') {
+      $res = [
+        "id"               => $this->id,
+        "name"             => $this->name,
+        "type"             => $this->type,
+        "start_date"       => $this->start_date,
+        "end_date"         => $this->end_date,
+        "discount_code"    => $this->discount_code,
+        "condition"        => $this->condition,
+        "full_amount"      => $this->full_amount,
+        "discount_percent" => $this->discount_percent,
+        "discount_amount"  => $this->discount_amount,
+        "limit"            => $this->limit,
+        "is_active"        => $this->is_active,
+        "discount_way"     => $this->discount_way,
+      ];
+    }
+    return $res;
   }
 }

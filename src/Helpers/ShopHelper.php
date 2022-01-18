@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Jobs\BonusPointFeedbackJob;
 use Wasateam\Laravelapistone\Models\Area;
@@ -14,6 +15,8 @@ use Wasateam\Laravelapistone\Models\ShopFreeShipping;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
 use Wasateam\Laravelapistone\Models\ShopProduct;
+use Wasateam\Laravelapistone\Models\ShopProductSpecSetting;
+use Wasateam\Laravelapistone\Models\ShopProductSpecSettingItem;
 use Wasateam\Laravelapistone\Models\ShopReturnRecord;
 use Wasateam\Laravelapistone\Models\User;
 use Wasateam\Laravelapistone\Models\UserAddress;
@@ -479,6 +482,109 @@ class ShopHelper
     $shop_campaign_shop_order->feedback_rate    = $shop_campaign->feedback_rate;
 
     $shop_campaign_shop_order->save();
+  }
+
+  public static function shopProductCreateSpec($shop_product_spec_settings, $shop_product_specs, $shop_product_id)
+  {
+    // create/update shop_product_spec,shop_product_spec_setting,shop_product_spec_setting_item when shop_product created/updated
+    $shop_product_spec_setting_ids = [];
+    foreach ($shop_product_spec_settings as $shop_product_spec_setting) {
+
+      //shop_product_spec_setting
+      $new_shop_product_spec_setting = null;
+      if (!isset($shop_product_spec_setting['id'])) {
+        $new_shop_product_spec_setting = new ShopProductSpecSetting;
+      } else {
+        $new_shop_product_spec_setting = ShopProductSpecSetting::find($shop_product_spec_setting['id']);
+      }
+      $new_shop_product_spec_setting->name            = $shop_product_spec_setting['name'];
+      $new_shop_product_spec_setting->sq              = $shop_product_spec_setting['sq'];
+      $new_shop_product_spec_setting->shop_product_id = $shop_product_id;
+      $new_shop_product_spec_setting->save();
+
+      //shop_product_spec_setting_item
+      $item_ids = [];
+      foreach ($shop_product_spec_setting['shop_product_spec_setting_items'] as $shop_product_spec_setting_item) {
+        $new_shop_product_spec_setting_item = null;
+        if (!isset($shop_product_spec_setting_item['id'])) {
+          $new_shop_product_spec_setting_item = new ShopProductSpecSettingItem;
+        } else {
+          $new_shop_product_spec_setting_item = ShopProductSpecSettingItem::find($shop_product_spec_setting_item['id']);
+        }
+        $new_shop_product_spec_setting_item->name                         = $shop_product_spec_setting_item['name'];
+        $new_shop_product_spec_setting_item->sq                           = $shop_product_spec_setting_item['sq'];
+        $new_shop_product_spec_setting_item->shop_product_id              = $shop_product_id;
+        $new_shop_product_spec_setting_item->shop_product_spec_setting_id = $new_shop_product_spec_setting->id;
+        $new_shop_product_spec_setting_item->save();
+        $item_ids[] = $new_shop_product_spec_setting_item->id;
+      }
+      $shop_product_spec_setting_ids[] = [
+        'setting_id' => $new_shop_product_spec_setting->id,
+        'item_ids'   => $item_ids,
+      ];
+    }
+
+    //shop_product_spec
+    foreach ($shop_product_specs as $shop_product_spec_key => $shop_product_spec) {
+      $new_shop_product_spec = $shop_product_spec;
+      //shop_product_spec_settings
+      $shop_product_spec_settings = [];
+      //shop_product_spec_setting_items
+      $shop_product_spec_setting_items = [];
+      //get_ids
+      foreach ($shop_product_spec_setting_ids as $shop_product_spec_setting_id) {
+        $shop_product_spec_settings[]      = $shop_product_spec_setting_id['setting_id'];
+        $shop_product_spec_setting_items[] = $shop_product_spec_setting_id['item_ids'][$shop_product_spec_key];
+      }
+
+      $new_shop_product_spec['shop_product']                    = $shop_product_id;
+      $new_shop_product_spec['shop_product_spec_settings']      = $shop_product_spec_settings;
+      $new_shop_product_spec['shop_product_spec_setting_items'] = $shop_product_spec_setting_items;
+      if (isset($shop_product_spec['id'])) {
+        ModelHelper::ws_UpdateHandler(new \Wasateam\Laravelapistone\Controllers\ShopProductSpecController, new Request($new_shop_product_spec), $shop_product_spec['id']);
+      } else {
+        ModelHelper::ws_StoreHandler(new \Wasateam\Laravelapistone\Controllers\ShopProductSpecController, new Request($new_shop_product_spec));
+      }
+    }
+  }
+
+  public static function shopProductDeleteSpec($shop_product_spec_settings, $shop_product_specs, $shop_product_id)
+  {
+    // delete shop_product_spec,shop_product_spec_setting,shop_product_spec_setting_item when shop_product updated
+    $shop_product                        = ShopProduct::find($shop_product_id);
+    $shop_product_spec_ids               = Self::getItemsIdArray($shop_product_specs);
+    $shop_product_spec_setting_ids       = [];
+    $shop_product_spec_settting_item_ids = [];
+    foreach ($shop_product_spec_settings as $shop_product_spec_setting) {
+      if (isset($shop_product_spec_setting['id'])) {
+        $shop_product_spec_setting_ids[] = $shop_product_spec_setting['id'];
+      }
+      $shop_product_spec_settting_item_ids = Self::getItemsIdArray($shop_product_spec_setting['shop_product_spec_setting_items'], $shop_product_spec_settting_item_ids);
+    }
+    //delete
+    Self::deleteItemByIdArray($shop_product->shop_product_specs, $shop_product_spec_ids);
+    Self::deleteItemByIdArray($shop_product->shop_product_spec_settings, $shop_product_spec_setting_ids);
+    Self::deleteItemByIdArray($shop_product->shop_product_spec_setting_items, $shop_product_spec_settting_item_ids);
+  }
+
+  public static function getItemsIdArray($items, $id_array = [])
+  {
+    $ids = $id_array;
+    foreach ($items as $item) {
+      if (isset($item['id'])) {
+        $ids[] = $item['id'];
+      }
+    }
+    return $ids;
+  }
+
+  public static function deleteItemByIdArray($items, $id_array)
+  {
+    foreach ($items as $item) {
+      if (!in_array($item->id, $id_array)) {
+        $item->delete();
+      }
+    }
   }
 
 }

@@ -14,18 +14,35 @@ class ShopCartProduct extends JsonResource
    */
   public function toArray($request)
   {
-    return [
-      'id'             => $this->id,
-      'created_at'     => $this->created_at,
-      'updated_at'     => $this->updated_at,
-      'name'           => $this->name,
-      'subtitle'       => $this->subtitle,
-      'count'          => $this->count,
-      'price'          => $this->price,
-      'discount_price' => $this->discount_price,
-      'order_type'     => $this->order_type,
-      'shop_cart'      => new ShopCart($this->shop_cart),
-      'shop_product'   => new ShopProduct($this->shop_product),
-    ];
+    if (config('stone.mode') == 'cms') {
+      $res = [
+        'id'                => $this->id,
+        'created_at'        => $this->created_at,
+        'updated_at'        => $this->updated_at,
+        'name'              => $this->name,
+        'subtitle'          => $this->subtitle,
+        'count'             => $this->count,
+        'price'             => $this->price,
+        'discount_price'    => $this->discount_price,
+        'order_type'        => $this->order_type,
+        'shop_cart'         => new ShopCart($this->shop_cart),
+        'shop_product'      => new ShopProduct($this->shop_product),
+        'shop_product_spec' => new ShopProductSpec($this->shop_product_spec),
+      ];
+    } else {
+      $res = [
+        'id'                => $this->id,
+        'name'              => $this->name,
+        'subtitle'          => $this->subtitle,
+        'count'             => $this->count,
+        'price'             => $this->price,
+        'discount_price'    => $this->discount_price,
+        'order_type'        => $this->order_type,
+        'shop_cart'         => new ShopCart($this->shop_cart),
+        'shop_product'      => new ShopProduct($this->shop_product),
+        'shop_product_spec' => new ShopProductSpec($this->shop_product_spec),
+      ];
+    }
+    return $res;
   }
 }

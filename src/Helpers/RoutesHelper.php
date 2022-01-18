@@ -52,6 +52,9 @@ use Wasateam\Laravelapistone\Controllers\ShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductCoverFrameController;
 use Wasateam\Laravelapistone\Controllers\ShopProductExpectShipController;
 use Wasateam\Laravelapistone\Controllers\ShopProductImportRecordController;
+use Wasateam\Laravelapistone\Controllers\ShopProductSpecController;
+use Wasateam\Laravelapistone\Controllers\ShopProductSpecSettingController;
+use Wasateam\Laravelapistone\Controllers\ShopProductSpecSettingItemController;
 use Wasateam\Laravelapistone\Controllers\ShopReturnRecordController;
 use Wasateam\Laravelapistone\Controllers\ShopShipAreaSettingController;
 use Wasateam\Laravelapistone\Controllers\ShopShipTimeSettingController;
@@ -517,6 +520,18 @@ class RoutesHelper
       Route::resource('shop_campaign_shop_order', ShopCampaignShopOrderController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      # Shop Product Spec
+      Route::resource('shop_product_spec', ShopProductSpecController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Product Spec Setting
+      Route::resource('shop_product_spec_setting', ShopProductSpecSettingController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Product Spec
+      Route::resource('shop_product_spec_setting_item', ShopProductSpecSettingItemController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
 
     }
 
@@ -886,8 +901,8 @@ class RoutesHelper
       //   ])->shallow();
       // }
       if (config('stone.shop.favorite')) {
-        Route::get('/auth/shop_product/{shop_product_id}/collect', [ShopProductController::class, 'collect_shop_product']);
-        Route::get('/auth/shop_product/{shop_product_id}/uncollect', [ShopProductController::class, 'uncollect_shop_procut']);
+        Route::post('/auth/shop_product/{shop_product_id}/collect', [ShopProductController::class, 'collect_shop_product']);
+        Route::post('/auth/shop_product/{shop_product_id}/uncollect', [ShopProductController::class, 'uncollect_shop_procut']);
         Route::get('/auth/collected_shop_product/index', [ShopProductController::class, 'collected_shop_product_index']);
         Route::get('/auth/collected_shop_product/ids', [ShopProductController::class, 'collected_shop_product_ids']);
       }
@@ -939,6 +954,19 @@ class RoutesHelper
       ])->shallow();
       # Shop Campaign Shop Order
       Route::resource('shop_campaign_shop_order', ShopCampaignShopOrderController::class)->only([
+        'index', 'show',
+      ])->shallow();
+
+      # Shop Product Spec
+      Route::resource('shop_product_spec', ShopProductSpecController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      # Shop Product Spec Setting
+      Route::resource('shop_product_spec_setting', ShopProductSpecSettingController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      # Shop Product Spec
+      Route::resource('shop_product_spec_setting_item', ShopProductSpecSettingItemController::class)->only([
         'index', 'show',
       ])->shallow();
     }

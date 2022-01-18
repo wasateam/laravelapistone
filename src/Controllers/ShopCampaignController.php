@@ -31,6 +31,7 @@ use Wasateam\Laravelapistone\Helpers\ShopHelper;
  * 回饋比例 feedback_rate
  * 是否啟用 is_active
  * 數量 limit
+ * 折扣方式 discount_way
  *
  * Index 篩選
  * status
@@ -62,12 +63,14 @@ class ShopCampaignController extends Controller
     'limit',
     'is_active',
     'feedback_rate',
+    'discount_way',
   ];
   public $search_fields = [
     'name',
   ];
   public $filter_fields = [
     'is_active',
+    'type',
   ];
   public $order_fields = [
     "start_date",
@@ -138,6 +141,7 @@ class ShopCampaignController extends Controller
    * @bodyParam is_active int Example:1
    * @bodyParam limit int Example:100
    * @bodyParam feedback_rate float Example:0.001
+   * @bodyParam dicount_way string Example:discount_way
    */
   public function store(Request $request, $id = null)
   {
@@ -193,6 +197,7 @@ class ShopCampaignController extends Controller
    * @bodyParam is_active int Example:1
    * @bodyParam limit int Example:100
    * @bodyParam feedback_rate float Example:0.001
+   * @bodyParam dicount_way string Example:discount_way
    */
   public function update(Request $request, $id)
   {

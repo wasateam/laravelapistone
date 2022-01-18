@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ShopProductSetting extends JsonResource
+class ShopProductSpecSetting extends JsonResource
 {
   /**
    * Transform the resource into an array.

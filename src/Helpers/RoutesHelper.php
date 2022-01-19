@@ -952,6 +952,8 @@ class RoutesHelper
       Route::resource('shop_campaign', ShopCampaignController::class)->only([
         'index', 'show',
       ])->shallow();
+      Route::get('/shop_campaign/today/index', [ShopCampaignController::class, 'today_index']);
+      Route::post('/shop_campaign/today/discount_code/check', [ShopCampaignController::class, 'today_discount_code_check']);
       # Shop Campaign Shop Order
       Route::resource('shop_campaign_shop_order', ShopCampaignShopOrderController::class)->only([
         'index', 'show',

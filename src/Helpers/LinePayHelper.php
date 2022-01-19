@@ -12,13 +12,11 @@ use Illuminate\Support\Facades\Http;
 class LinePayHelper
 {
   /**
-   * 建立裝置
+   * 建立付款請求
    */
-  public static function payment_request()
+  public static function payment_request($confirm_url, $cancel_url)
   {
-    $uri = env('LINEPAY_API_URL') . '/v3/payments/request';
-    error_log($uri);
-    // $nonce        = date('c') . uniqid('-');
+    $uri          = env('LINEPAY_API_URL') . '/v3/payments/request';
     $nonce        = Carbon::now()->timestamp;
     $request_body = [
       'amount'       => 250,
@@ -40,28 +38,16 @@ class LinePayHelper
         ],
       ],
       'redirectUrls' => [
-        'confirmUrl' => 'https://yourname.com/line-pay/confirm',
-        'cancelUrl'  => 'https://yourname.com/line-pay/cancel',
+        'confirmUrl' => $confirm_url,
+        'cancelUrl'  => $cancel_url,
       ],
     ];
-    $sig    = self::get_post_signature('/v3/payments/request', $request_body, $nonce);
-    $header = self::get_request_header($nonce, $sig);
-
-    error_log(json_encode($header));
-
+    $sig      = self::get_post_signature('/v3/payments/request', $request_body, $nonce);
+    $header   = self::get_request_header($nonce, $sig);
     $response = Http::withHeaders($header)
       ->post($uri, $request_body);
 
-    // $res =
-    error_log($response->body());
-
-    // $response = Http::withHeaders([
-    //   'Authorization' => "Bearer {$token}",
-    // ])->put($post_url, $post_data);
-    // $amount   = 100;
-    // $currency = 'TWD';
-    // $orderId  = '0001';
-
+    return $response->json();
   }
 
   /**
@@ -91,5 +77,4 @@ class LinePayHelper
       'X-LINE-Authorization'       => $sig,
     ];
   }
-
 }

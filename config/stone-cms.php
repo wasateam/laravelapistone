@@ -133,4 +133,10 @@ return [
   'xc_task'            => true,
   'xc_milestone'       => true,
   'xc_project'         => true,
+  // LINE Pay
+  'linepay'            => [
+    'channel_id' => env('LINEPAY_CHANNEL_ID'),
+    'secret_key' => env('LINEPAY_CHENNEL_SECRET_KEY'),
+    'url'        => env('LINEPAY_API_URL'),
+  ],
 ];

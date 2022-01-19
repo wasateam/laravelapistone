@@ -231,6 +231,9 @@ class AcumaticaHelper
         'Tel' => [
           'value' => $user->tel,
         ],
+        'Birthday' => [
+          'value' => $user->birthday,
+        ],
       ],
       'PrimayContact' => [
         'DateOfBirth' => [
@@ -244,6 +247,9 @@ class AcumaticaHelper
         ],
         'Tel'       => [
           'value' => $user->tel,
+        ],
+        'Birthday' => [
+          'value' => $user->birthday,
         ],
       ],
     ];

@@ -15,7 +15,6 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopOrder;
-use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
 use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
 
 /**
@@ -373,7 +372,7 @@ class ShopOrderController extends Controller
             'message' => 'not your cart product.',
           ], 400);
         }
-        if ($cart_product->count > $cart_product->shop_product->stock_count) {
+        if (!ShopHelper::adjustProductStockEnough($cart_product)) {
           return response()->json([
             'message' => 'products not enough;',
           ], 400);
@@ -471,25 +470,9 @@ class ShopOrderController extends Controller
       return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($my_cart_products, $invoice_status, $invoice_number, $order_type, $today_dicount_decode_campaign) {
         # Shop Order Shop Product
         foreach ($my_cart_products as $my_cart_product) {
-          $new_order_product                       = new ShopOrderShopProduct;
-          $cart_product                            = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->first();
-          $shop_product                            = $cart_product->shop_product;
-          $new_order_product->name                 = $shop_product->name;
-          $new_order_product->subtitle             = $shop_product->subtitle;
-          $new_order_product->count                = $cart_product->count;
-          $new_order_product->original_count       = $cart_product->count;
-          $new_order_product->price                = $shop_product->price;
-          $new_order_product->discount_price       = $shop_product->discount_price;
-          $new_order_product->spec                 = $shop_product->spec;
-          $new_order_product->weight_capacity      = $shop_product->weight_capacity;
-          $new_order_product->cover_image          = $shop_product->cover_image;
-          $new_order_product->order_type           = $shop_product->order_type;
-          $new_order_product->freight              = $shop_product->freight;
-          $new_order_product->shop_product_id      = $shop_product->id;
-          $new_order_product->cost                 = $shop_product->cost;
-          $new_order_product->shop_cart_product_id = $my_cart_product['id'];
-          $new_order_product->shop_order_id        = $model->id;
-          $new_order_product->save();
+          $cart_product         = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->first();
+          # create shop_order_shop_product
+          $new_order_product    = ShopHelper::createShopOrderShopProduct($cart_product, $model->id);
           $cart_product->status = 0;
           $cart_product->save();
           ShopHelper::shopOrderProductChangeCount($new_order_product->id);

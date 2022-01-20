@@ -30,9 +30,9 @@ class ShopOrderShopProduct extends Model
     return $this->hasMany(ShopReturnRecord::class);
   }
 
-  public function shop_order_shop_product_specs()
+  public function shop_order_shop_product_spec()
   {
-    return $this->hasMany(ShopOrderShopProductSpec::class, 'shop_order_shop_product_id');
+    return $this->hasOne(ShopOrderShopProductSpec::class, 'shop_order_shop_product_id');
   }
 
   public function shop_order_shop_product_spec_settings()

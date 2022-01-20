@@ -144,16 +144,20 @@ class ShopCartProductController extends Controller
       ], 400);
     }
     //shop_product_spec
-    if (!$request->has('shop_product_spec')) {
-      return response()->json([
-        'message' => 'shop_product_spec is required.',
-      ], 400);
-    }
-    $shop_product_spec = ShopProductSpec::find($request->shop_product_spec);
-    if (!$shop_product_spec) {
-      return response()->json([
-        'message' => 'no spec.',
-      ], 400);
+    if ($request->has('shop_product_spec')) {
+      //判斷shop_product_spec是否是shop_product的
+      $shop_product_spec = ShopProductSpec::where('id', $request->shop_product_spec)->where('shop_product_id', $request->shop_product);
+      if (!$shop_product_spec) {
+        return response()->json([
+          'message' => 'no spec.',
+        ], 400);
+      }
+      $stock_count = $shop_product_spec->stock_count;
+      if ($request->count > $stock_count) {
+        return response()->json([
+          'message' => 'products not enough.',
+        ], 400);
+      }
     }
 
     if ($shop_cart_product) {

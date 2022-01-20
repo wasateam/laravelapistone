@@ -346,13 +346,19 @@ class EcpayHelper
   {
     $items = [];
     foreach ($shop_cart_products as $shop_cart_product) {
-      $amount  = ShopHelper::getOrderProductAmountPrice($shop_cart_product);
+      $amount                  = ShopHelper::getOrderProductAmountPrice($shop_cart_product);
+      $shop_cart_product_price = 0;
+      if (isset($shop_cart_product->shop_product_spec)) {
+        $shop_cart_product_price = $shop_cart_product->shop_product_spec['discount_price'] ? $shop_cart_product->shop_product_spec['discount_price'] : $shop_cart_product->shop_product_spec['price'];
+      } else {
+        $shop_cart_product_price = $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
+      }
       $items[] = [
         // "ItemSeq"     => 1,
         "ItemName"    => $shop_cart_product['name'],
         "ItemCount"   => $shop_cart_product['count'],
         "ItemWord"    => "件",
-        "ItemPrice"   => $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'],
+        "ItemPrice"   => $shop_cart_product_price,
         "ItemTaxType" => "1",
         "ItemAmount"  => $amount,
         "ItemRemark"  => "",

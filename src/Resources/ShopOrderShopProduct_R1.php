@@ -37,7 +37,7 @@ class ShopOrderShopProduct_R1 extends JsonResource
         'shop_product'                               => new ShopProduct_R0($this->shop_product),
         'shop_cart_product'                          => new ShopCartProduct_R1($this->shop_cart_product),
         'shop_return_records'                        => ShopReturnRecord_R0::collection($this->shop_return_records),
-        'shop_order_shop_product_specs'              => ShopOrderShopProductSpec_R1::collection($this->shop_order_shop_product_specs),
+        'shop_order_shop_product_spec'               => new ShopOrderShopProductSpec_R1($this->shop_order_shop_product_spec),
         'shop_order_shop_product_spec_settings'      => ShopOrderShopProductSpecSetting_R0::collection($this->shop_order_shop_product_spec_settings),
         'shop_order_shop_product_spec_setting_items' => ShopOrderShopProductSpecSettingItem_R0::collection($this->shop_order_shop_product_spec_setting_items),
       ];
@@ -62,7 +62,7 @@ class ShopOrderShopProduct_R1 extends JsonResource
         'shop_product'                               => new ShopProduct_R0($this->shop_product),
         'shop_cart_product'                          => new ShopCartProduct_R1($this->shop_cart_product),
         'shop_return_records'                        => ShopReturnRecord_R0::collection($this->shop_return_records),
-        'shop_order_shop_product_specs'              => ShopOrderShopProductSpec_R1::collection($this->shop_order_shop_product_specs),
+        'shop_order_shop_product_spec'               => new ShopOrderShopProductSpec_R1($this->shop_order_shop_product_spec),
         'shop_order_shop_product_spec_settings'      => ShopOrderShopProductSpecSetting_R0::collection($this->shop_order_shop_product_spec_settings),
         'shop_order_shop_product_spec_setting_items' => ShopOrderShopProductSpecSettingItem_R0::collection($this->shop_order_shop_product_spec_setting_items),
       ];

@@ -540,12 +540,14 @@ class ShopHelper
       $new_shop_product_spec['shop_product']                    = $shop_product_id;
       $new_shop_product_spec['shop_product_spec_settings']      = $shop_product_spec_settings;
       $new_shop_product_spec['shop_product_spec_setting_items'] = $shop_product_spec_setting_items;
+      // create/update shop_product_spec
       if (isset($shop_product_spec['id'])) {
         ModelHelper::ws_UpdateHandler(new \Wasateam\Laravelapistone\Controllers\ShopProductSpecController, new Request($new_shop_product_spec), $shop_product_spec['id']);
       } else {
         ModelHelper::ws_StoreHandler(new \Wasateam\Laravelapistone\Controllers\ShopProductSpecController, new Request($new_shop_product_spec));
       }
     }
+
   }
 
   public static function shopProductDeleteSpec($shop_product_spec_settings, $shop_product_specs, $shop_product_id)

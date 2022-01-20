@@ -16,13 +16,15 @@ class ShopProductSpecSetting_R1 extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       $res = [
-        'id'   => $this->id,
-        'name' => $this->name,
+        'id'                              => $this->id,
+        'name'                            => $this->name,
+        'shop_product_spec_setting_items' => ShopProductSpecSettingItem_R1::collection($this->shop_product_spec_setting_items),
       ];
     } else if (config('stone.mode') == 'webapi') {
       $res = [
-        'id'   => $this->id,
-        'name' => $this->name,
+        'id'                              => $this->id,
+        'name'                            => $this->name,
+        'shop_product_spec_setting_items' => ShopProductSpecSettingItem_R1::collection($this->shop_product_spec_setting_items),
       ];
     }
     return $res;

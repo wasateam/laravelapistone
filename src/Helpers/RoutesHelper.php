@@ -91,6 +91,7 @@ use Wasateam\Laravelapistone\Controllers\XcMilestoneController;
 use Wasateam\Laravelapistone\Controllers\XcTaskController;
 use Wasateam\Laravelapistone\Controllers\XcTaskTemplateController;
 use Wasateam\Laravelapistone\Controllers\XcWorkTypeController;
+use Wasateam\Laravelapistone\Controllers\LinepayController;
 
 class RoutesHelper
 {

@@ -172,4 +172,6 @@ return [
   //頁面彈跳視窗
   'page_cover'          => true,
   'excute_class'        => true,
+  // LINE Pay
+  'linepay'             => true,
 ];

@@ -228,16 +228,16 @@ class AcumaticaHelper
         'Email' => [
           'value' => $user->email,
         ],
-        'Tel' => [
-          'value' => $user->tel,
+        'Phone1Type' => [
+          'value' => 'Cell',
         ],
-        'Birthday' => [
-          'value' => $user->birthday,
+        'Phone1' => [
+          'value' => $user->tel,
         ],
       ],
       'PrimayContact' => [
         'DateOfBirth' => [
-          'value' => $user->birth,
+          'value' => $user->birthday,
         ],
         'LastName'    => [
           'value' => $user->name,
@@ -245,11 +245,11 @@ class AcumaticaHelper
         'Email'       => [
           'value' => $user->email,
         ],
-        'Tel'       => [
-          'value' => $user->tel,
+        'Phone1Type'       => [
+          'value' => 'Cell',
         ],
-        'Birthday' => [
-          'value' => $user->birthday,
+        'Phone1'       => [
+          'value' => $user->tel,
         ],
       ],
     ];

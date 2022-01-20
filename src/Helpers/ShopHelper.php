@@ -590,6 +590,12 @@ class ShopHelper
   public static function adjustProductStockEnough($buy_count, $shop_product_id)
   {
     # 建立訂單時判斷商品庫存是否足夠
+    $shop_product     = ShopProduct::find($shop_product_id);
+    $shop_stock_count = 0;
+
+    if (count($shop_product->shop_product_specs)) {
+      $shop_stock_count = $shop_product->shop_product_specs[0];
+    }
   }
 
 }

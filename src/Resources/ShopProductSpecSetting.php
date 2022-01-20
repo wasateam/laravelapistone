@@ -17,18 +17,20 @@ class ShopProductSpecSetting extends JsonResource
 
     if (config('stone.mode') == 'cms') {
       $res = [
-        'id'           => $this->id,
-        'updated_at'   => $this->updated_at,
-        'created_at'   => $this->created_at,
-        'sq'           => $this->sq,
-        'name'         => $this->name,
-        'shop_product' => new ShopProduct_R0($this->shop_product),
+        'id'                              => $this->id,
+        'updated_at'                      => $this->updated_at,
+        'created_at'                      => $this->created_at,
+        'sq'                              => $this->sq,
+        'name'                            => $this->name,
+        'shop_product'                    => new ShopProduct_R0($this->shop_product),
+        'shop_product_spec_setting_items' => ShopProductSpecSettingItem_R1::collection($this->shop_product_spec_setting_items),
       ];
     } else if (config('stone.mode') == 'webapi') {
       $res = [
-        'id'           => $this->id,
-        'name'         => $this->name,
-        'shop_product' => new ShopProduct_R0($this->shop_product),
+        'id'                              => $this->id,
+        'name'                            => $this->name,
+        'shop_product'                    => new ShopProduct_R0($this->shop_product),
+        'shop_product_spec_setting_items' => ShopProductSpecSettingItem_R1::collection($this->shop_product_spec_setting_items),
       ];
     }
     return $res;

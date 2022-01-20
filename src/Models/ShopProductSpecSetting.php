@@ -15,4 +15,9 @@ class ShopProductSpecSetting extends Model
   {
     return $this->belongsTo(ShopProduct::class, 'shop_product_id');
   }
+
+  public function shop_product_spec_setting_items()
+  {
+    return $this->hasMany(ShopProductSpecSettingItem::class);
+  }
 }

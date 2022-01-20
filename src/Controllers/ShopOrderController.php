@@ -357,7 +357,7 @@ class ShopOrderController extends Controller
         ], 400);
       }
 
-      # 購物車商品+訂單類型
+      # 檢查購物車商品+訂單類型
       $my_cart_products  = $request->shop_cart_products;
       $_my_cart_products = [];
       $order_type        = "";

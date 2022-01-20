@@ -29,6 +29,9 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * shop_product
  * shop_cart_product
  * shop_order
+ * shop_order_shop_product_spec
+ * shop_order_shop_product_spec_setting
+ * shop_order_shop_product_spec_setting_item
  *
  * @authenticated
  */
@@ -67,6 +70,9 @@ class ShopOrderShopProductController extends Controller
       $this->belongs_to[]        = 'shop_product';
       $this->belongs_to[]        = 'shop_cart_product';
       $this->belongs_to[]        = 'shop_order';
+      $this->belongs_to[]        = 'shop_order_shop_product_spec';
+      $this->belongs_to_many[]   = 'shop_order_shop_product_spec_setting';
+      $this->belongs_to_many[]   = 'shop_order_shop_product_spec_setting_item';
       $this->filter_belongs_to[] = 'shop_product';
     }
   }
@@ -137,7 +143,9 @@ class ShopOrderShopProductController extends Controller
       'order_type'      => $shop_product->order_type,
       'original_count'  => $request->count,
     ]);
-
+    //create shop_order_shop_product_spec
+    //create shop_order_shop_product_spec_setting
+    //create shop_order_shop_product_spec_setting_item
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_StoreHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {

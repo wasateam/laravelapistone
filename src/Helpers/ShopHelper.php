@@ -587,4 +587,9 @@ class ShopHelper
     }
   }
 
+  public static function adjustProductStockEnough($buy_count, $shop_product_id)
+  {
+    # 建立訂單時判斷商品庫存是否足夠
+  }
+
 }

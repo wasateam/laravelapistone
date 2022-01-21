@@ -51,6 +51,22 @@ class LinePayHelper
   }
 
   /**
+   * 確認付款
+   */
+  public static function payment_confirm($transaction_id)
+  {
+
+  }
+
+  /**
+   * 取消付款
+   */
+  public static function payment_cancel($transaction_id)
+  {
+
+  }
+
+  /**
    * 取得 POST 用內容
    */
   public static function get_post_signature($uri, $request_body, $nonce, $linepay_secret_key = null)

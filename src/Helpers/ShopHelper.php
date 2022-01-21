@@ -548,8 +548,8 @@ class ShopHelper
   public static function shopProductCreateSpec($shop_product_spec_settings, $shop_product_specs, $shop_product_id)
   {
     // create/update shop_product_spec,shop_product_spec_setting,shop_product_spec_setting_item when shop_product created/updated
-    $shop_product_spec_setting_ids = []; //[1,2,3]
-    $shop_product_spec_setting_item_ids = [];//[[1,2],[3,4]]
+    $shop_product_spec_setting_ids      = []; //[1,2,3]
+    $shop_product_spec_setting_item_ids = []; //[[1,2],[3,4]]
     foreach ($shop_product_spec_settings as $shop_product_spec_setting) {
 
       //shop_product_spec_setting
@@ -581,7 +581,7 @@ class ShopHelper
         $item_ids[] = $new_shop_product_spec_setting_item->id;
       }
       $shop_product_spec_setting_item_ids[] = $item_ids;
-      $shop_product_spec_setting_ids[] = [
+      $shop_product_spec_setting_ids[]      = [
         'setting_id' => $new_shop_product_spec_setting->id,
         'item_ids'   => $item_ids,
       ];
@@ -652,7 +652,6 @@ class ShopHelper
     }
   }
 
-<<<<<<< HEAD
   public static function adjustProductStockEnough($shop_cart_product)
   {
     # 建立訂單時判斷商品庫存是否足夠
@@ -747,7 +746,6 @@ class ShopHelper
 
     return $results;
   }
-=======
   public static function getShopProductPriceRange($shop_product)
   {
     $price = null;
@@ -783,5 +781,4 @@ class ShopHelper
     return $stock_count;
   }
 
->>>>>>> issue
 }

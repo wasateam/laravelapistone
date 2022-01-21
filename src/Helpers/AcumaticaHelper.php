@@ -209,6 +209,7 @@ class AcumaticaHelper
    * customerId 使用者 Customer ID
    * class 類型
    * price_class 方案金額-Acumatica提供可輸入值 EX: HC199
+   * user 使用者 model
    */
   public static function createCustomer($class, $price_class, $user)
   {
@@ -237,7 +238,7 @@ class AcumaticaHelper
       ],
       'PrimayContact' => [
         'DateOfBirth' => [
-          'value' => $user->birthday,
+          'value' => Carbon::parse($user->birthday),
         ],
         'LastName'    => [
           'value' => $user->name,

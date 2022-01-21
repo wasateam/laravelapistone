@@ -90,7 +90,7 @@ class EmailHelper
       $snap = $snap->whereNull('country_code');
     }
     $auto_reply = $snap->first();
-    if (!$auto_reply) {
+    if (!$auto_reply || !$auto_reply->content) {
       return;
     }
 
@@ -116,5 +116,5 @@ class EmailHelper
   }
 
   # 發送預約通知
-  // public 
+  // public
 }

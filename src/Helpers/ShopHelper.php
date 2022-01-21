@@ -111,7 +111,7 @@ class ShopHelper
     //運費 default = 100
     $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
     if ($order_type) {
-      $order_types     = config('stone.shop.order_types.items') ? config('stone.shop.order_types.items') : [];
+      $order_types     = config('stone.shop.order_type') ? config('stone.shop.order_types') : [];
       $curr_order_type = str_replace('-', '_', $order_type);
       $has_type        = array_key_exists($curr_order_type, $order_types);
       if ($has_type) {

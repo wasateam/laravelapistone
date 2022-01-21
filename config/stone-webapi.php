@@ -105,15 +105,13 @@ return [
     'custom_shop_order' => true,
     'notice'            => true,
     'freight_default'   => 100,
-    'order_types'       => [
-      'items' => [
-        'next_day'  => [
-          'freight_default'        => 100,
-          'has_shop_free_shipping' => true,
-        ],
-        'pre_order' => [
-          'freight_separate' => true,
-        ],
+    'order_type'        => [
+      'next_day'  => [
+        'freight_default'        => 100,
+        'has_shop_free_shipping' => true,
+      ],
+      'pre_order' => [
+        'freight_separate' => true,
       ],
     ],
     'shop_campaign'     => [

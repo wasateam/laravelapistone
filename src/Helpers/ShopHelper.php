@@ -589,4 +589,39 @@ class ShopHelper
     }
   }
 
+  public static function getShopProductPriceRange($shop_product)
+  {
+    $price = null;
+    if (isset($shop_product->shop_product_specs) && $shop_product->shop_product_specs->count()) {
+      $all_price = [];
+      foreach ($shop_product->shop_product_specs as $shop_product_spec) {
+        $all_price[] = $shop_product_spec->discount_price ? $shop_product_spec->discount_price : $shop_product_spec->price;
+      }
+      if (count($all_price) > 1) {
+        sort($all_price);
+        $price = "{$all_price[0]}-{$all_price[$shop_product->shop_product_specs->count() - 1]}";
+      } else {
+        $price = $all_price[0];
+      }
+    } else {
+      $price = $shop_product->price;
+    }
+
+    return $price;
+  }
+
+  public static function getShopProductAllStockCount($shop_product)
+  {
+    $stock_count = 0;
+    if (isset($shop_product->shop_product_specs) && $shop_product->shop_product_specs->count()) {
+      foreach ($shop_product->shop_product_specs as $shop_product_spec) {
+        $stock_count += $shop_product_spec->stock_count;
+      }
+    } else {
+      $stock_count = $shop_product->stock_count;
+    }
+
+    return $stock_count;
+  }
+
 }

@@ -137,7 +137,8 @@ class PinCardController extends Controller
   }
 
   /**
-   * Register
+   * Register 註冊
+   * 兌換服務卡
    *
    */
   public function register(Request $request)

@@ -467,17 +467,17 @@ class ShopOrderController extends Controller
         }
       }
 
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($my_cart_products, $invoice_status, $invoice_number, $order_type, $today_dicount_decode_campaign) {
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($my_cart_products, $invoice_status, $invoice_number, $order_type, $request) {
         # Shop Order Shop Product
         foreach ($my_cart_products as $my_cart_product) {
-          $cart_product         = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->first();
+          $cart_product = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->first();
           # create shop_order_shop_product
           $new_order_product    = ShopHelper::createShopOrderShopProduct($cart_product, $model->id);
           $cart_product->status = 0;
           $cart_product->save();
           ShopHelper::shopOrderProductChangeCount($new_order_product->id);
         }
-        ShopHelper::changeShopOrderPrice($model->id, $order_type);
+        ShopHelper::changeShopOrderPrice($model->id, $order_type, $request);
         $model->status     = 'not-established';
         $model->pay_status = 'waiting';
         $model->save();
@@ -486,11 +486,6 @@ class ShopOrderController extends Controller
         if ($order_type) {
           $model->order_type = $order_type;
           $model->save();
-        }
-
-        # Create Discount Code Shop Campaign
-        if ($today_dicount_decode_campaign) {
-          ShopHelper::createShopCampaignShopOrder($model, $today_dicount_decode_campaign);
         }
 
         # Invoice

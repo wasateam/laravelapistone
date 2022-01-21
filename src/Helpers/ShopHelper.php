@@ -14,6 +14,8 @@ use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopFreeShipping;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
+use Wasateam\Laravelapistone\Models\ShopOrderShopProductSpecSetting;
+use Wasateam\Laravelapistone\Models\ShopOrderShopProductSpecSettingItem;
 use Wasateam\Laravelapistone\Models\ShopProduct;
 use Wasateam\Laravelapistone\Models\ShopProductSpecSetting;
 use Wasateam\Laravelapistone\Models\ShopProductSpecSettingItem;
@@ -52,14 +54,21 @@ class ShopHelper
   {
     //成立訂單，更改商品庫存
     $shop_order_product = ShopOrderShopProduct::where('id', $shop_order_product_id)->first();
-    $shop_product       = ShopProduct::where('id', $shop_order_product->shop_product_id)->first();
-    //減少商品庫存
-    $shop_product->stock_count = $shop_product->stock_count - $shop_order_product->count;
-    $shop_product->save();
+    $buy_count          = $shop_order_product->count;
+    if (isset($shop_order_product->shop_order_shop_proudct_spec)) {
+      $shop_order_shop_proudct_spec              = $shop_order_product->shop_order_shop_proudct_spec;
+      $shop_order_shop_proudct_spec->stock_count = $shop_order_shop_proudct_spec->stock_count - $buy_count;
+      $shop_order_shop_proudct_spec->save();
+    } else {
+      $shop_product = ShopProduct::where('id', $shop_order_product->shop_product_id)->first();
+      //減少商品庫存
+      $shop_product->stock_count = $shop_product->stock_count - $buy_count;
+      $shop_product->save();
+    }
   }
 
   //取得訂單金額、運費、商品總金額
-  public static function calculateShopOrderPrice($shop_order_id, $order_type)
+  public static function calculateShopOrderPrice($shop_order_id, $order_type, $request = null)
   {
     //計算訂單金額
     $today      = Carbon::now();
@@ -70,32 +79,74 @@ class ShopHelper
     //商品價錢總和  - 沒有優惠價就使用售價
     $shop_order_shop_products = $shop_order->shop_order_shop_products;
     $shop_product_price_arr   = $shop_order_shop_products->map(function ($item) {
-      return $item->discount_price ? $item->discount_price * $item->count : $item->price * $item->count;
+      $price = 0;
+      if (isset($item->shop_order_shop_product_sepc)) {
+        $spec  = $item->shop_order_shop_product_sepc;
+        $price = $spec->discount_price ? $spec->discount_price : $spec->price;
+      } else {
+        $price = $item->discount_price ? $item->discount_price : $item->price;
+      }
+      return $price * $item->count;
     });
     $shop_product_price_total = Self::sum_total($shop_product_price_arr);
 
-    //運費 default = 100
-    $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
-    if ($order_type == 'next-day') {
-      //隔日配
-      $free_freight_price = ShopFreeShipping::where('end_date', '>=', $today_date)->where('start_date', '<=', $today_date)->first();
-      if ($free_freight_price) {
-        if ($shop_product_price_total >= $free_freight_price->price) {
-          $freight = 0;
+    $dicount_shop_product_price_total = 0;
+    // discount_code
+    // create discount_code shop_camapign
+    if ($request && $request->has('discount_code')) {
+      $today_dicount_decode_campaign = ShopHelper::getTodayDiscountCodeCampaign($request->discount_code);
+      ShopHelper::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
+      if ($shop_product_price_total >= $today_dicount_decode_campaign->full_amount) {
+        if ($today_dicount_decode_campaign->discount_percent) {
+          $dicount_shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
+        } else if ($today_dicount_decode_campaign->discount_amount) {
+          $dicount_shop_product_price_total = $shop_product_price_total - $today_dicount_decode_campaign->discount_amount;
         }
       }
-    } else if ($order_type == 'pre-order') {
-      //預購
-      $all_product_freight_arr = $shop_order_shop_products->map(function ($item) {
-        return $item->freight ? $item->freight * $item->count : 0;
-      });
-      $freight = Self::sum_total($all_product_freight_arr);
     }
     //紅利點數
-    $bonus_points = $shop_order->bonus_points;
-    //折扣碼
+    //FIXME:create bonus_points record
+    $bonus_points = $shop_order->bonus_points ? $shop_order->bonus_points : 0;
+
+    //運費 default = 100
+    $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
+    if ($order_type) {
+      $order_types     = config('stone.shop.order_types.items') ? config('stone.shop.order_types.items') : [];
+      $curr_order_type = str_replace('-', '_', $order_type);
+      $has_type        = array_key_exists($curr_order_type, $order_types);
+      if ($has_type) {
+        $type = $order_types[$curr_order_type];
+        // type has freight_default
+        if ($type['freight_default']) {
+          $freight = $type['freight_default'];
+        }
+        // type has has_shop_free_shipping
+        if ($type['has_shop_free_shipping']) {
+          $free_freight_price = ShopFreeShipping::where('end_date', '>=', $today_date)->where('start_date', '<=', $today_date)->first();
+          if ($free_freight_price) {
+            if ($dicount_shop_product_price_total >= $free_freight_price->price) {
+              $freight = 0;
+            }
+          }
+        }
+        //type has freight_sepe
+        if ($type['freight_separate']) {
+          $all_product_freight_arr = $shop_order_shop_products->map(function ($item) {
+            $freight = 0;
+            if (isset($item->shop_order_shop_product_spec)) {
+              $freight = $item->shop_order_shop_prdouct_spec->freight ? $item->shop_order_shop_prdouct_spec->freight : 0;
+            } else {
+              $freight = $item->freight ? $item->freight : 0;
+            }
+            return $freight * $item->count;
+          });
+          $freight = Self::sum_total($all_product_freight_arr);
+        }
+      }
+    }
+
     //訂單金額 產品總和+運費
-    $order_price = $shop_product_price_total + $freight - $bonus_points;
+    $order_price = $dicount_shop_product_price_total + $freight - $bonus_points;
 
     return [
       "products_price" => $shop_product_price_total,
@@ -105,13 +156,13 @@ class ShopHelper
 
   }
 
-  public static function changeShopOrderPrice($shop_order_id, $order_type = null)
+  public static function changeShopOrderPrice($shop_order_id, $order_type = null, $request = null)
   {
     //更新訂單價格
     $shop_order = ShopOrder::where('id', $shop_order_id)->first();
     //取得訂單類型
     $_order_type                = $order_type ? $order_type : $shop_order->order_type;
-    $price_array                = Self::calculateShopOrderPrice($shop_order_id, $_order_type);
+    $price_array                = Self::calculateShopOrderPrice($shop_order_id, $_order_type, $request);
     $shop_order->products_price = $price_array['products_price'];
     $shop_order->freight        = $price_array['freight'];
     $shop_order->order_price    = $price_array['order_price'];
@@ -171,7 +222,12 @@ class ShopHelper
     $order_amount = 0;
     foreach ($shop_cart_products as $shop_cart_product) {
       $count = $shop_cart_product['count'];
-      $price = $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
+      $price = 0;
+      if (isset($shop_cart_product->shop_product_spec)) {
+        $price = $shop_cart_product->shop_product_spec['discount_price'] ? $shop_cart_product->shop_product_spec['discount_price'] : $shop_cart_product->shop_product_spec['price'];
+      } else {
+        $price = $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
+      }
       $order_amount += $count * $price;
     }
     return $order_amount;
@@ -180,7 +236,12 @@ class ShopHelper
   public static function getOrderProductAmountPrice($order_product)
   {
     $count = $order_product['count'];
-    $price = $order_product['discount_price'] ? $order_product['discount_price'] : $order_product['price'];
+    $price = 0;
+    if (isset($order_product->shop_product_spec)) {
+      $price = $order_product->shop_product_spec['discount_price'] ? $order_product->shop_product_spec['discount_price'] : $order_product->shop_product_spec['price'];
+    } else {
+      $price = $order_product['discount_price'] ? $order_product['discount_price'] : $order_product['price'];
+    }
     return $count * $price;
   }
 
@@ -589,15 +650,98 @@ class ShopHelper
     }
   }
 
-  public static function adjustProductStockEnough($buy_count, $shop_product_id)
+  public static function adjustProductStockEnough($shop_cart_product)
   {
     # 建立訂單時判斷商品庫存是否足夠
-    $shop_product     = ShopProduct::find($shop_product_id);
     $shop_stock_count = 0;
+    $buy_count        = $shop_cart_product->count ? $shop_cart_product->count : 0;
 
-    if (count($shop_product->shop_product_specs)) {
-      $shop_stock_count = $shop_product->shop_product_specs[0];
+    if (isset($shop_cart_product->shop_product_spec)) {
+      $shop_stock_count = $shop_cart_product->shop_product_spec->stock_count;
+    } else {
+      $shop_stock_count = $shop_cart_product->shop_product->stock_count;
+    }
+
+    if ($buy_count > $shop_stock_count) {
+      return false;
+    } else {
+      return true;
     }
   }
 
+  public static function createShopOrderShopProduct($shop_cart_product, $shop_order_id)
+  {
+    # 建立訂單時建立訂單商品(用購物車商品判斷)
+    $new_order_product                       = new ShopOrderShopProduct;
+    $shop_product                            = $shop_cart_product->shop_product;
+    $new_order_product->name                 = $shop_product->name;
+    $new_order_product->subtitle             = $shop_product->subtitle;
+    $new_order_product->count                = $shop_cart_product->count;
+    $new_order_product->original_count       = $shop_cart_product->count;
+    $new_order_product->price                = $shop_product->price;
+    $new_order_product->discount_price       = $shop_product->discount_price;
+    $new_order_product->spec                 = $shop_product->spec;
+    $new_order_product->weight_capacity      = $shop_product->weight_capacity;
+    $new_order_product->cover_image          = $shop_product->cover_image;
+    $new_order_product->order_type           = $shop_product->order_type;
+    $new_order_product->freight              = $shop_product->freight;
+    $new_order_product->shop_product_id      = $shop_product->id;
+    $new_order_product->cost                 = $shop_product->cost;
+    $new_order_product->shop_cart_product_id = $shop_cart_product['id'];
+    $new_order_product->shop_order_id        = $shop_order_id;
+    $new_order_product->save();
+    if (isset($shop_cart_product->shop_product_spec)) {
+      # create shop_order_shop_prdouct_spec
+      $shop_product_spec = $shop_cart_product->shop_product_spec;
+      Self::createShopOrderShopProductSpec($shop_product_spec, $new_order_product->id);
+    }
+    return $new_order_product;
+  }
+
+  public static function createShopOrderShopProductSpec($shop_product_spec, $shop_order_shop_product_id)
+  {
+    # 建立訂單商品規格(用商品格式判斷)
+    # create shop_order_shop_product_spec_setting
+    $shop_product_settings = $shop_product_spec->shop_product_spec_settings;
+    $new_settings          = [];
+    foreach ($shop_product_settings as $shop_product_settings) {
+      $new_shop_order_product_setting                                     = new ShopOrderShopProductSpecSetting;
+      $new_shop_order_product_setting->name                               = $shop_product_settings->name;
+      $new_shop_order_product_setting->sq                                 = $shop_product_settings->sq;
+      $new_shop_order_product_setting->shop_order_shop_product_id         = $shop_order_shop_product_id;
+      $new_shop_order_product_setting->shop_order_shop_product_setting_id = $shop_product_settings->id;
+      $new_shop_order_product_setting->save();
+      $new_settings[] = $new_shop_order_product_setting;
+    }
+    # create shop_order_shop_product_spec_setting_item
+    $shop_product_setting_items = $shop_product_spec->shop_product_spec_setting_items;
+    foreach ($shop_product_setting_items as $shop_product_setting_item) {
+      $new_shop_order_product_setting_item                                    = new ShopOrderShopProductSpecSettingItem;
+      $new_shop_order_product_setting_item->name                              = $shop_product_setting_item->name;
+      $new_shop_order_product_setting_item->sq                                = $shop_product_setting_item->sq;
+      $new_shop_order_product_setting_item->shop_order_shop_product_id        = $shop_order_shop_product_id;
+      $new_shop_order_product_setting_item->shop_product_spec_setting_item_id = $shop_product_setting_item->id;
+      //shop_order_shop_product_spec_setting
+      $shop_order_shop_product_spec_setting                                         = Self::findItemsInArray($new_settings, 'id', $shop_product_setting_item->shop_product_spec_setting_id);
+      $new_shop_order_product_setting_item->shop_order_shop_prdouct_spec_setting_id = $shop_order_shop_product_spec_setting[0]->id;
+      $new_shop_order_product_setting->save();
+    }
+  }
+
+  public static function findItemsInArray($array, $key, $value)
+  {
+    $results = array();
+
+    if (is_array($array)) {
+      if (isset($array[$key]) && $array[$key] == $value) {
+        $results[] = $array;
+      }
+
+      foreach ($array as $subarray) {
+        $results = array_merge($results, search($subarray, $key, $value));
+      }
+    }
+
+    return $results;
+  }
 }

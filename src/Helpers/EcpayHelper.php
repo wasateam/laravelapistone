@@ -45,7 +45,7 @@ class EcpayHelper
   # 取得商品Token，準備站內付
   public static function getMerchantToken($data)
   {
-    $mode         = config('stone.thrid_party_payment.mode');
+    $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData($data);
     if ($mode == 'dev') {
       $post_url = 'https://ecpg-stage.ecpay.com.tw/Merchant/GetTokenbyTrade';
@@ -117,7 +117,7 @@ class EcpayHelper
   # 站內付送出，建立付費動作
   public static function createPayment($PayToken, $MerchantTradeNo)
   {
-    $mode         = config('stone.thrid_party_payment.mode');
+    $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData([
       "MerchantID"      => config('stone.thrid_party_payment.ecpay_inpay.merchant_id'),
       "PayToken"        => $PayToken,

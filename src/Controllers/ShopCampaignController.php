@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
+use Wasateam\Laravelapistone\Models\ShopCampaign;
 
 /**
  * @group 促銷活動 ShopCampaign
@@ -96,6 +97,7 @@ class ShopCampaignController extends Controller
    * @queryParam time_field string  No-example created_at,updated_at
    * @queryParam is_active int  No-example 0,1
    * @queryParam status int  No-example 1,2,3
+   * @queryParam type string  No-example bonus_point_feedback,discount_code
    *
    */
   public function index(Request $request, $id = null)
@@ -237,4 +239,55 @@ class ShopCampaignController extends Controller
     return ModelHelper::ws_DestroyHandler($this, $id);
   }
 
+/**
+ * DiscountCode Check 折扣碼可否使用
+ *
+ * @bodyParam dicsount_code string 折扣碼 Example:LittleChicken
+ * @bodyParam price string 訂單價格 Example:1000
+ */
+  public function today_discount_code_check(Request $request)
+  {
+    if (!$request->has('price')) {
+      return response()->json([
+        'message' => 'price is required',
+      ], 400);
+    }
+    if (gettype($request->price) != 'integer') {
+      return response()->json([
+        'message' => 'price is not integer',
+      ], 400);
+    }
+    //today
+    $today_date = Carbon::now()->format('Y-m-d');
+    //shop_campaign
+    $has_shop_campaign = ShopCampaign::where('type', 'discount_code')->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('full_amount', '<=', $request->price)->first();
+
+    if (isset($has_shop_campaign)) {
+      return response()->json([
+        'message' => 'OK',
+      ], 200);
+    } else {
+      return response()->json([
+        'message' => 'no shop_campaign',
+      ], 200);
+    }
+  }
+
+  /**
+   * Today Index 今日促銷活動
+   * @queryParam search string 搜尋  No-example
+   * @queryParam type string  No-example bonus_point_feedback,discount_code
+   * @queryParam type string  No-example bonus_point_feedback,discount_code
+   *
+   */
+  public function today_index(Request $request, $id = null)
+  {
+    return ModelHelper::ws_IndexHandler($this, $request, $id, $request->get_all, function ($snap) {
+      //today
+      $today_date = Carbon::now()->format('Y-m-d');
+      //篩選日期區間
+      $snap = $snap->where('end_date', '>=', $today_date)->where('start_date', '<=', $today_date)->where('is_active', 1);
+      return $snap;
+    });
+  }
 }

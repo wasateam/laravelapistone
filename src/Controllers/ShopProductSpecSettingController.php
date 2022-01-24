@@ -19,13 +19,17 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  */
 class ShopProductSpecSettingController extends Controller
 {
-  public $model         = 'Wasateam\Laravelapistone\Models\ShopProductSpecSetting';
-  public $name          = 'shop_product_spec_setting';
-  public $resource      = 'Wasateam\Laravelapistone\Resources\ShopProductSpecSetting';
-  public $input_fields  = [];
-  public $filter_fields = [
+  public $model        = 'Wasateam\Laravelapistone\Models\ShopProductSpecSetting';
+  public $name         = 'shop_product_spec_setting';
+  public $resource     = 'Wasateam\Laravelapistone\Resources\ShopProductSpecSetting';
+  public $input_fields = [
     'sq',
     'name',
+  ];
+  public $filter_fields = [
+  ];
+  public $order_fields = [
+    'sq',
   ];
   public $belongs_to = [
     'shop_product',

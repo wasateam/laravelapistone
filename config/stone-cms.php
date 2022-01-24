@@ -89,7 +89,6 @@ return [
     'pre_order'       => true,
     'current'         => true,
     'order_export'    => true,
-    'freight_default' => 100,
     //購物須知
     'notice'          => true,
     //促銷活動
@@ -99,6 +98,16 @@ return [
           'feedback_after_invoice_days' => 3, //開立發票後多久發紅利
           'date_no_repeat'              => true, //日期是否重複
         ],
+      ],
+    ],
+    'freight_default' => 100,
+    'order_type'      => [
+      'next_day'  => [
+        'freight_default'        => 100,
+        'has_shop_free_shipping' => true,
+      ],
+      'pre_order' => [
+        'freight_separate' => true,
       ],
     ],
   ],

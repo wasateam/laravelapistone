@@ -147,4 +147,14 @@ class AuthHelper
     $url = Str::replace(config('stone.app_url') . '/api', config('stone.web_url'), $api_url);
     return $url;
   }
+
+  # Check Request User qualified
+  public static function checkRequestUser($request)
+  {
+    if ($request->user != Auth::user()->id) {
+      return response()->json([
+        'message' => 'not you',
+      ], 400);
+    }
+  }
 }

@@ -48,6 +48,9 @@ use Wasateam\Laravelapistone\Controllers\ShopNoticeClassController;
 use Wasateam\Laravelapistone\Controllers\ShopNoticeController;
 use Wasateam\Laravelapistone\Controllers\ShopOrderController;
 use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductController;
+use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductSpecController;
+use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductSpecSettingController;
+use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductSpecSettingItemController;
 use Wasateam\Laravelapistone\Controllers\ShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductCoverFrameController;
 use Wasateam\Laravelapistone\Controllers\ShopProductExpectShipController;
@@ -491,6 +494,18 @@ class RoutesHelper
       Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      # Shop Order Shop Product Spec
+      Route::resource('shop_order_shop_product_spec', ShopOrderShopProductSpecController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Order Shop Product Spec Setting
+      Route::resource('shop_order_shop_product_spec_setting', ShopOrderShopProductSpecSettingController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Order Shop Product Spec Setting Item
+      Route::resource('shop_order_shop_product_spec_setting_item', ShopOrderShopProductSpecSettingItemController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
       # Shop Cart
       Route::resource('shop_cart', ShopCartController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
@@ -932,7 +947,19 @@ class RoutesHelper
       Route::get('/auth/shop_order', [ShopOrderController::class, 'auth_shop_order_index']);
       # Shop Order Product
       Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
-        'index', 'show', 'store',
+        'index', 'show',
+      ])->shallow();
+      # Shop Order Shop Product Spec
+      Route::resource('shop_order_shop_product_spec', ShopOrderShopProductSpecController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      # Shop Order Shop Product Spec Setting
+      Route::resource('shop_order_shop_product_spec_setting', ShopOrderShopProductSpecSettingController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      # Shop Order Shop Product Spec Setting Item
+      Route::resource('shop_order_shop_product_spec_setting_item', ShopOrderShopProductSpecSettingItemController::class)->only([
+        'index', 'show',
       ])->shallow();
       # Shop Cart
       Route::get('/auth/shop_cart', [ShopCartController::class, 'auth_cart']);
@@ -953,6 +980,8 @@ class RoutesHelper
       Route::resource('shop_campaign', ShopCampaignController::class)->only([
         'index', 'show',
       ])->shallow();
+      Route::get('/shop_campaign/today/index', [ShopCampaignController::class, 'today_index']);
+      Route::post('/shop_campaign/today/discount_code/check', [ShopCampaignController::class, 'today_discount_code_check']);
       # Shop Campaign Shop Order
       Route::resource('shop_campaign_shop_order', ShopCampaignShopOrderController::class)->only([
         'index', 'show',

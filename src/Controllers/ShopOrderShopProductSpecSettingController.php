@@ -7,33 +7,29 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group ShopProductSpecSettingItem 產品規格設定項目
+ * @group ShopOrderShopProductSpecSetting 訂單商品規格設定
  *
- * 產品規格設定項目 API
+ * 訂單商品規格設定 API
  *
- * name 產品規格設定項目名稱
+ * name 產品規格設定名稱
  * sq 排序
- * shop_product 綁定之商品
- * shop_product_spec_setting 綁定之商品設定
+ * shop_order_shop_product 綁定之訂單商品
+ * shop_product_spec_setting 綁定之訂單商品規格設定
  *
  * @authenticated
  */
-class ShopProductSpecSettingItemController extends Controller
+class ShopOrderShopProductSpecSettingController extends Controller
 {
-  public $model         = 'Wasateam\Laravelapistone\Models\ShopProductSpecSettingItem';
-  public $name          = 'shop_product_spec_setting_item';
-  public $resource      = 'Wasateam\Laravelapistone\Resources\ShopProductSpecSettingItem';
+  public $model         = 'Wasateam\Laravelapistone\Models\ShopOrderShopProductSpecSetting';
+  public $name          = 'shop_order_shop_product_spec_setting';
+  public $resource      = 'Wasateam\Laravelapistone\Resources\ShopOrderShopProductSpecSetting';
   public $input_fields  = [];
   public $filter_fields = [
     'sq',
   ];
-  public $belongs_to = [
-    'shop_product',
-    'shop_product_spec_setting',
-  ];
+  public $order_fields      = ['sq'];
   public $filter_belongs_to = [
-    'shop_product',
-    'shop_product_spec_setting',
+    'shop_order_shop_product',
   ];
 
   public function __construct()
@@ -41,13 +37,14 @@ class ShopProductSpecSettingItemController extends Controller
     if (config('stone.mode') == 'cms') {
       $input_fields[] = 'sq';
       $input_fields[] = 'name';
+      $belongs_to[]   = 'shop_order_shop_product';
+      $belongs_to[]   = 'shop_product_spec_setting';
     }
   }
 
   /**
    * Index
-   * @queryParam shop_product ids 商品  No-example
-   * @queryParam shop_product_spec_setting ids 商品  No-example
+   * @queryParam shop_order_shop_product ids 訂單商品  No-example
    *
    */
   public function index(Request $request, $id = null)
@@ -62,8 +59,7 @@ class ShopProductSpecSettingItemController extends Controller
   /**
    * Store
    *
-   * @bodyParam shop_product int 產品 Example:1
-   * @bodyParam shop_product_spec_setting int 產品 Example:1
+   * @bodyParam shop_order_shop_product int 產品 Example:1
    * @bodyParam name string 名稱 Example:name
    * @bodyParam sq string 名稱 Example:1
    */
@@ -75,7 +71,7 @@ class ShopProductSpecSettingItemController extends Controller
   /**
    * Show
    *
-   * @urlParam  shop_product_spec_setting_item required The ID of shop_product_spec_setting_item. Example: 1
+   * @urlParam  shop_order_shop_product_spec_setting required The ID of shop_order_shop_product_spec_setting. Example: 1
    */
   public function show(Request $request, $id = null)
   {
@@ -85,9 +81,8 @@ class ShopProductSpecSettingItemController extends Controller
   /**
    * Update
    *
-   * @urlParam  shop_product_spec_setting_item required The ID of shop_product_spec_setting_item. Example: 1
-   * @bodyParam shop_product int 產品 Example:1
-   * @bodyParam shop_product_spec_setting int 產品 Example:1
+   * @urlParam  shop_order_shop_product_spec_setting required The ID of shop_order_shop_product_spec_setting. Example: 1
+   * @bodyParam shop_order_shop_product int 產品 Example:1
    * @bodyParam name string 名稱 Example:name
    * @bodyParam sq string 名稱 Example:1
    */
@@ -99,11 +94,10 @@ class ShopProductSpecSettingItemController extends Controller
   /**
    * Delete
    *
-   * @urlParam  shop_product_spec_setting_item required The ID of shop_product_spec_setting_item. Example: 2
+   * @urlParam  shop_order_shop_product_spec_setting required The ID of shop_order_shop_product_spec_setting. Example: 2
    */
   public function destroy($id)
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
   }
-
 }

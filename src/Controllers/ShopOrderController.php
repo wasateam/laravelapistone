@@ -13,6 +13,7 @@ use Wasateam\Laravelapistone\Exports\ShopOrderExport;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
+use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
@@ -333,6 +334,8 @@ class ShopOrderController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_StoreHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
+      // return AuthHelper::checkRequestUser($request);
+      
       if ($request->user != Auth::user()->id) {
         return response()->json([
           'message' => 'not you',
@@ -344,20 +347,24 @@ class ShopOrderController extends Controller
         ], 400);
       }
 
-      # ShopShipTimeSetting
-      if (!$request->has('shop_ship_time_setting')) {
-        return response()->json([
-          'message' => 'shop_ship_time_setting required.',
-        ], 400);
-      }
-      $shop_ship_time_setting = ShopShipTimeSetting::where('id', $request->shop_ship_time_setting)->first();
-      if ($shop_ship_time_setting->max_count <= count($shop_ship_time_setting->today_shop_orders)) {
-        return response()->json([
-          'message' => 'shop_ship_time_setting is max today.',
-        ], 400);
+      # ShopShipTimeSetting 配送時間限制
+      if (config('stone.shop.ship_time')) {
+        if (!$request->has('shop_ship_time_setting')) {
+          return response()->json([
+            'message' => 'shop_ship_time_setting required.',
+          ], 400);
+        }
+        $shop_ship_time_setting = ShopShipTimeSetting::where('id', $request->shop_ship_time_setting)->first();
+        if (config('stone.shop.ship_time.daily_count_limit')) {
+          if ($shop_ship_time_setting->max_count <= count($shop_ship_time_setting->today_shop_orders)) {
+            return response()->json([
+              'message' => 'shop_ship_time_setting is max today.',
+            ], 400);
+          }
+        }
       }
 
-      # 購物車商品+訂單類型
+      # ShopCartProduct and ShopType Check
       $my_cart_products  = $request->shop_cart_products;
       $_my_cart_products = [];
       $order_type        = "";

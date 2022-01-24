@@ -581,24 +581,19 @@ class ShopHelper
         $item_ids[] = $new_shop_product_spec_setting_item->id;
       }
       $shop_product_spec_setting_item_ids[] = $item_ids;
-      $shop_product_spec_setting_ids[]      = [
-        'setting_id' => $new_shop_product_spec_setting->id,
-        'item_ids'   => $item_ids,
-      ];
+      $shop_product_spec_setting_ids[]      = $new_shop_product_spec_setting->id;
     }
+
+    $id_combination = Self::combinateArray($shop_product_spec_setting_item_ids);
+    error_log(json_encode($id_combination));
 
     //shop_product_spec
     foreach ($shop_product_specs as $shop_product_spec_key => $shop_product_spec) {
       $new_shop_product_spec = $shop_product_spec;
       //shop_product_spec_settings
-      $shop_product_spec_settings = [];
+      $shop_product_spec_settings = $shop_product_spec_setting_ids;
       //shop_product_spec_setting_items
-      $shop_product_spec_setting_items = [];
-      //get_ids
-      foreach ($shop_product_spec_setting_ids as $shop_product_spec_setting_id) {
-        $shop_product_spec_settings[]      = $shop_product_spec_setting_id['setting_id'];
-        $shop_product_spec_setting_items[] = $shop_product_spec_setting_id['item_ids'][$shop_product_spec_key];
-      }
+      $shop_product_spec_setting_items = $id_combination[$shop_product_spec_key];
 
       $new_shop_product_spec['shop_product']                    = $shop_product_id;
       $new_shop_product_spec['shop_product_spec_settings']      = $shop_product_spec_settings;
@@ -779,6 +774,26 @@ class ShopHelper
     }
 
     return $stock_count;
+  }
+
+  public static function combinateArray($array)
+  {
+    // combination array element
+    // array example: [[1,2],[4,5],[6,7]]
+    if (count($array) === 0 || !isset($array)) {
+      return [];
+    }
+    $current = $array[0]; //[1,2]
+    for ($i = 1; $i < count($array); $i++) {
+      $result = [];
+      for ($c = 0; $c < count($current); $c++) {
+        for ($r = 0; $r < count($array[$i]); $r++) {
+          $result[] = [$current[$c], $array[$i][$r]];
+        }
+      }
+      $current = $result;
+    }
+    return $current;
   }
 
 }

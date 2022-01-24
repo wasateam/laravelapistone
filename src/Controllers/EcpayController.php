@@ -10,6 +10,11 @@ use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 
+/**
+ * @group Ecpay 綠界站內付相關動作
+ *
+ * @authenticated
+ */
 class EcpayController extends Controller
 {
   public function get_inpay_merchant_init(Request $request)

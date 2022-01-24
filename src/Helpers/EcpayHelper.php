@@ -45,7 +45,7 @@ class EcpayHelper
   # 取得商品Token，準備站內付
   public static function getMerchantToken($data)
   {
-    $mode         = config('stone.thrid_party_payment.mode');
+    $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData($data);
     if ($mode == 'dev') {
       $post_url = 'https://ecpg-stage.ecpay.com.tw/Merchant/GetTokenbyTrade';
@@ -117,7 +117,7 @@ class EcpayHelper
   # 站內付送出，建立付費動作
   public static function createPayment($PayToken, $MerchantTradeNo)
   {
-    $mode         = config('stone.thrid_party_payment.mode');
+    $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData([
       "MerchantID"      => config('stone.thrid_party_payment.ecpay_inpay.merchant_id'),
       "PayToken"        => $PayToken,
@@ -346,13 +346,19 @@ class EcpayHelper
   {
     $items = [];
     foreach ($shop_cart_products as $shop_cart_product) {
-      $amount  = ShopHelper::getOrderProductAmountPrice($shop_cart_product);
+      $amount                  = ShopHelper::getOrderProductAmountPrice($shop_cart_product);
+      $shop_cart_product_price = 0;
+      if (isset($shop_cart_product->shop_product_spec)) {
+        $shop_cart_product_price = $shop_cart_product->shop_product_spec['discount_price'] ? $shop_cart_product->shop_product_spec['discount_price'] : $shop_cart_product->shop_product_spec['price'];
+      } else {
+        $shop_cart_product_price = $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
+      }
       $items[] = [
         // "ItemSeq"     => 1,
         "ItemName"    => $shop_cart_product['name'],
         "ItemCount"   => $shop_cart_product['count'],
         "ItemWord"    => "件",
-        "ItemPrice"   => $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'],
+        "ItemPrice"   => $shop_cart_product_price,
         "ItemTaxType" => "1",
         "ItemAmount"  => $amount,
         "ItemRemark"  => "",

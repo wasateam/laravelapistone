@@ -133,53 +133,70 @@ class ShopCartProductController extends Controller
         'message' => 'no data.',
       ], 400);
     }
-    $shop_cart_product = ShopCartProduct::where('shop_product_id', $request->shop_product)->where('status', 1)->where('user_id', $auth->id)->first();
-    //原本選的量
-    $original_count = $shop_cart_product && $shop_cart_product->count ? $shop_cart_product->count : 0;
-    //原本選的量＋新增的量
-    $count = $original_count + $request->count;
-    if ($shop_product->stock_count < $count) {
-      return response()->json([
-        'message' => 'products not enough.',
-      ], 400);
-    }
+    $shop_cart_product = ShopCartProduct::where('shop_product_id', $request->shop_product)->where('status', 1)->where('user_id', $auth->id);
     //shop_product_spec
-    if (!$request->has('shop_product_spec')) {
-      return response()->json([
-        'message' => 'shop_product_spec is required.',
-      ], 400);
-    }
-    $shop_product_spec = ShopProductSpec::find($request->shop_product_spec);
-    if (!$shop_product_spec) {
-      return response()->json([
-        'message' => 'no spec.',
-      ], 400);
+    if ($request->has('shop_product_spec')) {
+      $shop_cart_product = $shop_cart_product->where('shop_product_spec_id', $request->shop_product_spec)->first();
+      if ($shop_cart_product) {
+        //判斷shop_product_spec是否是shop_product的
+        $shop_product_spec = ShopProductSpec::where('id', $request->shop_product_spec)->where('shop_product_id', $request->shop_product)->first();
+        if (!$shop_product_spec) {
+          return response()->json([
+            'message' => 'no spec.',
+          ], 400);
+        }
+        $original_count      = $shop_cart_product && $shop_cart_product->count ? $shop_cart_product->count : 0;
+        $product_stock_count = $shop_product_spec->stock_count;
+        $count               = $original_count + $request->count;
+        //原本選的量＋新增的量
+        if ($count > $product_stock_count) {
+          return response()->json([
+            'message' => 'products not enough.',
+          ], 400);
+        }
+      }
+    } else {
+      $shop_cart_product = $shop_cart_product->first();
+      //原本選的量
+      $original_count = $shop_cart_product && $shop_cart_product->count ? $shop_cart_product->count : 0;
+      //原本選的量＋新增的量
+      $count = $original_count + $request->count;
+      if ($shop_product->stock_count < $count) {
+        return response()->json([
+          'message' => 'products not enough.',
+        ], 400);
+      }
     }
 
     if ($shop_cart_product) {
-      return ModelHelper::ws_UpdateHandler($this, $request, $shop_cart_product->id, [], function ($model) use ($shop_product, $auth_shop_cart, $count, $shop_product_spec) {
-        $model->shop_cart_id         = $auth_shop_cart->id;
-        $model->shop_product_id      = $shop_product->id;
-        $model->shop_product_spec_id = $shop_product_spec->id;
-        $model->name                 = $shop_product->name;
-        $model->subtitle             = $shop_product->subtitle;
-        $model->price                = $shop_product->price;
-        $model->discount_price       = $shop_product->discount_price;
-        $model->order_type           = $shop_product->order_type;
-        $model->count                = $count;
+      return ModelHelper::ws_UpdateHandler($this, $request, $shop_cart_product->id, [], function ($model) use ($shop_product, $auth_shop_cart, $count, $request) {
+        $model->shop_cart_id    = $auth_shop_cart->id;
+        $model->shop_product_id = $shop_product->id;
+        if (isset($request->shop_product_spec)) {
+          $model->shop_product_spec_id = $request->shop_product_spec;
+        }
+        $model->name           = $shop_product->name;
+        $model->subtitle       = $shop_product->subtitle;
+        $model->price          = $shop_product->price;
+        $model->discount_price = $shop_product->discount_price;
+        $model->order_type     = $shop_product->order_type;
+        $model->count          = $count;
         $model->save();
       });
     } else {
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($shop_product, $auth_shop_cart, $shop_product_spec) {
-        $model->shop_cart_id         = $auth_shop_cart->id;
-        $model->shop_product_id      = $shop_product->id;
-        $model->shop_product_spec_id = $shop_product_spec->id;
-        $model->name                 = $shop_product->name;
-        $model->subtitle             = $shop_product->subtitle;
-        $model->price                = $shop_product->price;
-        $model->discount_price       = $shop_product->discount_price;
-        $model->order_type           = $shop_product->order_type;
-        $model->user_id              = Auth::user()->id;
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($shop_product, $auth_shop_cart, $request, $count) {
+        $model->shop_cart_id    = $auth_shop_cart->id;
+        $model->shop_product_id = $shop_product->id;
+        if (isset($request->shop_product_spec)) {
+          $model->shop_product_spec_id = $request->shop_product_spec;
+        }
+        $model->name           = $shop_product->name;
+        $model->subtitle       = $shop_product->subtitle;
+        $model->price          = $shop_product->price;
+        $model->discount_price = $shop_product->discount_price;
+        $model->order_type     = $shop_product->order_type;
+        $model->user_id        = Auth::user()->id;
+        $model->count          = $count;
         $model->save();
       });
 
@@ -202,7 +219,13 @@ class ShopCartProductController extends Controller
         'message' => 'no data.',
       ], 400);
     }
-    if ($shop_cart_product->shop_product->stock_count < $request->count) {
+    $stock_count = 0;
+    if (isset($shop_cart_product->shop_product_spec)) {
+      $stock_count = $shop_cart_product->shop_product_spec->stock_count;
+    } else {
+      $stock_count = $shop_cart_product->shop_product->stock_count;
+    }
+    if ($stock_count < $request->count) {
       return response()->json([
         'message' => 'products not enough.',
       ], 400);

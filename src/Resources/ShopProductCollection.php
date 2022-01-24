@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Wasateam\Laravelapistone\Helpers\ShopHelper;
 
 class ShopProductCollection extends JsonResource
 {
@@ -52,7 +53,9 @@ class ShopProductCollection extends JsonResource
         $res['featured_classes'] = FeaturedClass_R0::collection($this->featured_classes);
       }
     } else if (config('stone.mode') == 'webapi') {
-      $res = [
+      $price       = ShopHelper::getShopProductPriceRange($this);
+      $stock_count = ShopHelper::getShopProductAllStockCount($this);
+      $res         = [
         'id'                          => $this->id,
         'type'                        => $this->type,
         'order_type'                  => $this->order_type,
@@ -61,13 +64,13 @@ class ShopProductCollection extends JsonResource
         'subtitle'                    => $this->subtitle,
         'status'                      => $this->status,
         'spec'                        => $this->spec,
-        'price'                       => $this->price,
+        'price'                       => $price,
         'discount_price'              => $this->discount_price,
         'weight_capacity'             => $this->show_weight_capacity ? $this->weight_capacity : null,
         'weight_capacity_unit'        => $this->show_weight_capacity ? $this->weight_capacity_unit : null,
         'show_weight_capacity'        => $this->show_weight_capacity,
         'tax'                         => $this->tax,
-        'stock_count'                 => $this->stock_count,
+        'stock_count'                 => $stock_count,
         'max_buyable_count'           => $this->max_buyable_count,
         'cover_image'                 => $this->cover_image,
         'shop_product_cover_frame_id' => $this->shop_product_cover_frame_id,

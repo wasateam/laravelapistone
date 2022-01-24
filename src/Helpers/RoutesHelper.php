@@ -22,6 +22,7 @@ use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
+use Wasateam\Laravelapistone\Controllers\LinePayController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerGroupController;
@@ -48,6 +49,9 @@ use Wasateam\Laravelapistone\Controllers\ShopNoticeClassController;
 use Wasateam\Laravelapistone\Controllers\ShopNoticeController;
 use Wasateam\Laravelapistone\Controllers\ShopOrderController;
 use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductController;
+use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductSpecController;
+use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductSpecSettingController;
+use Wasateam\Laravelapistone\Controllers\ShopOrderShopProductSpecSettingItemController;
 use Wasateam\Laravelapistone\Controllers\ShopProductController;
 use Wasateam\Laravelapistone\Controllers\ShopProductCoverFrameController;
 use Wasateam\Laravelapistone\Controllers\ShopProductExpectShipController;
@@ -88,7 +92,6 @@ use Wasateam\Laravelapistone\Controllers\XcMilestoneController;
 use Wasateam\Laravelapistone\Controllers\XcTaskController;
 use Wasateam\Laravelapistone\Controllers\XcTaskTemplateController;
 use Wasateam\Laravelapistone\Controllers\XcWorkTypeController;
-use Wasateam\Laravelapistone\Controllers\LinepayController;
 
 class RoutesHelper
 {
@@ -491,6 +494,18 @@ class RoutesHelper
       Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      # Shop Order Shop Product Spec
+      Route::resource('shop_order_shop_product_spec', ShopOrderShopProductSpecController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Order Shop Product Spec Setting
+      Route::resource('shop_order_shop_product_spec_setting', ShopOrderShopProductSpecSettingController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+      # Shop Order Shop Product Spec Setting Item
+      Route::resource('shop_order_shop_product_spec_setting_item', ShopOrderShopProductSpecSettingItemController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
       # Shop Cart
       Route::resource('shop_cart', ShopCartController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
@@ -714,9 +729,15 @@ class RoutesHelper
     # Third Party Payment
     if (config('stone.thrid_party_payment')) {
       # Ecpay Inpay
-      if (config('stone.thrid_party_payment.service') == 'ecpay_inpay') {
+      if (config('stone.thrid_party_payment.service.ecpay_inpay')) {
         Route::post('ecpay/inpay/merchant_init', [EcpayController::class, 'get_inpay_merchant_init']);
         Route::post('ecpay/inpay/create_payment', [EcpayController::class, 'inpay_create_payment']);
+      }
+
+      # LINE Pay
+      if (config('stone.thrid_party_payment.service.line_pay')) {
+        Route::post('line_pay/payment/confirm', [LinePayController::class, 'payment_confirm']);
+        Route::post('line_pay/payment/cancel', [LinePayController::class, 'payment_cancel']);
       }
     }
 
@@ -932,7 +953,19 @@ class RoutesHelper
       Route::get('/auth/shop_order', [ShopOrderController::class, 'auth_shop_order_index']);
       # Shop Order Product
       Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
-        'index', 'show', 'store',
+        'index', 'show',
+      ])->shallow();
+      # Shop Order Shop Product Spec
+      Route::resource('shop_order_shop_product_spec', ShopOrderShopProductSpecController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      # Shop Order Shop Product Spec Setting
+      Route::resource('shop_order_shop_product_spec_setting', ShopOrderShopProductSpecSettingController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      # Shop Order Shop Product Spec Setting Item
+      Route::resource('shop_order_shop_product_spec_setting_item', ShopOrderShopProductSpecSettingItemController::class)->only([
+        'index', 'show',
       ])->shallow();
       # Shop Cart
       Route::get('/auth/shop_cart', [ShopCartController::class, 'auth_cart']);
@@ -953,6 +986,8 @@ class RoutesHelper
       Route::resource('shop_campaign', ShopCampaignController::class)->only([
         'index', 'show',
       ])->shallow();
+      Route::get('/shop_campaign/today/index', [ShopCampaignController::class, 'today_index']);
+      Route::post('/shop_campaign/today/discount_code/check', [ShopCampaignController::class, 'today_discount_code_check']);
       # Shop Campaign Shop Order
       Route::resource('shop_campaign_shop_order', ShopCampaignShopOrderController::class)->only([
         'index', 'show',
@@ -1019,7 +1054,7 @@ class RoutesHelper
 
     # Ecpay
     if (config('stone.thrid_party_payment')) {
-      if (config('stone.thrid_party_payment.service') == 'ecpay_inpay') {
+      if (config('stone.thrid_party_payment.service.ecpay_inpay')) {
         Route::post('callback/ecpay/inpay/order', [EcpayController::class, 'callback_ecpay_inpay_order']);
       }
     }

@@ -29,4 +29,19 @@ class ShopOrderShopProduct extends Model
   {
     return $this->hasMany(ShopReturnRecord::class);
   }
+
+  public function shop_order_shop_product_spec()
+  {
+    return $this->hasOne(ShopOrderShopProductSpec::class, 'shop_order_shop_product_id');
+  }
+
+  public function shop_order_shop_product_spec_settings()
+  {
+    return $this->hasMany(ShopOrderShopProductSpecSetting::class, 'shop_order_shop_product_id');
+  }
+
+  public function shop_order_shop_product_spec_setting_items()
+  {
+    return $this->hasMany(ShopOrderShopProductSpecSettingItem::class, 'shop_order_shop_product_id');
+  }
 }

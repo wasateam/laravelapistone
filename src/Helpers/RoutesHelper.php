@@ -499,11 +499,11 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       # Shop Order Shop Product Spec Setting
-      Route::resource('shop_order_shop_product_spec_setting', ShopOrderShopProductSpecSettingController::class)->only([
+      Route::resource('shop_ord_shop_pro_spec_set', ShopOrderShopProductSpecSettingController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       # Shop Order Shop Product Spec Setting Item
-      Route::resource('shop_order_shop_product_spec_setting_item', ShopOrderShopProductSpecSettingItemController::class)->only([
+      Route::resource('shop_ord_shop_pro_spec_set_item', ShopOrderShopProductSpecSettingItemController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       # Shop Cart
@@ -960,11 +960,11 @@ class RoutesHelper
         'index', 'show',
       ])->shallow();
       # Shop Order Shop Product Spec Setting
-      Route::resource('shop_order_shop_product_spec_setting', ShopOrderShopProductSpecSettingController::class)->only([
+      Route::resource('shop_ord_shop_pro_spec_set', ShopOrderShopProductSpecSettingController::class)->only([
         'index', 'show',
       ])->shallow();
       # Shop Order Shop Product Spec Setting Item
-      Route::resource('shop_order_shop_product_spec_setting_item', ShopOrderShopProductSpecSettingItemController::class)->only([
+      Route::resource('shop_ord_shop_pro_spec_set_item', ShopOrderShopProductSpecSettingItemController::class)->only([
         'index', 'show',
       ])->shallow();
       # Shop Cart

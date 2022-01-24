@@ -22,6 +22,7 @@ use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
+use Wasateam\Laravelapistone\Controllers\LinePayController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerGroupController;
@@ -88,7 +89,6 @@ use Wasateam\Laravelapistone\Controllers\XcMilestoneController;
 use Wasateam\Laravelapistone\Controllers\XcTaskController;
 use Wasateam\Laravelapistone\Controllers\XcTaskTemplateController;
 use Wasateam\Laravelapistone\Controllers\XcWorkTypeController;
-use Wasateam\Laravelapistone\Controllers\LinepayController;
 
 class RoutesHelper
 {
@@ -714,9 +714,15 @@ class RoutesHelper
     # Third Party Payment
     if (config('stone.thrid_party_payment')) {
       # Ecpay Inpay
-      if (config('stone.thrid_party_payment.service') == 'ecpay_inpay') {
+      if (config('stone.thrid_party_payment.service.ecpay_inpay')) {
         Route::post('ecpay/inpay/merchant_init', [EcpayController::class, 'get_inpay_merchant_init']);
         Route::post('ecpay/inpay/create_payment', [EcpayController::class, 'inpay_create_payment']);
+      }
+
+      # LINE Pay
+      if (config('stone.thrid_party_payment.service.line_pay')) {
+        Route::post('line_pay/payment/confirm', [LinePayController::class, 'payment_confirm']);
+        Route::post('line_pay/payment/cancel', [LinePayController::class, 'payment_cancel']);
       }
     }
 
@@ -1019,7 +1025,7 @@ class RoutesHelper
 
     # Ecpay
     if (config('stone.thrid_party_payment')) {
-      if (config('stone.thrid_party_payment.service') == 'ecpay_inpay') {
+      if (config('stone.thrid_party_payment.service.ecpay_inpay')) {
         Route::post('callback/ecpay/inpay/order', [EcpayController::class, 'callback_ecpay_inpay_order']);
       }
     }

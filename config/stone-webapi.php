@@ -118,9 +118,11 @@ return [
   ],
   'file_upload'         => 'laravel_signed',
   'privacy_terms'       => true,
-  'thrid_party_payment' => [
-    'service'     => 'ecpay_inpay',
-    'mode'        => env('ECPAY_MODE', 'dev'),
+  'third_party_payment' => [
+    'service'     => [
+      'ecpay_inpay' => true,
+      'line_pay'    => true,
+    ],
     'ecpay_inpay' => [
       'insite_order_return_url' => env('APP_URL') . env('ECPAY_INSITE_ORDER_RETURN_URL', "/api/callback/ecpay/inpay/order"),
       'cardinfo'                => [
@@ -172,6 +174,4 @@ return [
   //頁面彈跳視窗
   'page_cover'          => true,
   'excute_class'        => true,
-  // LINE Pay
-  'linepay'             => true,
 ];

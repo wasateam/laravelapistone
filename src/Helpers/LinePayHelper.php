@@ -14,9 +14,15 @@ class LinePayHelper
   /**
    * 建立付款請求
    */
-  public static function payment_request($confirm_url, $cancel_url)
+  public static function payment_request($confirm_url = null, $cancel_url = null)
   {
-    $uri          = env('LINEPAY_API_URL') . '/v3/payments/request';
+    if (!$confirm_url) {
+      $confirm_url = env('WEB_URL') . '/linepay/payment/confirm';
+    }
+    if (!$cancel_url) {
+      $confirm_url = env('WEB_URL') . '/linepay/payment/cancel';
+    }
+    $post_url     = env('LINE_PAY_API_URL') . '/v3/payments/request';
     $nonce        = Carbon::now()->timestamp;
     $request_body = [
       'amount'       => 250,
@@ -45,7 +51,7 @@ class LinePayHelper
     $sig      = self::get_post_signature('/v3/payments/request', $request_body, $nonce);
     $header   = self::get_request_header($nonce, $sig);
     $response = Http::withHeaders($header)
-      ->post($uri, $request_body);
+      ->post($post_url, $request_body);
 
     return $response->json();
   }
@@ -55,7 +61,7 @@ class LinePayHelper
    */
   public static function payment_confirm($transaction_id)
   {
-
+    $post_url = env('LINE_PAY_API_URL') . '/v3/payments/' . $transaction_id . '/confirm';
   }
 
   /**
@@ -69,12 +75,12 @@ class LinePayHelper
   /**
    * 取得 POST 用內容
    */
-  public static function get_post_signature($uri, $request_body, $nonce, $linepay_secret_key = null)
+  public static function get_post_signature($uri, $request_body, $nonce, $secret_key = null)
   {
-    if (!$linepay_secret_key) {
-      $linepay_secret_key = env('LINEPAY_CHENNEL_SECRET_KEY');
+    if (!$secret_key) {
+      $secret_key = env('LINE_PAY_CHENNEL_SECRET_KEY');
     }
-    $sig = base64_encode(hash_hmac('sha256', $linepay_secret_key . $uri . json_encode($request_body) . $nonce, $linepay_secret_key, true));
+    $sig = base64_encode(hash_hmac('sha256', $secret_key . $uri . json_encode($request_body) . $nonce, $secret_key, true));
     return $sig;
   }
 
@@ -84,7 +90,7 @@ class LinePayHelper
   public static function get_request_header($nonce, $sig, $channel_id = null)
   {
     if (!$channel_id) {
-      $channel_id = env('LINEPAY_CHANNEL_ID');
+      $channel_id = env('LINE_PAY_CHANNEL_ID');
     }
     return [
       'Content-Type'               => 'application/json',

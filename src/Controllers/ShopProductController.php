@@ -256,6 +256,14 @@ class ShopProductController extends Controller
    */
   public function store(Request $request, $id = null)
   {
+    if ($request->has('shop_product_spec_settings') && $request->has('shop_product_specs')) {
+      $is_match = ShopHelper::checkSettingItemsMatchSpecs($request->shop_product_spec_settings, $request->shop_product_specs);
+      if (!$is_match) {
+        return response()->json([
+          'message' => 'specs count is not correct',
+        ], 400);
+      }
+    }
     return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($request) {
       //shop_product_spec_settings
       if ($request->has('shop_product_spec_settings') && $request->has('shop_product_specs')) {
@@ -315,6 +323,14 @@ class ShopProductController extends Controller
    */
   public function update(Request $request, $id)
   {
+    if ($request->has('shop_product_spec_settings') && $request->has('shop_product_specs')) {
+      $is_match = ShopHelper::checkSettingItemsMatchSpecs($request->shop_product_spec_settings, $request->shop_product_specs);
+      if (!$is_match) {
+        return response()->json([
+          'message' => 'specs count is not correct',
+        ], 400);
+      }
+    }
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($request) {
       //shop_product_spec_settings
       if ($request->has('shop_product_spec_settings') && $request->has('shop_product_specs')) {

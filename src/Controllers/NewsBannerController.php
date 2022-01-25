@@ -21,6 +21,9 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * title_color 標題顏色
  * des 說明
  * des_color 說明顏色
+ * start_date 上架日期
+ * end_date 下架日期
+ * is_active 是否上架
  * 
  */
 class NewsBannerController extends Controller
@@ -40,6 +43,9 @@ class NewsBannerController extends Controller
     'title_color',
     'des',
     'des_color',
+    'start_date',
+    'end_date',
+    'is_active'
   ];
   public $belongs_to = [
   ];
@@ -54,6 +60,9 @@ class NewsBannerController extends Controller
 
   /**
    * Index
+   * 
+   * @authenticated
+   * 
    * @queryParam search string 搜尋字串 No-example
    * @queryParam page int 頁碼(前台全抓)  No-example
    *
@@ -69,7 +78,9 @@ class NewsBannerController extends Controller
 
   /**
    * Store
-   *
+   * 
+   * @authenticated
+   * 
    * @bodyParam name string 名稱 No-example
    * @bodyParam sq 排序設定值 Example:1
    * @bodyParam bg_img_1440  底圖1440 No-example
@@ -80,6 +91,9 @@ class NewsBannerController extends Controller
    * @bodyParam title_color 標題顏色 Example:#000
    * @bodyParam des 說明 Example:DesDesDes
    * @bodyParam des_color 說明顏色 Example:#000
+   * @bodyParam start_date timestamp 上架日期 Example:2022-01-01 01:01:01
+   * @bodyParam end_date timestamp 下架日期 Example:2022-01-05 01:01:01
+   * @bodyParam is_active boolean 刊登狀態 Example:1
 
    */
   public function store(Request $request, $id = null)

@@ -336,7 +336,6 @@ class ShopOrderController extends Controller
       return ModelHelper::ws_StoreHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
       // return AuthHelper::checkRequestUser($request);
-
       if ($request->user != Auth::user()->id) {
         return response()->json([
           'message' => 'not you',

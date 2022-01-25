@@ -94,8 +94,8 @@ class ShopHelper
     // discount_code
     // create discount_code shop_camapign
     if ($request && $request->has('discount_code')) {
-      $today_dicount_decode_campaign = ShopHelper::getTodayDiscountCodeCampaign($request->discount_code);
-      ShopHelper::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
+      $today_dicount_decode_campaign = Self::getTodayDiscountCodeCampaign($request->discount_code);
+      Self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
       if ($shop_product_price_total >= $today_dicount_decode_campaign->full_amount) {
         if ($today_dicount_decode_campaign->discount_percent) {
           $dicount_shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
@@ -339,7 +339,7 @@ class ShopHelper
     # User Address
     if (config('stone.user.address')) {
       if (config('stone.user.address.delivery')) {
-        self::createUserAddress($user, $request->area, $request->area_section, self::getAddressWithoutArea($request->receive_address, $request->area, $request->area_section), 'delivery');
+        Self::createUserAddress($user, $request->area, $request->area_section, Self::getAddressWithoutArea($request->receive_address, $request->area, $request->area_section), 'delivery');
       }
     }
 
@@ -547,6 +547,7 @@ class ShopHelper
 
   public static function shopProductCreateSpec($shop_product_spec_settings, $shop_product_specs, $shop_product_id)
   {
+    //商品建立規格
     // create/update shop_product_spec,shop_product_spec_setting,shop_product_spec_setting_item when shop_product created/updated
     $shop_product_spec_setting_ids      = []; //[1,2,3]
     $shop_product_spec_setting_item_ids = []; //[[1,2],[3,4]]
@@ -585,7 +586,6 @@ class ShopHelper
     }
 
     $id_combination = Self::combinateArray($shop_product_spec_setting_item_ids);
-    error_log(json_encode($id_combination));
 
     //shop_product_spec
     foreach ($shop_product_specs as $shop_product_spec_key => $shop_product_spec) {
@@ -776,6 +776,21 @@ class ShopHelper
     return $stock_count;
   }
 
+  public static function checkSettingItemsMatchSpecs($settings, $specs)
+  {
+    // check combination of all setting items count match specs count or not;
+    $setting_items_count_arr = [];
+    foreach ($settings as $setting) {
+      $setting_items_count_arr[] = count($setting['shop_product_spec_setting_items']);
+    }
+    $setting_items_total = Self::multiplyArray($setting_items_count_arr);
+    if ($setting_items_total == count($specs)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public static function combinateArray($array)
   {
     // combination array element
@@ -794,6 +809,18 @@ class ShopHelper
       $current = $result;
     }
     return $current;
+  }
+
+  public static function multiplyArray($array)
+  {
+    //multiply items in array
+    //$array = [1,2,3]
+    $result = 0;
+    if (!isset($array) || !count($array)) {
+      return $result;
+    }
+    $result = array_product($array);
+    return $result;
   }
 
 }

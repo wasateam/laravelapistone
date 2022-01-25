@@ -1078,7 +1078,7 @@ class RoutesHelper
 
     # News Banner Group
     if (config('stone.news_banner_group')) {
-      Route::resource('news_banner', NewsBannerGroupController::class)->only([
+      Route::resource('news_banner_group', NewsBannerGroupController::class)->only([
         'index', 'show',
       ])->shallow();
     }

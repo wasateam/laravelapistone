@@ -9,9 +9,11 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\ShopCart;
 
 /**
- * @group 購物車
+ * @group ShopCart 購物車
  *
  * 購物車 API
+ *
+ * user 購物車所屬使用者
  *
  * Auth Cart 用來取得當前登入者的購物車
  *
@@ -33,7 +35,6 @@ class ShopCartController extends Controller
 
   /**
    * Index
-   * @queryParam area_sections ids 子地區  No-example
    *
    */
   public function index(Request $request, $id = null)

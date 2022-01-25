@@ -34,6 +34,8 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * fields ----
  * type 類型
  * order_type 訂單類型 如要建立訂單，商品的訂單類型皆需一致，不然無法建立訂單
+ * ~ next-day 隔日配
+ * ~ pre-order 預購
  * name 商品名稱
  * subtitle 商品副標
  * on_time 上架時間
@@ -48,21 +50,21 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * weight_capacity 重量/容量
  * weight_capacity_unit 重量/容量單位
  * show_weight_capacity 重量/容量 前台是否顯示
- * tax
- * stock_count
- * stock_alert_count
- * max_buyable_count
+ * tax 稅
+ * stock_count 庫存
+ * stock_alert_count 庫存警示數量
+ * max_buyable_count 最大購買數量
  * storage_space 儲位
- * cover_image
- * images
- * description
+ * cover_image 封面圖片
+ * images 圖片們
+ * description 敘述
  * ranking_score
- * shop_product_cover_frame
- * suggests
- * shop_classes
- * shop_subclasses
- * areas
- * area_sections
+ * shop_product_cover_frame 綁定之活動圖框
+ * suggests 綁定之建議商品
+ * shop_classes 綁定之商品類別
+ * shop_subclasses 綁定之商品子類別
+ * areas 綁定之地區
+ * area_sections 綁定之子地區
  * freight 運費
  * store_temperature 溫層
  * shop_product_spec_settings 商品規格設定
@@ -254,6 +256,14 @@ class ShopProductController extends Controller
    */
   public function store(Request $request, $id = null)
   {
+    if ($request->has('shop_product_spec_settings') && $request->has('shop_product_specs')) {
+      $is_match = ShopHelper::checkSettingItemsMatchSpecs($request->shop_product_spec_settings, $request->shop_product_specs);
+      if (!$is_match) {
+        return response()->json([
+          'message' => 'specs count is not correct',
+        ], 400);
+      }
+    }
     return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($request) {
       //shop_product_spec_settings
       if ($request->has('shop_product_spec_settings') && $request->has('shop_product_specs')) {
@@ -313,6 +323,14 @@ class ShopProductController extends Controller
    */
   public function update(Request $request, $id)
   {
+    if ($request->has('shop_product_spec_settings') && $request->has('shop_product_specs')) {
+      $is_match = ShopHelper::checkSettingItemsMatchSpecs($request->shop_product_spec_settings, $request->shop_product_specs);
+      if (!$is_match) {
+        return response()->json([
+          'message' => 'specs count is not correct',
+        ], 400);
+      }
+    }
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($request) {
       //shop_product_spec_settings
       if ($request->has('shop_product_spec_settings') && $request->has('shop_product_specs')) {

@@ -13,16 +13,17 @@ use Wasateam\Laravelapistone\Exports\ShopOrderExport;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
-use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
 
 /**
- * @group 訂單
+ * @group ShopOrder 訂單
  *
  * type 類型
  * order_type 訂單類型
+ * ~ pre-order 預購
+ * ~ next-day 隔日配
  * no 訂單編號
  * orderer 訂購人
  * orderer_tel 訂購人電話
@@ -120,6 +121,7 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
  * bonus_points_deduct 訂單所使用(扣除)的紅利點數
  * discount_code 折扣碼
  *
+ * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立
  *
  * @authenticated
@@ -334,7 +336,6 @@ class ShopOrderController extends Controller
       return ModelHelper::ws_StoreHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
       // return AuthHelper::checkRequestUser($request);
-      
       if ($request->user != Auth::user()->id) {
         return response()->json([
           'message' => 'not you',

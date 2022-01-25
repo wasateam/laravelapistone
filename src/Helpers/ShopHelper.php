@@ -94,8 +94,8 @@ class ShopHelper
     // discount_code
     // create discount_code shop_camapign
     if ($request && $request->has('discount_code')) {
-      $today_dicount_decode_campaign = ShopHelper::getTodayDiscountCodeCampaign($request->discount_code);
-      ShopHelper::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
+      $today_dicount_decode_campaign = Self::getTodayDiscountCodeCampaign($request->discount_code);
+      Self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
       if ($shop_product_price_total >= $today_dicount_decode_campaign->full_amount) {
         if ($today_dicount_decode_campaign->discount_percent) {
           $dicount_shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
@@ -339,7 +339,7 @@ class ShopHelper
     # User Address
     if (config('stone.user.address')) {
       if (config('stone.user.address.delivery')) {
-        self::createUserAddress($user, $request->area, $request->area_section, self::getAddressWithoutArea($request->receive_address, $request->area, $request->area_section), 'delivery');
+        Self::createUserAddress($user, $request->area, $request->area_section, Self::getAddressWithoutArea($request->receive_address, $request->area, $request->area_section), 'delivery');
       }
     }
 

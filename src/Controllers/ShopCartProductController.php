@@ -184,7 +184,7 @@ class ShopCartProductController extends Controller
         $model->save();
       });
     } else {
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($shop_product, $auth_shop_cart, $request, $count) {
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($shop_product, $auth_shop_cart, $request) {
         $model->shop_cart_id    = $auth_shop_cart->id;
         $model->shop_product_id = $shop_product->id;
         if (isset($request->shop_product_spec)) {
@@ -196,7 +196,6 @@ class ShopCartProductController extends Controller
         $model->discount_price = $shop_product->discount_price;
         $model->order_type     = $shop_product->order_type;
         $model->user_id        = Auth::user()->id;
-        $model->count          = $count;
         $model->save();
       });
 

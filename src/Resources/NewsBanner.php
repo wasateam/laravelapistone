@@ -29,6 +29,9 @@ class NewsBanner extends JsonResource
         'title_color' => $this->title_color,
         'des'         => $this->des,
         'des_color'   => $this->des_color,
+        'start_date'  => $this->start_date,
+        'end_date'    => $this->end_date,
+        'is_active'   => $this->is_active,
       ];
     } else if (config('stone.mode') == 'webapi') {
       $res = [

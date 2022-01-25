@@ -143,7 +143,7 @@ class ShopCampaignController extends Controller
    * @bodyParam is_active int Example:1
    * @bodyParam limit int Example:100
    * @bodyParam feedback_rate float Example:0.001
-   * @bodyParam dicount_way string Example:discount_way
+   * @bodyParam discount_way string Example:discount_way
    */
   public function store(Request $request, $id = null)
   {
@@ -199,7 +199,7 @@ class ShopCampaignController extends Controller
    * @bodyParam is_active int Example:1
    * @bodyParam limit int Example:100
    * @bodyParam feedback_rate float Example:0.001
-   * @bodyParam dicount_way string Example:discount_way
+   * @bodyParam discount_way string Example:discount_way
    */
   public function update(Request $request, $id)
   {
@@ -242,7 +242,7 @@ class ShopCampaignController extends Controller
 /**
  * DiscountCode Check 折扣碼可否使用
  *
- * @bodyParam dicsount_code string 折扣碼 Example:LittleChicken
+ * @bodyParam discount_code string 折扣碼 Example:LittleChicken
  * @bodyParam price string 訂單價格 Example:1000
  */
   public function today_discount_code_check(Request $request)

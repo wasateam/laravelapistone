@@ -14,7 +14,7 @@ use Wasateam\Laravelapistone\Imports\ShopProductImport;
 use Wasateam\Laravelapistone\Models\ShopProduct;
 
 /**
- * @group 商品
+ * @group ShopProduct 商品
  *
  * 商品列表API
  *

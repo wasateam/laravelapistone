@@ -7,11 +7,13 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group ShopNoticeClass
- *
- * @authenticated
+ * @group ShopNoticeClass 購物須知分類
  *
  * APIs for shop_notice_class
+ *
+ * name 分類名稱
+ *
+ * @authenticated
  */
 class ShopNoticeClassController extends Controller
 {

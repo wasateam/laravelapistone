@@ -12,7 +12,7 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
 use Wasateam\Laravelapistone\Models\ShopProductSpec;
 
 /**
- * @group 購物車商品
+ * @group ShopCartProduct 購物車商品
  *
  * 購物車商品 API
  *

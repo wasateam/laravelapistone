@@ -10,28 +10,28 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopProduct;
 
 /**
- * @group 訂單商品
+ * @group ShopOrderShopProduct 訂單商品
  *
  * 訂單商品 API
  *
- * name
- * subtitle
- * count
- * original_count
- * price
- * discount_price
- * spec
- * weight_capacity
- * cost
- * type
- * order_type
- * cover_image
- * shop_product
- * shop_cart_product
- * shop_order
- * shop_order_shop_product_spec
- * shop_order_shop_product_spec_setting
- * shop_order_shop_product_spec_setting_item
+ * name 商品名稱
+ * subtitle 商品副標
+ * count 數量
+ * original_count 原始數量
+ * price 價格
+ * discount_price 優惠價
+ * spec 商品規格
+ * weight_capacity 重量/容量
+ * cost 成本
+ * type 類型
+ * order_type 訂單類型
+ * cover_image 封面照片
+ * shop_product 綁定之商品
+ * shop_cart_product 綁定之購物車商品
+ * shop_order 綁定之訂單
+ * shop_order_shop_product_spec 訂單商品規格
+ * shop_order_shop_product_spec_setting 訂單商品規格設定
+ * shop_order_shop_product_spec_setting_item 訂單商品規格項目
  *
  * @authenticated
  */

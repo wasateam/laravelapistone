@@ -585,7 +585,6 @@ class ShopHelper
     }
 
     $id_combination = Self::combinateArray($shop_product_spec_setting_item_ids);
-    error_log(json_encode($id_combination));
 
     //shop_product_spec
     foreach ($shop_product_specs as $shop_product_spec_key => $shop_product_spec) {

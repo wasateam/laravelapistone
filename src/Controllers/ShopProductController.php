@@ -137,7 +137,7 @@ class ShopProductController extends Controller
     'shop_subclasses',
   ];
   public $filter_belongs_to = [
-    'shop_product_cover_frame_id'
+    'shop_product_cover_frame'
   ];
   public $filter_belongs_to_many = [
     'shop_classes',

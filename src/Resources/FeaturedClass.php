@@ -22,12 +22,14 @@ class FeaturedClass extends JsonResource
         'name'       => $this->name,
         'icon'       => $this->icon,
         'sequence'   => $this->sequence,
+        'order_type' => $this->order_type 
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
         'id'   => $this->id,
         'name' => $this->name,
         'icon' => $this->icon,
+        'order_type' => $this->order_type 
       ];
     }
   }

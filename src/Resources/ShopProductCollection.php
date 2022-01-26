@@ -46,7 +46,7 @@ class ShopProductCollection extends JsonResource
         'freight'                             => $this->freight,
         'today_shop_order_shop_product_count' => $this->today_shop_order_shop_products->count(),
         'shop_product_cover_frame'            => new ShopProductCoverFrame_R1($this->shop_product_cover_frame),
-        'shop_campaigns'                       => ShopProduct_R1::collection($this->shop_campaigns)
+        'shop_campaigns'                       => ShopCampaign_R1::collection($this->shop_campaigns)
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
@@ -83,7 +83,7 @@ class ShopProductCollection extends JsonResource
         'shop_subclasses'             => ShopSubclass_R_ShopProduct::collection($this->shop_subclasses),
         'shop_product_specs'          => ShopProductSpec_R1::collection($this->shop_product_specs),
         'shop_product_spec_settings'  => ShopProductSpecSetting_R1::collection($this->shop_product_spec_settings),
-        'shop_campaigns'               => ShopProduct_R1::collection($this->shop_campaigns)
+        'shop_campaigns'               => ShopCampaign_R1::collection($this->shop_campaigns)
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;

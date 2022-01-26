@@ -15,7 +15,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * ~ 數值越低、排序越前
  * type 類型
  * icon Icon Url
- * order_type 館別
+ * order_type 訂單類型
  */
 class ShopClassController extends Controller
 {
@@ -59,7 +59,7 @@ class ShopClassController extends Controller
    * Index
    * @queryParam search string 搜尋字串 No-example
    * @queryParam page int 頁碼(前台全抓)  No-example
-   * @queryParam order_type text 館別  No-example next-day,pre-order
+   * @queryParam order_type string 訂單類型  No-example next-day,pre-order
    *
    */
   public function index(Request $request, $id = null)

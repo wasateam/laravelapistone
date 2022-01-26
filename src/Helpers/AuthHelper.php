@@ -151,10 +151,8 @@ class AuthHelper
   # Check Request User qualified
   public static function checkRequestUser($request)
   {
-    if ($request->user != Auth::user()->id) {
-      return response()->json([
-        'message' => 'not you',
-      ], 400);
+    if (!$request->user || $request->user != Auth::user()->id) {
+      throw new \Wasateam\Laravelapistone\Exceptions\NotUserException;
     }
   }
 }

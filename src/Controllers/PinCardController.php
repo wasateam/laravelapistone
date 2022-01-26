@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use Wasateam\Laravelapistone\Exceptions\FindNoPinCardException;
 use Wasateam\Laravelapistone\Exports\PinCardExport;
 use Wasateam\Laravelapistone\Helpers\LogHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
@@ -149,7 +148,7 @@ class PinCardController extends Controller
     $user  = Auth::user();
     $model = $this->model::where('pin', $request->pin)->where('status', 0)->first();
     if (!$model) {
-      throw new FindNoPinCardException;
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('pin_card');
     }
     if (config('stone.pin_card.register_before_action')) {
       config('stone.pin_card.register_before_action')::pin_card_register_before_action($model, $user);

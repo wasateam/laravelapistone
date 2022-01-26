@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Exceptions;
 
 use Exception;
 
-class FindNoPinCardException extends Exception
+class NotUserException extends Exception
 {
   /**
    * Report the exception.
@@ -25,7 +25,7 @@ class FindNoPinCardException extends Exception
   public function render($request)
   {
     return response()->json([
-      'message' => 'find no pin card.',
+      'message' => 'not you',
     ], 400);
   }
 }

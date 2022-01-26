@@ -12,7 +12,7 @@ use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
 use Wasateam\Laravelapistone\Models\ShopReturnRecord;
 
 /**
- * @group 商品退貨紀錄
+ * @group ShopReturnRecord 商品退貨紀錄
  *
  * 商品退貨紀錄API
  *

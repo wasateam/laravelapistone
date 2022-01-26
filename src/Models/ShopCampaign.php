@@ -14,4 +14,9 @@ class ShopCampaign extends Model
   {
     return $this->hasMany(ShopCampaignShopProduct::class, 'shop_campaign_id');
   }
+
+  public function shop_products()
+  {
+    return $this->belongsToMany(ShopProduct::class, 'shop_product_shop_campaign','shop_campaign_id','shop_product_id');
+  }
 }

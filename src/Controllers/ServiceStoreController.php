@@ -8,7 +8,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\ServiceStore;
 
 /**
- * @group 服務店家 ServiceStore
+ * @group ServiceStore 服務店家
  *
  * name 名稱
  * type 類型

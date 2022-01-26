@@ -8,7 +8,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\ServicePlan;
 
 /**
- * @group 服務方案
+ * @group ServicePlan 服務方案
  *
  *
  * name 名稱

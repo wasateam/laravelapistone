@@ -35,15 +35,29 @@ class ShopHelper
     $shop_order_orginal_count = $shop_order_product->original_count;
     if ($type == 'store') {
       // 商品庫存
-      $shop_product->stock_count = $shop_product->stock_count + $return_record->count;
-      $shop_product->save();
+      // 沒有所屬spec->加商品庫存，有所屬spec->加spec庫存
+      if ($shop_order_product->shop_order_shop_product_spec) {
+        $shop_product_spec              = ShopProductSpec::find($shop_order_product->shop_order_shop_product_spec->shop_product_spec_id);
+        $shop_product_spec->stock_count = $shop_product_spec->stock_count + $return_record->count;
+        $shop_product_spec->save();
+      } else {
+        $shop_product->stock_count = $shop_product->stock_count + $return_record->count;
+        $shop_product->save();
+      }
       // 訂單商品數量
       $shop_order_product->count = $shop_order_product->count - $return_record->count;
       $shop_order_product->save();
     } else if ($type == 'update') {
       // 商品庫存
-      $shop_product->stock_count = $shop_product->stock_count - $shop_order_orginal_count + $shop_product->count + $return_record->count;
-      $shop_product->save();
+      // 沒有所屬spec->加商品庫存，有所屬spec->加spec庫存
+      if ($shop_order_product->shop_order_shop_product_spec) {
+        $shop_product_spec              = ShopProductSpec::find($shop_order_product->shop_order_shop_product_spec->shop_product_spec_id);
+        $shop_product_spec->stock_count = $shop_product_spec->stock_count - $shop_order_product->count + $return_record->count;
+        $shop_product_spec->save();
+      } else {
+        $shop_product->stock_count = $shop_product->stock_count - $shop_order_product->count + $return_record->count;
+        $shop_product->save();
+      }
       // 訂單商品數量
       $shop_order_product->count = $shop_order_orginal_count - $return_record->count;
       $shop_order_product->save();
@@ -821,6 +835,34 @@ class ShopHelper
     }
     $result = array_product($array);
     return $result;
+  }
+
+  public static function getShopReturnRecordPrice($count, $shop_order_shop_product)
+  {
+    $price = 0;
+    if (isset($shop_order_shop_product->shop_order_shop_product_spec)) {
+      $spec  = $shop_order_shop_product->shop_order_shop_product_spec;
+      $price = $spec->discount_price ? $spec->discount_price : $spec->price;
+    } else {
+      $price = $shop_order_shop_product->discount_price ? $shop_order_shop_product->dicount_price : $shop_order_shop_product->price;
+    }
+    return $price * $count;
+  }
+
+  public static function createShopReturnRecord($shop_order, $shop_order_shop_product, $remark = null, $return_reason = null, $type = null)
+  {
+    $shop_return_record                             = new ShopReturnRecord;
+    $shop_return_record->user_id                    = $shop_order->user_id;
+    $shop_return_record->shop_order_id              = $shop_order->id;
+    $shop_return_record->shop_product_id            = $shop_order_shop_product->shop_product_id;
+    $shop_return_record->shop_order_shop_product_id = $shop_order_shop_product->id;
+    $shop_return_record->count                      = $shop_order_shop_product->count;
+    $shop_return_record->price                      = $shop_order_shop_product->dicount_price ? $shop_order_shop_product->dicount_price : $shop_order_shop_product->price;
+    $shop_return_record->remark                     = $remark;
+    $shop_return_record->return_reason              = $return_reason;
+    $shop_return_record->type                       = $type;
+    $shop_return_record->save();
+    return $shop_return_record;
   }
 
 }

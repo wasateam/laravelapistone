@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group 最新消息Banner
+ * @group NewsBanner 橫幅Banner
  *
  * name 後台管理識別用途
  * sq 排序設定值
@@ -24,7 +24,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * start_date 上架日期
  * end_date 下架日期
  * is_active 是否上架
- * 
+ *
  */
 class NewsBannerController extends Controller
 {
@@ -45,7 +45,7 @@ class NewsBannerController extends Controller
     'des_color',
     'start_date',
     'end_date',
-    'is_active'
+    'is_active',
   ];
   public $belongs_to = [
   ];
@@ -60,9 +60,9 @@ class NewsBannerController extends Controller
 
   /**
    * Index
-   * 
+   *
    * @authenticated
-   * 
+   *
    * @queryParam search string 搜尋字串 No-example
    * @queryParam page int 頁碼(前台全抓)  No-example
    *
@@ -78,9 +78,9 @@ class NewsBannerController extends Controller
 
   /**
    * Store
-   * 
+   *
    * @authenticated
-   * 
+   *
    * @bodyParam name string 名稱 No-example
    * @bodyParam sq 排序設定值 Example:1
    * @bodyParam bg_img_1440  底圖1440 No-example

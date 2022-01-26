@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group 配送時間設定
+ * @group ShopShipTimeSetting 配送時間設定
  *
  * APIs for shop_ship_time_setting
  *

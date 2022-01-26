@@ -10,7 +10,7 @@ use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCampaign;
 
 /**
- * @group 促銷活動 ShopCampaign
+ * @group ShopCampaign 促銷活動
  *
  * 促銷活動 API
  *

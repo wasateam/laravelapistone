@@ -9,11 +9,20 @@ use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group News
- *
- * @authenticated
+ * @group News 最新消息
  *
  * APIs for news
+ *
+ * title 標題
+ * description 敘述
+ * publish_at 發表日期
+ * read_count 閱讀次數
+ * content 內容
+ * tags 標籤
+ * rough_content 無html標籤內容
+ * publish_status
+ *
+ * @authenticated
  */
 class NewsController extends Controller
 {

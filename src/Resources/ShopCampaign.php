@@ -31,7 +31,7 @@ class ShopCampaign extends JsonResource
         "limit"            => $this->limit,
         "is_active"        => $this->is_active,
         "discount_way"     => $this->discount_way,
-        'shop_product'     => $this->shop_products,
+        "shop_products"    => ShopProduct_R1::collection($this->shop_products),
       ];
     } else if (config('stone.mode') == 'webapi') {
       $res = [
@@ -48,7 +48,7 @@ class ShopCampaign extends JsonResource
         "limit"            => $this->limit,
         "is_active"        => $this->is_active,
         "discount_way"     => $this->discount_way,
-        'shop_product'     => $this->shop_products,
+        "shop_products"    => ShopProduct_R1::collection($this->shop_products),
       ];
     }
     return $res;

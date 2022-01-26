@@ -87,6 +87,11 @@ class ShopProduct extends Model
     return $this->hasMany(ShopProductSpecSettingItem::class, 'shop_product_id');
   }
 
+  public function shop_campaigns()
+  {
+    return $this->belongsToMany(ShopCampaign::class, 'shop_product_shop_campaign','shop_product_id','shop_campaign_id');
+  }
+  
   protected $casts = [
     'cover_image' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
     'images'      => \Wasateam\Laravelapistone\Casts\UrlsCast::class,

@@ -28,6 +28,7 @@ class ShopCampaignCollection extends JsonResource
         "discount_code"    => $this->discount_code,
         "discount_percent" => $this->discount_percent,
         "discount_amount"  => $this->discount_amount,
+        "shop_products"     => ShopProduct_R1::collection($this->shop_products),
       ];
     } else if (config('stone.mode') == 'webapi') {
       $res = [
@@ -38,6 +39,7 @@ class ShopCampaignCollection extends JsonResource
         "end_date"   => $this->end_date,
         "condition"  => $this->condition,
         "is_active"  => $this->is_active,
+        "shop_products"     => ShopProduct_R1::collection($this->shop_products),
       ];
     }
     return $res;

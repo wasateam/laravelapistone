@@ -42,7 +42,7 @@ class NewsBannerGroupController extends Controller
     ],
   ];
 
-  public function __contrust()
+  public function __construct()
   {
     if (config('stone.page_setting')) {
       $this->belongs_to_many[]        = 'page_settings';

@@ -61,8 +61,6 @@ class NewsBannerController extends Controller
   /**
    * Index
    *
-   * @authenticated
-   *
    * @queryParam search string 搜尋字串 No-example
    * @queryParam page int 頁碼(前台全抓)  No-example
    *
@@ -78,8 +76,6 @@ class NewsBannerController extends Controller
 
   /**
    * Store
-   *
-   * @authenticated
    *
    * @bodyParam name string 名稱 No-example
    * @bodyParam sq 排序設定值 Example:1

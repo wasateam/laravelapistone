@@ -45,6 +45,7 @@ class ShopProductCollection extends JsonResource
         'store_temperature'                   => $this->store_temperature,
         'freight'                             => $this->freight,
         'today_shop_order_shop_product_count' => $this->today_shop_order_shop_products->count(),
+        'shop_product_cover_frame_id'         => $this->shop_product_cover_frame_id
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;

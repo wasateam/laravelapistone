@@ -24,6 +24,8 @@ use Wasateam\Laravelapistone\Models\ShopReturnRecord;
  * shop_order 訂單
  * shop_order_shop_product 訂單商品
  * type 類別
+ * ~ return-all 全部退訂
+ * ~ return-part 部分退訂
  * status 退訂狀態
  * shop_product 商品(原始商品)
  *
@@ -112,8 +114,9 @@ class ShopReturnRecordController extends Controller
   {
     $shop_order_shop_product = ShopOrderShopProduct::where('id', $request->shop_order_shop_product)->first();
     $request->request->add(['shop_product' => $shop_order_shop_product->shop_product->id]);
+    $request->request->add(['type' => 'return-part']);
     return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
-      $model->price = $model->shop_order_shop_product->discount_price ? $model->shop_order_shop_product->discount_price * $model->count : $model->shop_order_shop_product->price * $model->count;
+      $model->price = ShopHelper::getShopReturnRecordPrice($model->count, $model->shop_order_shop_product);
       $model->save();
       ShopHelper::returnProductChangeCount($model->id, 'store');
       ShopHelper::changeShopOrderPrice($model->shop_order->id);
@@ -209,17 +212,9 @@ class ShopReturnRecordController extends Controller
       foreach ($shop_order_shop_products as $shop_order_shop_product) {
         //shop_order_shop_product's count > 0
         if ($shop_order_shop_product->count) {
-          $shop_return_record                             = new ShopReturnRecord;
-          $shop_return_record->user_id                    = $shop_order->user_id;
-          $shop_return_record->shop_order_id              = $shop_order->id;
-          $shop_return_record->shop_product_id            = $shop_order_shop_product->shop_product_id;
-          $shop_return_record->shop_order_shop_product_id = $shop_order_shop_product->id;
-          $shop_return_record->count                      = $shop_order_shop_product->count;
-          $shop_return_record->price                      = $shop_order_shop_product->dicount_price ? $shop_order_shop_product->dicount_price : $shop_order_shop_product->price;
-          $shop_return_record->remark                     = $request->remark ? $request->remark : null;
-          $shop_return_record->return_reason              = $request->return_reason ? $request->return_reason : null;
-          $shop_return_record->type                       = 'return-all';
-          $shop_return_record->save();
+          //create shop_return_record
+          $shop_return_record = ShopHelper::createShopReturnRecord($shop_order, $shop_order_shop_product, $request->remark, $request->return_reason, 'return_all');
+          //change product stock
           ShopHelper::returnProductChangeCount($shop_return_record->id, 'store');
         }
       }

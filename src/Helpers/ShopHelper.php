@@ -20,6 +20,7 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
 use Wasateam\Laravelapistone\Models\ShopProductSpecSetting;
 use Wasateam\Laravelapistone\Models\ShopProductSpecSettingItem;
 use Wasateam\Laravelapistone\Models\ShopReturnRecord;
+use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
 use Wasateam\Laravelapistone\Models\User;
 use Wasateam\Laravelapistone\Models\UserAddress;
 
@@ -491,19 +492,18 @@ class ShopHelper
     }
   }
 
-  public static function adjustBonusPointEnough($user_id, $bonus_points_deduct)
+  public static function checkBonusPointEnough($request)
   {
-    //紅利點數是否足夠
-    $user = User::find($user_id);
 
-    if ($bonus_points_deduct) {
-      if ($bonus_points_deduct > $user->bonus_points) {
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      return true;
+    if (!$request->has('bonus_points_deduct')) {
+      return;
+    }
+
+    $user                = User::find($request->user);
+    $bonus_points_deduct = $request->bonus_points_deduct;
+    if ($bonus_points_deduct > $user->bonus_points) {
+      return false;
+      throw new \Wasateam\Laravelapistone\Exceptions\OutOfException('bonus_points');
     }
   }
 
@@ -652,22 +652,17 @@ class ShopHelper
     }
   }
 
-  public static function adjustProductStockEnough($shop_cart_product)
+  public static function checkProductStockEnough($shop_cart_product)
   {
-    # 建立訂單時判斷商品庫存是否足夠
     $shop_stock_count = 0;
     $buy_count        = $shop_cart_product->count ? $shop_cart_product->count : 0;
-
     if (isset($shop_cart_product->shop_product_spec)) {
       $shop_stock_count = $shop_cart_product->shop_product_spec->stock_count;
     } else {
       $shop_stock_count = $shop_cart_product->shop_product->stock_count;
     }
-
     if ($buy_count > $shop_stock_count) {
-      return false;
-    } else {
-      return true;
+      throw new \Wasateam\Laravelapistone\Exceptions\OutOfException('shop product stock', 'shop_product', $shop_cart_product->shop_product->id);
     }
   }
 
@@ -781,4 +776,123 @@ class ShopHelper
     return $stock_count;
   }
 
+  public static function checkShopCartProductsExist($request)
+  {
+    if (!$request->has('shop_cart_products') || !is_array($request->shop_cart_products)) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('shop_cart_products');
+    }
+  }
+
+  public static function shopShipTimeLimitCheck($request)
+  {
+    if (config('stone.shop.ship_time')) {
+      if (!$request->has('shop_ship_time_setting')) {
+        throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('shop_ship_time_setting');
+      }
+      $shop_ship_time_setting = ShopShipTimeSetting::where('id', $request->shop_ship_time_setting)->first();
+      if (config('stone.shop.ship_time.daily_count_limit')) {
+        if ($shop_ship_time_setting->max_count <= count($shop_ship_time_setting->today_shop_orders)) {
+          throw new \Wasateam\Laravelapistone\Exceptions\OutOfException('shop_ship_time_setting count', 'shop_ship_time_setting', $shop_ship_time_setting->id);
+        }
+      }
+    }
+  }
+
+  public static function getShopCartOrderType($shop_cart_products = [])
+  {
+    $shop_cart_product = $shop_cart_products[0];
+    $cart_product      = ShopCartProduct::where('id', $shop_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
+    if (!$cart_product) {
+      throw new FindNoDataException('shop_cart_product', $shop_cart_product['id']);
+    }
+    return $cart_product->shop_product->order_type;
+  }
+
+  public static function getMyCartProducts($request, $order_type)
+  {
+    $my_cart_products  = $request->shop_cart_products;
+    $_my_cart_products = [];
+    foreach ($my_cart_products as $my_cart_product) {
+      $cart_product = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
+      if (!$cart_product) {
+        throw new FindNoDataException('shop_cart_product', $my_cart_product['id']);
+      }
+      if ($cart_product->user_id != Auth::user()->id) {
+        throw new FindNoDataException('shop_cart_product', $cart_product->id);
+      }
+      self::checkProductStockEnough($cart_product);
+      if ($order_type && $cart_product->shop_product->order_type != $order_type) {
+        throw new \Wasateam\Laravelapistone\Exceptions\FieldNotMatchException('order_type', $order_type);
+      }
+      $order_type          = $cart_product->shop_product->order_type;
+      $_my_cart_products[] = $cart_product;
+    }
+    return $_my_cart_products;
+  }
+
+  public static function checkDiscountCode($request)
+  {
+    if ($request->has('discount_code')) {
+      $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($request->discount_code);
+      if (!$today_dicount_decode_campaign) {
+        throw new \Wasateam\Laravelapistone\Exceptions\InvalidException('discount_code');
+      }
+    }
+  }
+
+  public static function createShopInvoice($shop_order)
+  {
+    // @Q@ 待調整完成
+    if (config('stone.invoice')) {
+      if (config('stone.invoice.service') == 'ecpay') {
+        try {
+          $invoice_type   = $shop_order->invoice_type;
+          $customer_email = $shop_order->orderer_email;
+          $customer_tel   = $shop_order->orderer_tel;
+          $customer_addr  = $shop_order->receive_address;
+          $order_amount   = ShopHelper::getOrderAmount($_my_cart_products);
+          $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
+          $customer_id    = Auth::user()->id;
+          $post_data      = [
+            'Items'         => $items,
+            'SalesAmount'   => $order_amount,
+            'TaxType'       => 1,
+            'CustomerEmail' => $customer_email,
+            'CustomerAddr'  => $customer_addr,
+            'CustomerPhone' => $customer_tel,
+            'CustomerID'    => $customer_id,
+          ];
+          if ($invoice_type == 'personal') {
+            $invoice_carrier_type      = $shop_order->invoice_carrier_type;
+            $invoice_carrier_number    = $shop_order->invoice_carrier_number;
+            $post_data['Print']        = 0;
+            $post_data['CustomerName'] = $shop_order->orderer;
+            if ($invoice_carrier_type == 'mobile') {
+              $post_data['CarrierType'] = 3;
+              $post_data['CarrierNum']  = $invoice_carrier_number;
+            } else if ($invoice_carrier_type == 'certificate') {
+              $post_data['CarrierType'] = 2;
+              $post_data['CarrierNum']  = $invoice_carrier_number;
+            } else if ($invoice_carrier_type == 'email') {
+              $post_data['CarrierType']   = 1;
+              $post_data['CarrierNum']    = '';
+              $post_data['CustomerEmail'] = $invoice_carrier_number;
+            }
+          } else if ($invoice_type == 'triple') {
+            $invoice_title                   = $shop_order->invoice_title;
+            $invoice_uniform_number          = $shop_order->invoice_uniform_number;
+            $post_data['CarrierType']        = '';
+            $post_data['Print']              = 1;
+            $post_data['CustomerName']       = $invoice_title;
+            $post_data['CustomerIdentifier'] = $invoice_uniform_number;
+          }
+          $post_data      = EcpayHelper::getInvoicePostData($post_data);
+          $invoice_number = EcpayHelper::createInvoice($post_data);
+          $invoice_status = 'done';
+        } catch (\Throwable $th) {
+          $invoice_status = 'fail';
+        }
+      }
+    }
+  }
 }

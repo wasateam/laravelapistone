@@ -6,10 +6,10 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
+use Wasateam\Laravelapistone\Models\ShopOrder;
 
 class EcpayHelper
 {
-  # 取得加密檔案
   public static function getEncryptData($data, $type = 'payment')
   {
     $invoice_mode = config('stone.invoice.mode');
@@ -26,7 +26,6 @@ class EcpayHelper
     return $data_encrypt;
   }
 
-  # 取得解密檔案
   public static function getDecryptData($data_encrypt, $type = 'payment')
   {
     $invoice_mode = config('stone.invoice.mode');
@@ -42,7 +41,6 @@ class EcpayHelper
     return json_decode($data_decode);
   }
 
-  # 取得商品Token，準備站內付
   public static function getMerchantToken($data)
   {
     $mode         = env('THIRD_PARTY_PAYMENT_MODE');
@@ -68,7 +66,6 @@ class EcpayHelper
     }
   }
 
-  # 取得站內付初始化資料，準備開始站內付
   public static function getInpayInitData($data = [], $order_type)
   {
     $initData = [
@@ -114,7 +111,6 @@ class EcpayHelper
     return $initData;
   }
 
-  # 站內付送出，建立付費動作
   public static function createPayment($PayToken, $MerchantTradeNo)
   {
     $mode         = env('THIRD_PARTY_PAYMENT_MODE');
@@ -140,13 +136,10 @@ class EcpayHelper
     if ($res->status() == '200') {
       $res_json = $res->json();
       $res_data = self::getDecryptData($res_json['Data']);
-      error_log(json_encode($res_data));
-      // return $res_data->Token;
     }
 
   }
 
-  # 建立發票
   public static function createInvoice($data)
   {
     $mode         = config('stone.invoice.mode');
@@ -365,5 +358,70 @@ class EcpayHelper
       ];
     }
     return $items;
+  }
+
+  public static function updateShopOrderFromEcpayOrderCallbackRes($res)
+  {
+    $shop_order = ShopOrder::where('no', $res->OrderInfo->MerchantTradeNo)->first();
+    if (!$shop_order) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order', $res->OrderInfo->MerchantTradeNo, 'no');
+    }
+    $shop_order->ecpay_merchant_id = $res->MerchantID;
+    if (isset($res->SimulatePaid)) {
+      if ($res->SimulatePaid == 1) {
+        $shop_order->pay_status  = 'sumulate-paid';
+        $shop_order->status      = 'established';
+        $shop_order->ship_status = 'unfulfilled';
+      }
+    }
+    if (isset($res->OrderInfo->TradeStatus)) {
+      if ($res->OrderInfo->TradeStatus == 1) {
+        $shop_order->pay_status  = 'paid';
+        $shop_order->status      = 'established';
+        $shop_order->ship_status = 'unfulfilled';
+      } else if ($res->OrderInfo->TradeStatus == 0) {
+        $shop_order->pay_status  = 'not-paid';
+        $shop_order->status      = 'not-established';
+        $shop_order->ship_status = null;
+      }
+    }
+    $shop_order->ecpay_trade_no   = $res->OrderInfo->TradeNo;
+    $shop_order->pay_type         = $res->OrderInfo->PaymentType;
+    $shop_order->ecpay_charge_fee = $res->OrderInfo->ChargeFee;
+    if (isset($res->CVSInfo)) {
+      $shop_order->csv_pay_from    = $res->CVSInfo->PayFrom;
+      $shop_order->csv_payment_no  = $res->CVSInfo->PaymentNo;
+      $shop_order->csv_payment_url = $res->CVSInfo->PaymentURL;
+    }
+    if (isset($res->BarcodeInfo)) {
+      $shop_order->barcode_pay_from = $res->BarcodeInfo->PayFrom;
+    }
+    if (isset($res->ATMInfo)) {
+      $shop_order->atm_acc_bank = $res->ATMInfo->ATMAccBank;
+      $shop_order->atm_acc_no   = $res->ATMInfo->ATMAccNo;
+    }
+    if (isset($res->CardInfo)) {
+      $shop_order->card_auth_code            = $res->CardInfo->AuthCode;
+      $shop_order->card_gwsr                 = $res->CardInfo->Gwsr;
+      $shop_order->card_process_at           = $res->CardInfo->ProcessDate;
+      $shop_order->card_amount               = $res->CardInfo->Amount;
+      $shop_order->card_pre_six_no           = $res->CardInfo->Card6No;
+      $shop_order->card_last_four_no         = $res->CardInfo->Card4No;
+      $shop_order->card_stage                = $res->CardInfo->Stage;
+      $shop_order->card_stast                = $res->CardInfo->Stast;
+      $shop_order->card_staed                = $res->CardInfo->Staed;
+      $shop_order->card_red_dan              = $res->CardInfo->RedDan;
+      $shop_order->card_red_de_amt           = $res->CardInfo->RedDeAmt;
+      $shop_order->card_red_ok_amt           = $res->CardInfo->RedOkAmt;
+      $shop_order->card_red_yet              = $res->CardInfo->RedYet;
+      $shop_order->card_period_type          = $res->CardInfo->PeriodType;
+      $shop_order->card_frequency            = $res->CardInfo->Frequency;
+      $shop_order->card_exec_times           = $res->CardInfo->ExecTimes;
+      $shop_order->card_period_amount        = $res->CardInfo->PeriodAmount;
+      $shop_order->card_total_success_times  = $res->CardInfo->TotalSuccessTimes;
+      $shop_order->card_total_success_amount = $res->CardInfo->TotalSuccessAmount;
+    }
+    $shop_order->save();
+    return $shop_order;
   }
 }

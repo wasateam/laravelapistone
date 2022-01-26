@@ -257,7 +257,6 @@ class AcumaticaHelper
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",
     ])->put($post_url, $post_data);
-    # @Q@ 回存acu id
     $user->acumatica_id = $response->json()['id'];
     $user->save();
     return $response->json();
@@ -331,7 +330,6 @@ class AcumaticaHelper
         return $last_token->access_token;
       }
     }
-    // @Q@ 待補 PRD URL
     $post_url = config('stone.acumatica.token_url');
     try {
       $response = Http::withBody("grant_type=password&client_id=" . $client_id . "&client_secret=" . $client_secret . "&username=" . $username . "&password=" . $password . "&scope=api", 'application/x-www-form-urlencoded')

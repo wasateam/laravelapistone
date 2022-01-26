@@ -10,16 +10,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Exports\ShopOrderExport;
+use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
-use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
 
 /**
- * @group 訂單
+ * @group ShopOrder 訂單
  *
  * type 類型
  * order_type 訂單類型
@@ -333,88 +333,21 @@ class ShopOrderController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_StoreHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      // return AuthHelper::checkRequestUser($request);
-      
-      if ($request->user != Auth::user()->id) {
-        return response()->json([
-          'message' => 'not you',
-        ], 400);
-      }
-      if (!$request->has('shop_cart_products') || !is_array($request->shop_cart_products)) {
-        return response()->json([
-          'message' => 'products required.',
-        ], 400);
-      }
 
-      # ShopShipTimeSetting 配送時間限制
-      if (config('stone.shop.ship_time')) {
-        if (!$request->has('shop_ship_time_setting')) {
-          return response()->json([
-            'message' => 'shop_ship_time_setting required.',
-          ], 400);
-        }
-        $shop_ship_time_setting = ShopShipTimeSetting::where('id', $request->shop_ship_time_setting)->first();
-        if (config('stone.shop.ship_time.daily_count_limit')) {
-          if ($shop_ship_time_setting->max_count <= count($shop_ship_time_setting->today_shop_orders)) {
-            return response()->json([
-              'message' => 'shop_ship_time_setting is max today.',
-            ], 400);
-          }
-        }
-      }
+      AuthHelper::checkRequestUser($request);
 
-      # ShopCartProduct and ShopType Check
-      $my_cart_products  = $request->shop_cart_products;
-      $_my_cart_products = [];
-      $order_type        = "";
-      foreach ($my_cart_products as $my_cart_product) {
-        $cart_product = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
-        if (!$cart_product) {
-          return response()->json([
-            'message' => 'no data.',
-          ], 400);
-        }
-        if ($cart_product->user_id != Auth::user()->id) {
-          return response()->json([
-            'message' => 'not your cart product.',
-          ], 400);
-        }
-        if (!ShopHelper::adjustProductStockEnough($cart_product)) {
-          return response()->json([
-            'message' => 'products not enough;',
-          ], 400);
-        }
-        if ($order_type && $cart_product->shop_product->order_type != $order_type) {
-          return response()->json([
-            'message' => 'product is not same order type.',
-          ], 400);
-        }
-        $order_type          = $cart_product->shop_product->order_type;
-        $_my_cart_products[] = $cart_product;
-      }
+      ShopHelper::checkShopCartProductsExist($request);
 
-      # User's bonus_points is enough or not
-      if ($request->has('bonus_points_deduct')) {
-        $is_bonus_point_enough = ShopHelper::adjustBonusPointEnough($request->user, $request->bonus_points_deduct);
-        if (!$is_bonus_point_enough) {
-          return response()->json([
-            'message' => 'bonus_points is not enough.',
-          ], 400);
-        }
-      }
+      ShopHelper::shopShipTimeLimitCheck($request);
 
-      # Discount_code adjust can use or not
-      $today_dicount_decode_campaign = null;
-      if ($request->has('discount_code')) {
-        $today_dicount_decode_campaign = ShopHelper::getTodayDiscountCodeCampaign($request->discount_code);
-        if (!$today_dicount_decode_campaign) {
-          return response()->json([
-            'message' => 'Invalid discount_code.',
-          ], 400);
-        }
-      }
+      $order_type        = ShopHelper::getShopCartOrderType($request->shop_cart_products);
 
-      # Update User Info
+      $_my_cart_products = ShopHelper::getMyCartProducts($request,$order_type);
+
+      ShopHelper::checkBonusPointEnough($request);
+
+      ShopHelper::checkDiscountCode($request);
+
       ShopHelper::updateUserInfoFromShopOrderRequest(Auth::user(), $request);
 
       # invoice

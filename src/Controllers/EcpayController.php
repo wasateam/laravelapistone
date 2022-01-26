@@ -8,7 +8,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
-use Wasateam\Laravelapistone\Models\ShopOrder;
 
 /**
  * @group Ecpay 綠界站內付相關動作
@@ -17,6 +16,11 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  */
 class EcpayController extends Controller
 {
+
+  /**
+   * Get Inpay Merchant Init 取得站內付初始化資訊
+   *
+   */
   public function get_inpay_merchant_init(Request $request)
   {
     if (!$request->has('shop_cart_products')) {
@@ -60,6 +64,10 @@ class EcpayController extends Controller
     ], 200);
   }
 
+  /**
+   * Inpay Create Payment 站內付付款動作
+   *
+   */
   public function inpay_create_payment(Request $request)
   {
     if (!$request->has('PayToken')) {
@@ -75,72 +83,17 @@ class EcpayController extends Controller
     EcpayHelper::createPayment($request->PayToken, $request->MerchantTradeNo);
   }
 
+  /**
+   *  Callbacl Ecpay inpay order 站內付訂單回存狀態
+   *
+   */
   public function callback_ecpay_inpay_order(Request $request)
   {
     $res = EcpayHelper::getDecryptData($request->Data);
     if ($res->RtnCode != 1) {
       return '1|OK';
     }
-    $shop_order = ShopOrder::where('no', $res->OrderInfo->MerchantTradeNo)->first();
-    if (!$shop_order) {
-      return;
-    }
-    $shop_order->ecpay_merchant_id = $res->MerchantID;
-    if (isset($res->SimulatePaid)) {
-      if ($res->SimulatePaid == 1) {
-        $shop_order->pay_status  = 'sumulate-paid';
-        $shop_order->status      = 'established';
-        $shop_order->ship_status = 'unfulfilled';
-      }
-    }
-    if (isset($res->OrderInfo->TradeStatus)) {
-      if ($res->OrderInfo->TradeStatus == 1) {
-        $shop_order->pay_status  = 'paid';
-        $shop_order->status      = 'established';
-        $shop_order->ship_status = 'unfulfilled';
-      } else if ($res->OrderInfo->TradeStatus == 0) {
-        $shop_order->pay_status  = 'not-paid';
-        $shop_order->status      = 'not-established';
-        $shop_order->ship_status = null;
-      }
-    }
-    $shop_order->ecpay_trade_no   = $res->OrderInfo->TradeNo;
-    $shop_order->pay_type         = $res->OrderInfo->PaymentType;
-    $shop_order->ecpay_charge_fee = $res->OrderInfo->ChargeFee;
-    if (isset($res->CVSInfo)) {
-      $shop_order->csv_pay_from    = $res->CVSInfo->PayFrom;
-      $shop_order->csv_payment_no  = $res->CVSInfo->PaymentNo;
-      $shop_order->csv_payment_url = $res->CVSInfo->PaymentURL;
-    }
-    if (isset($res->BarcodeInfo)) {
-      $shop_order->barcode_pay_from = $res->BarcodeInfo->PayFrom;
-    }
-    if (isset($res->ATMInfo)) {
-      $shop_order->atm_acc_bank = $res->ATMInfo->ATMAccBank;
-      $shop_order->atm_acc_no   = $res->ATMInfo->ATMAccNo;
-    }
-    if (isset($res->CardInfo)) {
-      $shop_order->card_auth_code            = $res->CardInfo->AuthCode;
-      $shop_order->card_gwsr                 = $res->CardInfo->Gwsr;
-      $shop_order->card_process_at           = $res->CardInfo->ProcessDate;
-      $shop_order->card_amount               = $res->CardInfo->Amount;
-      $shop_order->card_pre_six_no           = $res->CardInfo->Card6No;
-      $shop_order->card_last_four_no         = $res->CardInfo->Card4No;
-      $shop_order->card_stage                = $res->CardInfo->Stage;
-      $shop_order->card_stast                = $res->CardInfo->Stast;
-      $shop_order->card_staed                = $res->CardInfo->Staed;
-      $shop_order->card_red_dan              = $res->CardInfo->RedDan;
-      $shop_order->card_red_de_amt           = $res->CardInfo->RedDeAmt;
-      $shop_order->card_red_ok_amt           = $res->CardInfo->RedOkAmt;
-      $shop_order->card_red_yet              = $res->CardInfo->RedYet;
-      $shop_order->card_period_type          = $res->CardInfo->PeriodType;
-      $shop_order->card_frequency            = $res->CardInfo->Frequency;
-      $shop_order->card_exec_times           = $res->CardInfo->ExecTimes;
-      $shop_order->card_period_amount        = $res->CardInfo->PeriodAmount;
-      $shop_order->card_total_success_times  = $res->CardInfo->TotalSuccessTimes;
-      $shop_order->card_total_success_amount = $res->CardInfo->TotalSuccessAmount;
-    }
-    $shop_order->save();
+    $shop_order = EcpayHelper::updateShopOrderFromEcpayOrderCallbackRes($request);
     return '1|OK';
   }
 }

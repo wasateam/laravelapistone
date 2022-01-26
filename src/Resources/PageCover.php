@@ -26,6 +26,7 @@ class PageCover extends JsonResource
         'is_active'  => $this->is_active,
         'link'       => $this->link,
         'image'      => $this->image,
+        'page_settings' => $this->page_settings
       ];
     } else if (config('stone.mode') == 'webapi') {
       $res = [
@@ -33,6 +34,7 @@ class PageCover extends JsonResource
         'name'  => $this->name,
         'link'  => $this->link,
         'image' => $this->image,
+        'page_settings' => $this->page_settings
       ];
     }
     return $res;

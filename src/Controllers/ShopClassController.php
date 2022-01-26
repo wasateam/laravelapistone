@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group 商品分類
+ * @group ShopClass 商品分類
  *
  * name 分類名稱
  * sq 排序設定值

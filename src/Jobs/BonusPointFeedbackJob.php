@@ -35,6 +35,7 @@ class BonusPointFeedbackJob implements ShouldQueue
    */
   public function handle()
   {
+    //紅利點數回饋
     $shop_order = ShopOrder::find($this->shop_order_id);
     // get today shop_campaign bonus-point-feedback
     $today                = Carbon::now()->format('Y-m-d');

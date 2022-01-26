@@ -9,7 +9,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 
 /**
- * @group 免運門檻
+ * @group ShopFreeShipping 免運門檻
  *
  * create,update時的欄位----
  * name 免運名稱

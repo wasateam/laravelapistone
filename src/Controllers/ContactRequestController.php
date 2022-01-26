@@ -9,9 +9,9 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\ContactRequestNotifyMail;
 
 /**
- * @group  聯絡請求
+ * @group  ContactRequest 聯絡請求
  * ### ContactRequest
- * 
+ *
  * name 名稱
  * email 信箱
  * tel 電話

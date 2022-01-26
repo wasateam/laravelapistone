@@ -8,11 +8,16 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group ShopSubclass
- *
- * @authenticated
+ * @group ShopSubclass 商品子分類
  *
  * APIs for shop_subclass
+ *
+ * name 分類名稱
+ * sq 排序
+ * type 分類
+ * icon 圖片
+ *
+ * @authenticated
  */
 class ShopSubclassController extends Controller
 {

@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group 商品匯入紀錄
- *
+ * @group ShopProductImportRecord 商品匯入紀錄
  * no 編號
  * uuid
  * storage_space 儲位

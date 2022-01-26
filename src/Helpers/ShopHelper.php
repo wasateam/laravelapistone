@@ -36,15 +36,29 @@ class ShopHelper
     $shop_order_orginal_count = $shop_order_product->original_count;
     if ($type == 'store') {
       // 商品庫存
-      $shop_product->stock_count = $shop_product->stock_count + $return_record->count;
-      $shop_product->save();
+      // 沒有所屬spec->加商品庫存，有所屬spec->加spec庫存
+      if ($shop_order_product->shop_order_shop_product_spec) {
+        $shop_product_spec              = ShopProductSpec::find($shop_order_product->shop_order_shop_product_spec->shop_product_spec_id);
+        $shop_product_spec->stock_count = $shop_product_spec->stock_count + $return_record->count;
+        $shop_product_spec->save();
+      } else {
+        $shop_product->stock_count = $shop_product->stock_count + $return_record->count;
+        $shop_product->save();
+      }
       // 訂單商品數量
       $shop_order_product->count = $shop_order_product->count - $return_record->count;
       $shop_order_product->save();
     } else if ($type == 'update') {
       // 商品庫存
-      $shop_product->stock_count = $shop_product->stock_count - $shop_order_orginal_count + $shop_product->count + $return_record->count;
-      $shop_product->save();
+      // 沒有所屬spec->加商品庫存，有所屬spec->加spec庫存
+      if ($shop_order_product->shop_order_shop_product_spec) {
+        $shop_product_spec              = ShopProductSpec::find($shop_order_product->shop_order_shop_product_spec->shop_product_spec_id);
+        $shop_product_spec->stock_count = $shop_product_spec->stock_count - $shop_order_product->count + $return_record->count;
+        $shop_product_spec->save();
+      } else {
+        $shop_product->stock_count = $shop_product->stock_count - $shop_order_product->count + $return_record->count;
+        $shop_product->save();
+      }
       // 訂單商品數量
       $shop_order_product->count = $shop_order_orginal_count - $return_record->count;
       $shop_order_product->save();
@@ -95,8 +109,8 @@ class ShopHelper
     // discount_code
     // create discount_code shop_camapign
     if ($request && $request->has('discount_code')) {
-      $today_dicount_decode_campaign = ShopHelper::getTodayDiscountCodeCampaign($request->discount_code);
-      ShopHelper::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
+      $today_dicount_decode_campaign = Self::getTodayDiscountCodeCampaign($request->discount_code);
+      Self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
       if ($shop_product_price_total >= $today_dicount_decode_campaign->full_amount) {
         if ($today_dicount_decode_campaign->discount_percent) {
           $dicount_shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
@@ -340,7 +354,7 @@ class ShopHelper
     # User Address
     if (config('stone.user.address')) {
       if (config('stone.user.address.delivery')) {
-        self::createUserAddress($user, $request->area, $request->area_section, self::getAddressWithoutArea($request->receive_address, $request->area, $request->area_section), 'delivery');
+        Self::createUserAddress($user, $request->area, $request->area_section, Self::getAddressWithoutArea($request->receive_address, $request->area, $request->area_section), 'delivery');
       }
     }
 
@@ -547,6 +561,7 @@ class ShopHelper
 
   public static function shopProductCreateSpec($shop_product_spec_settings, $shop_product_specs, $shop_product_id)
   {
+    //商品建立規格
     // create/update shop_product_spec,shop_product_spec_setting,shop_product_spec_setting_item when shop_product created/updated
     $shop_product_spec_setting_ids      = []; //[1,2,3]
     $shop_product_spec_setting_item_ids = []; //[[1,2],[3,4]]
@@ -581,24 +596,18 @@ class ShopHelper
         $item_ids[] = $new_shop_product_spec_setting_item->id;
       }
       $shop_product_spec_setting_item_ids[] = $item_ids;
-      $shop_product_spec_setting_ids[]      = [
-        'setting_id' => $new_shop_product_spec_setting->id,
-        'item_ids'   => $item_ids,
-      ];
+      $shop_product_spec_setting_ids[]      = $new_shop_product_spec_setting->id;
     }
+
+    $id_combination = Self::combinateArray($shop_product_spec_setting_item_ids);
 
     //shop_product_spec
     foreach ($shop_product_specs as $shop_product_spec_key => $shop_product_spec) {
       $new_shop_product_spec = $shop_product_spec;
       //shop_product_spec_settings
-      $shop_product_spec_settings = [];
+      $shop_product_spec_settings = $shop_product_spec_setting_ids;
       //shop_product_spec_setting_items
-      $shop_product_spec_setting_items = [];
-      //get_ids
-      foreach ($shop_product_spec_setting_ids as $shop_product_spec_setting_id) {
-        $shop_product_spec_settings[]      = $shop_product_spec_setting_id['setting_id'];
-        $shop_product_spec_setting_items[] = $shop_product_spec_setting_id['item_ids'][$shop_product_spec_key];
-      }
+      $shop_product_spec_setting_items = $id_combination[$shop_product_spec_key];
 
       $new_shop_product_spec['shop_product']                    = $shop_product_id;
       $new_shop_product_spec['shop_product_spec_settings']      = $shop_product_spec_settings;
@@ -895,4 +904,79 @@ class ShopHelper
       }
     }
   }
+  public static function checkSettingItemsMatchSpecs($settings, $specs)
+  {
+    // check combination of all setting items count match specs count or not;
+    $setting_items_count_arr = [];
+    foreach ($settings as $setting) {
+      $setting_items_count_arr[] = count($setting['shop_product_spec_setting_items']);
+    }
+    $setting_items_total = Self::multiplyArray($setting_items_count_arr);
+    if ($setting_items_total == count($specs)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public static function combinateArray($array)
+  {
+    // combination array element
+    // array example: [[1,2],[4,5],[6,7]]
+    if (count($array) === 0 || !isset($array)) {
+      return [];
+    }
+    $current = $array[0]; //[1,2]
+    for ($i = 1; $i < count($array); $i++) {
+      $result = [];
+      for ($c = 0; $c < count($current); $c++) {
+        for ($r = 0; $r < count($array[$i]); $r++) {
+          $result[] = [$current[$c], $array[$i][$r]];
+        }
+      }
+      $current = $result;
+    }
+    return $current;
+  }
+
+  public static function multiplyArray($array)
+  {
+    //multiply items in array
+    //$array = [1,2,3]
+    $result = 0;
+    if (!isset($array) || !count($array)) {
+      return $result;
+    }
+    $result = array_product($array);
+    return $result;
+  }
+
+  public static function getShopReturnRecordPrice($count, $shop_order_shop_product)
+  {
+    $price = 0;
+    if (isset($shop_order_shop_product->shop_order_shop_product_spec)) {
+      $spec  = $shop_order_shop_product->shop_order_shop_product_spec;
+      $price = $spec->discount_price ? $spec->discount_price : $spec->price;
+    } else {
+      $price = $shop_order_shop_product->discount_price ? $shop_order_shop_product->dicount_price : $shop_order_shop_product->price;
+    }
+    return $price * $count;
+  }
+
+  public static function createShopReturnRecord($shop_order, $shop_order_shop_product, $remark = null, $return_reason = null, $type = null)
+  {
+    $shop_return_record                             = new ShopReturnRecord;
+    $shop_return_record->user_id                    = $shop_order->user_id;
+    $shop_return_record->shop_order_id              = $shop_order->id;
+    $shop_return_record->shop_product_id            = $shop_order_shop_product->shop_product_id;
+    $shop_return_record->shop_order_shop_product_id = $shop_order_shop_product->id;
+    $shop_return_record->count                      = $shop_order_shop_product->count;
+    $shop_return_record->price                      = $shop_order_shop_product->dicount_price ? $shop_order_shop_product->dicount_price : $shop_order_shop_product->price;
+    $shop_return_record->remark                     = $remark;
+    $shop_return_record->return_reason              = $return_reason;
+    $shop_return_record->type                       = $type;
+    $shop_return_record->save();
+    return $shop_return_record;
+  }
+
 }

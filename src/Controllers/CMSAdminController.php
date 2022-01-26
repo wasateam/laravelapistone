@@ -67,15 +67,9 @@ class CMSAdminController extends Controller
     'name',
     'email',
   ];
-  public $belongs_to_many = [
-    'xc_projects',
-    'manage_xc_projects',
-  ];
-  public $filter_belongs_to_many = [
-    'xc_projects',
-    'manage_xc_projects',
-  ];
-  public $order_fields = [
+  public $belongs_to_many        = [];
+  public $filter_belongs_to_many = [];
+  public $order_fields           = [
     'id',
     'updated_at',
     'created_at',
@@ -102,6 +96,12 @@ class CMSAdminController extends Controller
     if (config('stone.country_code')) {
       $this->input_fields[]  = 'country_code';
       $this->filter_fields[] = 'country_code';
+    }
+    if (config('stone.xc_project')) {
+      $this->belongs_to_many[]        = 'xc_projects';
+      $this->belongs_to_many[]        = 'manage_xc_projects';
+      $this->filter_belongs_to_many[] = 'xc_projects';
+      $this->filter_belongs_to_many[] = 'manage_xc_projects';
     }
   }
 

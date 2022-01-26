@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group 配送地區設定
+ * @group ShopShipAreaSetting 配送地區設定
  *
  * @authenticated
  *

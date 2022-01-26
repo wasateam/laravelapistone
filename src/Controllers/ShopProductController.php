@@ -59,7 +59,7 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * images 圖片們
  * description 敘述
  * ranking_score
- * shop_product_cover_frame 綁定之活動圖框
+ * shop_product_cover_frame 綁定之活動框
  * suggests 綁定之建議商品
  * shop_classes 綁定之商品類別
  * shop_subclasses 綁定之商品子類別
@@ -136,6 +136,9 @@ class ShopProductController extends Controller
     'shop_classes',
     'shop_subclasses',
   ];
+  public $filter_belongs_to = [
+    'shop_product_cover_frame'
+  ];
   public $filter_belongs_to_many = [
     'shop_classes',
     'shop_subclasses',
@@ -179,6 +182,7 @@ class ShopProductController extends Controller
    * @queryParam type ids 類型  No-example
    * @queryParam order_type ids 訂單類型  No-example
    * @queryParam stock_level ids 篩選庫存狀態  No-example 1,2
+   * @queryParam shop_product_cover_frame 篩選活動框  No-example 1,2
    *
    */
   public function index(Request $request, $id = null)

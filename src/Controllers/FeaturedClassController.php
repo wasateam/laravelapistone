@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group FeaturedClass
+ * @group FeaturedClass 精選分類
  *
  * @authenticated
  *
@@ -23,6 +23,10 @@ class FeaturedClassController extends Controller
     'name',
     'icon',
     'sequence',
+    'order_type'
+  ];
+  public $filter_fields = [
+    'order_type'
   ];
   public $order_fields = [
     'sequence',
@@ -44,6 +48,7 @@ class FeaturedClassController extends Controller
   /**
    * Index
    * @queryParam search string No-example
+   * @queryParam order_type string No-example pre-order,next-day
    *
    */
   public function index(Request $request, $id = null)

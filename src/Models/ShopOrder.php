@@ -59,6 +59,11 @@ class ShopOrder extends Model
     return $this->hasMany(ShopCampaignShopOrder::class);
   }
 
+  public function the_point_records()
+  {
+    return $this->hasMany(ThePointRecord::class);
+  }
+
   protected $casts = [
     'discounts'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'orderer_birthday'  => 'datetime',

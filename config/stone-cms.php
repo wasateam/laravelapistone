@@ -142,4 +142,6 @@ return [
   'xc_task'            => true,
   'xc_milestone'       => true,
   'xc_project'         => true,
+  //點數記錄系統
+  'the_point_record'   => true,
 ];

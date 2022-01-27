@@ -99,6 +99,9 @@ class ShopOrder extends JsonResource
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
       }
+      if (config('stone.the_point_record')) {
+        $res['the_point_records'] = ThePointRecord_R1::collection($this->the_point_records);
+      }
     } else if (config('stone.mode') == 'webapi') {
       $res = [
         'id'                        => $this->id,
@@ -182,6 +185,9 @@ class ShopOrder extends JsonResource
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
+      }
+      if (config('stone.the_point_record')) {
+        $res['the_point_records'] = ThePointRecord_R1::collection($this->the_point_records);
       }
     }
     return $res;

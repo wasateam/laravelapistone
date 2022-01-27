@@ -10,6 +10,8 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 /**
  * @group NewsBanner 橫幅Banner
  *
+ * api for news_banner
+ *
  * name 後台管理識別用途
  * sq 排序設定值
  * ~ 數值越低、排序越前
@@ -24,6 +26,8 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * start_date 上架日期
  * end_date 下架日期
  * is_active 是否上架
+ *
+ * @authenticated
  *
  */
 class NewsBannerController extends Controller
@@ -79,10 +83,10 @@ class NewsBannerController extends Controller
    *
    * @bodyParam name string 名稱 No-example
    * @bodyParam sq 排序設定值 Example:1
-   * @bodyParam bg_img_1440  底圖1440 No-example
-   * @bodyParam bg_img_768 底圖768 No-example
-   * @bodyParam bg_img_320 底圖320 No-example
-   * @bodyParam link 連結 No-example
+   * @bodyParam bg_img_1440  底圖1440 Example:""
+   * @bodyParam bg_img_768 底圖768 Example:""
+   * @bodyParam bg_img_320 底圖320 Example:""
+   * @bodyParam link 連結 Example:""
    * @bodyParam title 標題 Example:Title
    * @bodyParam title_color 標題顏色 Example:#000
    * @bodyParam des 說明 Example:DesDesDes
@@ -113,10 +117,10 @@ class NewsBannerController extends Controller
    * @urlParam  news_banner required The ID of news_banner. Example: 1
    * @bodyParam name string 名稱 No-example
    * @bodyParam sq 排序設定值 Example:1
-   * @bodyParam bg_img_1440  底圖1440 No-example
-   * @bodyParam bg_img_768 底圖768 No-example
-   * @bodyParam bg_img_320 底圖320 No-example
-   * @bodyParam link 連結 No-example
+   * @bodyParam bg_img_1440  底圖1440 Example:""
+   * @bodyParam bg_img_768 底圖768 Example:""
+   * @bodyParam bg_img_320 底圖320 Example:""
+   * @bodyParam link 連結 Example:""
    * @bodyParam title 標題 Example:Title
    * @bodyParam title_color 標題顏色 Example:#000
    * @bodyParam des 說明 Example:DesDesDes

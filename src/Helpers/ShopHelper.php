@@ -138,7 +138,7 @@ class ShopHelper
         if ($type['has_shop_free_shipping']) {
           $free_freight_price = ShopFreeShipping::where('end_date', '>=', $today_date)->where('start_date', '<=', $today_date)->first();
           if ($free_freight_price) {
-            if ($dicount_shop_product_price_total >= $free_freight_price->price) {
+            if ($shop_product_price_total >= $free_freight_price->price) {
               $freight = 0;
             }
           }

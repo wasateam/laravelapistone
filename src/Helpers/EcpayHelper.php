@@ -66,7 +66,7 @@ class EcpayHelper
     }
   }
 
-  public static function getInpayInitData($data = [], $order_type)
+  public static function getInpayInitData($shop_order_no, $trade_date, $order_price, $order_product_names, $user_id, $orderer_email, $orderer_tel, $orderer)
   {
     $initData = [
       "MerchantID"        => config('stone.thrid_party_payment.ecpay_inpay.merchant_id'),
@@ -74,12 +74,12 @@ class EcpayHelper
       "PaymentUIType"     => 2,
       "ChoosePaymentList" => "1,2,3,4,5",
       "OrderInfo"         => [
-        "MerchantTradeNo"   => ShopHelper::newShopOrderNo(),
-        "MerchantTradeDate" => Carbon::now()->format('Y/m/d H:i:s'),
-        "TotalAmount"       => 100,
+        "MerchantTradeNo"   => $shop_order_no,
+        "MerchantTradeDate" => $trade_date,
+        "TotalAmount"       => $order_price,
         "ReturnURL"         => config('stone.thrid_party_payment.ecpay_inpay.insite_order_return_url'),
         "TradeDesc"         => "Trade",
-        "ItemName"          => "ProductA, ProductB",
+        "ItemName"          => $order_product_names,
       ],
       "CardInfo"          => [
         "OrderResultURL"    => config('stone.thrid_party_payment.ecpay_inpay.cardinfo.order_return_url'),
@@ -96,18 +96,12 @@ class EcpayHelper
         "StoreExpireDate" => 7,
       ],
       "ConsumerInfo"      => [
-        "MerchantMemberID" => "1",
-        "Email"            => "customer@email.com",
-        "Phone"            => "0912345678",
-        "Name"             => "Test",
+        "MerchantMemberID" => $user_id,
+        "Email"            => $orderer_email,
+        "Phone"            => $orderer_tel,
+        "Name"             => $orderer,
       ],
     ];
-    if (array_key_exists('ConsumerInfo', $data)) {
-      $initData['ConsumerInfo'] = $data['ConsumerInfo'];
-    }
-    if (array_key_exists('OrderInfo', $data)) {
-      $initData['OrderInfo'] = $data['OrderInfo'];
-    }
     return $initData;
   }
 

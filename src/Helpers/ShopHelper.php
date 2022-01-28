@@ -108,21 +108,23 @@ class ShopHelper
     $dicount_shop_product_price_total = 0;
     // discount_code
     // create discount_code shop_camapign
-    if ($request && $request->has('discount_code')) {
+    if ($request && $request->has('discount_code') && $request->discount_code) {
       $today_dicount_decode_campaign = Self::getTodayDiscountCodeCampaign($request->discount_code);
-      Self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
-      if ($shop_product_price_total >= $today_dicount_decode_campaign->full_amount) {
-        if ($today_dicount_decode_campaign->discount_percent) {
-          $dicount_shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
-        } else if ($today_dicount_decode_campaign->discount_amount) {
-          $dicount_shop_product_price_total = $shop_product_price_total - $today_dicount_decode_campaign->discount_amount;
+      if ($today_dicount_decode_campaign) {
+        Self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
+        if ($shop_product_price_total >= $today_dicount_decode_campaign->full_amount) {
+          if ($today_dicount_decode_campaign->discount_percent) {
+            $dicount_shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
+          } else if ($today_dicount_decode_campaign->discount_amount) {
+            $dicount_shop_product_price_total = $shop_product_price_total - $today_dicount_decode_campaign->discount_amount;
+          }
         }
       }
     }
     //紅利點數
     //create bonus_points record
     $bonus_points = $shop_order->bonus_points_deduct ? $shop_order->bonus_points_deduct : 0;
-    Self::createShopReturnRecord($shop_order, null, $bonus_points, 'deduct');
+    Self::createThePointRecord($shop_order, null, $bonus_points, 'deduct');
 
     //運費 default = 100
     $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;

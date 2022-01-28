@@ -406,7 +406,7 @@ class ShopOrderController extends Controller
 
       # Discount_code adjust can use or not
       $today_dicount_decode_campaign = null;
-      if ($request->has('discount_code')) {
+      if ($request->has('discount_code') && $request->discount_code) {
         $today_dicount_decode_campaign = ShopHelper::getTodayDiscountCodeCampaign($request->discount_code);
         if (!$today_dicount_decode_campaign) {
           return response()->json([

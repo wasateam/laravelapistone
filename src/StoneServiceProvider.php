@@ -239,6 +239,11 @@ class StoneServiceProvider extends ServiceProvider
         if (config('stone.the_point')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/the_point');
         }
+
+        # PageSettingPageCover
+        if (config('stone.page_setting') && config('stone.page_cover')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/page_setting_page_cover');
+        }
       }
 
       $this->publishes([

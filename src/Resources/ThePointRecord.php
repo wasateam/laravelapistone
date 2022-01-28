@@ -23,8 +23,8 @@ class ThePointRecord extends JsonResource
         'source'        => $this->source,
         'count'         => $this->count,
         'user'          => new User_R0($this->user),
-        'shop_order'    => new ShopOrder_R0($this->user),
-        'shop_campaign' => new User_R0($this->user),
+        'shop_order'    => new ShopOrder_R0($this->shop_order),
+        'shop_campaign' => new User_R0($this->shop_campaign),
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
@@ -35,8 +35,8 @@ class ThePointRecord extends JsonResource
         'source'        => $this->source,
         'count'         => $this->count,
         'user'          => new User_R0($this->user),
-        'shop_order'    => new ShopOrder_R0($this->user),
-        'shop_campaign' => new User_R0($this->user),
+        'shop_order'    => new ShopOrder_R0($this->shop_order),
+        'shop_campaign' => new User_R0($this->shop_campaign),
       ];
     }
   }

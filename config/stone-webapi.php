@@ -183,4 +183,6 @@ return [
   //頁面彈跳視窗
   'page_cover'          => true,
   'excute_class'        => true,
+  //點數系統
+  'the_point'           => true,
 ];

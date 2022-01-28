@@ -234,6 +234,11 @@ class StoneServiceProvider extends ServiceProvider
         if (config('stone.xc_milestone')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/xc_milestone');
         }
+
+        # ThePoint
+        if (config('stone.the_point')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/the_point');
+        }
       }
 
       $this->publishes([

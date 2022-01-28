@@ -72,6 +72,7 @@ use Wasateam\Laravelapistone\Controllers\SystemClassController;
 use Wasateam\Laravelapistone\Controllers\SystemSubclassController;
 use Wasateam\Laravelapistone\Controllers\TagController;
 use Wasateam\Laravelapistone\Controllers\TermsController;
+use Wasateam\Laravelapistone\Controllers\ThePointRecordController;
 use Wasateam\Laravelapistone\Controllers\TulpaCrossItemController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
@@ -671,6 +672,14 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
+
+    # ThePoint
+    if (config('stone.the_point')) {
+      # ThePointRecord
+      Route::resource('the_point_record', THePointRecordController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
   }
 
   # CMS 公開
@@ -1095,6 +1104,15 @@ class RoutesHelper
       Route::resource('page_cover', PageCoverController::class)->only([
         'index', 'show',
       ])->shallow();
+    }
+
+    # ThePoint
+    if (config('stone.the_point')) {
+      # ThePointRecord
+      Route::resource('the_point_record', ThePointRecordController::class)->only([
+        'show',
+      ])->shallow();
+      Route::get('the_point_record/auth_index', [ThePointRecordController::class, 'auth_index']);
     }
   }
 

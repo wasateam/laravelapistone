@@ -6,11 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Wasateam\Laravelapistone\Database\Factories\UserFactory;
 
 class User extends Authenticatable
 {
   use HasFactory, Notifiable, HasApiTokens;
   use \Illuminate\Database\Eloquent\SoftDeletes;
+
+  protected static function newFactory()
+  {
+    return UserFactory::new ();
+  }
 
   public function updated_admin()
   {

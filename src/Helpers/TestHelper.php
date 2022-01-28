@@ -2,24 +2,28 @@
 
 namespace Wasateam\Laravelapistone\Helpers;
 
+use Wasateam\Laravelapistone\Helpers\AuthHelper;
+use Wasateam\Laravelapistone\Models\User;
+
 class TestHelper
 {
-  public static function test_all_stone($tester)
+  public static function getTestUserToken()
   {
-    if (config('stone.mode') == 'cms') {
-      self::test_cms($tester);
-    } else if (config('stone.mode') == 'webapi') {
-      self::test_webapi($tester);
+    $user        = self::getTestUser();
+    $tokenResult = $user->createToken('Personal Access Token', AuthHelper::getUserScopes($user));
+    return $tokenResult->accessToken;
+  }
+
+  public static function getTestUser()
+  {
+    $user = User::where('email', 'cowabunga@haha.com')->first();
+    if (!$user) {
+      User::factory()
+        ->cowabunga()
+        ->count(1)
+        ->create();
+      $user = User::where('email', 'cowabunga@haha.com')->first();
     }
-  }
-
-  public static function test_cms($tester)
-  {
-
-  }
-
-  public static function test_webapi($tester)
-  {
-    error_log('ok');
+    return $user;
   }
 }

@@ -155,4 +155,11 @@ class AuthHelper
       throw new \Wasateam\Laravelapistone\Exceptions\NotUserException;
     }
   }
+
+  public static function getToken($user)
+  {
+    $tokenResult = $user->createToken('Personal Access Token', self::getUserScopes($user));
+    $token       = $tokenResult->token;
+    return $token;
+  }
 }

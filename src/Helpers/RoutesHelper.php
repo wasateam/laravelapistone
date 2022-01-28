@@ -673,8 +673,9 @@ class RoutesHelper
       ])->shallow();
     }
 
-    # ThePointRecord
-    if (config('stone.the_point_record')) {
+    # ThePoint
+    if (config('stone.the_point')) {
+      # ThePointRecord
       Route::resource('the_point_record', THePointRecordController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
@@ -1105,8 +1106,9 @@ class RoutesHelper
       ])->shallow();
     }
 
-    # ThePointRecord
-    if (config('stone.the_point_record')) {
+    # ThePoint
+    if (config('stone.the_point')) {
+      # ThePointRecord
       Route::resource('the_point_record', ThePointRecordController::class)->only([
         'show',
       ])->shallow();

@@ -65,7 +65,7 @@ class UserMy extends JsonResource
     if (config('stone.user.acumatica_id')) {
       $res['acumatica_id'] = $this->acumatica_id;
     }
-    if (config('stone.the_point_record')) {
+    if (config('stone.the_point')) {
       $res['the_point_records'] = ThePointRecord_R2::collection($this->the_point_records);
     }
     return $res;

@@ -38,7 +38,7 @@ class PageCoverController extends Controller
   ];
   public $uuid = false;
 
-  public function __contrust()
+  public function __construct()
   {
     if (config('stone.page_setting')) {
       $this->belongs_to_many[]        = 'page_settings';

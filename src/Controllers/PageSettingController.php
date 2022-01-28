@@ -12,7 +12,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * APIs for page_setting
  *
  * name 名稱
- * route 頁面路徑
+ * route 頁面路徑 前面須加斜線 ex. /route
  *
  * @authenticated
  */
@@ -38,8 +38,8 @@ class PageSettingController extends Controller
   /**
    * Store
    *
-   * @bodyParam name string No-example
-   * @bodyParam route id No-example
+   * @bodyParam name string Example:index
+   * @bodyParam route id Example:/index
    */
   public function store(Request $request, $id = null)
   {
@@ -60,8 +60,8 @@ class PageSettingController extends Controller
    * Update
    *
    * @urlParam  page_setting required The ID of page_setting. Example: 1
-   * @bodyParam name string No-example
-   * @bodyParam route string No-example
+   * @bodyParam name string Example:index
+   * @bodyParam route id Example:/index
    */
   public function update(Request $request, $id)
   {

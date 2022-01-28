@@ -15,23 +15,34 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * sq 排序
  * page_settings 所屬頁面id
  *
+ * api ----
+ * News Banner Order Get 取得NewsBanner(橫幅)在NewsBannerGroup裡面的排序
+ * News Banner Order Patch 更新NewsBanner(橫幅)在NewsBannerGroup裡面的排序，送的是NewsBanner的id
+ *
  * @authenticated
  */
 class NewsBannerGroupController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Models\NewsBannerGroup';
-  public $name         = 'news_benner_group';
-  public $resource     = 'Wasateam\Laravelapistone\Resources\NewsBannerGroup';
-  public $input_fields = [
+  public $model              = 'Wasateam\Laravelapistone\Models\NewsBannerGroup';
+  public $name               = 'news_benner_group';
+  public $resource           = 'Wasateam\Laravelapistone\Resources\NewsBannerGroup';
+  public $resource_for_order = 'Wasateam\Laravelapistone\Resources\NewsBannerGroup_R_Order';
+  public $input_fields       = [
     'name',
     'sq',
   ];
   public $order_fields = [
     'sq',
   ];
-  public $order_by = 'sq';
+  public $order_by             = 'sq';
+  public $order_layers_setting = [
+    [
+      'model' => 'Wasateam\Laravelapistone\Models\NewsBanner',
+      'key'   => 'news_banners',
+    ],
+  ];
 
-  public function __contrust()
+  public function __construct()
   {
     if (config('stone.page_setting')) {
       $this->belongs_to_many[]        = 'page_settings';
@@ -96,7 +107,7 @@ class NewsBannerGroupController extends Controller
   }
 
   /**
-   * News Banner Order Get
+   * News Banner Order Get 取得橫幅排序
    *
    */
   public function news_banner_order_get($id)
@@ -105,12 +116,12 @@ class NewsBannerGroupController extends Controller
   }
 
   /**
-   * News Banner Order Patch
+   * News Banner Order Patch 更新橫幅排序
    *
-   * @bodyParam order object Example:[{id:1}]
+   * @bodyParam order object Example:[{"id":1}]
    */
   public function news_banner_order_patch($id, Request $request)
   {
-    return ModelHelper::ws_BelongsToManyOrderPatchHandler($id, $this, 'news_banners', $request);
+    return ModelHelper::ws_BelongsToManyOrderPatchHandler($id, $this, 'news_banners', $request, 'news_banner_sq');
   }
 }

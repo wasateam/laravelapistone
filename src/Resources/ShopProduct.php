@@ -52,6 +52,7 @@ class ShopProduct extends JsonResource
         'shop_subclasses'            => ShopSubclass_R1::collection($this->shop_subclasses),
         'shop_product_specs'         => ShopProductSpec::collection($this->shop_product_specs),
         'shop_product_spec_settings' => ShopProductSpecSetting_R1::collection($this->shop_product_spec_settings),
+        'shop_campaigns'              => ShopCampaign_R1::collection($this->shop_campaigns),
       ];
       if (config('stone.area')) {
         $res['areas']         = Area_R1::collection($this->areas);
@@ -92,6 +93,7 @@ class ShopProduct extends JsonResource
         'shop_subclasses'            => ShopSubclass_R1::collection($this->shop_subclasses),
         'shop_product_specs'         => ShopProductSpec::collection($this->shop_product_specs),
         'shop_product_spec_settings' => ShopProductSpecSetting_R1::collection($this->shop_product_spec_settings),
+        'shop_campaigns'              => ShopCampaign_R1::collection($this->shop_campaigns),
       ];
       if (config('stone.area')) {
         $res['areas']         = Area_R1::collection($this->areas);

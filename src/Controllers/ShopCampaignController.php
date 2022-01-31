@@ -240,32 +240,19 @@ class ShopCampaignController extends Controller
   }
 
 /**
- * DiscountCode Check 折扣碼可否使用
+ * Today DiscountCode Get 取得今日折扣碼活動
  *
  * @bodyParam discount_code string 折扣碼 Example:LittleChicken
- * @bodyParam price string 訂單價格 Example:1000
  */
-  public function today_discount_code_check(Request $request)
+  public function get_today_discount_code(Request $request)
   {
-    if (!$request->has('price')) {
-      return response()->json([
-        'message' => 'price is required',
-      ], 400);
-    }
-    if (gettype($request->price) != 'integer') {
-      return response()->json([
-        'message' => 'price is not integer',
-      ], 400);
-    }
     //today
     $today_date = Carbon::now()->format('Y-m-d');
     //shop_campaign
-    $has_shop_campaign = ShopCampaign::where('type', 'discount_code')->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('full_amount', '<=', $request->price)->first();
+    $has_shop_campaign = ShopCampaign::where('type', 'discount_code')->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('discount_code', $request->discount_code)->first();
 
     if (isset($has_shop_campaign)) {
-      return response()->json([
-        'message' => 'OK',
-      ], 200);
+      return new $this->resource($has_shop_campaign);
     } else {
       return response()->json([
         'message' => 'no shop_campaign',

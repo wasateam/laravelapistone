@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCampaign;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 
@@ -48,6 +49,8 @@ class BonusPointFeedbackJob implements ShouldQueue
         $user              = $shop_order->user;
         $user->bonus_point = $user->bonus_point + $bonus_point_feedback;
         $user->save();
+        // create the_point_record
+        ShopHelper::createShopReturnRecord($shop_order, $today_bonus_campaign->id, $bonus_point_feedback, 'get');
       }
     }
   }

@@ -72,6 +72,7 @@ use Wasateam\Laravelapistone\Controllers\SystemClassController;
 use Wasateam\Laravelapistone\Controllers\SystemSubclassController;
 use Wasateam\Laravelapistone\Controllers\TagController;
 use Wasateam\Laravelapistone\Controllers\TermsController;
+use Wasateam\Laravelapistone\Controllers\ThePointRecordController;
 use Wasateam\Laravelapistone\Controllers\TulpaCrossItemController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
@@ -671,6 +672,14 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
+
+    # ThePoint
+    if (config('stone.the_point')) {
+      # ThePointRecord
+      Route::resource('the_point_record', THePointRecordController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
   }
 
   # CMS 公開
@@ -987,7 +996,7 @@ class RoutesHelper
         'index', 'show',
       ])->shallow();
       Route::get('/shop_campaign/today/index', [ShopCampaignController::class, 'today_index']);
-      Route::post('/shop_campaign/today/discount_code/check', [ShopCampaignController::class, 'today_discount_code_check']);
+      Route::post('/shop_campaign/today/discount_code', [ShopCampaignController::class, 'get_today_discount_code']);
       # Shop Campaign Shop Order
       Route::resource('shop_campaign_shop_order', ShopCampaignShopOrderController::class)->only([
         'index', 'show',
@@ -1095,6 +1104,15 @@ class RoutesHelper
       Route::resource('page_cover', PageCoverController::class)->only([
         'index', 'show',
       ])->shallow();
+    }
+
+    # ThePoint
+    if (config('stone.the_point')) {
+      # ThePointRecord
+      Route::resource('the_point_record', ThePointRecordController::class)->only([
+        'show',
+      ])->shallow();
+      Route::get('the_point_record/auth/index', [ThePointRecordController::class, 'auth_index']);
     }
   }
 

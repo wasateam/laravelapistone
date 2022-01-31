@@ -21,6 +21,7 @@ use Wasateam\Laravelapistone\Models\ShopProductSpecSetting;
 use Wasateam\Laravelapistone\Models\ShopProductSpecSettingItem;
 use Wasateam\Laravelapistone\Models\ShopReturnRecord;
 use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
+use Wasateam\Laravelapistone\Models\ThePointRecord;
 use Wasateam\Laravelapistone\Models\User;
 use Wasateam\Laravelapistone\Models\UserAddress;
 
@@ -108,20 +109,23 @@ class ShopHelper
     $dicount_shop_product_price_total = 0;
     // discount_code
     // create discount_code shop_camapign
-    if ($request && $request->has('discount_code')) {
+    if ($request && $request->has('discount_code') && $request->discount_code) {
       $today_dicount_decode_campaign = Self::getTodayDiscountCodeCampaign($request->discount_code);
-      Self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
-      if ($shop_product_price_total >= $today_dicount_decode_campaign->full_amount) {
-        if ($today_dicount_decode_campaign->discount_percent) {
-          $dicount_shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
-        } else if ($today_dicount_decode_campaign->discount_amount) {
-          $dicount_shop_product_price_total = $shop_product_price_total - $today_dicount_decode_campaign->discount_amount;
+      if ($today_dicount_decode_campaign) {
+        Self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
+        if ($shop_product_price_total >= $today_dicount_decode_campaign->full_amount) {
+          if ($today_dicount_decode_campaign->discount_percent) {
+            $dicount_shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
+          } else if ($today_dicount_decode_campaign->discount_amount) {
+            $dicount_shop_product_price_total = $shop_product_price_total - $today_dicount_decode_campaign->discount_amount;
+          }
         }
       }
     }
     //紅利點數
-    //FIXME:create bonus_points record
-    $bonus_points = $shop_order->bonus_points ? $shop_order->bonus_points : 0;
+    //create bonus_points record
+    $bonus_points = $shop_order->bonus_points_deduct ? $shop_order->bonus_points_deduct : 0;
+    Self::createThePointRecord($shop_order, null, $bonus_points, 'deduct');
 
     //運費 default = 100
     $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
@@ -841,7 +845,7 @@ class ShopHelper
 
   public static function checkDiscountCode($request)
   {
-    if ($request->has('discount_code')) {
+    if ($request->has('discount_code') && $request->discount_code) {
       $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($request->discount_code);
       if (!$today_dicount_decode_campaign) {
         throw new \Wasateam\Laravelapistone\Exceptions\InvalidException('discount_code');
@@ -977,6 +981,19 @@ class ShopHelper
     $shop_return_record->type                       = $type;
     $shop_return_record->save();
     return $shop_return_record;
+  }
+
+  public static function createThePointRecord($shop_order, $shop_campaign_id = null, $point_count, $type)
+  {
+    //create the_point_record when get/deduct bonus_points
+    $the_point_record                   = new ThePointRecord;
+    $the_point_record->user_id          = $shop_order->user_id;
+    $the_point_record->shop_order_id    = $shop_order->id;
+    $the_point_record->shop_campaign_id = $shop_campaign_id;
+    $the_point_record->type             = $type;
+    $the_point_record->source           = 'new_shop_order';
+    $the_point_record->count            = $point_count;
+    $the_point_record->save();
   }
 
 }

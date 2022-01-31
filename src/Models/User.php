@@ -93,6 +93,11 @@ class User extends Authenticatable
     return $this->belongsToMany(ShopProduct::class, 'user_shop_product', 'user_id', 'shop_product_id');
   }
 
+  public function the_point_records()
+  {
+    return $this->hasMany(ThePointRecord::class, 'user_id');
+  }
+
   /**
    * The attributes that are mass assignable.
    *

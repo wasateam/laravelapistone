@@ -3,8 +3,10 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\LinePayHelper;
+use Wasateam\Laravelapistone\Models\ShopOrder;
 
 /**
  * @group LinePay LINE Pay 相關動作
@@ -19,30 +21,85 @@ class LinePayController extends Controller
    */
   public function payment_init(Request $request)
   {
-    if (!$request->has('shop_cart_products')) {
-      throw new \Wasateam\Laravelapistone\Exceptions\ParamRequiredException('shop_cart_products');
-    }
+    // if (!$request->has('shop_order')) {
+    //   throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('shop_order');
+    // }
+    // $shop_order = ShopOrder::find($request->shop_order);
+    // if (!$shop_order) {
+    //   throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
+    // }
+    // $user = Auth::user();
+    // if ($shop_order->user->id != $user->id) {
+    //   throw new \Wasateam\Laravelapistone\Exceptions\NotOwnerException('shop_order', $request->shop_order);
+    // }
+
+    // if ($request->has('mode') && $request->mode == 'test') {
+    //   $confirm_url = env('WEB_URL') . '/ws_test/linepay/payment/confirm';
+    //   $cancel_url  = env('WEB_URL') . '/ws_test/linepay/payment/cancel';
+    //   $res =LinePayHelper::payment_request($shop_order, $confirm_url, $cancel_url);
+    // } else {
+    //   $res= LinePayHelper::payment_request($shop_order);
+    // }
+    // if ($res['returnCode'] != '0000') {
+    //   return;
+    // }
+    // return response()->json($res['info']['paymentUrl'], 200);
+
+
+    # Test
     if ($request->has('mode') && $request->mode == 'test') {
-      $confirm_url = env('WEB_URL') . '/ws_test/linepay/payment/confirm';
-      $cancel_url  = env('WEB_URL') . '/ws_test/linepay/payment/cancel';
-      return LinePayHelper::payment_request();
+      $confirm_url = env('WEB_URL') . '/ws_test/line_pay/confirm';
+      $cancel_url  = env('WEB_URL') . '/ws_test/line_pay/cancel';
+      $res =LinePayHelper::payment_request(null, $confirm_url, $cancel_url);
     } else {
-      return LinePayHelper::payment_request();
+      $res= LinePayHelper::payment_request(null);
     }
+    if ($res['returnCode'] != '0000') {
+      return response()->json([
+        'message'=>'init error'
+      ],400);
+    }
+    return response()->json($res['info']['paymentUrl'], 200);
   }
 
   /**
    * 確認付款
    */
-  public function payment_confirm($transaction_id)
+  public function payment_confirm(Request $request)
   {
-    LinePayHelper::payment_confirm($transaction_id);
+    // if (!$request->has('transaction_id')) {
+    //   throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('transaction_id');
+    // }
+    // if (!$request->has('shop_order')) {
+    //   throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('shop_order');
+    // }
+    // $shop_order = ShopOrder::find($request->shop_order);
+    // if (!$shop_order) {
+    //   throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
+    // }
+    // $res = LinePayHelper::payment_confirm($request->transaction_id, $shop_order);
+    // if ($res['returnCode'] != '0000') {
+    //   return;
+    // }
+
+
+    # Test
+    $res = LinePayHelper::payment_confirm($request->transaction_id);
+    if ($res['returnCode'] != '0000') {
+       return response()->json([
+        'message'=>'pay fail'
+      ], 400);
+    }
+    return response()->json([
+      'message'=>'pay success'
+    ], 200);
+    // return response()->json($res, 200);
   }
 
   /**
    * 取消付款
    */
-  public function payment_cancel($transaction_id)
+  public function payment_cancel(Request $request)
   {
     LinePayHelper::payment_cancel($transaction_id);
   }

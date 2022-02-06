@@ -30,7 +30,7 @@ class FieldRequiredException extends Exception
   public function render($request)
   {
     $response_json = [
-      'message' => $field . ' required.',
+      'message' => $this->field . ' required.',
     ];
     return response()->json($response_json, 400);
   }

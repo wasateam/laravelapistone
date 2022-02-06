@@ -364,6 +364,7 @@ class ShopOrderController extends Controller
 
       ShopHelper::updateUserInfoFromShopOrderRequest(Auth::user(), $request);
 
+      // REMOVE FOR PAY
       # invoice
       $invoice_status = null;
       $invoice_number = null;
@@ -442,6 +443,7 @@ class ShopOrderController extends Controller
           $model->save();
         }
 
+        // REMOVE FOR PAY
         # Invoice
         if ($invoice_status) {
           $model->invoice_status = $invoice_status;

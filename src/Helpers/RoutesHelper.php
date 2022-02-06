@@ -745,6 +745,7 @@ class RoutesHelper
 
       # LINE Pay
       if (config('stone.thrid_party_payment.service.line_pay')) {
+        Route::post('line_pay/payment/init', [LinePayController::class, 'payment_init']);
         Route::post('line_pay/payment/confirm', [LinePayController::class, 'payment_confirm']);
         Route::post('line_pay/payment/cancel', [LinePayController::class, 'payment_cancel']);
       }

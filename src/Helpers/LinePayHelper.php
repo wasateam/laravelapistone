@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Http;
  */
 class LinePayHelper
 {
+
+  static $url_prod = 'https://api-pay.line.me';
+  static $url_dev  = 'https://sandbox-api-pay.line.me';
+
   /**
    * 建立付款請求
    */
@@ -20,9 +24,14 @@ class LinePayHelper
       $confirm_url = env('WEB_URL') . '/linepay/payment/confirm';
     }
     if (!$cancel_url) {
-      $confirm_url = env('WEB_URL') . '/linepay/payment/cancel';
+      $cancel_url = env('WEB_URL') . '/linepay/payment/cancel';
     }
-    $post_url     = env('LINE_PAY_API_URL') . '/v3/payments/request';
+    $mode = env('THIRD_PARTY_PAYMENT_MODE');
+    if ($mode == 'dev') {
+      $post_url = self::$url_dev . '/v3/payments/request';
+    } else {
+      $post_url = self::$url_prod . '/v3/payments/request';
+    }
     $nonce        = Carbon::now()->timestamp;
     $request_body = [
       'amount'       => 250,
@@ -53,7 +62,7 @@ class LinePayHelper
     $response = Http::withHeaders($header)
       ->post($post_url, $request_body);
 
-    return $response->json();
+    return $response;
   }
 
   /**

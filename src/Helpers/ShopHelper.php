@@ -817,7 +817,7 @@ class ShopHelper
     $shop_cart_product = $shop_cart_products[0];
     $cart_product      = ShopCartProduct::where('id', $shop_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
     if (!$cart_product) {
-      throw new FindNoDataException('shop_cart_product', $shop_cart_product['id']);
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_cart_product', $shop_cart_product['id']);
     }
     return $cart_product->shop_product->order_type;
   }
@@ -829,10 +829,10 @@ class ShopHelper
     foreach ($my_cart_products as $my_cart_product) {
       $cart_product = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
       if (!$cart_product) {
-        throw new FindNoDataException('shop_cart_product', $my_cart_product['id']);
+        throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_cart_product', $my_cart_product['id']);
       }
       if ($cart_product->user_id != Auth::user()->id) {
-        throw new FindNoDataException('shop_cart_product', $cart_product->id);
+        throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_cart_product', $cart_product->id);
       }
       self::checkProductStockEnough($cart_product);
       if ($order_type && $cart_product->shop_product->order_type != $order_type) {

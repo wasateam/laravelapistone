@@ -719,7 +719,7 @@ class ShopHelper
       $new_shop_order_product_setting->name                               = $shop_product_settings->name;
       $new_shop_order_product_setting->sq                                 = $shop_product_settings->sq;
       $new_shop_order_product_setting->shop_order_shop_product_id         = $shop_order_shop_product_id;
-      $new_shop_order_product_setting->shop_order_shop_product_setting_id = $shop_product_settings->id;
+      $new_shop_order_product_setting->shop_product_spec_setting_id = $shop_product_settings->id;
       $new_shop_order_product_setting->save();
       $new_settings[] = $new_shop_order_product_setting;
     }

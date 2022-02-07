@@ -24,6 +24,7 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
 use Wasateam\Laravelapistone\Models\ThePointRecord;
 use Wasateam\Laravelapistone\Models\User;
 use Wasateam\Laravelapistone\Models\UserAddress;
+use Auth;
 
 class ShopHelper
 {

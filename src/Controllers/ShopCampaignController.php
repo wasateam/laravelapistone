@@ -131,7 +131,7 @@ class ShopCampaignController extends Controller
   /**
    * Store
    *
-   * @bodyParam type string 活動類型 Example:type
+   * @bodyParam type string 活動類型 Example:new_feedback new_feedback,bonus_point_feedback
    * @bodyParam name string 活動名稱 Example:name
    * @bodyParam start_date string 開始日期 Example:2021-10-10
    * @bodyParam end_date string 結束日期 Example:2021-10-20
@@ -154,13 +154,13 @@ class ShopCampaignController extends Controller
     }
     if ($request->has('type')) {
       //get types from stone.php
-      $types    = config('stone.shop.shop_campaign.items');
-      $req_type = str_replace('-', '_', $request->type);
+      $types    = config('stone.shop.shop_campaign.types');
+      $req_type = $request->type;
       $has_key  = array_key_exists($req_type, $types);
       if ($has_key) {
         $type = $types[$req_type] ? $types[$req_type] : null;
         //date_no_repeat
-        if (isset($type['date_no_repeat'])) {
+        if ($types[$req_type]['date_no_repeat']) {
           $has_repeat = ShopHelper::sameCampaignDuration($request->start_date, $request->end_date, null, $request->type);
           if ($has_repeat) {
             return response()->json([
@@ -177,10 +177,27 @@ class ShopCampaignController extends Controller
    * Show
    *
    * @urlParam  shop_campaign required The ID of shop_campaign. Example: 1
+   * @queryParam status string  No-example progressing,non-start,end
    */
   public function show(Request $request, $id = null)
   {
-    return ModelHelper::ws_ShowHandler($this, $request, $id);
+    return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) use ($request){
+      //篩選狀態
+      $status = $request->has('status') ? $request->status : null;
+      if (isset($status)) {
+        $today = Carbon::now()->format('Y-m-d');
+        if ($status == 'progressing') {
+          $snap = $snap->where(function ($query) use ($today) {
+            $query->whereDate('end_date', '>=', $today)->whereDate('start_date', '<=', $today);
+          })->orWhereNull('start_date');
+        } else if ($status == 'non-start') {
+          $snap = $snap->whereDate('start_date', '>', $today);
+        } else if ($status == 'end') {
+          $snap = $snap->whereDate('end_date', '<', $today);
+        }
+      }
+      return $snap;
+    });
   }
 
   /**
@@ -239,25 +256,38 @@ class ShopCampaignController extends Controller
     return ModelHelper::ws_DestroyHandler($this, $id);
   }
 
-/**
- * Today DiscountCode Get 取得今日折扣碼活動
- *
- * @bodyParam discount_code string 折扣碼 Example:LittleChicken
- */
+  /**
+   * Today DiscountCode Get 取得今日折扣碼活動
+   * 
+   * @urlParam user int user_id Example:1
+   * @bodyParam discount_code string 折扣碼 Example:LittleChicken
+   */
   public function get_today_discount_code(Request $request)
-  {
+  { 
     //today
-    $today_date = Carbon::now()->format('Y-m-d');
+    $today_date = Carbon::now()->format('Y-m-d'); 
     //shop_campaign
-    $has_shop_campaign = ShopCampaign::where('type', 'discount_code')->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('discount_code', $request->discount_code)->first();
-
-    if (isset($has_shop_campaign)) {
-      return new $this->resource($has_shop_campaign);
+    $shop_campaign = ShopCampaign::where('type', 'discount_code')->where('is_active',1)->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('discount_code', $request->discount_code)->first();
+    if ($shop_campaign) {
+      if ($shop_campaign->condition == 'first-purchase') {
+        //is user first purchase or not
+        $shop_order = ShopOrder::where('user_id',$request->user)->where('pay_status','paid')->first();
+        if ($shop_order) {
+          return response()->json([
+            'message' => 'you are not first purchase',
+          ],403);
+        } else {
+          return new $this->resource($shop_campaign);
+        }
+      } else {
+        return new $this->resource($shop_campaign);
+      }
     } else {
       return response()->json([
         'message' => 'no shop_campaign',
       ], 200);
     }
+    
   }
 
   /**

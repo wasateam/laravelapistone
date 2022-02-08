@@ -26,6 +26,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * start_date 上架日期
  * end_date 下架日期
  * is_active 是否上架
+ * news_banner_groups banner群組
  *
  * @authenticated
  *
@@ -52,6 +53,12 @@ class NewsBannerController extends Controller
     'is_active',
   ];
   public $belongs_to = [
+  ];
+  public $belongs_to_many = [
+    'news_banner_groups'
+  ];
+  public $filter_belongs_to_many = [
+    'news_banner_groups'
   ];
   public $order_fields = [
     'sq',
@@ -94,6 +101,7 @@ class NewsBannerController extends Controller
    * @bodyParam start_date timestamp 上架日期 Example:2022-01-01 01:01:01
    * @bodyParam end_date timestamp 下架日期 Example:2022-01-05 01:01:01
    * @bodyParam is_active boolean 刊登狀態 Example:1
+   * @bodyParam news_banner_groups array Banner群組 Example:[1,2]
 
    */
   public function store(Request $request, $id = null)
@@ -125,6 +133,8 @@ class NewsBannerController extends Controller
    * @bodyParam title_color 標題顏色 Example:#000
    * @bodyParam des 說明 Example:DesDesDes
    * @bodyParam des_color 說明顏色 Example:#000
+   * @bodyParam news_banner_groups array Banner群組 Example:[1,2]
+
    */
   public function update(Request $request, $id)
   {

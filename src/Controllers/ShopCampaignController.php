@@ -256,25 +256,38 @@ class ShopCampaignController extends Controller
     return ModelHelper::ws_DestroyHandler($this, $id);
   }
 
-/**
- * Today DiscountCode Get 取得今日折扣碼活動
- *
- * @bodyParam discount_code string 折扣碼 Example:LittleChicken
- */
-  public function get_today_discount_code(Request $request)
-  {
+  /**
+   * Today DiscountCode Get 取得今日折扣碼活動
+   * 
+   * @queryParam id int user_id Example:1
+   * @bodyParam discount_code string 折扣碼 Example:LittleChicken
+   */
+  public function get_today_discount_code(Request $request, $id = null)
+  { 
     //today
-    $today_date = Carbon::now()->format('Y-m-d');
+    $today_date = Carbon::now()->format('Y-m-d'); 
     //shop_campaign
     $has_shop_campaign = ShopCampaign::where('type', 'discount_code')->where('is_active',1)->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('discount_code', $request->discount_code)->first();
-
-    if (isset($has_shop_campaign)) {
-      return new $this->resource($has_shop_campaign);
+    if ($has_shop_campaign) {
+      if ($has_shop_campaign->condition == 'first-purchase') {
+        //is user first purchase or not
+          $shop_order = ShopOrder::where('user_id',$id)->where('pay_status','paid')->first();
+          if ($shop_order) {
+            return response()->json([
+              'message' => 'you are not first purchase',
+            ],200);
+          } else {
+            return new $this->resource($has_shop_campaign);
+          }
+      } else {
+        return new $this->resource($has_shop_campaign);
+      }
     } else {
       return response()->json([
         'message' => 'no shop_campaign',
       ], 200);
     }
+    
   }
 
   /**

@@ -266,7 +266,7 @@ class ShopCampaignController extends Controller
     //today
     $today_date = Carbon::now()->format('Y-m-d');
     //shop_campaign
-    $has_shop_campaign = ShopCampaign::where('type', 'discount_code')->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('discount_code', $request->discount_code)->first();
+    $has_shop_campaign = ShopCampaign::where('type', 'discount_code')->where('is_active',1)->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('discount_code', $request->discount_code)->first();
 
     if (isset($has_shop_campaign)) {
       return new $this->resource($has_shop_campaign);

@@ -53,7 +53,7 @@ class NewsBannerGroupController extends Controller
   /**
    * Index
    * @queryParam search string No-example
-   * @queryParam page_settings int No-example 1,2,3
+   * @queryParam page_settings ids int No-example 1,2,3
    *
    */
   public function index(Request $request, $id = null)

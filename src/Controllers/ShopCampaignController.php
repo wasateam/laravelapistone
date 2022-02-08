@@ -131,7 +131,7 @@ class ShopCampaignController extends Controller
   /**
    * Store
    *
-   * @bodyParam type string 活動類型 Example:type
+   * @bodyParam type string 活動類型 Example:new_feedback new_feedback,bonus_point_feedback
    * @bodyParam name string 活動名稱 Example:name
    * @bodyParam start_date string 開始日期 Example:2021-10-10
    * @bodyParam end_date string 結束日期 Example:2021-10-20
@@ -154,13 +154,13 @@ class ShopCampaignController extends Controller
     }
     if ($request->has('type')) {
       //get types from stone.php
-      $types    = config('stone.shop.shop_campaign.items');
+      $types    = config('stone.shop.shop_campaign.types');
       $req_type = str_replace('-', '_', $request->type);
       $has_key  = array_key_exists($req_type, $types);
       if ($has_key) {
         $type = $types[$req_type] ? $types[$req_type] : null;
         //date_no_repeat
-        if (isset($type['date_no_repeat'])) {
+        if ($types[$req_type]['date_no_repeat']) {
           $has_repeat = ShopHelper::sameCampaignDuration($request->start_date, $request->end_date, null, $request->type);
           if ($has_repeat) {
             return response()->json([

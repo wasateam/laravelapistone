@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCampaign;
-use Auth;
+
 /**
  * @group ShopCampaign 促銷活動
  *
@@ -271,8 +271,7 @@ class ShopCampaignController extends Controller
     if ($shop_campaign) {
       if ($shop_campaign->condition == 'first-purchase') {
         //is user first purchase or not
-        $user = Auth::user();
-        $shop_order = ShopOrder::where('user_id',$user -> id)->where('pay_status','paid')->first();
+        $shop_order = ShopOrder::where('user_id',$request->user)->where('pay_status','paid')->first();
         if ($shop_order) {
           return response()->json([
             'message' => 'you are not first purchase',

@@ -127,11 +127,40 @@ class EcpayHelper
       ],
       "Data"       => $data_encrypt,
     ]);
-    if ($res->status() == '200') {
-      $res_json = $res->json();
-      $res_data = self::getDecryptData($res_json['Data']);
+    if (!$res->status() == '200') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInpayCreatePaymentException();
     }
+    $res_json = $res->json();
+    $res_data = self::getDecryptData($res_json['Data']);
+    if ($res_data['RtnCode'] != '1') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInpayCreatePaymentException();
+    }
+    return $res_data;
+  }
 
+  public static function updateShopOrderFromEcpayPaymentRes($payment_res)
+  {
+    $shop_order = ShopOrder::where('no', $payment_res->OrderInfo->MerchantTradeNo)->first();
+    if (!$shop_order) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order', $payment_res->OrderInfo->MerchantTradeNo, 'no');
+    }
+    $shop_order->ecpay_merchant_id = $payment_res->MerchantID;
+    if (isset($payment_res->OrderInfo->TradeStatus)) {
+      if ($payment_res->OrderInfo->TradeStatus == 1) {
+        $shop_order->pay_status  = 'paid';
+        $shop_order->status      = 'established';
+        $shop_order->ship_status = 'unfulfilled';
+      } else if ($payment_res->OrderInfo->TradeStatus == 0) {
+        $shop_order->pay_status  = 'not-paid';
+        $shop_order->status      = 'not-established';
+        $shop_order->ship_status = null;
+      }
+    }
+    $shop_order->ecpay_trade_no   = $payment_res->OrderInfo->TradeNo;
+    $shop_order->pay_type         = $payment_res->OrderInfo->PaymentType;
+    $shop_order->ecpay_charge_fee = $payment_res->OrderInfo->ChargeFee;
+    $shop_order->save();
+    return $shop_order;
   }
 
   public static function createInvoice($data)
@@ -166,43 +195,55 @@ class EcpayHelper
     return "{$time}{$str}";
   }
 
-  public static function getInvoicePostData($data)
-  {
+  // public static function getInvoicePostData($data)
+  public static function getInvoicePostData(
+    $CustomerID,
+    $CustomerIdentifier,
+    $CustomerName,
+    $CustomerAddr,
+    $CustomerPhone,
+    $CustomerEmail,
+    $Print = "0",
+    $Donation = "0",
+    $CarrierType,
+    $CarrierNum,
+    $TaxType,
+    $SalesAmount,
+    $Items
+  ) {
     $post_data = [
       "MerchantID"         => config('stone.invoice.ecpay.merchant_id'),
       "RelateNumber"       => self::newRelateNumber(),
-      "CustomerID"         => "",
-      "CustomerIdentifier" => "",
-      "CustomerName"       => "",
-      "CustomerAddr"       => "",
-      // "CustomerName"       => "綠界科技股份有限公司",
-      // "CustomerAddr"       => "106 台北市南港區發票一街 1 號 1 樓",
-      "CustomerPhone"      => "",
-      "CustomerEmail"      => "test@ecpay.com.tw",
+      "CustomerID"         => $CustomerID,
+      "CustomerIdentifier" => $CustomerIdentifier,
+      "CustomerName"       => $CustomerName,
+      "CustomerAddr"       => $CustomerAddr,
+      "CustomerPhone"      => $CustomerPhone,
+      "CustomerEmail"      => $CustomerEmail,
       "ClearanceMark"      => "1",
-      "Print"              => "0",
-      "Donation"           => "0",
+      "Print"              => $Print,
+      "Donation"           => $Donation,
       "LoveCode"           => "",
-      "CarrierType"        => "",
-      "CarrierNum"         => "",
-      "TaxType"            => "",
-      // "TaxType"            => "",
-      "SalesAmount"        => 100,
-      "InvoiceRemark"      => "發票備註",
+      "CarrierType"        => $CarrierType,
+      "CarrierNum"         => $CarrierNum,
+      "TaxType"            => $TaxType,
+      "SalesAmount"        => $SalesAmount,
+      "InvoiceRemark"      => "",
       "InvType"            => "07",
       "vat"                => "1",
-      "Items"              => [
-        [
-          "ItemSeq"     => 1,
-          "ItemName"    => "item01",
-          "ItemCount"   => 1,
-          "ItemWord"    => "件",
-          "ItemPrice"   => 50,
-          "ItemTaxType" => "1",
-          "ItemAmount"  => 50,
-          "ItemRemark"  => "item01_desc",
-        ],
-      ],
+      "Items"              => $Items,
+      // "Items"              => [
+      //   [
+      //     "ItemSeq"     => 1,
+      //     "ItemName"    => "item01",
+      //     "ItemCount"   => 1,
+      //     "ItemWord"    => "件",
+      //     "ItemPrice"   => 50,
+      //     "ItemTaxType" => "1",
+      //     "ItemAmount"  => 50,
+      //     "ItemRemark"  => "item01_desc",
+      //   ],
+      // ],
     ];
 
     foreach ($data as $key => $value) {
@@ -236,96 +277,45 @@ class EcpayHelper
     }
   }
 
-  public static function getDelayInvoicePostData($data)
-  {
+  public static function getDelayInvoicePostData(
+    $CustomerID,
+    $CustomerIdentifier,
+    $CustomerName,
+    $CustomerAddr,
+    $CustomerPhone,
+    $CustomerEmail,
+    $Print = "0",
+    $Donation = "0",
+    $CarrierType,
+    $CarrierNum,
+    $TaxType,
+    $SalesAmount,
+    $Items,
+    $DelayDay = 0
+  ) {
     return [
-      "MerchantID"         => "2000132",
+      "MerchantID"         => config('stone.invoice.ecpay.merchant_id'),
       "RelateNumber"       => self::newRelateNumber(),
-      "CustomerID"         => "",
-      "CustomerIdentifier" => "",
-      "CustomerName"       => "綠界科技股份有限公司",
-      "CustomerAddr"       => "106 台北市南港區發票一街 1 號 1 樓",
-      "CustomerPhone"      => "",
-      "CustomerEmail"      => "test@ecpay.com.tw",
+      "CustomerID"         => $CustomerID,
+      "CustomerIdentifier" => $CustomerIdentifier,
+      "CustomerName"       => $CustomerName,
+      "CustomerAddr"       => $CustomerAddr,
+      "CustomerPhone"      => $CustomerPhone,
+      "CustomerEmail"      => $CustomerEmail,
       "ClearanceMark"      => "1",
-      "Print"              => "1",
-      "Donation"           => "0",
+      "Print"              => $Print,
+      "Donation"           => $Donation,
       "LoveCode"           => "",
-      "CarrierType"        => "",
-      "CarrierNum"         => "",
-      "TaxType"            => "1",
-      "SalesAmount"        => 100,
-      "InvoiceRemark"      => "發票備註",
+      "CarrierType"        => $CarrierType,
+      "CarrierNum"         => $CarrierNum,
+      "TaxType"            => $TaxType,
+      "SalesAmount"        => $SalesAmount,
+      "InvoiceRemark"      => "",
       "InvType"            => "07",
       "vat"                => "1",
+      "Items"              => $Items,
       "DelayFlag"          => "1",
-      "DelayDay"           => "3",
-      "Items"              => [
-        [
-          "ItemSeq"     => 1,
-          "ItemName"    => "item01",
-          "ItemCount"   => 1,
-          "ItemWord"    => "件",
-          "ItemPrice"   => 50,
-          "ItemTaxType" => "1",
-          "ItemAmount"  => 50,
-          "ItemRemark"  => "item01_desc",
-        ],
-        [
-          "ItemSeq"     => 2,
-          "ItemName"    => "item02",
-          "ItemCount"   => 1,
-          "ItemWord"    => "個",
-          "ItemPrice"   => 20,
-          "ItemTaxType" => "1",
-          "ItemAmount"  => 20,
-          "ItemRemark"  => "item02_desc",
-        ],
-        [
-          "ItemSeq"     => 3,
-          "ItemName"    => "item03",
-          "ItemCount"   => 3,
-          "ItemWord"    => "粒",
-          "ItemPrice"   => 10,
-          "ItemTaxType" => "1",
-          "ItemAmount"  => 30,
-          "ItemRemark"  => "item03_desc",
-        ],
-      ],
-      // "MerchantID"         => config('stone.invoice.ecpay.merchant_id'),
-      // 'RelateNumber'       => self::newRelateNumber(),
-      // 'CustomerID'         => '123123',
-      // 'CustomerIdentifier' => '',
-      // 'CustomerName'       => '',
-      // // 'CustomerIdentifier' => '12341234',
-      // // 'CustomerName'       => 'companyyyyy',
-      // 'CustomerAddr'       => '',
-      // 'CustomerPhone'      => '',
-      // 'CustomerEmail'      => 'hello@wasateam.com',
-      // 'ClearanceMark'      => '',
-      // 'Print'              => '0',
-      // 'Donation'           => '0',
-      // // 'LoveCode'           => '',
-      // 'CarrierType'        => '',
-      // 'CarrierNum'         => '',
-      // 'TaxType'            => '1',
-      // // 'SpecialTaxType'     => '',
-      // 'SalesAmount'        => '333',
-      // 'InvoiceRemark'      => 'Remark Hereeee',
-      // 'Items'              => [
-      //   [
-      //     "ItemSeq"     => '123123',
-      //     "ItemName"    => 'Product AAA',
-      //     "ItemCount"   => '3',
-      //     "ItemWord"    => '個',
-      //     "ItemPrice"   => '111',
-      //     "ItemTaxType" => '1',
-      //     "ItemAmount"  => '333',
-      //     "ItemRemark"  => 'Product Remarkkkk',
-      //   ],
-      // ],
-      // 'InvType'            => '07',
-      // 'vat'                => '1',
+      "DelayDay"           => $DelayDay,
     ];
   }
 

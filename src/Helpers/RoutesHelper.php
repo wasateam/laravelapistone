@@ -22,7 +22,6 @@ use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
-use Wasateam\Laravelapistone\Controllers\LinePayController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerGroupController;
@@ -766,6 +765,14 @@ class RoutesHelper
     if (config('stone.service_plan')) {
       Route::get('user_service_plan/my_current_plan', [UserServicePlanController::class, 'my_current_plan']);
     }
+
+    # Shop
+    if (config('stone.shop')) {
+      # Shop Order
+      Route::resource('shop_order', ShopOrderController::class)->only([
+        'store',
+      ])->shallow();
+    }
   }
 
   # Web 需符合對應使用者之
@@ -956,11 +963,7 @@ class RoutesHelper
       Route::resource('shop_ship_time_setting', ShopShipTimeSettingController::class)->only([
         'index', 'show',
       ])->shallow();
-      # Shop Order
-      Route::resource('shop_order', ShopOrderController::class)->only([
-        'store',
-      ])->shallow();
-      Route::get('/auth/shop_order', [ShopOrderController::class, 'auth_shop_order_index']);
+      // Route::get('/auth/shop_order', [ShopOrderController::class, 'auth_shop_order_index']);
       # Shop Order Product
       Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
         'index', 'show',

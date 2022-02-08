@@ -183,7 +183,7 @@ class ShopCampaignController extends Controller
   {
     return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) use ($request){
       //篩選狀態
-      $status = ($request != null) && $request->filled('status') ? $request->status : null;
+      $status = $request->has('status') ? $request->status : null;
       if (isset($status)) {
         $today = Carbon::now()->format('Y-m-d');
         if ($status == 1) {

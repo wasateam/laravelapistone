@@ -186,13 +186,13 @@ class ShopCampaignController extends Controller
       $status = $request->has('status') ? $request->status : null;
       if (isset($status)) {
         $today = Carbon::now()->format('Y-m-d');
-        if ($status == 'ongoing') {
+        if ($status == 'progressing') {
           $snap = $snap->where(function ($query) use ($today) {
             $query->whereDate('end_date', '>=', $today)->whereDate('start_date', '<=', $today);
           })->orWhereNull('start_date');
-        } else if ($status == 'unstart') {
+        } else if ($status == 'non-start') {
           $snap = $snap->whereDate('start_date', '>', $today);
-        } else if ($status == 'ended') {
+        } else if ($status == 'end') {
           $snap = $snap->whereDate('end_date', '<', $today);
         }
       }

@@ -155,7 +155,7 @@ class ShopCampaignController extends Controller
     if ($request->has('type')) {
       //get types from stone.php
       $types    = config('stone.shop.shop_campaign.types');
-      $req_type = str_replace('-', '_', $request->type);
+      $req_type = $request->type;
       $has_key  = array_key_exists($req_type, $types);
       if ($has_key) {
         $type = $types[$req_type] ? $types[$req_type] : null;

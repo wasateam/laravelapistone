@@ -177,10 +177,27 @@ class ShopCampaignController extends Controller
    * Show
    *
    * @urlParam  shop_campaign required The ID of shop_campaign. Example: 1
+   * @queryParam status int  No-example 1,2,3
    */
   public function show(Request $request, $id = null)
   {
-    return ModelHelper::ws_ShowHandler($this, $request, $id);
+    return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) use ($request){
+      //篩選狀態
+      $status = ($request != null) && $request->filled('status') ? $request->status : null;
+      if (isset($status)) {
+        $today = Carbon::now()->format('Y-m-d');
+        if ($status == 1) {
+          $snap = $snap->where(function ($query) use ($today) {
+            $query->whereDate('end_date', '>=', $today)->whereDate('start_date', '<=', $today);
+          })->orWhereNull('start_date');
+        } else if ($status == 2) {
+          $snap = $snap->whereDate('start_date', '>', $today);
+        } else if ($status == 3) {
+          $snap = $snap->whereDate('end_date', '<', $today);
+        }
+      }
+      return $snap;
+    });
   }
 
   /**

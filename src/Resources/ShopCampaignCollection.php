@@ -28,6 +28,8 @@ class ShopCampaignCollection extends JsonResource
         "discount_code"    => $this->discount_code,
         "discount_percent" => $this->discount_percent,
         "discount_amount"  => $this->discount_amount,
+        "discount_way"     => $this->discount_way,
+        "feedback_rate"     => $this->feedback_rate,
         "shop_products"     => ShopProduct_R1::collection($this->shop_products),
       ];
     } else if (config('stone.mode') == 'webapi') {
@@ -39,6 +41,8 @@ class ShopCampaignCollection extends JsonResource
         "end_date"   => $this->end_date,
         "condition"  => $this->condition,
         "is_active"  => $this->is_active,
+        "discount_way"     => $this->discount_way,
+        "feedback_rate"     => $this->feedback_rate,
         "shop_products"     => ShopProduct_R1::collection($this->shop_products),
       ];
     }

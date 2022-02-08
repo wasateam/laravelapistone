@@ -65,6 +65,7 @@ class ShopCampaignController extends Controller
     'is_active',
     'feedback_rate',
     'discount_way',
+    'user_id',
   ];
   public $search_fields = [
     'name',
@@ -72,6 +73,7 @@ class ShopCampaignController extends Controller
   public $filter_fields = [
     'is_active',
     'type',
+    'user_id'
   ];
   public $order_fields = [
     "start_date",
@@ -259,10 +261,10 @@ class ShopCampaignController extends Controller
   /**
    * Today DiscountCode Get 取得今日折扣碼活動
    * 
-   * @queryParam id int user_id Example:1
+   * @urlParam user_id int user_id Example:1
    * @bodyParam discount_code string 折扣碼 Example:LittleChicken
    */
-  public function get_today_discount_code(Request $request, $id = null)
+  public function get_today_discount_code(Request $request)
   { 
     //today
     $today_date = Carbon::now()->format('Y-m-d'); 
@@ -271,7 +273,7 @@ class ShopCampaignController extends Controller
     if ($shop_campaign) {
       if ($shop_campaign->condition == 'first-purchase') {
         //is user first purchase or not
-          $shop_order = ShopOrder::where('user_id',$id)->where('pay_status','paid')->first();
+          $shop_order = ShopOrder::where('user_id',$request -> id)->where('pay_status','paid')->first();
           if ($shop_order) {
             return response()->json([
               'message' => 'you are not first purchase',

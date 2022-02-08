@@ -177,7 +177,7 @@ class ShopCampaignController extends Controller
    * Show
    *
    * @urlParam  shop_campaign required The ID of shop_campaign. Example: 1
-   * @queryParam status string  No-example ongoing,unstart,ended
+   * @queryParam status string  No-example progressing,non-start,end
    */
   public function show(Request $request, $id = null)
   {

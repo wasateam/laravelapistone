@@ -17,8 +17,8 @@ class EcpayHelper
       $hash_key = 'ejCk326UnaZWKisg';
       $hash_iv  = 'q9jcZX8Ib9LM8wYk';
     } else {
-      $hash_key = config('stone.thrid_party_payment.ecpay_inpay.hash_key');
-      $hash_iv  = config('stone.thrid_party_payment.ecpay_inpay.hash_iv');
+      $hash_key = config('stone.third_party_payment.ecpay_inpay.hash_key');
+      $hash_iv  = config('stone.third_party_payment.ecpay_inpay.hash_iv');
     }
     $data_json    = json_encode($data);
     $data_encode  = urlencode($data_json);
@@ -33,8 +33,8 @@ class EcpayHelper
       $hash_key = 'ejCk326UnaZWKisg';
       $hash_iv  = 'q9jcZX8Ib9LM8wYk';
     } else {
-      $hash_key = config('stone.thrid_party_payment.ecpay_inpay.hash_key');
-      $hash_iv  = config('stone.thrid_party_payment.ecpay_inpay.hash_iv');
+      $hash_key = config('stone.third_party_payment.ecpay_inpay.hash_key');
+      $hash_iv  = config('stone.third_party_payment.ecpay_inpay.hash_iv');
     }
     $data_decrypt = openssl_decrypt($data_encrypt, 'aes-128-cbc', $hash_key, $options = 0, $hash_iv);
     $data_decode  = urldecode($data_decrypt);
@@ -52,7 +52,7 @@ class EcpayHelper
     }
 
     $res = Http::withHeaders([])->post($post_url, [
-      "MerchantID" => config('stone.thrid_party_payment.ecpay_inpay.merchant_id'),
+      "MerchantID" => config('stone.third_party_payment.ecpay_inpay.merchant_id'),
       "RqHeader"   => [
         "Timestamp" => Carbon::now()->timestamp,
         "Revision"  => "1.3.15",
@@ -69,7 +69,7 @@ class EcpayHelper
   public static function getInpayInitData($shop_order_no, $trade_date, $order_price, $order_product_names, $user_id, $orderer_email, $orderer_tel, $orderer)
   {
     $initData = [
-      "MerchantID"        => config('stone.thrid_party_payment.ecpay_inpay.merchant_id'),
+      "MerchantID"        => config('stone.third_party_payment.ecpay_inpay.merchant_id'),
       "RememberCard"      => 1,
       "PaymentUIType"     => 2,
       "ChoosePaymentList" => "1,2,3,4,5",
@@ -77,12 +77,12 @@ class EcpayHelper
         "MerchantTradeNo"   => $shop_order_no,
         "MerchantTradeDate" => $trade_date,
         "TotalAmount"       => $order_price,
-        "ReturnURL"         => config('stone.thrid_party_payment.ecpay_inpay.insite_order_return_url'),
+        "ReturnURL"         => config('stone.third_party_payment.ecpay_inpay.insite_order_return_url'),
         "TradeDesc"         => "Trade",
         "ItemName"          => $order_product_names,
       ],
       "CardInfo"          => [
-        "OrderResultURL"    => config('stone.thrid_party_payment.ecpay_inpay.cardinfo.order_return_url'),
+        "OrderResultURL"    => config('stone.third_party_payment.ecpay_inpay.cardinfo.order_return_url'),
         "CreditInstallment" => "3",
       ],
       "ATMInfo"           => [
@@ -109,7 +109,7 @@ class EcpayHelper
   {
     $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData([
-      "MerchantID"      => config('stone.thrid_party_payment.ecpay_inpay.merchant_id'),
+      "MerchantID"      => config('stone.third_party_payment.ecpay_inpay.merchant_id'),
       "PayToken"        => $PayToken,
       "MerchantTradeNo" => $MerchantTradeNo,
     ]);
@@ -120,7 +120,7 @@ class EcpayHelper
     }
 
     $res = Http::withHeaders([])->post($post_url, [
-      "MerchantID" => config('stone.thrid_party_payment.ecpay_inpay.merchant_id'),
+      "MerchantID" => config('stone.third_party_payment.ecpay_inpay.merchant_id'),
       "RqHeader"   => [
         "Timestamp" => Carbon::now()->timestamp,
         "Revision"  => "1.3.15",

@@ -736,15 +736,15 @@ class RoutesHelper
     }
 
     # Third Party Payment
-    if (config('stone.thrid_party_payment')) {
+    if (config('stone.third_party_payment')) {
       # Ecpay Inpay
-      if (config('stone.thrid_party_payment.service.ecpay_inpay')) {
+      if (config('stone.third_party_payment.service.ecpay_inpay')) {
         Route::post('ecpay/inpay/merchant_init', [EcpayController::class, 'get_inpay_merchant_init']);
         Route::post('ecpay/inpay/create_payment', [EcpayController::class, 'inpay_create_payment']);
       }
 
       # LINE Pay
-      if (config('stone.thrid_party_payment.service.line_pay')) {
+      if (config('stone.third_party_payment.service.line_pay')) {
         Route::post('line_pay/payment/init', [LinePayController::class, 'payment_init']);
         Route::post('line_pay/payment/confirm', [LinePayController::class, 'payment_confirm']);
         Route::post('line_pay/payment/cancel', [LinePayController::class, 'payment_cancel']);
@@ -1063,8 +1063,8 @@ class RoutesHelper
     }
 
     # Ecpay
-    if (config('stone.thrid_party_payment')) {
-      if (config('stone.thrid_party_payment.service.ecpay_inpay')) {
+    if (config('stone.third_party_payment')) {
+      if (config('stone.third_party_payment.service.ecpay_inpay')) {
         Route::post('callback/ecpay/inpay/order', [EcpayController::class, 'callback_ecpay_inpay_order']);
       }
     }

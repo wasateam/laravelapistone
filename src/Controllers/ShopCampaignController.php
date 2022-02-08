@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCampaign;
-
+use Auth;
 /**
  * @group ShopCampaign 促銷活動
  *
@@ -261,7 +261,7 @@ class ShopCampaignController extends Controller
   /**
    * Today DiscountCode Get 取得今日折扣碼活動
    * 
-   * @urlParam user_id int user_id Example:1
+   * @urlParam user int user_id Example:1
    * @bodyParam discount_code string 折扣碼 Example:LittleChicken
    */
   public function get_today_discount_code(Request $request)
@@ -273,14 +273,15 @@ class ShopCampaignController extends Controller
     if ($shop_campaign) {
       if ($shop_campaign->condition == 'first-purchase') {
         //is user first purchase or not
-          $shop_order = ShopOrder::where('user_id',$request -> id)->where('pay_status','paid')->first();
-          if ($shop_order) {
-            return response()->json([
-              'message' => 'you are not first purchase',
-            ],403);
-          } else {
-            return new $this->resource($shop_campaign);
-          }
+        $user = Auth::user();
+        $shop_order = ShopOrder::where('user_id',$user -> id)->where('pay_status','paid')->first();
+        if ($shop_order) {
+          return response()->json([
+            'message' => 'you are not first purchase',
+          ],403);
+        } else {
+          return new $this->resource($shop_campaign);
+        }
       } else {
         return new $this->resource($shop_campaign);
       }

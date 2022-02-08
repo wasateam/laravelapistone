@@ -65,7 +65,6 @@ class ShopCampaignController extends Controller
     'is_active',
     'feedback_rate',
     'discount_way',
-    'user_id',
   ];
   public $search_fields = [
     'name',
@@ -73,7 +72,6 @@ class ShopCampaignController extends Controller
   public $filter_fields = [
     'is_active',
     'type',
-    'user_id'
   ];
   public $order_fields = [
     "start_date",

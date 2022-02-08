@@ -267,20 +267,20 @@ class ShopCampaignController extends Controller
     //today
     $today_date = Carbon::now()->format('Y-m-d'); 
     //shop_campaign
-    $has_shop_campaign = ShopCampaign::where('type', 'discount_code')->where('is_active',1)->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('discount_code', $request->discount_code)->first();
-    if ($has_shop_campaign) {
-      if ($has_shop_campaign->condition == 'first-purchase') {
+    $shop_campaign = ShopCampaign::where('type', 'discount_code')->where('is_active',1)->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('discount_code', $request->discount_code)->first();
+    if ($shop_campaign) {
+      if ($shop_campaign->condition == 'first-purchase') {
         //is user first purchase or not
           $shop_order = ShopOrder::where('user_id',$id)->where('pay_status','paid')->first();
           if ($shop_order) {
             return response()->json([
               'message' => 'you are not first purchase',
-            ],200);
+            ],403);
           } else {
-            return new $this->resource($has_shop_campaign);
+            return new $this->resource($shop_campaign);
           }
       } else {
-        return new $this->resource($has_shop_campaign);
+        return new $this->resource($shop_campaign);
       }
     } else {
       return response()->json([

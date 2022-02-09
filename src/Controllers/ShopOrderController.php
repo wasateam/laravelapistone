@@ -437,11 +437,11 @@ class ShopOrderController extends Controller
         $model->status     = 'not-established';
         $model->pay_status = 'waiting';
 
-        if (config('stone.shop.custom_shop_order')) {
-          $model->no = \App\Helpers\AppHelper::newShopOrderNo($order_type);
-        } else {
-          $model->no = ShopHelper::newShopOrderNo();
-        }
+        // if (config('stone.shop.custom_shop_order')) {
+        //   $model->no = \App\Helpers\AppHelper::newShopOrderNo($order_type);
+        // } else {
+        //   $model->no = ShopHelper::newShopOrderNo();
+        // }
 
         $model->save();
 

@@ -44,7 +44,9 @@ class EcpayController extends Controller
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
     }
 
-    $trade_date          = Carbon::now()->format('Y/m/d H:i:s');
+    $shop_order = ShopHelper::setShopOrderNo($shop_order);
+
+    $trade_date = Carbon::now()->setTimezone('Asia/Taipei')->format('Y/m/d H:i:s');
     $order_price         = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
     $order_product_names = ShopHelper::getOrderProductNames($shop_order->shop_order_shop_products);
 

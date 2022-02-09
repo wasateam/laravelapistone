@@ -43,6 +43,7 @@ class EcpayHelper
 
   public static function getMerchantToken($data)
   {
+    error_log('getMerchantToken');
     $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData($data);
     if ($mode == 'dev') {
@@ -62,6 +63,10 @@ class EcpayHelper
     if ($res->status() == '200') {
       $res_json = $res->json();
       $res_data = self::getDecryptData($res_json['Data']);
+      error_log(json_encode($res_data));
+      if ($res_data->RtnCode != '1') {
+        throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('getMerchantToken', $res_data->RtnCode, $res_data->RtnMsg);
+      }
       return $res_data->Token;
     }
   }
@@ -107,6 +112,7 @@ class EcpayHelper
 
   public static function createPayment($PayToken, $MerchantTradeNo)
   {
+    error_log('createPayment');
     $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData([
       "MerchantID"      => config('stone.third_party_payment.ecpay_inpay.merchant_id'),
@@ -128,18 +134,20 @@ class EcpayHelper
       "Data"       => $data_encrypt,
     ]);
     if (!$res->status() == '200') {
-      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInpayCreatePaymentException();
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('createPayment', '-', 'status not 200');
     }
     $res_json = $res->json();
     $res_data = self::getDecryptData($res_json['Data']);
-    if ($res_data['RtnCode'] != '1') {
-      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInpayCreatePaymentException();
+    if ($res_data->RtnCode != '1') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('createPayment', $res_data->RtnCode, $res_data->RtnMsg);
     }
+    error_log(json_encode($res_data));
     return $res_data;
   }
 
   public static function updateShopOrderFromEcpayPaymentRes($payment_res)
   {
+    error_log('updateShopOrderFromEcpayPaymentRes');
     $shop_order = ShopOrder::where('no', $payment_res->OrderInfo->MerchantTradeNo)->first();
     if (!$shop_order) {
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order', $payment_res->OrderInfo->MerchantTradeNo, 'no');
@@ -160,11 +168,14 @@ class EcpayHelper
     $shop_order->pay_type         = $payment_res->OrderInfo->PaymentType;
     $shop_order->ecpay_charge_fee = $payment_res->OrderInfo->ChargeFee;
     $shop_order->save();
+    error_log('$shop_order');
+    error_log(json_encode($shop_order));
     return $shop_order;
   }
 
   public static function createInvoice($data)
   {
+    error_log('createInvoice');
     $mode         = config('stone.invoice.mode');
     $data_encrypt = self::getEncryptData($data, 'invoice');
     if ($mode == 'dev') {
@@ -181,11 +192,19 @@ class EcpayHelper
       "Data"       => $data_encrypt,
     ]);
 
-    if ($res->status() == '200') {
-      $res_json = $res->json();
-      $res_data = self::getDecryptData($res_json['Data'], 'invoice');
-      return $res_data->InvoiceNo;
+    if (!$res->status() == '200') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', '-', 'status not 200');
     }
+
+    $res_json = $res->json();
+    if ($res_json['TransCode'] != '1') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', null, null, $res_json['TransCode'], $res_json['TransMsg']);
+    }
+    $res_data = self::getDecryptData($res_json['Data'], 'invoice');
+    if ($res_data->RtnCode != '1') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', $res_data->RtnCode, $res_data->RtnMsg);
+    }
+    return $res_data;
   }
 
   public static function newRelateNumber()
@@ -211,6 +230,7 @@ class EcpayHelper
     $SalesAmount,
     $Items
   ) {
+
     $post_data = [
       "MerchantID"         => config('stone.invoice.ecpay.merchant_id'),
       "RelateNumber"       => self::newRelateNumber(),
@@ -232,29 +252,14 @@ class EcpayHelper
       "InvType"            => "07",
       "vat"                => "1",
       "Items"              => $Items,
-      // "Items"              => [
-      //   [
-      //     "ItemSeq"     => 1,
-      //     "ItemName"    => "item01",
-      //     "ItemCount"   => 1,
-      //     "ItemWord"    => "件",
-      //     "ItemPrice"   => 50,
-      //     "ItemTaxType" => "1",
-      //     "ItemAmount"  => 50,
-      //     "ItemRemark"  => "item01_desc",
-      //   ],
-      // ],
     ];
-
-    foreach ($data as $key => $value) {
-      $post_data[$key] = $data[$key];
-    }
 
     return $post_data;
   }
 
   public static function createDelayInvoice($data)
   {
+    error_log('createDelayInvoice');
     $mode         = config('stone.invoice.mode');
     $data_encrypt = self::getEncryptData($data, 'invoice');
     if ($mode == 'dev') {
@@ -271,10 +276,19 @@ class EcpayHelper
       "Data"       => $data_encrypt,
     ]);
 
-    if ($res->status() == '200') {
-      $res_json = $res->json();
-      $res_data = self::getDecryptData($res_json['Data'], 'invoice');
+    if (!$res->status() == '200') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createDelayInvoice', '-', 'status not 200');
     }
+
+    $res_json = $res->json();
+    if ($res_json['TransCode'] != '1') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createDelayInvoice', null, null, $res_json['TransCode'], $res_json['TransMsg']);
+    }
+    $res_data = self::getDecryptData($res_json['Data'], 'invoice');
+    if ($res_data->RtnCode != '1') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createDelayInvoice', $res_data->RtnCode, $res_data->RtnMsg);
+    }
+    return $res_data;
   }
 
   public static function getDelayInvoicePostData(
@@ -316,6 +330,9 @@ class EcpayHelper
       "Items"              => $Items,
       "DelayFlag"          => "1",
       "DelayDay"           => $DelayDay,
+      "PayType"            => '2',
+      "PayAct"             => 'ECPAY',
+      "NotifyURL"          => '',
     ];
   }
 
@@ -346,6 +363,7 @@ class EcpayHelper
 
   public static function updateShopOrderFromEcpayOrderCallbackRes($res)
   {
+    error_log('updateShopOrderFromEcpayOrderCallbackRes');
     $shop_order = ShopOrder::where('no', $res->OrderInfo->MerchantTradeNo)->first();
     if (!$shop_order) {
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order', $res->OrderInfo->MerchantTradeNo, 'no');

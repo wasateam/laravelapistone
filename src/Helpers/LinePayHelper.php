@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Wasateam\Laravelapistone\Helpers\ShopHelper;
 
 /**
  * 用來串接 LINE Pay 服務的動作
@@ -18,68 +19,45 @@ class LinePayHelper
   /**
    * 建立付款請求
    */
-  public static function payment_request($shop_order = null, $confirm_url = null, $cancel_url = null, $currency = 'TWD')
-  {
-    // if (!$shop_order) {
-    //   throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
-    // }
+  public static function payment_request(
+    $amount = null,
+    $currency = 'TWD',
+    $orderId = null,
+    $packages = null,
+    $confirm_url = null,
+    $cancel_url = null
+  ) {
+    error_log('payment_request');
     if (!$confirm_url) {
       $confirm_url = env('WEB_URL') . '/linepay/payment/confirm';
     }
     if (!$cancel_url) {
       $cancel_url = env('WEB_URL') . '/linepay/payment/cancel';
     }
-    $post_url = self::getBaseUrl() . '/v3/payments/request';
-    error_log('$post_url');
-    error_log($post_url);
-    // $amount       = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
-    // $products     = self::getPackageProductsFromShopOrder($shop_order);
+    $post_url     = self::getBaseUrl() . '/v3/payments/request';
     $request_body = [
-      'amount'       => 250,
+      'amount'       => $amount,
       'currency'     => $currency,
-      'orderId'      => '0002',
-      'packages'     => [
-        [
-          'id'       => '0002',
-          'amount'   => 250,
-          'name'     => 'AAAAA',
-          'products' => [
-            [
-              'name'     => 'asvasdvad',
-              'quantity' => 1,
-              'price'    => 250,
-              'imageUrl' => '',
-            ],
-          ],
-        ],
-      ],
+      'orderId'      => $orderId,
+      'packages'     => $packages,
       'redirectUrls' => [
         'confirmUrl' => $confirm_url,
         'cancelUrl'  => $cancel_url,
       ],
     ];
-    // $request_body = [
-    //   'amount'       => $amount,
-    //   'currency'     => $currency,
-    //   'orderId'      => $shop_order->id,
-    //   'packages'     => [
-    //     [
-    //       'id'       => $shop_order->id,
-    //       'amount'   => $amount,
-    //       'name'     => $shop_order->order_type,
-    //       'products' => $products,
-    //     ],
-    //   ],
-    //   'redirectUrls' => [
-    //     'confirmUrl' => $confirm_url,
-    //     'cancelUrl'  => $cancel_url,
-    //   ],
-    // ];
     $header   = self::get_request_header($request_body, '/v3/payments/request');
     $response = Http::withHeaders($header)
       ->post($post_url, $request_body);
-      error_log('$response');
-      error_log($response->body());
+    $res_json = $response->json();
+
+    if ($res_json['returnCode'] != '0000') {
+      throw new \Wasateam\Laravelapistone\Exceptions\LinePayException(
+        'payment_request',
+        $res_json['returnCode'],
+        $res_json['returnMessage']
+      );
+    }
+
     return $response->json();
   }
 
@@ -88,33 +66,32 @@ class LinePayHelper
    */
   public static function payment_confirm($transaction_id, $shop_order = null, $currency = 'TWD')
   {
-    // $post_url     = env('LINE_PAY_API_URL') . '/v3/payments/' . $transaction_id . '/confirm';
-    // $amount       = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
-    // $request_body = [
-    //   'amount'   => $amount,
-    //   'currency' => $currency,
-    // ];
-    // $header   = self::get_request_header($request_body);
-    // $response = Http::withHeaders($header)
-    //   ->post($post_url, $request_body);
-    // return $response->json();
-
-    # Test
     $post_url     = self::getBaseUrl() . '/v3/payments/' . $transaction_id . '/confirm';
-    $amount       = 250;
+    $amount       = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
     $request_body = [
       'amount'   => $amount,
       'currency' => $currency,
     ];
-    error_log('$post_url');
-    error_log($post_url);
-    error_log('$request_body');
-    error_log(json_encode($request_body));
     $header   = self::get_request_header($request_body, '/v3/payments/' . $transaction_id . '/confirm');
     $response = Http::withHeaders($header)
       ->post($post_url, $request_body);
-    error_log($response->body());
-    return $response->json();
+    $res_json = $response->json();
+
+    if ($res_json['returnCode'] != '0000') {
+      throw new \Wasateam\Laravelapistone\Exceptions\LinePayException(
+        'payment_confirm',
+        $res_json['returnCode'],
+        $res_json['returnMessage']
+      );
+    }
+
+    $shop_order->pay_status  = 'paid';
+    $shop_order->status      = 'established';
+    $shop_order->ship_status = 'unfulfilled';
+    $shop_order->pay_type    = 'line_pay';
+    $shop_order->save();
+
+    return $shop_order;
   }
 
   /**
@@ -158,8 +135,9 @@ class LinePayHelper
     ];
   }
 
-  public static function getPackageProductsFromShopOrder($shop_order)
+  public static function getLinePayPackageProductsFromShopOrder($shop_order)
   {
+    $amount   = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
     $products = [];
     foreach ($shop_order->shop_order_shop_products as $shop_order_shop_product) {
       $price      = $shop_order_shop_product->discount_price ? $shop_order_shop_product->discount_price : $shop_order_shop_product->price;
@@ -170,7 +148,14 @@ class LinePayHelper
         'imageUrl' => '',
       ];
     }
-    return $products;
+    return [
+      [
+        'id'       => $shop_order->no,
+        'amount'   => $amount,
+        'name'     => $shop_order->no,
+        'products' => $products,
+      ],
+    ];
   }
 
   public static function getBaseUrl()

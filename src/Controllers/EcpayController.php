@@ -95,6 +95,9 @@ class EcpayController extends Controller
       return '1|OK';
     }
     $shop_order = EcpayHelper::updateShopOrderFromEcpayOrderCallbackRes($request);
+    if ($shop_order->pay_status == 'paid' && $shop_order->status == 'established') {
+      ShopHelper::createInvoice($shop_order);
+    }
     return '1|OK';
   }
 }

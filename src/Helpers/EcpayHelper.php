@@ -363,7 +363,6 @@ class EcpayHelper
 
   public static function updateShopOrderFromEcpayOrderCallbackRes($res)
   {
-    error_log('updateShopOrderFromEcpayOrderCallbackRes');
     $shop_order = ShopOrder::where('no', $res->OrderInfo->MerchantTradeNo)->first();
     if (!$shop_order) {
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order', $res->OrderInfo->MerchantTradeNo, 'no');

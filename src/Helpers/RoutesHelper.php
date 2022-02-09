@@ -22,6 +22,7 @@ use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
+use Wasateam\Laravelapistone\Controllers\LinePayController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerGroupController;

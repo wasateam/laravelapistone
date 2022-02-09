@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCampaign;
+use Wasateam\Laravelapistone\Models\ShopOrder;
 
 /**
  * @group ShopCampaign 促銷活動
@@ -259,7 +260,7 @@ class ShopCampaignController extends Controller
   /**
    * Today DiscountCode Get 取得今日折扣碼活動
    * 
-   * @urlParam user int user_id Example:1
+   * @queryParam user int user_id Example:1
    * @bodyParam discount_code string 折扣碼 Example:LittleChicken
    */
   public function get_today_discount_code(Request $request)

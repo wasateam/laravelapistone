@@ -674,7 +674,7 @@ class RoutesHelper
     }
 
     # ThePoint
-    if (config('stone.user.bonus_points')) {
+    if (config('stone.the_point')) {
       # ThePointRecord
       Route::resource('the_point_record', THePointRecordController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
@@ -1110,7 +1110,7 @@ class RoutesHelper
     }
 
     # ThePoint
-    if (config('stone.user.bonus_points')) {
+    if (config('stone.the_point')) {
       # ThePointRecord
       Route::resource('the_point_record', ThePointRecordController::class)->only([
         'show',

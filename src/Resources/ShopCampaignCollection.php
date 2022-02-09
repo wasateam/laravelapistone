@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 class ShopCampaignCollection extends JsonResource
 {
@@ -15,7 +16,7 @@ class ShopCampaignCollection extends JsonResource
   public function toArray($request)
   {
     $status = null;
-    $today = Carbon::now()->format('Y:m:d');
+    $today = Carbon::now()->format('Y-m-d');
     if($this->start_date > $today){
       $status = 'non-start';
     } else if ($this->start_date <= $today && $this->end_date > $today){
@@ -40,7 +41,7 @@ class ShopCampaignCollection extends JsonResource
         "discount_way"     => $this->discount_way,
         "feedback_rate"     => $this->feedback_rate,
         "shop_products"     => ShopProduct_R1::collection($this->shop_products),
-        "status"      => $stauts,
+        "status"      => $status,
       ];
     } else if (config('stone.mode') == 'webapi') {
       $res = [
@@ -54,7 +55,7 @@ class ShopCampaignCollection extends JsonResource
         "discount_way"     => $this->discount_way,
         "feedback_rate"     => $this->feedback_rate,
         "shop_products"     => ShopProduct_R1::collection($this->shop_products),
-        "status"      => $stauts,
+        "status"      => $status,
       ];
     }
     return $res;

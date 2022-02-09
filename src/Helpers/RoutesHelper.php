@@ -797,6 +797,9 @@ class RoutesHelper
     # User
     if (config('stone.user')) {
 
+      # ShopCampaign
+      Route::post('/shop_campaign/today/discount_code', [ShopCampaignController::class, 'get_today_discount_code']);
+
       # UserAddress
       if (config('stone.user.address')) {
         Route::resource('user_address', UserAddressController::class)->only([
@@ -1000,7 +1003,6 @@ class RoutesHelper
         'index', 'show',
       ])->shallow();
       Route::get('/shop_campaign/today/index', [ShopCampaignController::class, 'today_index']);
-      Route::post('/shop_campaign/today/discount_code', [ShopCampaignController::class, 'get_today_discount_code']);
       # Shop Campaign Shop Order
       Route::resource('shop_campaign_shop_order', ShopCampaignShopOrderController::class)->only([
         'index', 'show',

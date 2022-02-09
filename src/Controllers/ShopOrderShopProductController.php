@@ -71,8 +71,8 @@ class ShopOrderShopProductController extends Controller
       $this->belongs_to[]        = 'shop_cart_product';
       $this->belongs_to[]        = 'shop_order';
       $this->belongs_to[]        = 'shop_order_shop_product_spec';
-      $this->belongs_to_many[]   = 'shop_order_shop_product_spec_setting';
-      $this->belongs_to_many[]   = 'shop_order_shop_product_spec_setting_item';
+      $this->belongs_to_many[]   = 'shop_order_shop_product_spec_settings';
+      $this->belongs_to_many[]   = 'shop_order_shop_product_spec_setting_items';
       $this->filter_belongs_to[] = 'shop_product';
     }
   }

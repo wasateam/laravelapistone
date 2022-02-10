@@ -2,9 +2,11 @@
 
 namespace Wasateam\Laravelapistone\Helpers;
 
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Jobs\BonusPointFeedbackJob;
 use Wasateam\Laravelapistone\Models\Area;
 use Wasateam\Laravelapistone\Models\AreaSection;
@@ -24,7 +26,6 @@ use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
 use Wasateam\Laravelapistone\Models\ThePointRecord;
 use Wasateam\Laravelapistone\Models\User;
 use Wasateam\Laravelapistone\Models\UserAddress;
-use Auth;
 
 class ShopHelper
 {
@@ -716,10 +717,10 @@ class ShopHelper
     $shop_product_settings = $shop_product_spec->shop_product_spec_settings;
     $new_settings          = [];
     foreach ($shop_product_settings as $shop_product_settings) {
-      $new_shop_order_product_setting                                     = new ShopOrderShopProductSpecSetting;
-      $new_shop_order_product_setting->name                               = $shop_product_settings->name;
-      $new_shop_order_product_setting->sq                                 = $shop_product_settings->sq;
-      $new_shop_order_product_setting->shop_order_shop_product_id         = $shop_order_shop_product_id;
+      $new_shop_order_product_setting                               = new ShopOrderShopProductSpecSetting;
+      $new_shop_order_product_setting->name                         = $shop_product_settings->name;
+      $new_shop_order_product_setting->sq                           = $shop_product_settings->sq;
+      $new_shop_order_product_setting->shop_order_shop_product_id   = $shop_order_shop_product_id;
       $new_shop_order_product_setting->shop_product_spec_setting_id = $shop_product_settings->id;
       $new_shop_order_product_setting->save();
       $new_settings[] = $new_shop_order_product_setting;
@@ -817,7 +818,7 @@ class ShopHelper
     $shop_cart_product = $shop_cart_products[0];
     $cart_product      = ShopCartProduct::where('id', $shop_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
     if (!$cart_product) {
-      throw new FindNoDataException('shop_cart_product', $shop_cart_product['id']);
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_cart_product', $shop_cart_product['id']);
     }
     return $cart_product->shop_product->order_type;
   }
@@ -829,10 +830,10 @@ class ShopHelper
     foreach ($my_cart_products as $my_cart_product) {
       $cart_product = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
       if (!$cart_product) {
-        throw new FindNoDataException('shop_cart_product', $my_cart_product['id']);
+        throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_cart_product', $my_cart_product['id']);
       }
       if ($cart_product->user_id != Auth::user()->id) {
-        throw new FindNoDataException('shop_cart_product', $cart_product->id);
+        throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_cart_product', $cart_product->id);
       }
       self::checkProductStockEnough($cart_product);
       if ($order_type && $cart_product->shop_product->order_type != $order_type) {
@@ -854,61 +855,61 @@ class ShopHelper
     }
   }
 
-  public static function createShopInvoice($shop_order)
-  {
-    // @Q@ 待調整完成
-    if (config('stone.invoice')) {
-      if (config('stone.invoice.service') == 'ecpay') {
-        try {
-          $invoice_type   = $shop_order->invoice_type;
-          $customer_email = $shop_order->orderer_email;
-          $customer_tel   = $shop_order->orderer_tel;
-          $customer_addr  = $shop_order->receive_address;
-          $order_amount   = ShopHelper::getOrderAmount($_my_cart_products);
-          $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
-          $customer_id    = Auth::user()->id;
-          $post_data      = [
-            'Items'         => $items,
-            'SalesAmount'   => $order_amount,
-            'TaxType'       => 1,
-            'CustomerEmail' => $customer_email,
-            'CustomerAddr'  => $customer_addr,
-            'CustomerPhone' => $customer_tel,
-            'CustomerID'    => $customer_id,
-          ];
-          if ($invoice_type == 'personal') {
-            $invoice_carrier_type      = $shop_order->invoice_carrier_type;
-            $invoice_carrier_number    = $shop_order->invoice_carrier_number;
-            $post_data['Print']        = 0;
-            $post_data['CustomerName'] = $shop_order->orderer;
-            if ($invoice_carrier_type == 'mobile') {
-              $post_data['CarrierType'] = 3;
-              $post_data['CarrierNum']  = $invoice_carrier_number;
-            } else if ($invoice_carrier_type == 'certificate') {
-              $post_data['CarrierType'] = 2;
-              $post_data['CarrierNum']  = $invoice_carrier_number;
-            } else if ($invoice_carrier_type == 'email') {
-              $post_data['CarrierType']   = 1;
-              $post_data['CarrierNum']    = '';
-              $post_data['CustomerEmail'] = $invoice_carrier_number;
-            }
-          } else if ($invoice_type == 'triple') {
-            $invoice_title                   = $shop_order->invoice_title;
-            $invoice_uniform_number          = $shop_order->invoice_uniform_number;
-            $post_data['CarrierType']        = '';
-            $post_data['Print']              = 1;
-            $post_data['CustomerName']       = $invoice_title;
-            $post_data['CustomerIdentifier'] = $invoice_uniform_number;
-          }
-          $post_data      = EcpayHelper::getInvoicePostData($post_data);
-          $invoice_number = EcpayHelper::createInvoice($post_data);
-          $invoice_status = 'done';
-        } catch (\Throwable $th) {
-          $invoice_status = 'fail';
-        }
-      }
-    }
-  }
+  // public static function createShopInvoice($shop_order)
+  // {
+  //   // @Q@ 待調整完成
+  //   if (config('stone.invoice')) {
+  //     if (config('stone.invoice.service') == 'ecpay') {
+  //       try {
+  //         $invoice_type   = $shop_order->invoice_type;
+  //         $customer_email = $shop_order->orderer_email;
+  //         $customer_tel   = $shop_order->orderer_tel;
+  //         $customer_addr  = $shop_order->receive_address;
+  //         $order_amount   = ShopHelper::getOrderAmount($_my_cart_products);
+  //         $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
+  //         $customer_id    = Auth::user()->id;
+  //         $post_data      = [
+  //           'Items'         => $items,
+  //           'SalesAmount'   => $order_amount,
+  //           'TaxType'       => 1,
+  //           'CustomerEmail' => $customer_email,
+  //           'CustomerAddr'  => $customer_addr,
+  //           'CustomerPhone' => $customer_tel,
+  //           'CustomerID'    => $customer_id,
+  //         ];
+  //         if ($invoice_type == 'personal') {
+  //           $invoice_carrier_type      = $shop_order->invoice_carrier_type;
+  //           $invoice_carrier_number    = $shop_order->invoice_carrier_number;
+  //           $post_data['Print']        = 0;
+  //           $post_data['CustomerName'] = $shop_order->orderer;
+  //           if ($invoice_carrier_type == 'mobile') {
+  //             $post_data['CarrierType'] = 3;
+  //             $post_data['CarrierNum']  = $invoice_carrier_number;
+  //           } else if ($invoice_carrier_type == 'certificate') {
+  //             $post_data['CarrierType'] = 2;
+  //             $post_data['CarrierNum']  = $invoice_carrier_number;
+  //           } else if ($invoice_carrier_type == 'email') {
+  //             $post_data['CarrierType']   = 1;
+  //             $post_data['CarrierNum']    = '';
+  //             $post_data['CustomerEmail'] = $invoice_carrier_number;
+  //           }
+  //         } else if ($invoice_type == 'triple') {
+  //           $invoice_title                   = $shop_order->invoice_title;
+  //           $invoice_uniform_number          = $shop_order->invoice_uniform_number;
+  //           $post_data['CarrierType']        = '';
+  //           $post_data['Print']              = 1;
+  //           $post_data['CustomerName']       = $invoice_title;
+  //           $post_data['CustomerIdentifier'] = $invoice_uniform_number;
+  //         }
+  //         $post_data      = EcpayHelper::getInvoicePostData($post_data);
+  //         $invoice_number = EcpayHelper::createInvoice($post_data);
+  //         $invoice_status = 'done';
+  //       } catch (\Throwable $th) {
+  //         $invoice_status = 'fail';
+  //       }
+  //     }
+  //   }
+  // }
   public static function checkSettingItemsMatchSpecs($settings, $specs)
   {
     // check combination of all setting items count match specs count or not;
@@ -995,6 +996,108 @@ class ShopHelper
     $the_point_record->source           = 'new_shop_order';
     $the_point_record->count            = $point_count;
     $the_point_record->save();
+  }
+
+  public static function createInvoice($shop_order)
+  {
+    if (config('stone.invoice')) {
+      if (config('stone.invoice.service') == 'ecpay') {
+        // try {
+        $invoice_type       = $shop_order->invoice_type;
+        $SalesAmount        = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
+        $Items              = EcpayHelper::getInvoiceItemsFromShopCartProducts($shop_order->shop_order_shop_products);
+        $CustomerID         = $shop_order->user_id;
+        $CustomerIdentifier = '';
+        $CustomerName       = '';
+        $CustomerAddr       = $shop_order->receive_address;
+        $CustomerPhone      = $shop_order->orderer_tel;
+        $CustomerEmail      = $shop_order->orderer_email;
+        $Print              = '0';
+        $Donation           = '0';
+        $CarrierType        = '';
+        $CarrierNum         = '';
+        $TaxType            = '1';
+        if ($invoice_type == 'personal') {
+          $invoice_carrier_type   = $shop_order->invoice_carrier_type;
+          $invoice_carrier_number = $shop_order->invoice_carrier_number;
+          $Print                  = '0';
+          $CustomerName           = $shop_order->orderer;
+          if ($invoice_carrier_type == 'mobile') {
+            $CarrierType = '3';
+            $CarrierNum  = $invoice_carrier_number;
+          } else if ($invoice_carrier_type == 'certificate') {
+            $CarrierType = '2';
+            $CarrierNum  = $invoice_carrier_number;
+          } else if ($invoice_carrier_type == 'email') {
+            $CarrierType   = '1';
+            $CarrierNum    = '';
+            $CustomerEmail = $invoice_carrier_number;
+          }
+        } else if ($invoice_type == 'triple') {
+          $invoice_title          = $shop_order->invoice_title;
+          $invoice_uniform_number = $shop_order->invoice_uniform_number;
+          $CarrierType            = '';
+          $Print                  = '1';
+          $CustomerName           = $invoice_title;
+          $CustomerIdentifier     = $invoice_uniform_number;
+        }
+        if (config('stone.invoice.delay')) {
+          error_log('delay');
+          $DelayDay  = config('stone.invoice.delay');
+          $post_data = EcpayHelper::getDelayInvoicePostData(
+            $CustomerID,
+            $CustomerIdentifier,
+            $CustomerName,
+            $CustomerAddr,
+            $CustomerPhone,
+            $CustomerEmail,
+            $Print,
+            $Donation,
+            $CarrierType,
+            $CarrierNum,
+            $TaxType,
+            $SalesAmount,
+            $Items,
+            $DelayDay,
+          );
+          $invoice_res = EcpayHelper::createDelayInvoice($post_data);
+        } else {
+          error_log('immediate');
+          $post_data = EcpayHelper::getInvoicePostData(
+            $CustomerID,
+            $CustomerIdentifier,
+            $CustomerName,
+            $CustomerAddr,
+            $CustomerPhone,
+            $CustomerEmail,
+            $Print,
+            $Donation,
+            $CarrierType,
+            $CarrierNum,
+            $TaxType,
+            $SalesAmount,
+            $Items
+          );
+          $invoice_res = EcpayHelper::createInvoice($post_data);
+        }
+        $shop_order->invoice_status = 'done';
+        $shop_order->invoice_number = $invoice_res->InvoiceNo;
+        self::createBonusPointFeedbackJob($shop_order->id);
+        $shop_order->save();
+        return response()->json($shop_order,200);
+      }
+    }
+  }
+
+  public static function setShopOrderNo($shop_order)
+  {
+    if (config('stone.shop.custom_shop_order')) {
+      $shop_order->no = \App\Helpers\AppHelper::newShopOrderNo($shop_order->order_type);
+    } else {
+      $shop_order->no = self::newShopOrderNo();
+    }
+    $shop_order->save();
+    return $shop_order;
   }
 
 }

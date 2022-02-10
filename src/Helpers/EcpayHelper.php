@@ -43,6 +43,7 @@ class EcpayHelper
 
   public static function getMerchantToken($data)
   {
+    error_log('getMerchantToken');
     $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData($data);
     if ($mode == 'dev') {
@@ -62,6 +63,10 @@ class EcpayHelper
     if ($res->status() == '200') {
       $res_json = $res->json();
       $res_data = self::getDecryptData($res_json['Data']);
+      error_log(json_encode($res_data));
+      if ($res_data->RtnCode != '1') {
+        throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('getMerchantToken', $res_data->RtnCode, $res_data->RtnMsg);
+      }
       return $res_data->Token;
     }
   }
@@ -107,6 +112,7 @@ class EcpayHelper
 
   public static function createPayment($PayToken, $MerchantTradeNo)
   {
+    error_log('createPayment');
     $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData([
       "MerchantID"      => config('stone.third_party_payment.ecpay_inpay.merchant_id'),
@@ -127,15 +133,49 @@ class EcpayHelper
       ],
       "Data"       => $data_encrypt,
     ]);
-    if ($res->status() == '200') {
-      $res_json = $res->json();
-      $res_data = self::getDecryptData($res_json['Data']);
+    if (!$res->status() == '200') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('createPayment', '-', 'status not 200');
     }
+    $res_json = $res->json();
+    $res_data = self::getDecryptData($res_json['Data']);
+    if ($res_data->RtnCode != '1') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('createPayment', $res_data->RtnCode, $res_data->RtnMsg);
+    }
+    error_log(json_encode($res_data));
+    return $res_data;
+  }
 
+  public static function updateShopOrderFromEcpayPaymentRes($payment_res)
+  {
+    error_log('updateShopOrderFromEcpayPaymentRes');
+    $shop_order = ShopOrder::where('no', $payment_res->OrderInfo->MerchantTradeNo)->first();
+    if (!$shop_order) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order', $payment_res->OrderInfo->MerchantTradeNo, 'no');
+    }
+    $shop_order->ecpay_merchant_id = $payment_res->MerchantID;
+    if (isset($payment_res->OrderInfo->TradeStatus)) {
+      if ($payment_res->OrderInfo->TradeStatus == 1) {
+        $shop_order->pay_status  = 'paid';
+        $shop_order->status      = 'established';
+        $shop_order->ship_status = 'unfulfilled';
+      } else if ($payment_res->OrderInfo->TradeStatus == 0) {
+        $shop_order->pay_status  = 'not-paid';
+        $shop_order->status      = 'not-established';
+        $shop_order->ship_status = null;
+      }
+    }
+    $shop_order->ecpay_trade_no   = $payment_res->OrderInfo->TradeNo;
+    $shop_order->pay_type         = $payment_res->OrderInfo->PaymentType;
+    $shop_order->ecpay_charge_fee = $payment_res->OrderInfo->ChargeFee;
+    $shop_order->save();
+    error_log('$shop_order');
+    error_log(json_encode($shop_order));
+    return $shop_order;
   }
 
   public static function createInvoice($data)
   {
+    error_log('createInvoice');
     $mode         = config('stone.invoice.mode');
     $data_encrypt = self::getEncryptData($data, 'invoice');
     if ($mode == 'dev') {
@@ -152,11 +192,19 @@ class EcpayHelper
       "Data"       => $data_encrypt,
     ]);
 
-    if ($res->status() == '200') {
-      $res_json = $res->json();
-      $res_data = self::getDecryptData($res_json['Data'], 'invoice');
-      return $res_data->InvoiceNo;
+    if (!$res->status() == '200') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', '-', 'status not 200');
     }
+
+    $res_json = $res->json();
+    if ($res_json['TransCode'] != '1') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', null, null, $res_json['TransCode'], $res_json['TransMsg']);
+    }
+    $res_data = self::getDecryptData($res_json['Data'], 'invoice');
+    if ($res_data->RtnCode != '1') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', $res_data->RtnCode, $res_data->RtnMsg);
+    }
+    return $res_data;
   }
 
   public static function newRelateNumber()
@@ -166,54 +214,52 @@ class EcpayHelper
     return "{$time}{$str}";
   }
 
-  public static function getInvoicePostData($data)
-  {
+  // public static function getInvoicePostData($data)
+  public static function getInvoicePostData(
+    $CustomerID,
+    $CustomerIdentifier,
+    $CustomerName,
+    $CustomerAddr,
+    $CustomerPhone,
+    $CustomerEmail,
+    $Print = "0",
+    $Donation = "0",
+    $CarrierType,
+    $CarrierNum,
+    $TaxType,
+    $SalesAmount,
+    $Items
+  ) {
+
     $post_data = [
       "MerchantID"         => config('stone.invoice.ecpay.merchant_id'),
       "RelateNumber"       => self::newRelateNumber(),
-      "CustomerID"         => "",
-      "CustomerIdentifier" => "",
-      "CustomerName"       => "",
-      "CustomerAddr"       => "",
-      // "CustomerName"       => "綠界科技股份有限公司",
-      // "CustomerAddr"       => "106 台北市南港區發票一街 1 號 1 樓",
-      "CustomerPhone"      => "",
-      "CustomerEmail"      => "test@ecpay.com.tw",
+      "CustomerID"         => $CustomerID,
+      "CustomerIdentifier" => $CustomerIdentifier,
+      "CustomerName"       => $CustomerName,
+      "CustomerAddr"       => $CustomerAddr,
+      "CustomerPhone"      => $CustomerPhone,
+      "CustomerEmail"      => $CustomerEmail,
       "ClearanceMark"      => "1",
-      "Print"              => "0",
-      "Donation"           => "0",
+      "Print"              => $Print,
+      "Donation"           => $Donation,
       "LoveCode"           => "",
-      "CarrierType"        => "",
-      "CarrierNum"         => "",
-      "TaxType"            => "",
-      // "TaxType"            => "",
-      "SalesAmount"        => 100,
-      "InvoiceRemark"      => "發票備註",
+      "CarrierType"        => $CarrierType,
+      "CarrierNum"         => $CarrierNum,
+      "TaxType"            => $TaxType,
+      "SalesAmount"        => $SalesAmount,
+      "InvoiceRemark"      => "",
       "InvType"            => "07",
       "vat"                => "1",
-      "Items"              => [
-        [
-          "ItemSeq"     => 1,
-          "ItemName"    => "item01",
-          "ItemCount"   => 1,
-          "ItemWord"    => "件",
-          "ItemPrice"   => 50,
-          "ItemTaxType" => "1",
-          "ItemAmount"  => 50,
-          "ItemRemark"  => "item01_desc",
-        ],
-      ],
+      "Items"              => $Items,
     ];
-
-    foreach ($data as $key => $value) {
-      $post_data[$key] = $data[$key];
-    }
 
     return $post_data;
   }
 
   public static function createDelayInvoice($data)
   {
+    error_log('createDelayInvoice');
     $mode         = config('stone.invoice.mode');
     $data_encrypt = self::getEncryptData($data, 'invoice');
     if ($mode == 'dev') {
@@ -230,102 +276,63 @@ class EcpayHelper
       "Data"       => $data_encrypt,
     ]);
 
-    if ($res->status() == '200') {
-      $res_json = $res->json();
-      $res_data = self::getDecryptData($res_json['Data'], 'invoice');
+    if (!$res->status() == '200') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createDelayInvoice', '-', 'status not 200');
     }
+
+    $res_json = $res->json();
+    if ($res_json['TransCode'] != '1') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createDelayInvoice', null, null, $res_json['TransCode'], $res_json['TransMsg']);
+    }
+    $res_data = self::getDecryptData($res_json['Data'], 'invoice');
+    if ($res_data->RtnCode != '1') {
+      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createDelayInvoice', $res_data->RtnCode, $res_data->RtnMsg);
+    }
+    return $res_data;
   }
 
-  public static function getDelayInvoicePostData($data)
-  {
+  public static function getDelayInvoicePostData(
+    $CustomerID,
+    $CustomerIdentifier,
+    $CustomerName,
+    $CustomerAddr,
+    $CustomerPhone,
+    $CustomerEmail,
+    $Print = "0",
+    $Donation = "0",
+    $CarrierType,
+    $CarrierNum,
+    $TaxType,
+    $SalesAmount,
+    $Items,
+    $DelayDay = 0
+  ) {
     return [
-      "MerchantID"         => "2000132",
+      "MerchantID"         => config('stone.invoice.ecpay.merchant_id'),
       "RelateNumber"       => self::newRelateNumber(),
-      "CustomerID"         => "",
-      "CustomerIdentifier" => "",
-      "CustomerName"       => "綠界科技股份有限公司",
-      "CustomerAddr"       => "106 台北市南港區發票一街 1 號 1 樓",
-      "CustomerPhone"      => "",
-      "CustomerEmail"      => "test@ecpay.com.tw",
+      "CustomerID"         => $CustomerID,
+      "CustomerIdentifier" => $CustomerIdentifier,
+      "CustomerName"       => $CustomerName,
+      "CustomerAddr"       => $CustomerAddr,
+      "CustomerPhone"      => $CustomerPhone,
+      "CustomerEmail"      => $CustomerEmail,
       "ClearanceMark"      => "1",
-      "Print"              => "1",
-      "Donation"           => "0",
+      "Print"              => $Print,
+      "Donation"           => $Donation,
       "LoveCode"           => "",
-      "CarrierType"        => "",
-      "CarrierNum"         => "",
-      "TaxType"            => "1",
-      "SalesAmount"        => 100,
-      "InvoiceRemark"      => "發票備註",
+      "CarrierType"        => $CarrierType,
+      "CarrierNum"         => $CarrierNum,
+      "TaxType"            => $TaxType,
+      "SalesAmount"        => $SalesAmount,
+      "InvoiceRemark"      => "",
       "InvType"            => "07",
       "vat"                => "1",
+      "Items"              => $Items,
       "DelayFlag"          => "1",
-      "DelayDay"           => "3",
-      "Items"              => [
-        [
-          "ItemSeq"     => 1,
-          "ItemName"    => "item01",
-          "ItemCount"   => 1,
-          "ItemWord"    => "件",
-          "ItemPrice"   => 50,
-          "ItemTaxType" => "1",
-          "ItemAmount"  => 50,
-          "ItemRemark"  => "item01_desc",
-        ],
-        [
-          "ItemSeq"     => 2,
-          "ItemName"    => "item02",
-          "ItemCount"   => 1,
-          "ItemWord"    => "個",
-          "ItemPrice"   => 20,
-          "ItemTaxType" => "1",
-          "ItemAmount"  => 20,
-          "ItemRemark"  => "item02_desc",
-        ],
-        [
-          "ItemSeq"     => 3,
-          "ItemName"    => "item03",
-          "ItemCount"   => 3,
-          "ItemWord"    => "粒",
-          "ItemPrice"   => 10,
-          "ItemTaxType" => "1",
-          "ItemAmount"  => 30,
-          "ItemRemark"  => "item03_desc",
-        ],
-      ],
-      // "MerchantID"         => config('stone.invoice.ecpay.merchant_id'),
-      // 'RelateNumber'       => self::newRelateNumber(),
-      // 'CustomerID'         => '123123',
-      // 'CustomerIdentifier' => '',
-      // 'CustomerName'       => '',
-      // // 'CustomerIdentifier' => '12341234',
-      // // 'CustomerName'       => 'companyyyyy',
-      // 'CustomerAddr'       => '',
-      // 'CustomerPhone'      => '',
-      // 'CustomerEmail'      => 'hello@wasateam.com',
-      // 'ClearanceMark'      => '',
-      // 'Print'              => '0',
-      // 'Donation'           => '0',
-      // // 'LoveCode'           => '',
-      // 'CarrierType'        => '',
-      // 'CarrierNum'         => '',
-      // 'TaxType'            => '1',
-      // // 'SpecialTaxType'     => '',
-      // 'SalesAmount'        => '333',
-      // 'InvoiceRemark'      => 'Remark Hereeee',
-      // 'Items'              => [
-      //   [
-      //     "ItemSeq"     => '123123',
-      //     "ItemName"    => 'Product AAA',
-      //     "ItemCount"   => '3',
-      //     "ItemWord"    => '個',
-      //     "ItemPrice"   => '111',
-      //     "ItemTaxType" => '1',
-      //     "ItemAmount"  => '333',
-      //     "ItemRemark"  => 'Product Remarkkkk',
-      //   ],
-      // ],
-      // 'InvType'            => '07',
-      // 'vat'                => '1',
+      "DelayDay"           => $DelayDay,
+      "PayType"            => '2',
+      "PayAct"             => 'ECPAY',
+      "NotifyURL"          => '',
     ];
   }
 
@@ -356,6 +363,7 @@ class EcpayHelper
 
   public static function updateShopOrderFromEcpayOrderCallbackRes($res)
   {
+    error_log('updateShopOrderFromEcpayOrderCallbackRes');
     $shop_order = ShopOrder::where('no', $res->OrderInfo->MerchantTradeNo)->first();
     if (!$shop_order) {
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order', $res->OrderInfo->MerchantTradeNo, 'no');

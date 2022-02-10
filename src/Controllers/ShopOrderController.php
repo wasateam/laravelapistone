@@ -10,13 +10,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Exports\ShopOrderExport;
-use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopOrder;
-use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
 
 /**
  * @group ShopOrder 訂單
@@ -135,7 +133,7 @@ class ShopOrderController extends Controller
   public $resource                = 'Wasateam\Laravelapistone\Resources\ShopOrder';
   public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\ShopOrderCollection';
   public $input_fields            = [
-    'no',
+    // 'no',
     'orderer',
     'orderer_tel',
     'orderer_birthday',
@@ -190,7 +188,7 @@ class ShopOrderController extends Controller
     'ship_remark',
   ];
   public $belongs_to = [
-    'user',
+    // 'user',
     'user_address',
     'shop_ship_area_setting',
     'shop_ship_time_setting',
@@ -255,31 +253,31 @@ class ShopOrderController extends Controller
     return ModelHelper::ws_IndexHandler($this, $request, $id);
   }
 
-  /**
-   * Auth Shop Order Index
-   *
-   * @queryParam area int 地區 No-Example 1
-   * @queryParam area_section int 子地區 No-Example 1
-   * @queryParam shop_ship_time_setting int 配送時段 No-Example 1
-   * @queryParam ship_remark string  No-example null,not_null
-   * @queryParam type string  No-example type
-   * @queryParam order_type string  No-example order_type
-   * @queryParam ship_status string  No-example ship_status
-   * @queryParam pay_status string  No-example pay_status
-   * @queryParam invoice_status string  No-example invoice_status
-   * @queryParam order_by string  No-example created_at,updated_at
-   * @queryParam order_way string  No-example asc,desc
-   * @queryParam start_time string  No-example 2020-10-10
-   * @queryParam end_time string  No-example 2021-10-11
-   * @queryParam time_field string  No-example created_at,updated_at
-   */
-  public function auth_shop_order_index(Request $request, $id = null)
-  {
-    return ModelHelper::ws_IndexHandler($this, $request, $id, $request->get_all, function ($model) {
-      $auth = Auth::user();
-      return $model->where('user_id', $auth->id);
-    });
-  }
+  // /**
+  //  * Auth Shop Order Index
+  //  *
+  //  * @queryParam area int 地區 No-Example 1
+  //  * @queryParam area_section int 子地區 No-Example 1
+  //  * @queryParam shop_ship_time_setting int 配送時段 No-Example 1
+  //  * @queryParam ship_remark string  No-example null,not_null
+  //  * @queryParam type string  No-example type
+  //  * @queryParam order_type string  No-example order_type
+  //  * @queryParam ship_status string  No-example ship_status
+  //  * @queryParam pay_status string  No-example pay_status
+  //  * @queryParam invoice_status string  No-example invoice_status
+  //  * @queryParam order_by string  No-example created_at,updated_at
+  //  * @queryParam order_way string  No-example asc,desc
+  //  * @queryParam start_time string  No-example 2020-10-10
+  //  * @queryParam end_time string  No-example 2021-10-11
+  //  * @queryParam time_field string  No-example created_at,updated_at
+  //  */
+  // public function auth_shop_order_index(Request $request, $id = null)
+  // {
+  //   return ModelHelper::ws_IndexHandler($this, $request, $id, $request->get_all, function ($model) {
+  //     $auth = Auth::user();
+  //     return $model->where('user_id', $auth->id);
+  //   });
+  // }
 
   /**
    * Store
@@ -337,26 +335,28 @@ class ShopOrderController extends Controller
       return ModelHelper::ws_StoreHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
       // return AuthHelper::checkRequestUser($request);
-      if ($request->user != Auth::user()->id) {
-        return response()->json([
-          'message' => 'not you',
-        ], 400);
-      }
+      // if ($request->user != Auth::user()->id) {
+      //   return response()->json([
+      //     'message' => 'not you',
+      //   ], 400);
+      // }
       if (!$request->has('shop_cart_products') || !is_array($request->shop_cart_products)) {
         return response()->json([
           'message' => 'products required.',
         ], 400);
       }
 
-      AuthHelper::checkRequestUser($request);
+      $user = Auth::user();
+
+      // AuthHelper::checkRequestUser($request);
 
       ShopHelper::checkShopCartProductsExist($request);
 
       ShopHelper::shopShipTimeLimitCheck($request);
 
-      $order_type        = ShopHelper::getShopCartOrderType($request->shop_cart_products);
+      $order_type = ShopHelper::getShopCartOrderType($request->shop_cart_products);
 
-      $_my_cart_products = ShopHelper::getMyCartProducts($request,$order_type);
+      $_my_cart_products = ShopHelper::getMyCartProducts($request, $order_type);
 
       ShopHelper::checkBonusPointEnough($request);
 
@@ -366,65 +366,66 @@ class ShopOrderController extends Controller
 
       // REMOVE FOR PAY
       # invoice
-      $invoice_status = null;
-      $invoice_number = null;
-      if (config('stone.invoice')) {
-        if (config('stone.invoice.service') == 'ecpay') {
-          if ($request->has('invoice_type')) {
-            try {
-              $invoice_type   = $request->invoice_type;
-              $customer_email = $request->orderer_email;
-              $customer_tel   = $request->orderer_tel;
-              $customer_addr  = $request->receive_address;
-              $order_amount   = ShopHelper::getOrderAmount($_my_cart_products);
-              $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
-              $customer_id    = Auth::user()->id;
-              $post_data      = [
-                'Items'         => $items,
-                'SalesAmount'   => $order_amount,
-                'TaxType'       => 1,
-                'CustomerEmail' => $customer_email,
-                'CustomerAddr'  => $customer_addr,
-                'CustomerPhone' => $customer_tel,
-                'CustomerID'    => $customer_id,
-              ];
-              if ($invoice_type == 'personal') {
-                $invoice_carrier_type      = $request->invoice_carrier_type;
-                $invoice_carrier_number    = $request->invoice_carrier_number;
-                $post_data['Print']        = 0;
-                $post_data['CustomerName'] = $request->orderer;
-                if ($invoice_carrier_type == 'mobile') {
-                  $post_data['CarrierType'] = 3;
-                  $post_data['CarrierNum']  = $invoice_carrier_number;
-                } else if ($invoice_carrier_type == 'certificate') {
-                  $post_data['CarrierType'] = 2;
-                  $post_data['CarrierNum']  = $invoice_carrier_number;
-                } else if ($invoice_carrier_type == 'email') {
-                  $post_data['CarrierType']   = 1;
-                  $post_data['CarrierNum']    = '';
-                  $post_data['CustomerEmail'] = $invoice_carrier_number;
-                }
-              } else if ($invoice_type == 'triple') {
-                $invoice_title                   = $request->invoice_title;
-                $invoice_uniform_number          = $request->invoice_uniform_number;
-                $post_data['CarrierType']        = '';
-                $post_data['Print']              = 1;
-                $post_data['CustomerName']       = $invoice_title;
-                $post_data['CustomerIdentifier'] = $invoice_uniform_number;
-              }
-              $post_data      = EcpayHelper::getInvoicePostData($post_data);
-              $invoice_number = EcpayHelper::createInvoice($post_data);
-              $invoice_status = 'done';
-            } catch (\Throwable $th) {
-              $invoice_status = 'fail';
-            }
-          }
-        }
-      }
+      // $invoice_status = null;
+      // $invoice_number = null;
+      // if (config('stone.invoice')) {
+      //   if (config('stone.invoice.service') == 'ecpay') {
+      //     if ($request->has('invoice_type')) {
+      //       try {
+      //         $invoice_type   = $request->invoice_type;
+      //         $customer_email = $request->orderer_email;
+      //         $customer_tel   = $request->orderer_tel;
+      //         $customer_addr  = $request->receive_address;
+      //         $order_amount   = ShopHelper::getOrderAmount($_my_cart_products);
+      //         $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
+      //         $customer_id    = Auth::user()->id;
+      //         $post_data      = [
+      //           'Items'         => $items,
+      //           'SalesAmount'   => $order_amount,
+      //           'TaxType'       => 1,
+      //           'CustomerEmail' => $customer_email,
+      //           'CustomerAddr'  => $customer_addr,
+      //           'CustomerPhone' => $customer_tel,
+      //           'CustomerID'    => $customer_id,
+      //         ];
+      //         if ($invoice_type == 'personal') {
+      //           $invoice_carrier_type      = $request->invoice_carrier_type;
+      //           $invoice_carrier_number    = $request->invoice_carrier_number;
+      //           $post_data['Print']        = 0;
+      //           $post_data['CustomerName'] = $request->orderer;
+      //           if ($invoice_carrier_type == 'mobile') {
+      //             $post_data['CarrierType'] = 3;
+      //             $post_data['CarrierNum']  = $invoice_carrier_number;
+      //           } else if ($invoice_carrier_type == 'certificate') {
+      //             $post_data['CarrierType'] = 2;
+      //             $post_data['CarrierNum']  = $invoice_carrier_number;
+      //           } else if ($invoice_carrier_type == 'email') {
+      //             $post_data['CarrierType']   = 1;
+      //             $post_data['CarrierNum']    = '';
+      //             $post_data['CustomerEmail'] = $invoice_carrier_number;
+      //           }
+      //         } else if ($invoice_type == 'triple') {
+      //           $invoice_title                   = $request->invoice_title;
+      //           $invoice_uniform_number          = $request->invoice_uniform_number;
+      //           $post_data['CarrierType']        = '';
+      //           $post_data['Print']              = 1;
+      //           $post_data['CustomerName']       = $invoice_title;
+      //           $post_data['CustomerIdentifier'] = $invoice_uniform_number;
+      //         }
+      //         $post_data      = EcpayHelper::getInvoicePostData($post_data);
+      //         $invoice_number = EcpayHelper::createInvoice($post_data);
+      //         $invoice_status = 'done';
+      //       } catch (\Throwable $th) {
+      //         $invoice_status = 'fail';
+      //       }
+      //     }
+      //   }
+      // }
 
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($my_cart_products, $invoice_status, $invoice_number, $order_type, $request) {
+      // return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($_my_cart_products, $invoice_status, $invoice_number, $order_type, $request) {
+      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($_my_cart_products, $order_type, $request) {
         # Shop Order Shop Product
-        foreach ($my_cart_products as $my_cart_product) {
+        foreach ($_my_cart_products as $my_cart_product) {
           $cart_product = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->first();
           # create shop_order_shop_product
           $new_order_product    = ShopHelper::createShopOrderShopProduct($cart_product, $model->id);
@@ -435,6 +436,13 @@ class ShopOrderController extends Controller
         ShopHelper::changeShopOrderPrice($model->id, $order_type, $request);
         $model->status     = 'not-established';
         $model->pay_status = 'waiting';
+
+        // if (config('stone.shop.custom_shop_order')) {
+        //   $model->no = \App\Helpers\AppHelper::newShopOrderNo($order_type);
+        // } else {
+        //   $model->no = ShopHelper::newShopOrderNo();
+        // }
+
         $model->save();
 
         # Order Type
@@ -444,15 +452,18 @@ class ShopOrderController extends Controller
         }
 
         // REMOVE FOR PAY
-        # Invoice
-        if ($invoice_status) {
-          $model->invoice_status = $invoice_status;
-          if ($invoice_status == 'done') {
-            $model->invoice_number = $invoice_number;
-            ShopHelper::createBonusPointFeedbackJob($model->id);
-          }
-          $model->save();
-        }
+        // # Invoice
+        // if ($invoice_status) {
+        //   $model->invoice_status = $invoice_status;
+        //   if ($invoice_status == 'done') {
+        //     $model->invoice_number = $invoice_number;
+        //     ShopHelper::createBonusPointFeedbackJob($model->id);
+        //   }
+        //   $model->save();
+        // }
+      }, function ($model) use ($user) {
+        $model->user_id = $user->id;
+        return $model;
       });
     }
   }

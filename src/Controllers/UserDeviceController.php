@@ -57,6 +57,11 @@ class UserDeviceController extends Controller
     'updated_at',
     'created_at',
   ];
+  public $search_relationship_fields = [
+    'user' => [
+      'name'
+    ],
+  ];
   public $uuid = true;
 
   public function __construct()
@@ -70,7 +75,7 @@ class UserDeviceController extends Controller
 
   /**
    * Index
-   * @urlParam search string No-example
+   * @queryParam search string No-example
    *
    */
   public function index(Request $request, $id = null)

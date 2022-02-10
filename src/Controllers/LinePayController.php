@@ -82,9 +82,7 @@ class LinePayController extends Controller
       ShopHelper::createInvoice($shop_order);
     }
 
-    return response()->json([
-      'message' => 'pay success',
-    ], 200);
+    return response()->json($shop_order, 200);
   }
 
   /**

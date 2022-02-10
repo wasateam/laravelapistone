@@ -29,10 +29,10 @@ class LinePayHelper
   ) {
     error_log('payment_request');
     if (!$confirm_url) {
-      $confirm_url = env('WEB_URL') . '/linepay/payment/confirm';
+      $confirm_url = env('WEB_URL') . '/line_pay/payment/confirm';
     }
     if (!$cancel_url) {
-      $cancel_url = env('WEB_URL') . '/linepay/payment/cancel';
+      $cancel_url = env('WEB_URL') . '/line_pay/payment/cancel';
     }
     $post_url     = self::getBaseUrl() . '/v3/payments/request';
     $request_body = [

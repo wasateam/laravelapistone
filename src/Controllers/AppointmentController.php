@@ -39,9 +39,6 @@ class AppointmentController extends Controller
     'type',
     'remark',
   ];
-  public $filter_fields = [
-    'date'
-  ];
   public $search_relationship_fields = [
     'user' =>[
       'name',

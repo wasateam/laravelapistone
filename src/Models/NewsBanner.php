@@ -12,7 +12,7 @@ class NewsBanner extends Model
 
   public function news_banner_groups()
   {
-    return $this->belongsToMany(ShopSubclass::class, 'news_banner_news_banner_group', 'news_banner_id', 'news_banner_group_id')->withPivot('news_banner_sq');
+    return $this->belongsToMany(NewsBannerGroup::class, 'news_banner_news_banner_group', 'news_banner_id', 'news_banner_group_id')->withPivot('news_banner_sq');
   }
   
   protected $casts = [

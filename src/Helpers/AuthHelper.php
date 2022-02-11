@@ -143,6 +143,9 @@ class AuthHelper
     if (str_contains(config('stone.web_url'), 'https') && str_contains(config('stone.app_url'), 'https')) {
       $api_url = Str::replace('http', 'https', $api_url);
     }
+    if (str_contains(config('stone.web_url'), 'http://localhost') && str_contains(config('stone.app_url'), 'http://localhost')) {
+      $api_url = Str::replace('127.0.0.1', 'localhost', $api_url);
+    }
     $url = Str::replace(config('stone.app_url') . '/api', config('stone.web_url'), $api_url);
     return $url;
   }
@@ -155,6 +158,9 @@ class AuthHelper
 
     if (str_contains(config('stone.web_url'), 'https') && str_contains(config('stone.app_url'), 'https')) {
       $api_url = Str::replace('http', 'https', $api_url);
+    }
+    if (str_contains(config('stone.web_url'), 'http://localhost') && str_contains(config('stone.app_url'), 'http://localhost')) {
+      $api_url = Str::replace('127.0.0.1', 'localhost', $api_url);
     }
     $url = Str::replace(config('stone.app_url') . '/api', config('stone.web_url'), $api_url);
     return $url;

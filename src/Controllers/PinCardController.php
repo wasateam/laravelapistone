@@ -46,6 +46,11 @@ class PinCardController extends Controller
     'updated_at',
     'created_at',
   ];
+  public $search_relationship_fields = [
+    'user' =>[
+      'name',
+    ],
+  ];
   public $user_create_field = 'created_admin_id';
 
   /**

@@ -32,6 +32,7 @@ class NewsBanner extends JsonResource
         'start_date'  => $this->start_date,
         'end_date'    => $this->end_date,
         'is_active'   => $this->is_active,
+        'news_banner_groups' => NewsBannerGroup::collection($this->news_banner_groups)
       ];
     } else if (config('stone.mode') == 'webapi') {
       $res = [
@@ -47,6 +48,7 @@ class NewsBanner extends JsonResource
         'title_color' => $this->title_color,
         'des'         => $this->des,
         'des_color'   => $this->des_color,
+        'news_banner_groups' => NewsBannerGroup::collection($this->news_banner_groups)
       ];
     }
     return $res;

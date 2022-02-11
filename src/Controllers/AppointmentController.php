@@ -39,6 +39,11 @@ class AppointmentController extends Controller
     'type',
     'remark',
   ];
+  public $search_relationship_fields = [
+    'user' =>[
+      'name',
+    ],
+  ];
   public $belongs_to = [
     'user',
     'service_store',

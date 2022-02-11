@@ -388,10 +388,9 @@ class AuthController extends Controller
       ], 400);
     }
 
-    $url = URL::temporarySignedRoute(
-      'forget_password_patch', now()->addMinutes(60), ['user_id' => $user->id]
-    );
-    Mail::to($user->email)->send(new PasswordResetRequest($url));
+    $url = AuthHelper::getPasswordResetUrl($user);
+    EmailHelper::password_reset_request($url, $user->email);
+
     return response()->json([
       'message' => 'mail sent.',
     ], 200);

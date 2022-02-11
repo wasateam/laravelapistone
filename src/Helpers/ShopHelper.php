@@ -485,8 +485,8 @@ class ShopHelper
   {
     $stone_feedback_after_invoice_days = config('stone.shop_campaign.items.bonus_point_feedback.feedback_after_invoice_days');
     $feedback_after_invoice_days       = $stone_feedback_after_invoice_days ? $stone_feedback_after_invoice_days : 3;
-    BonusPointFeedbackJob::dispatch($shop_order_id)
-      ->delay(Carbon::now()->addDays($feedback_after_invoice_days));
+    BonusPointFeedbackJob::dispatch($shop_order_id);
+      // ->delay(Carbon::now()->addDays($feedback_after_invoice_days));
   }
 
   public static function samePageCoverDuration($start_date, $end_date, $id = null, $page_settings = null)

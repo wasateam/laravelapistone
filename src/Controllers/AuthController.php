@@ -423,8 +423,11 @@ class AuthController extends Controller
     $user           = $model::find($user_id);
     $user->password = $request->password;
     $user->save();
+    $tokenResult = $user->createToken('Personal Access Token', AuthHelper::getUserScopes($user));
     return response()->json([
       'message' => 'password reset.',
+      'email'   => $user->email,
+      'token'   => $tokenResult->accessToken
     ], 200);
   }
 

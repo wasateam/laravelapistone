@@ -195,10 +195,12 @@ class UserDeviceController extends Controller
       $model_number  = $request->model_number ? $request->model_number : $uuid;
       $serial_number = $is_diy ? $uuid : $request->serial_number;
       $exist         = $this->model::where('serial_number', $serial_number)->first();
-      if ($exist) {
+      if ($exist->status == 'active') {
         return response()->json([
           'message' => 'existed.',
         ], 400);
+      } else if ($exist->status == 'deactive') {
+        return self::active($exist->id);
       }
       $model                = new $this->model;
       $model->type          = $type;

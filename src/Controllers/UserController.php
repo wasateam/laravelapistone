@@ -102,6 +102,8 @@ class UserController extends Controller
     'name',
     'email',
     'uuid',
+    'tel',
+    'customer_id'
   ];
   public $order_fields = [
     'id',

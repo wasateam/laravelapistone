@@ -291,6 +291,9 @@ class AuthController extends Controller
     if ($request->has('carrier_certificate')) {
       $user->carrier_certificate = $request->carrier_certificate;
     }
+    if(config('stone.user.update_before_action')) {
+      config('stone.user.update_before_action')::update_before_action($user);
+    }
     $user->save();
     return response()->json([
       'user' => new $resource($user),

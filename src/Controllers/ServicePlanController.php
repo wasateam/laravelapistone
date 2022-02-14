@@ -34,8 +34,6 @@ class ServicePlanController extends Controller
     'total_price',
     'annual_price',
     'monthly_price',
-    'changed_times_limit',
-    'limit'
   ];
   public $search_fields = [
     'name',

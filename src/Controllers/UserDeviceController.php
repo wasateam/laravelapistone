@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\UserDeviceHelper;
+use Wasateam\Laravelapistone\Models\UserDeviceModifyRecord;
 
 /**
  * @group UserDevice 使用者綁定裝置
@@ -200,7 +201,16 @@ class UserDeviceController extends Controller
           'message' => 'existed.',
         ], 400);
       } else if ($exist->status == 'deactive') {
-        return $this->active($exist->id);
+        $model->status = 'active';
+        if (config('stone.user.device.active_before_action')) {
+          config('stone.user.device.active_before_action')::device_active_before_action($exist, $user);
+        }
+        $model->save();
+        # UserDeviceModifyRecord
+        UserDeviceHelper::user_device_record('active', $model, $user);
+        return response()->json([
+          'message' => 'activated',
+        ], 200);
       }
       $model                = new $this->model;
       $model->type          = $type;
@@ -241,9 +251,11 @@ class UserDeviceController extends Controller
     $user                      = Auth::user();
     $active_user_devices_count = $this->model::where('user_id', $user->id)
       ->where('status', 'active')->count();
+    $changed_times = UserDeviceModifyRecord::where('user_id',$user->id)->count();
     return response()->json([
-      'limit'                     => $limit,
+      'change_times_limit'        => $limit,
       'active_user_devices_count' => $active_user_devices_count,
+      'available_change_times'    => $limit - $changed_times
     ], 200);
   }
 

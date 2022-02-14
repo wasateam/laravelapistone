@@ -291,8 +291,8 @@ class AuthController extends Controller
     if ($request->has('carrier_certificate')) {
       $user->carrier_certificate = $request->carrier_certificate;
     }
-    if(config('stone.acumatica.user_update')) {
-      config('stone.acumatica.user_update')::user_update($user);
+    if(config('stone.user.update_before_action')) {
+      config('stone.user.update_before_action')::user_update($user);
     }
     $user->save();
     return response()->json([

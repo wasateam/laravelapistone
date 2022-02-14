@@ -263,7 +263,7 @@ class AcumaticaHelper
   }
 
   /**
-   * 更新使用者資訊
+   * 更新使用者id資訊
    * user 使用者
    */
   public static function updateUserCustomerId($user)
@@ -279,6 +279,42 @@ class AcumaticaHelper
           "value" => $user->customer_id,
         ],
       ],
+    ];
+    $response = Http::withHeaders([
+      'Authorization' => "Bearer {$token}",
+    ])->post($post_url, $post_data);
+    return $response->json();
+  }
+
+  /**
+   * 更新使用者資訊
+   * user 使用者
+   */
+  public static function updateCustomer($user)
+  {
+    $token     = self::getToken();
+    $post_url  = config('stone.acumatica.api_url') . "/Customer";
+    $post_data = [
+      "id" => $user->acumatica_id,
+      "CustomerName" => [
+        "value" => $user->name,
+      ],
+      "MainContact" => [
+        "Email" => [
+          "value" => $user->email
+        ]
+      ],
+      "PrimayContact" => [
+        "DateOfBirth" => [
+          "value" => $user->birthday
+        ],
+        "LastName" => [
+          "value" => $user->name
+        ],
+        "Email" => [
+          "value" => $user->email
+        ]
+      ]
     ];
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",

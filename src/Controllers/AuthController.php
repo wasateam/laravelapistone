@@ -17,6 +17,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
 use Wasateam\Laravelapistone\Mail\PasswordResetRequest;
 use Wasateam\Laravelapistone\Models\Admin;
+use Wasateam\Laravelapistone\Helpers\AcumaticaHelper;
 
 /**
  * @group @Auth
@@ -290,6 +291,9 @@ class AuthController extends Controller
     }
     if ($request->has('carrier_certificate')) {
       $user->carrier_certificate = $request->carrier_certificate;
+    }
+    if(config('stone.acumatica.username')) {
+      AcumaticaHelper::updateCustomer($user);
     }
     $user->save();
     return response()->json([

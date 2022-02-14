@@ -200,7 +200,7 @@ class UserDeviceController extends Controller
           'message' => 'existed.',
         ], 400);
       } else if ($exist->status == 'deactive') {
-        return self::active($exist->id);
+        return $this->active($exist->id);
       }
       $model                = new $this->model;
       $model->type          = $type;

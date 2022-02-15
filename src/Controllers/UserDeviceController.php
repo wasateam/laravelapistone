@@ -245,7 +245,7 @@ class UserDeviceController extends Controller
   public function get_info_user_binding_status()
   {
     $user              = Auth::user();
-    $user_service_plan = UserServicePlan::where('user_id',$user->id)->first();
+    $user_service_plan = UserServicePlan::where('user_id',$user->id)->latest()->first();
     $user_device_update_count_limit = $user_service_plan->service_plan->user_device_update_count_limit;
     $active_user_devices_count = $this->model::where('user_id', $user->id)
       ->where('status', 'active')->count();

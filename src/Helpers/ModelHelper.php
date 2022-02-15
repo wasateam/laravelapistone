@@ -673,11 +673,26 @@ class ModelHelper
     return $rules;
   }
 
+  public static function getOrderWay($request, $setting)
+  {
+    $avaliables = [
+      'asc',
+      'desc',
+    ];
+    if (($request != null) && $request->filled('order_way')) {
+      if (in_array($request->order_way, $avaliables)) {
+        return $request->order_way;
+      }
+    } else {
+      return $setting->order_way;
+    }
+  }
+
   public static function indexGetSnap($setting, $request, $parent_id, $limit = true)
   {
     // Variable
-    $order_by   = ($request != null) && $request->filled('order_by') ? $request->order_by : $setting->order_by;
-    $order_way  = ($request != null) && $request->filled('order_way') ? $request->order_way : $setting->order_way;
+    $order_by  = ($request != null) && $request->filled('order_by') ? $request->order_by : $setting->order_by;
+    $order_way = self::getOrderWay($request, $setting);
     $start_time = ($request != null) && $request->filled('start_time') ? Carbon::parse($request->start_time) : null;
     $end_time   = ($request != null) && $request->filled('end_time') ? Carbon::parse($request->end_time) : null;
     $time_field = ($request != null) && $request->filled('time_field') ? $request->time_field : 'created_at';

@@ -244,18 +244,20 @@ class UserDeviceController extends Controller
    */
   public function get_info_user_binding_status()
   {
-    $limit = 0;
-    if (config('stone.user.device.limit')) {
-      $limit = config('stone.user.device.limit');
-    }
-    $user                      = Auth::user();
+    // $limit = 0;
+    // if (config('stone.user.device.limit')) {
+    //   $limit = config('stone.user.device.limit');
+    // }
+    $user              = Auth::user();
+    $user_service_plan = UserServicePlan::where('user_id',$user->id)->first();
+    $user_device_update_count_limit = $user_service_plan->service_plan->user_device_update_count_limit;
     $active_user_devices_count = $this->model::where('user_id', $user->id)
       ->where('status', 'active')->count();
     $changed_times = UserDeviceModifyRecord::where('user_id',$user->id)->count();
     return response()->json([
-      'change_times_limit'        => $limit,
+      'user_device_update_count_limit'        => $user_device_update_count_limit,
       'active_user_devices_count' => $active_user_devices_count,
-      'available_change_times'    => $limit - $changed_times
+      'available_change_times'    => $user_device_update_count_limit - $changed_times
     ], 200);
   }
 

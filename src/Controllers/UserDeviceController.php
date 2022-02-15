@@ -251,7 +251,7 @@ class UserDeviceController extends Controller
     $user_device_update_count_limit = $user_service_plan->service_plan->user_device_update_count_limit;
     $active_user_devices_count = $this->model::where('user_id', $user->id)
       ->where('status', 'active')->count();
-    $changed_times = UserDeviceModifyRecord::where('user_id',$user->id)->count();
+    $changed_times = UserDeviceModifyRecord::where('user_id',$user->id)->where('service_plan_id',$user_service_plan->service_plan_id)->count();
     return response()->json([
       'user_device_update_count_limit'        => $user_device_update_count_limit,
       'active_user_devices_count' => $active_user_devices_count,

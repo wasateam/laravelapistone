@@ -20,6 +20,11 @@ class UserDeviceModifyRecord extends Model
     return $this->belongsTo(User::class, 'user_id');
   }
 
+  public function service_plan()
+  {
+    return $this->belongsTo(ServicePlan::class);
+  }
+
   protected $casts = [
     'payload' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
   ];

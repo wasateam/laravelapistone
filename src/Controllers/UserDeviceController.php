@@ -244,10 +244,6 @@ class UserDeviceController extends Controller
    */
   public function get_info_user_binding_status()
   {
-    // $limit = 0;
-    // if (config('stone.user.device.limit')) {
-    //   $limit = config('stone.user.device.limit');
-    // }
     $user              = Auth::user();
     $user_service_plan = UserServicePlan::where('user_id',$user->id)->first();
     $user_device_update_count_limit = $user_service_plan->service_plan->user_device_update_count_limit;

@@ -200,11 +200,6 @@ class StoneServiceProvider extends ServiceProvider
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/news_banner');
         }
 
-        # News Banner Group
-        if (config('stone.news_banner_group')) {
-          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/news_banner_group');
-        }
-
         # Page Setting
         if (config('stone.page_setting')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/page_setting');

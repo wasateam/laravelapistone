@@ -131,8 +131,6 @@ return [
   ],
   //banner
   'news_banner'        => true,
-  //banner 群組
-  'news_banner_group'  => true,
   'news'               => true,
   //頁面設定
   'page_setting'       => true,

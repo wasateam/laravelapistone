@@ -14,6 +14,5 @@ class UserServicePlanItemRecordController extends Controller
     if(config('stone.user.service_history')){
       return config('stone.user.service_history')::getUserOrderHistory(Auth::user());
     }
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
   }
 }

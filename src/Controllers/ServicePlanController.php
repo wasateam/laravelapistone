@@ -34,6 +34,8 @@ class ServicePlanController extends Controller
     'total_price',
     'annual_price',
     'monthly_price',
+    'user_device_bind_count_limit',
+    'user_device_update_count_limit'
   ];
   public $search_fields = [
     'name',

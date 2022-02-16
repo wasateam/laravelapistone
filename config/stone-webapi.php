@@ -13,7 +13,7 @@ return [
     'service'    => env('MAIL_MAILER'), // gmail, surenotify , smtp
     'api_key'    => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
-    'test_mail'  => env('MAIL_API_DOMAIN', 'wasalearn@gmail.com'),
+    'test_mail'  => env('MAIL_TEST_MAIL', 'wasalearn@gmail.com'),
   ],
   'app_url'             => env('APP_URL'),
   'web_url'             => env('WEB_URL'),

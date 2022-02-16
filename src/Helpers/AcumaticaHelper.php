@@ -318,7 +318,7 @@ class AcumaticaHelper
     ];
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",
-    ])->post($post_url, $post_data);
+    ])->put($post_url, $post_data);
     return $response->json();
   }
 

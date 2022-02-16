@@ -14,8 +14,8 @@ class AddChangedTimesLimitInServicePlansTable extends Migration
     public function up()
     {
         Schema::table('service_plans', function (Blueprint $table) {
-            $table->integer('changed_times_limit')->nullable();
-            $table->integer('limit')->nullable();
+            $table->integer('user_device_bind_count_limit')->nullable();
+            $table->integer('user_device_update_count_limit')->nullable();
         });
     }
 
@@ -27,8 +27,8 @@ class AddChangedTimesLimitInServicePlansTable extends Migration
     public function down()
     {
         Schema::table('service_plans', function (Blueprint $table) {
-            $table->dropColumn('changed_times_limit');
-            $table->dropColumn('limit');
+            $table->dropColumn('user_device_bind_count_limit');
+            $table->dropColumn('user_device_update_count_limit');
         });
     }
 }

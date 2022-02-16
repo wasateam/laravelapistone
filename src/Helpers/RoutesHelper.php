@@ -90,12 +90,140 @@ use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
 use Wasateam\Laravelapistone\Controllers\XcMilestoneController;
+use Wasateam\Laravelapistone\Controllers\XcProjectController;
 use Wasateam\Laravelapistone\Controllers\XcTaskController;
 use Wasateam\Laravelapistone\Controllers\XcTaskTemplateController;
 use Wasateam\Laravelapistone\Controllers\XcWorkTypeController;
 
 class RoutesHelper
 {
+  public static function get_resource_scope_routes($controller, $model_name, $scopes)
+  {
+    if (in_array('read', $scopes)) {
+      Route::group([
+        "middleware" => ["wasascopes:{$model_name}-read"],
+      ], function () use ($model_name, $controller) {
+        Route::get($model_name, [$controller, 'index']);
+        Route::get("{$model_name}/{id}", [$controller, 'show']);
+      });
+    }
+    if (in_array('edit', $scopes)) {
+      Route::group([
+        "middleware" => ["wasascopes:{$model_name}-edit"],
+      ], function () use ($model_name, $controller) {
+        Route::post($model_name, [$controller, 'store']);
+        Route::patch("{$model_name}/{id}", [$controller, 'update']);
+        Route::delete($model_name, [$controller, 'destroy']);
+      });
+    }
+  }
+
+  public static function cms_routes()
+  {
+
+    # Auth
+    \Wasateam\Laravelapistone\Helpers\RoutesHelper::auth_routes([
+      "signin",
+      "signout",
+      "userget",
+      "userpatch",
+      "avatarpatch",
+    ]);
+
+    # XcWorkType
+    if (config('stone.xc_work_type')) {
+      Route::group([
+        "middleware" => ["wasascopes:xc_work_type-read"],
+      ], function () {
+        Route::get("xc_work_type", [XcWorkTypeController::class, 'index']);
+        Route::get("xc_work_type/{id}", [XcWorkTypeController::class, 'show']);
+      });
+      Route::group([
+        "middleware" => ["wasascopes:xc_work_type-edit"],
+      ], function () {
+        Route::post("xc_work_type", [XcWorkTypeController::class, 'store']);
+        Route::patch("xc_work_type/{id}", [XcWorkTypeController::class, 'update']);
+        Route::delete("xc_work_type", [XcWorkTypeController::class, 'destroy']);
+      });
+    }
+
+    # XcTask
+    if (config('stone.xc_task')) {
+
+      Route::group([
+        "middleware" => ["wasascopes:xc_task_template-read"],
+      ], function () {
+        Route::get("xc_task_template", [XcTaskTemplateController::class, 'index']);
+        Route::get("xc_task_template/{id}", [XcTaskTemplateController::class, 'show']);
+      });
+      Route::group([
+        "middleware" => ["wasascopes:xc_task_template-edit"],
+      ], function () {
+        Route::post("xc_task_template", [XcTaskTemplateController::class, 'store']);
+        Route::patch("xc_task_template/{id}", [XcTaskTemplateController::class, 'update']);
+        Route::delete("xc_task_template", [XcTaskTemplateController::class, 'destroy']);
+      });
+
+      Route::group([
+        "middleware" => ["wasascopes:xc_task-read,xc_task-read-my,xc_task-read-my-xc_project,xc_task-read-my-xc_work_type"],
+      ], function () {
+        Route::get("xc_task", [XcTaskController::class, 'index']);
+        Route::get("xc_task/{id}", [XcTaskController::class, 'show']);
+      });
+      Route::group([
+        "middleware" => ["wasascopes:xc_task-edit,xc_task-edit-my,xc_task-edit-my-xc_project,xc_task-edit-my-xc_work_type"],
+      ], function () {
+        Route::post("xc_task", [XcTaskController::class, 'store']);
+        Route::patch("xc_task/{id}", [XcTaskController::class, 'update']);
+        Route::delete("xc_task", [XcTaskController::class, 'destroy']);
+      });
+
+      // self::get_resource_scope_routes(
+      //   XcTaskTemplateController::class,
+      //   'xc_task_template',
+      //   ['read', 'edit']
+      // );
+      // self::get_resource_scope_routes(
+      //   XcTaskController::class,
+      //   'xc_task',
+      //   ['read', 'edit']
+      // );
+      // Route::group([
+      //   "middleware" => ["wasascopes:read-my"],
+      // ], function () use ($model_name, $controller) {
+      //   Route::get("{$model_name}/my", [$controller, 'index_my']);
+      //   Route::get("{$model_name}/my/{id}", [$controller, 'show_my']);
+      // });
+      // Route::group([
+      //   "middleware" => ["wasascopes:edit-my"],
+      // ], function () use ($model_name, $controller) {
+      //   Route::post("{$model_name}/my", [$controller, 'store_my']);
+      //   Route::patch("{$model_name}/my/{id}", [$controller, 'update_my']);
+      //   Route::delete("{$model_name}/my", [$controller, 'destroy_my']);
+      // });
+      // personal
+      // admin_group
+    }
+
+    # XcMilestone
+    if (config('stone.xc_milestone')) {
+      self::get_resource_scope_routes(
+        XcMilestoneController::class,
+        'xc_milestone',
+        ['read', 'edit']
+      );
+    }
+
+    # XcProject
+    if (config('stone.xc_project')) {
+      self::get_resource_scope_routes(
+        XcProjectController::class,
+        'xc_project',
+        ['read', 'edit']
+      );
+    }
+  }
+
   public static function get_all_routes_name()
   {
     $routeCollection = Route::getRoutes();
@@ -638,37 +766,6 @@ class RoutesHelper
     # Acumatica
     if (config('stone.acumatica')) {
       Route::resource('acumatica_app', AcumaticaAppController::class)->only([
-        'index', 'show', 'store', 'update', 'destroy',
-      ])->shallow();
-    }
-
-    # XcWorkType
-    if (config('stone.xc_work_type')) {
-      Route::resource('xc_work_type', XcWorkTypeController::class)->only([
-        'index', 'show', 'store', 'update', 'destroy',
-      ])->shallow();
-    }
-
-    # XcTask
-    if (config('stone.xc_task')) {
-      Route::resource('xc_task', XcTaskController::class)->only([
-        'index', 'show', 'store', 'update', 'destroy',
-      ])->shallow();
-      Route::resource('xc_task_template', XcTaskTemplateController::class)->only([
-        'index', 'show', 'store', 'update', 'destroy',
-      ])->shallow();
-    }
-
-    # XcMilestone
-    if (config('stone.xc_milestone')) {
-      Route::resource('xc_milestone', XcMilestoneController::class)->only([
-        'index', 'show', 'store', 'update', 'destroy',
-      ])->shallow();
-    }
-
-    # XcProject
-    if (config('stone.xc_project')) {
-      Route::resource('xc_project', XcProjectController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }

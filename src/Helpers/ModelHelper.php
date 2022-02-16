@@ -1270,4 +1270,19 @@ class ModelHelper
     }
     return $snap;
   }
+
+  public static function requestFilterIsUser($request, $user_field_name = 'user_id')
+  {
+
+  }
+
+  public static function requestFilterUserBelongsToManyModelBelongsTo(
+    $request,
+    $user_belongs_to_many_field_name,
+    $model_filter_belongs_to
+  ) {
+    $user                 = Auth::user();
+    $user_belongs_to_many = $user->{$user_belongs_to_many_field_name};
+    @Q@
+  }
 }

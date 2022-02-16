@@ -256,6 +256,11 @@ class StoneServiceProvider extends ServiceProvider
       $publishes[__DIR__ . '/../database/seeders/admin'] = database_path('seeders');
       $publishes[__DIR__ . '/../resources/lang/']        = resource_path('lang/');
       $this->publishes($publishes, 'stone-setup-cms');
+
+      # Middleware
+      // $this->app['router']->pushMiddlewareToGroup('wasa_scopes', Wasateam\Laravelapistone\Middleware\WasaScopes::class);
+
+      app('router')->aliasMiddleware('wasascopes', \Wasateam\Laravelapistone\Middleware\WasaScopes::class);
     }
 
     if (config('stone.mode') == 'webapi') {

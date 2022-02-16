@@ -30,3 +30,8 @@ Route::group([
 
 # Public
 \Wasateam\Laravelapistone\Helpers\RoutesHelper::cms_public_routes();
+
+
+
+
+\Wasateam\Laravelapistone\Helpers\RoutesHelper::cms_routes();

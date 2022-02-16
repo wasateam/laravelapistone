@@ -7,14 +7,14 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group Area
+ * @group Area 地區
+ * 
  * @authenticated
  *
  * sequence 順序
  * name 名稱
  * country_code 國家代碼
  *
- * APIs for area
  */
 class AreaController extends Controller
 {

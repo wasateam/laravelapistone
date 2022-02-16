@@ -24,6 +24,7 @@ use Wasateam\Laravelapistone\Models\XcMilestone;
  * xc_project 專案 (管理後台)
  * creator 建立人
  * taker 執行人
+ * is_personal 個人 task
  *
  */
 class XcMilestoneController extends Controller
@@ -38,6 +39,7 @@ class XcMilestoneController extends Controller
     'status',
     'creator_remark',
     'taker_remark',
+    'is_personal',
   ];
   public $belongs_to = [
     'xc_project',
@@ -60,7 +62,7 @@ class XcMilestoneController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id, true);
+    return ModelHelper::ws_IndexHandler($this, $request, $id);
   }
 
   /**

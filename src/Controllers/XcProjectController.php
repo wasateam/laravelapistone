@@ -79,7 +79,7 @@ class XcProjectController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id, true);
+    return ModelHelper::ws_IndexHandler($this, $request, $id);
   }
 
   /**

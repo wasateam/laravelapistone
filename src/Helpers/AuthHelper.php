@@ -111,6 +111,8 @@ class AuthHelper
     return true;
   }
 
+
+  # !REMOVE
   public static function checkAuthScope($request, $filters = [], $custom_scope_handler = null)
   {
     $has_scope = true;

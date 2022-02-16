@@ -255,7 +255,7 @@ class UserDeviceController extends Controller
     $changed_times = UserDeviceModifyRecord::where('user_id', $user->id)->where('service_plan_id', $user_service_plan->service_plan_id)->count();
     return response()->json([
       'active_user_devices_count'      => $active_user_devices_count,
-      'changed_times'                  => $active_user_devices_count,
+      'changed_times'                  => $changed_times,
       'user_device_update_count_limit' => $user_device_update_count_limit,
       'limit'                          => config('stone.user.device.limit') ? config('stone.user.device.limit') : 2,
       'available_change_times'         => config('stone.user.device.limit') ? config('stone.user.device.limit') : 2,

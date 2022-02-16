@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Models\UserServicePlanRecord;
+use Auth;
 
 /**
  * @group UserServicePlanRecord 使用者方案綁定紀錄
@@ -67,6 +68,9 @@ class UserServicePlanRecordController extends Controller
    */
   public function index(Request $request, $id = null)
   {
+    if(config('stone.user.service_history')){
+      return config('stone.user.service_history')::getUserOrderHistory(Auth::user());
+    }
     return ModelHelper::ws_IndexHandler($this, $request, $id);
   }
 

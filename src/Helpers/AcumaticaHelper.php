@@ -339,6 +339,25 @@ class AcumaticaHelper
   }
 
   /**
+   * 取得使用者使用方案紀錄
+   * app AcumaticaApp 沒傳送會抓 .env的設定
+   */
+  public static function getServiceOrderHistory($user)
+  {
+    $token    = self::getToken();
+    $post_url = config('stone.acumatica.api_url') . '/HighcareServiceHistory?$expand=HighcareServiceHistoryDetails';
+    $post_data = [
+      'CustomerID'=>[
+        'value'=>$user->customer_id
+      ]
+    ];
+    $response = Http::withHeaders([
+      'Authorization' => "Bearer {$token}",
+    ])->put($post_url,$post_data);
+    return $response->json();
+  }
+
+  /**
    * 取得 Acumatica Token
    * 取得 Token 後才能做後續 API 動作
    * app AcumaticaApp 沒傳送會抓 .env的設定

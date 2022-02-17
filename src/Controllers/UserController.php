@@ -137,7 +137,7 @@ class UserController extends Controller
       $this->input_fields[] = 'carrier_phone';
       $this->input_fields[] = 'carrier_certificate';
     }
-    if (config('stone.user.acumatica_id')) {
+    if (config('stone.acumatica')) {
       $this->input_fields[] = 'acumatica_id';
     }
   }

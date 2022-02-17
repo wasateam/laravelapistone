@@ -302,7 +302,13 @@ class AcumaticaHelper
       "MainContact" => [
         "Email" => [
           "value" => $user->email
-        ]
+        ],
+        'Phone1Type' => [
+          'value' => 'Cell',
+        ],
+        'Phone1' => [
+          'value' => $user->tel,
+        ],
       ],
       "PrimayContact" => [
         "DateOfBirth" => [
@@ -313,7 +319,13 @@ class AcumaticaHelper
         ],
         "Email" => [
           "value" => $user->email
-        ]
+        ],
+        'Phone1Type'       => [
+          'value' => 'Cell',
+        ],
+        'Phone1'       => [
+          'value' => $user->tel,
+        ],
       ]
     ];
     $response = Http::withHeaders([

@@ -168,8 +168,13 @@ class UserDeviceController extends Controller
 
   /**
    * Register 註冊
-   * @bodyParam user string Example: 1
-   *
+   * 
+   * @bodyParam brand string Example: Wasateam
+   * @bodyParam is_diy boolean Example: 0
+   * @bodyParam model_number string Example: a_model_number
+   * @bodyParam serial_number string Example: a_serial_number
+   * @bodyParam type string Example: NOTEBOOK
+   * 
    */
   public function register(Request $request)
   {
@@ -200,7 +205,7 @@ class UserDeviceController extends Controller
       if ($exist) {
         if ($exist->status == 'active') {
           return response()->json([
-            'message' => 'existed.',
+            'message' => 'device already exists.',
           ], 400);
         } else if ($exist->status == 'deactive') {
           $model->status = 'active';

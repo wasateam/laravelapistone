@@ -9,7 +9,7 @@ class UserDeviceHelper
 {
   public static function user_device_record($action, $user_device, $user)
   {
-    $service_plan = UserServicePlan::where('user_id', $user->id)->latest()->get();
+    $service_plan = UserServicePlan::where('user_id', $user->id)->latest()->first();
 
     $user_device_modify_record                  = new UserDeviceModifyRecord;
     $user_device_modify_record->action          = $action;

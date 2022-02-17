@@ -201,16 +201,16 @@ class UserDeviceController extends Controller
       $is_diy        = $request->is_diy;
       $model_number  = $request->model_number ? $request->model_number : $uuid;
       $serial_number = $is_diy ? $uuid : $request->serial_number;
-      $exist         = $this->model::where('serial_number', $serial_number)->first();
-      if ($exist) {
-        if ($exist->status == 'active') {
+      $model         = $this->model::where('serial_number', $serial_number)->first();
+      if ($model) {
+        if ($model->status == 'active') {
           return response()->json([
             'message' => 'device already exists.',
           ], 400);
-        } else if ($exist->status == 'deactive') {
+        } else if ($model->status == 'deactive') {
           $model->status = 'active';
           if (config('stone.user.device.active_before_action')) {
-            config('stone.user.device.active_before_action')::device_active_before_action($exist, $user);
+            config('stone.user.device.active_before_action')::device_active_before_action($model, $user);
           }
           $model->save();
           # UserDeviceModifyRecord

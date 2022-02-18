@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\TimeHelper;
 use Wasateam\Laravelapistone\Models\Appointment;
@@ -40,7 +41,7 @@ class AppointmentController extends Controller
     'remark',
   ];
   public $search_relationship_fields = [
-    'user' =>[
+    'user' => [
       'name',
     ],
   ];
@@ -187,5 +188,37 @@ class AppointmentController extends Controller
         }
       });
     }
+  }
+
+  /**
+   * Export Excel Signedurl
+   *
+   */
+  public function export_excel_signedurl(Request $request)
+  {
+    return ModelHelper::ws_ExportExcelSignedurlHandler($controller, $request);
+
+  }
+
+  /**
+   * Export Excel
+   *
+   */
+  public function export_excel(Request $request)
+  {
+    return ModelHelper::ws_ExportExcelHandler(
+      $this,
+      $request,
+      [
+        'ID',
+        '開始',
+      ],
+      function ($model) {
+        return [
+          $model->id,
+          $model->start_time,
+        ];
+      }
+    );
   }
 }

@@ -389,6 +389,10 @@ class RoutesHelper
       Route::resource('appointment', AppointmentController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      # Export
+      if (config('stone.appointment.export')) {
+        Route::get('appointment/export/excel/signedurl', [AppointmentController::class, 'export_excel_signedurl']);
+      }
     }
 
     # ServicePlan
@@ -697,6 +701,16 @@ class RoutesHelper
           Route::get('user/export/excel', [UserController::class, 'export_excel'])->name('user_export_excel');
         }
 
+      });
+    }
+
+    if (config('stone.appointment')) {
+      Route::group([
+        "middleware" => ["signed"],
+      ], function () {
+        if (config('stone.appointment.export')) {
+          Route::get('appointment/export/excel', [AppointmentController::class, 'export_excel'])->name('appointment_export_excel');
+        }
       });
     }
 

@@ -7,7 +7,9 @@ use Auth;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use Storage;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
@@ -381,6 +383,36 @@ class ModelHelper
     }
   }
 
+  public static function ws_ExportExcelSignedurlHandler($controller, $request)
+  {
+
+    // Setting
+    $setting = self::getSetting($controller);
+
+    return URL::temporarySignedRoute(
+      $setting->name . '_export_excel',
+      now()->addMinutes(30),
+      $request->all()
+    );
+  }
+
+  public static function ws_ExportExcelHandler($controller, $request, $headings, $map)
+  {
+    // Setting
+    $setting = self::getSetting($controller);
+
+    // Snap
+    $snap = self::indexGetSnap($setting, $request, null, false);
+
+    # IDs Filter
+    $snap = self::idsFilterSnap($snap, $request);
+
+    // Collection
+    $collection = self::indexGetPaginate($setting, $snap, $request, true);
+
+    return Excel::download(new \Wasateam\Laravelapistone\Exports\ModelExport($collection, $headings, $map), $setting->name . '.xlsx');
+  }
+
   public static function ws_OrderGetHandler($controller)
   {
 
@@ -691,8 +723,8 @@ class ModelHelper
   public static function indexGetSnap($setting, $request, $parent_id, $limit = true)
   {
     // Variable
-    $order_by  = ($request != null) && $request->filled('order_by') ? $request->order_by : $setting->order_by;
-    $order_way = self::getOrderWay($request, $setting);
+    $order_by   = ($request != null) && $request->filled('order_by') ? $request->order_by : $setting->order_by;
+    $order_way  = self::getOrderWay($request, $setting);
     $start_time = ($request != null) && $request->filled('start_time') ? Carbon::parse($request->start_time) : null;
     $end_time   = ($request != null) && $request->filled('end_time') ? Carbon::parse($request->end_time) : null;
     $time_field = ($request != null) && $request->filled('time_field') ? $request->time_field : 'created_at';

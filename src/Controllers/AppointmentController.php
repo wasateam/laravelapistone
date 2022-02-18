@@ -196,7 +196,7 @@ class AppointmentController extends Controller
    */
   public function export_excel_signedurl(Request $request)
   {
-    return ModelHelper::ws_ExportExcelSignedurlHandler($controller, $request);
+    return ModelHelper::ws_ExportExcelSignedurlHandler($this, $request);
 
   }
 
@@ -210,13 +210,25 @@ class AppointmentController extends Controller
       $this,
       $request,
       [
-        'ID',
-        '開始',
+        '預約日期',
+        '預約時段(起訖時間)',
+        '服務中心名稱',
+        '會員編號',
+        '會員名稱',
+        '電話',
+        'Email',
+        '備註',
       ],
       function ($model) {
         return [
-          $model->id,
-          $model->start_time,
+          Carbon::parse($model->created_at)->format('Y-m-d'),
+          $model->start_time . " ~ " . $model->end_time,
+          $model->service_store ? $model->service_store->name : null,
+          $model->user ? $model->user->customer_id : null,
+          $model->user ? $model->user->name : null,
+          $model->user ? $model->user->email : null,
+          $model->user ? $model->user->tel : null,
+          $model->remark,
         ];
       }
     );

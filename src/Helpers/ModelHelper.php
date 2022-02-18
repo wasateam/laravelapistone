@@ -727,13 +727,12 @@ class ModelHelper
     $order_way  = self::getOrderWay($request, $setting);
     $start_time = ($request != null) && $request->filled('start_time') ? Carbon::parse($request->start_time) : null;
     $end_time   = ($request != null) && $request->filled('end_time') ? Carbon::parse($request->end_time) : null;
+    $start_date = ($request != null) && $request->filled('start_date') ? Carbon::parse($request->start_date) : null;
+    $end_date   = ($request != null) && $request->filled('end_date') ? Carbon::parse($request->end_date) : null;
+    $date       = ($request != null) && $request->filled('date') ? Carbon::parse($request->date) : null;
     $time_field = ($request != null) && $request->filled('time_field') ? $request->time_field : 'created_at';
     $search     = ($request != null) && $request->filled('search') ? str_replace(' ', '', $request->search) : null;
     $excludes   = ($request != null) && $request->filled('excludes') ? $request->excludes : null;
-
-    if (isset($end_time) && $end_time->hour == 0 && $end_time->minute == 0 && $end_time->second == 0) {
-      $end_time->setTime(23, 59, 59);
-    }
 
     // Snap
     $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many);
@@ -799,6 +798,9 @@ class ModelHelper
     }
 
     // Time
+    if (isset($end_time) && $end_time->hour == 0 && $end_time->minute == 0 && $end_time->second == 0) {
+      $end_time->setTime(23, 59, 59);
+    }
     if ($start_time && $end_time) {
       if ($limit) {
         $totalDuration = $end_time->diffInDays($start_time);
@@ -824,6 +826,16 @@ class ModelHelper
         $snap = $snap->where($time_field, '<=', $end_time);
 
       }
+    }
+
+    # Date
+    if (isset($start_date) && isset($end_date)) {
+      $end_date->setTime(23, 59, 59);
+      $query = $query->whereDate($time_field, '>=', $start_date);
+      $query = $query->whereDate($time_field, '<=', $end_date);
+    }
+    if (isset($date)) {
+      $query = $query->whereDate($time_field, '==', $date);
     }
 
     // Filter

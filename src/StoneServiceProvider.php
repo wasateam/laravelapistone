@@ -6,11 +6,14 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Wasateam\Laravelapistone\Commands\CommandStoneTest;
 use Wasateam\Laravelapistone\Commands\CommandStoneWork;
+use Wasateam\Laravelapistone\Helpers\AuthHelper;
 
 class StoneServiceProvider extends ServiceProvider
 {
   public function boot()
   {
+    \Laravel\Passport\Passport::tokensCan(AuthHelper::getScopesForProvider());
+
     # Publishes
     # CMS
     $this->publishes([
@@ -216,8 +219,8 @@ class StoneServiceProvider extends ServiceProvider
         }
 
         # XcWorkType
-        if (config('stone.ex_work_type')) {
-          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/ex_work_type');
+        if (config('stone.xc_work_type')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/xc_work_type');
         }
 
         # XcTask

@@ -13,7 +13,7 @@ class CreateXcWorkTypesTable extends Migration
    */
   public function up()
   {
-    Schema::create('xc_work_type', function (Blueprint $table) {
+    Schema::create('xc_work_types', function (Blueprint $table) {
       $table->id();
       $table->timestamps();
       $table->softDeletes();
@@ -29,6 +29,6 @@ class CreateXcWorkTypesTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('xc_work_type');
+    Schema::dropIfExists('xc_work_types');
   }
 }

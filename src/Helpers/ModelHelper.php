@@ -1283,6 +1283,6 @@ class ModelHelper
   ) {
     $user                 = Auth::user();
     $user_belongs_to_many = $user->{$user_belongs_to_many_field_name};
-    @Q@
+    // @Q@
   }
 }

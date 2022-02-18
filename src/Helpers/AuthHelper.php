@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Wasateam\Laravelapistone\Helpers\SpareHelper;
 
 class AuthHelper
 {
@@ -111,7 +112,6 @@ class AuthHelper
     return true;
   }
 
-
   # !REMOVE
   public static function checkAuthScope($request, $filters = [], $custom_scope_handler = null)
   {
@@ -181,5 +181,15 @@ class AuthHelper
     $tokenResult = $user->createToken('Personal Access Token', self::getUserScopes($user));
     $token       = $tokenResult->token;
     return $token;
+  }
+
+  public static function getScopesForProvider()
+  {
+    $system_scopes = SpareHelper::getSystemScopes();
+    $scopes        = [];
+    foreach ($system_scopes as $system_scope) {
+      $scopes[$system_scope] = $system_scope;
+    }
+    return $scopes;
   }
 }

@@ -49,7 +49,16 @@ class AppointmentController extends Controller
     'user',
     'service_store',
   ];
+  public $filter_belongs_to = [
+    'user',
+    'service_store',
+  ];
   public $order_fields = [
+    'updated_at',
+    'created_at',
+    'date',
+  ];
+  public $filter_time_fields = [
     'updated_at',
     'created_at',
     'date',

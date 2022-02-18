@@ -673,6 +673,7 @@ class ModelHelper
     $setting->country_code                    = isset($controller->country_code) ? $controller->country_code : null;
     $setting->resource_for_order              = isset($controller->resource_for_order) ? $controller->resource_for_order : $controller->resource;
     $setting->order_layers_setting            = isset($controller->order_layers_setting) ? $controller->order_layers_setting : [];
+    $setting->filter_time_fields              = isset($controller->filter_time_fields) ? $controller->filter_time_fields : [];
     return $setting;
   }
 
@@ -727,9 +728,6 @@ class ModelHelper
     $order_way  = self::getOrderWay($request, $setting);
     $start_time = ($request != null) && $request->filled('start_time') ? Carbon::parse($request->start_time) : null;
     $end_time   = ($request != null) && $request->filled('end_time') ? Carbon::parse($request->end_time) : null;
-    $start_date = ($request != null) && $request->filled('start_date') ? Carbon::parse($request->start_date) : null;
-    $end_date   = ($request != null) && $request->filled('end_date') ? Carbon::parse($request->end_date) : null;
-    $date       = ($request != null) && $request->filled('date') ? Carbon::parse($request->date) : null;
     $time_field = ($request != null) && $request->filled('time_field') ? $request->time_field : 'created_at';
     $search     = ($request != null) && $request->filled('search') ? str_replace(' ', '', $request->search) : null;
     $excludes   = ($request != null) && $request->filled('excludes') ? $request->excludes : null;
@@ -828,16 +826,6 @@ class ModelHelper
       }
     }
 
-    # Date
-    if (isset($start_date) && isset($end_date)) {
-      $end_date->setTime(23, 59, 59);
-      $query = $query->whereDate($time_field, '>=', $start_date);
-      $query = $query->whereDate($time_field, '<=', $end_date);
-    }
-    if (isset($date)) {
-      $query = $query->whereDate($time_field, '==', $date);
-    }
-
     // Filter
     if ($request != null && count($setting->filter_fields)) {
       foreach ($setting->filter_fields as $filter_field) {
@@ -899,6 +887,27 @@ class ModelHelper
           $snap     = $snap->whereHas($filter_relationship_field_value[0], function ($query) use ($filter_relationship_field_value, $item_arr) {
             return $query->whereIn('id', $item_arr);
           });
+        }
+      }
+    }
+    if (($request != null) && count($setting->filter_time_fields)) {
+      foreach ($setting->filter_time_fields as $filter_time_field) {
+        if ($request->filled($filter_time_field)) {
+          $item_arr = explode(',', $request->{$filter_time_field});
+          if (count($item_arr) == 1) {
+            $filter_date = Carbon::parse($item_arr[0])->format('Y-m-d');
+            $snap = $snap->whereDate($filter_time_field, '=', $filter_date);
+          } else {
+            $filter_start_time = Carbon::parse($item_arr[0]);
+            $filter_end_time   = Carbon::parse($item_arr[1]);
+            if (count($item_arr[1]) == 10 &&
+              (Srt::contains($item_arr[1], '/' || Srt::contains($item_arr[1], '-'))
+              )) {
+              $filter_end_time->setTime(23, 59, 59);
+            }
+            $snap = $snap->where($filter_time_field, '>=', $filter_start_time);
+            $snap = $snap->where($filter_time_field, '<=', $filter_end_time);
+          }
         }
       }
     }

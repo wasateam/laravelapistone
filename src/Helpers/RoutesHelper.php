@@ -1109,9 +1109,10 @@ class RoutesHelper
     if (config('stone.the_point')) {
       # ThePointRecord
       Route::resource('the_point_record', ThePointRecordController::class)->only([
+        'index',
         'show',
       ])->shallow();
-      Route::get('the_point_record/auth/index', [ThePointRecordController::class, 'auth_index']);
+      // Route::get('the_point_record/auth/index', [ThePointRecordController::class, 'auth_index']);
     }
   }
 

@@ -108,7 +108,7 @@ class ShopHelper
     });
     $shop_product_price_total = Self::sum_total($shop_product_price_arr);
 
-    $dicount_shop_product_price_total = 0;
+    // $dicount_shop_product_price_total = 0;
     // discount_code
     // create discount_code shop_camapign
     if ($request && $request->has('discount_code') && $request->discount_code) {
@@ -117,9 +117,9 @@ class ShopHelper
         Self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
         if ($shop_product_price_total >= $today_dicount_decode_campaign->full_amount) {
           if ($today_dicount_decode_campaign->discount_percent) {
-            $dicount_shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
+            $shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
           } else if ($today_dicount_decode_campaign->discount_amount) {
-            $dicount_shop_product_price_total = $shop_product_price_total - $today_dicount_decode_campaign->discount_amount;
+            $shop_product_price_total = $shop_product_price_total - $today_dicount_decode_campaign->discount_amount;
           }
         }
       }
@@ -167,7 +167,7 @@ class ShopHelper
     }
 
     //訂單金額 產品總和+運費
-    $order_price = $dicount_shop_product_price_total + $freight - $bonus_points;
+    $order_price = $shop_product_price_total + $freight - $bonus_points;
 
     return [
       "products_price" => $shop_product_price_total,

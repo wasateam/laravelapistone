@@ -17,6 +17,7 @@ use Wasateam\Laravelapistone\Helpers\ShopHelper;
  * start_date 開始日期
  * end_date 結束日期
  * is_no_limited 有無限制，有的話填true
+ * order_type 訂單類型
  *
  * @authenticated
  */
@@ -31,11 +32,13 @@ class ShopFreeShippingController extends Controller
     'start_date',
     'end_date',
     'price',
+    'order_type',
   ];
   public $search_fields = [
     'name',
   ];
   public $filter_fields = [
+    'order_type',
   ];
   public $order_fields = [
     "start_date",
@@ -75,6 +78,7 @@ class ShopFreeShippingController extends Controller
    * @bodyParam price int 免運金額 Example:1000
    * @bodyParam start_date string 開始日期 Example:2021-10-10
    * @bodyParam end_date string 結束日期 Example:2021-10-20
+   * @bodyParam order_type  string 訂單類型 Example:pre_order
    */
   public function store(Request $request, $id = null)
   {
@@ -109,6 +113,7 @@ class ShopFreeShippingController extends Controller
    * @bodyParam price int 免運金額 Example:1000
    * @bodyParam start_date string 開始日期 Example:2021-10-10
    * @bodyParam end_date string 結束日期 Example:2021-10-20
+   * @bodyParam order_type  string 訂單類型 Example:pre_order
    */
   public function update(Request $request, $id)
   {

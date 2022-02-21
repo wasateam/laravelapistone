@@ -9,10 +9,17 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
  * @group ShopShipAreaSetting 配送地區設定
+ * 
+ * is_all_area_section 是否為全區
+ * ship_ways 配送方式
+ * order_type 訂單類型
+ * area 地區
+ * area_sections 子地區
+ * 
  *
  * @authenticated
- *
- * APIs for shop_ship_area_setting
+ * 
+ * 
  */
 class ShopShipAreaSettingController extends Controller
 {
@@ -22,10 +29,10 @@ class ShopShipAreaSettingController extends Controller
   public $input_fields = [
     'is_all_area_section',
     'ship_ways',
-    'type',
+    'order_type',
   ];
   public $filter_fields = [
-    'type',
+    'order_type',
   ];
   public $belongs_to = [
     'area',
@@ -41,7 +48,7 @@ class ShopShipAreaSettingController extends Controller
   /**
    * Index
    * @queryParam search string No-example
-   * @queryParam type string No-example
+   * @queryParam order_type string 訂單類型 Example: pre_order
    *
    */
   public function index(Request $request, $id = null)
@@ -54,8 +61,8 @@ class ShopShipAreaSettingController extends Controller
    *
    * @bodyParam name string No-example
    * @bodyParam sq string No-example
-   * @bodyParam type string No-example
    * @bodyParam shop_class id No-example
+   * @bodyParam order_type  string 訂單類型 Example:pre_order
    */
   public function store(Request $request, $id = null)
   {
@@ -78,8 +85,8 @@ class ShopShipAreaSettingController extends Controller
    * @urlParam  shop_ship_area_setting required The ID of shop_ship_area_setting. Example: 1
    * @bodyParam name string No-example
    * @bodyParam sq string No-example
-   * @bodyParam type string No-example
    * @bodyParam shop_class id No-example
+   * @bodyParam order_type  string 訂單類型 Example:pre_order
    */
   public function update(Request $request, $id)
   {

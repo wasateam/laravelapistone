@@ -55,6 +55,7 @@ class ShopFreeShippingController extends Controller
   /**
    * Index
    * @queryParam search string 搜尋字串 No-example
+   * @queryParam order_type string 訂單類型 Example: pre_order
    * @queryParam date string 篩選時間日期 No-example
    *
    */

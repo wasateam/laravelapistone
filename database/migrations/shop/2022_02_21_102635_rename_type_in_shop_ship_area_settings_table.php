@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddOrderTypeInShopShipAreaSettingsTable extends Migration
+class RenameTypeInShopShipAreaSettingsTable extends Migration
 {
   /**
    * Run the migrations.
@@ -14,7 +14,7 @@ class AddOrderTypeInShopShipAreaSettingsTable extends Migration
   public function up()
   {
     Schema::table('shop_ship_area_settings', function (Blueprint $table) {
-      $table->string('order_type')->nullable();
+      $table->renameColumn('type', 'order_type');
     });
   }
 
@@ -26,7 +26,7 @@ class AddOrderTypeInShopShipAreaSettingsTable extends Migration
   public function down()
   {
     Schema::table('shop_ship_area_settings', function (Blueprint $table) {
-      $table->dropColumn('order_type');
+      $table->renameColumn('order_type', 'type');
     });
   }
 }

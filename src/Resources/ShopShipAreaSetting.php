@@ -17,7 +17,7 @@ class ShopShipAreaSetting extends JsonResource
     if (config('stone.mode') == 'cms') {
       $res = [
         'id'                  => $this->id,
-        'type'                => $this->type,
+        'order_type'          => $this->order_type,
         'is_all_area_section' => $this->is_all_area_section,
         'ship_ways'           => $this->ship_ways,
         'area'                => new Area_R1($this->area),
@@ -26,7 +26,7 @@ class ShopShipAreaSetting extends JsonResource
     } else if (config('stone.mode') == 'webapi') {
       $res = [
         'id'                  => $this->id,
-        'type'                => $this->type,
+        'order_type'          => $this->order_type,
         'is_all_area_section' => $this->is_all_area_section,
         'ship_ways'           => $this->ship_ways,
         'area'                => new Area_R1($this->area),

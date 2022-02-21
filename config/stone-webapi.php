@@ -68,7 +68,11 @@ return [
       'before_houres' => 1,
     ],
   ],
-  'service_plan'        => true,
+  'service_plan'        => [
+    'using_record' => [
+      'from' => 'acumatica',
+    ],
+  ],
   // 'pin_card'            => [
   //   'register_complete_action'=>
   // ],

@@ -413,6 +413,13 @@ class RoutesHelper
         'index', 'show',
       ])->shallow();
       Route::post('user_service_plan_item/{id}/remain_count_deduct', [UserServicePlanItemController::class, 'remain_count_deduct']);
+      if (stone('stone.service_plan.using_record')) {
+        if (stone('stone.service_plan.using_record.from') == 'acumatica') {
+          Route::resource('service_plan_using_record', ServicePlanUsingRecordController::class)->only([
+            'index'
+          ])->shallow();
+        }
+      }
     }
 
     # Pin Card

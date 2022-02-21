@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Wasateam\Laravelapistone\Helpers\UrlHelper;
 
 class AuthHelper
 {
@@ -141,7 +142,7 @@ class AuthHelper
       'email_verify', now()->addMinutes(60), ['user_id' => $user->id]
     );
 
-    $url = self::getFormatedHttpUrl($api_url);
+    $url = UrlHelper::getFormatedUrl($api_url, true, true, true);
 
     return $url;
   }
@@ -152,20 +153,7 @@ class AuthHelper
       'forget_password_patch', now()->addMinutes(60), ['user_id' => $user->id]
     );
 
-    $url = self::getFormatedHttpUrl($api_url);
-
-    return $url;
-  }
-
-  public static function getFormatedHttpUrl($url)
-  {
-    if (str_contains(config('stone.web_url'), 'https://') && str_contains(config('stone.app_url'), 'https://') && str_contains($url, 'http://')) {
-      $url = Str::replace('http', 'https', $url);
-    }
-    if (str_contains(config('stone.web_url'), 'http://localhost') && str_contains(config('stone.app_url'), 'http://localhost')) {
-      $url = Str::replace('127.0.0.1', 'localhost', $url);
-    }
-    $url = Str::replace(config('stone.app_url') . '/api', config('stone.web_url'), $url);
+    $url = UrlHelper::getFormatedUrl($api_url, true, true, true);
 
     return $url;
   }

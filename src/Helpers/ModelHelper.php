@@ -14,6 +14,7 @@ use Storage;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
+use Wasateam\Laravelapistone\Helpers\UrlHelper;
 use Wasateam\Laravelapistone\Models\Locale;
 
 class ModelHelper
@@ -389,11 +390,13 @@ class ModelHelper
     // Setting
     $setting = self::getSetting($controller);
 
-    return URL::temporarySignedRoute(
+    $url = URL::temporarySignedRoute(
       $setting->name . '_export_excel',
       now()->addMinutes(30),
       $request->all()
     );
+    $url = UrlHelper::getFormatedUrl($url, true, true);
+    return $url;
   }
 
   public static function ws_ExportExcelHandler($controller, $request, $headings, $map)
@@ -896,7 +899,7 @@ class ModelHelper
           $item_arr = explode(',', $request->{$filter_time_field});
           if (count($item_arr) == 1) {
             $filter_date = Carbon::parse($item_arr[0])->format('Y-m-d');
-            $snap = $snap->whereDate($filter_time_field, '=', $filter_date);
+            $snap        = $snap->whereDate($filter_time_field, '=', $filter_date);
           } else {
             $filter_start_time = Carbon::parse($item_arr[0]);
             $filter_end_time   = Carbon::parse($item_arr[1]);

@@ -3,6 +3,7 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
@@ -182,7 +183,7 @@ class ShopCampaignController extends Controller
    */
   public function show(Request $request, $id = null)
   {
-    return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) use ($request){
+    return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) use ($request) {
       //篩選狀態
       $status = $request->has('status') ? $request->status : null;
       if (isset($status)) {
@@ -259,24 +260,25 @@ class ShopCampaignController extends Controller
 
   /**
    * Today DiscountCode Get 取得今日折扣碼活動
-   * 
+   *
    * @queryParam user int user_id Example:1
    * @bodyParam discount_code string 折扣碼 Example:LittleChicken
    */
   public function get_today_discount_code(Request $request)
-  { 
+  {
     //today
-    $today_date = Carbon::now()->format('Y-m-d'); 
+    $today_date = Carbon::now()->format('Y-m-d');
     //shop_campaign
-    $shop_campaign = ShopCampaign::where('type', 'discount_code')->where('is_active',1)->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('discount_code', $request->discount_code)->first();
+    $shop_campaign = ShopCampaign::where('type', 'discount_code')->where('is_active', 1)->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('discount_code', $request->discount_code)->first();
+    $user          = Auth::user();
     if ($shop_campaign) {
       if ($shop_campaign->condition == 'first-purchase') {
         //is user first purchase or not
-        $shop_order = ShopOrder::where('user_id',$request->user)->where('pay_status','paid')->first();
+        $shop_order = ShopOrder::where('user_id', $user)->where('pay_status', 'paid')->first();
         if ($shop_order) {
           return response()->json([
             'message' => 'you are not first purchase',
-          ],403);
+          ], 403);
         } else {
           return new $this->resource($shop_campaign);
         }
@@ -288,7 +290,7 @@ class ShopCampaignController extends Controller
         'message' => 'no shop_campaign',
       ], 200);
     }
-    
+
   }
 
   /**

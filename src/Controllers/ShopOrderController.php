@@ -283,7 +283,7 @@ class ShopOrderController extends Controller
    * Store
    *
    * @bodyParam user int 人員 Example:1
-   * @bodyParam no string 訂單編號 No-example
+   * @bodyParam no string 訂單編號 Example:AC12342
    * @bodyParam orderer string 訂購者 Example:orderer_name
    * @bodyParam orderer_tel string 訂購者電話 Example:0900-000-000
    * @bodyParam orderer_birthday string 訂購者生日 Example:1000-10-10
@@ -482,7 +482,7 @@ class ShopOrderController extends Controller
    * update
    *
    * @urlParam  shop_order required The ID of shop_order. Example: 1
-   * @bodyParam no string 訂單編號 No-example
+   * @bodyParam no string 訂單編號 Example:AC12342
    * @bodyParam orderer string 訂購者 Example:orderer_name
    * @bodyParam orderer_tel string 訂購者電話 Example:0900-000-000
    * @bodyParam orderer_birthday string 訂購者生日 Example:1000-10-10

@@ -93,6 +93,7 @@ use Wasateam\Laravelapistone\Controllers\XcMilestoneController;
 use Wasateam\Laravelapistone\Controllers\XcTaskController;
 use Wasateam\Laravelapistone\Controllers\XcTaskTemplateController;
 use Wasateam\Laravelapistone\Controllers\XcWorkTypeController;
+use Wasateam\Laravelapistone\Controllers\ServicePlanUsingRecordController;
 
 class RoutesHelper
 {
@@ -413,13 +414,6 @@ class RoutesHelper
         'index', 'show',
       ])->shallow();
       Route::post('user_service_plan_item/{id}/remain_count_deduct', [UserServicePlanItemController::class, 'remain_count_deduct']);
-      if (stone('stone.service_plan.using_record')) {
-        if (stone('stone.service_plan.using_record.from') == 'acumatica') {
-          Route::resource('service_plan_using_record', ServicePlanUsingRecordController::class)->only([
-            'index'
-          ])->shallow();
-        }
-      }
     }
 
     # Pin Card
@@ -782,6 +776,13 @@ class RoutesHelper
     # UserServicePlan
     if (config('stone.service_plan')) {
       Route::get('user_service_plan/my_current_plan', [UserServicePlanController::class, 'my_current_plan']);
+      if (config('stone.service_plan.using_record')) {
+        if (config('stone.service_plan.using_record.from') == 'acumatica') {
+          Route::resource('service_plan_using_record', ServicePlanUsingRecordController::class)->only([
+            'index'
+          ])->shallow();
+        }
+      }
     }
 
     # Shop

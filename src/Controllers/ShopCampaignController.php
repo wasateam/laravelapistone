@@ -38,7 +38,9 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  *
  * Index 篩選
  * status
- * ~ 1 進行中 2 未開始 3 已結束
+ * ~ in-progress 進行中
+ * ~ not-started 未開始
+ * ~ end 已結束
  *
  * Store,Update相關補充
  * 需要送condition，condition要送什麼會依據type而不同
@@ -116,13 +118,13 @@ class ShopCampaignController extends Controller
       $status = ($request != null) && $request->filled('status') ? $request->status : null;
       if (isset($status)) {
         $today = Carbon::now()->format('Y-m-d');
-        if ($status == 1) {
+        if ($status == 'in-progress') {
           $snap = $snap->where(function ($query) use ($today) {
             $query->whereDate('end_date', '>=', $today)->whereDate('start_date', '<=', $today);
           })->orWhereNull('start_date');
-        } else if ($status == 2) {
+        } else if ($status == 'not-started') {
           $snap = $snap->whereDate('start_date', '>', $today);
-        } else if ($status == 3) {
+        } else if ($status == 'end') {
           $snap = $snap->whereDate('end_date', '<', $today);
         }
       }
@@ -188,11 +190,11 @@ class ShopCampaignController extends Controller
       $status = $request->has('status') ? $request->status : null;
       if (isset($status)) {
         $today = Carbon::now()->format('Y-m-d');
-        if ($status == 'progressing') {
+        if ($status == 'in-progress') {
           $snap = $snap->where(function ($query) use ($today) {
             $query->whereDate('end_date', '>=', $today)->whereDate('start_date', '<=', $today);
           })->orWhereNull('start_date');
-        } else if ($status == 'non-start') {
+        } else if ($status == 'not-started') {
           $snap = $snap->whereDate('start_date', '>', $today);
         } else if ($status == 'end') {
           $snap = $snap->whereDate('end_date', '<', $today);

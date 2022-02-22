@@ -18,16 +18,21 @@ class ServicePlanHelper
     }
   }
 
-  public static function getServicePlanUsingRecordsFromAcumatica($acumaticaDetails)
+  public static function getServicePlanUsingRecordsFromAcumatica($acumaticaDetails, $user, $pin)
   {
     $service_plan_using_records = [];
     foreach ($acumaticaDetails as $acumaticaDetail) {
-      $service_plan_using_records[] = [
-        'name'         => $acumaticaDetail['ServiceDescription']['value'],
-        'total_count'  => $acumaticaDetail['LimitedCount']['value'],
-        'remain_count' => $acumaticaDetail['RemainingCount']['value'],
-        'due_date'     => $acumaticaDetail['EndDate']['value'],
-      ];
+      if (
+        $acumaticaDetail['CustomerID']['value'] == $user->customer_id &&
+        $acumaticaDetail['PinCode']['value'] == $pin
+      ) {
+        $service_plan_using_records[] = [
+          'name'         => $acumaticaDetail['ServiceDescription']['value'],
+          'total_count'  => $acumaticaDetail['LimitedCount']['value'],
+          'remain_count' => $acumaticaDetail['RemainingCount']['value'],
+          'due_date'     => $acumaticaDetail['EndDate']['value'],
+        ];
+      }
     }
     return $service_plan_using_records;
   }

@@ -3,16 +3,20 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Resources\UserServicePlan;
 
 /**
  * @group UserServicePlan 使用者綁定方案
+ * @authenticated
  *
- * service_plan 方案 ID
- * user 使用者 ID
- * pin_card PinCard ID
+ * service_plan 服務方案
+ * user 使用者
+ * pin_card PinCard
+ * expired_at PinCard
  *
  */
 class UserServicePlanController extends Controller
@@ -21,11 +25,13 @@ class UserServicePlanController extends Controller
   public $name         = 'user_service_plan';
   public $resource     = 'Wasateam\Laravelapistone\Resources\UserServicePlan';
   public $input_fields = [
+    'expired_at',
   ];
   public $search_fields = [
   ];
   public $belongs_to = [
     'service_plan',
+    'pin_card',
   ];
   public $filter_belongs_to = [
     'service_plan',
@@ -35,10 +41,13 @@ class UserServicePlanController extends Controller
     'created_at',
   ];
   public $search_relationship_fields = [
-    'user' => [
+    'user'     => [
       'name',
       'email',
       'tel',
+    ],
+    'pin_card' => [
+      'pin',
     ],
   ];
 
@@ -56,12 +65,20 @@ class UserServicePlanController extends Controller
 
   /**
    * Index
+   * 
    * @queryParam search string No-example
    *
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id);
+    } else if (config('stone.mode') == 'webapi') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) {
+        $snap = $snap->where('user_id', Auth::user()->id);
+        return $snap;
+      });
+    }
   }
 
   /**
@@ -83,7 +100,15 @@ class UserServicePlanController extends Controller
    */
   public function show(Request $request, $id = null)
   {
-    return ModelHelper::ws_ShowHandler($this, $request, $id);
+
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_ShowHandler($this, $request, $id);
+    } else if (config('stone.mode') == 'webapi') {
+      return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) {
+        $snap = $snap->where('user_id', Auth::user()->id);
+        return $snap;
+      });
+    }
   }
 
   /**
@@ -110,17 +135,20 @@ class UserServicePlanController extends Controller
   }
 
   /**
-   * My Current Plan
+   * Get Current
    *
    */
-  public function my_current_plan()
+  public function get_current()
   {
     $user              = Auth::user();
     $user_service_plan = $this->model::where('user_id', $user->id)
       ->where('expired_at', '>=', Carbon::now())
+      ->orWhereNull('expired_at')
       ->orderBy('created_at', 'desc')
       ->first();
-
-    return response()->json(new UserServicePlan($user_service_plan), 200);
+    if (!$user_service_plan) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('user_service_plan');
+    }
+    return response()->json(new $this->resource($user_service_plan), 200);
   }
 }

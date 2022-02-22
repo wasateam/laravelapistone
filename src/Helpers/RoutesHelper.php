@@ -36,6 +36,7 @@ use Wasateam\Laravelapistone\Controllers\PocketImageController;
 use Wasateam\Laravelapistone\Controllers\PrivacyController;
 use Wasateam\Laravelapistone\Controllers\ServicePlanController;
 use Wasateam\Laravelapistone\Controllers\ServicePlanItemController;
+use Wasateam\Laravelapistone\Controllers\ServicePlanUsingRecordController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreCloseController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
@@ -93,7 +94,6 @@ use Wasateam\Laravelapistone\Controllers\XcMilestoneController;
 use Wasateam\Laravelapistone\Controllers\XcTaskController;
 use Wasateam\Laravelapistone\Controllers\XcTaskTemplateController;
 use Wasateam\Laravelapistone\Controllers\XcWorkTypeController;
-use Wasateam\Laravelapistone\Controllers\ServicePlanUsingRecordController;
 
 class RoutesHelper
 {
@@ -775,11 +775,14 @@ class RoutesHelper
 
     # UserServicePlan
     if (config('stone.service_plan')) {
-      Route::get('user_service_plan/my_current_plan', [UserServicePlanController::class, 'my_current_plan']);
+      Route::get('user_service_plan/current', [UserServicePlanController::class, 'get_current']);
+      Route::resource('user_service_plan', UserServicePlanController::class)->only([
+        'index', 'show',
+      ])->shallow();
       if (config('stone.service_plan.using_record')) {
         if (config('stone.service_plan.using_record.from') == 'acumatica') {
           Route::resource('service_plan_using_record', ServicePlanUsingRecordController::class)->only([
-            'index'
+            'index',
           ])->shallow();
         }
       }
@@ -800,17 +803,17 @@ class RoutesHelper
 
     # UserServicePlan
     if (config('stone.service_plan')) {
-      Route::resource('user_service_plan', UserServicePlanController::class)->only([
-        'index',
-        'show',
-      ])->shallow();
-      Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only([
-        'index',
-        'show',
-      ])->shallow();
-      Route::resource('user_service_plan_record', UserServicePlanRecordController::class)->only([
-        'index', 'show',
-      ])->shallow();
+      // Route::resource('user_service_plan', UserServicePlanController::class)->only([
+      //   'index',
+      //   'show',
+      // ])->shallow();
+      // Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only([
+      //   'index',
+      //   'show',
+      // ])->shallow();
+      // Route::resource('user_service_plan_record', UserServicePlanRecordController::class)->only([
+      //   'index', 'show',
+      // ])->shallow();
     }
 
     # User

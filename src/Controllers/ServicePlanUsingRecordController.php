@@ -24,7 +24,7 @@ class ServicePlanUsingRecordController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    if (stone('stone.service_plan.using_record.from') == 'acumatica') {
+    if (config('stone.service_plan.using_record.from') == 'acumatica') {
       $acumatica_res                 = AcumaticaHelper::getHighcareServiceHistory(Auth::user());
       $HighcareServiceHistoryDetails = $acumatica_res['HighcareServiceHistoryDetails'];
       $models                        = ServicePlanHelper::getServicePlanUsingRecordsFromAcumatica($HighcareServiceHistoryDetails);

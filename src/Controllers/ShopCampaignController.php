@@ -269,8 +269,17 @@ class ShopCampaignController extends Controller
     //today
     $today_date = Carbon::now()->format('Y-m-d');
     //shop_campaign
-    $shop_campaign = ShopCampaign::where('type', 'discount_code')->where('is_active', 1)->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('discount_code', $request->discount_code)->first();
-    $user          = Auth::user();
+    $shop_campaign = ShopCampaign::where('type', 'discount_code')
+      ->where('is_active', 1)
+      ->where('start_date', '<=', $today_date)
+      ->where('end_date', '>=', $today_date)
+      ->orWhere(function ($query) {
+        $query->whereNull('start_date');
+        $query->whereNull('end_date');
+      })
+      ->where('discount_code', $request->discount_code)
+      ->first();
+    $user = Auth::user();
     if ($shop_campaign) {
       if ($shop_campaign->condition == 'first-purchase') {
         //is user first purchase or not

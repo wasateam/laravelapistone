@@ -43,7 +43,6 @@ class EcpayHelper
 
   public static function getMerchantToken($data)
   {
-    error_log('getMerchantToken');
     $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData($data);
     if ($mode == 'dev') {
@@ -63,7 +62,6 @@ class EcpayHelper
     if ($res->status() == '200') {
       $res_json = $res->json();
       $res_data = self::getDecryptData($res_json['Data']);
-      error_log(json_encode($res_data));
       if ($res_data->RtnCode != '1') {
         throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('getMerchantToken', $res_data->RtnCode, $res_data->RtnMsg);
       }
@@ -112,7 +110,6 @@ class EcpayHelper
 
   public static function createPayment($PayToken, $MerchantTradeNo)
   {
-    error_log('createPayment');
     $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData([
       "MerchantID"      => config('stone.third_party_payment.ecpay_inpay.merchant_id'),
@@ -141,13 +138,11 @@ class EcpayHelper
     if ($res_data->RtnCode != '1') {
       throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('createPayment', $res_data->RtnCode, $res_data->RtnMsg);
     }
-    error_log(json_encode($res_data));
     return $res_data;
   }
 
   public static function updateShopOrderFromEcpayPaymentRes($payment_res)
   {
-    error_log('updateShopOrderFromEcpayPaymentRes');
     $shop_order = ShopOrder::where('no', $payment_res->OrderInfo->MerchantTradeNo)->first();
     if (!$shop_order) {
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order', $payment_res->OrderInfo->MerchantTradeNo, 'no');
@@ -168,8 +163,6 @@ class EcpayHelper
     $shop_order->pay_type         = $payment_res->OrderInfo->PaymentType;
     $shop_order->ecpay_charge_fee = $payment_res->OrderInfo->ChargeFee;
     $shop_order->save();
-    error_log('$shop_order');
-    error_log(json_encode($shop_order));
     return $shop_order;
   }
 

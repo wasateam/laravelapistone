@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCampaign;
-use Wasateam\Laravelapistone\Models\ShopOrder;
 
 /**
  * @group ShopCampaign 促銷活動
@@ -268,40 +267,16 @@ class ShopCampaignController extends Controller
    */
   public function get_today_discount_code(Request $request)
   {
-    //today
-    $today_date = Carbon::now()->format('Y-m-d');
-    //shop_campaign
-    $shop_campaign = ShopCampaign::where('type', 'discount_code')
-      ->where('is_active', 1)
-      ->where('start_date', '<=', $today_date)
-      ->where('end_date', '>=', $today_date)
-      ->orWhere(function ($query) {
-        $query->whereNull('start_date');
-        $query->whereNull('end_date');
-      })
-      ->where('discount_code', $request->discount_code)
-      ->first();
-    $user = Auth::user();
-    if ($shop_campaign) {
-      if ($shop_campaign->condition == 'first-purchase') {
-        //is user first purchase or not
-        $shop_order = ShopOrder::where('user_id', $user)->where('pay_status', 'paid')->first();
-        if ($shop_order) {
-          return response()->json([
-            'message' => 'you are not first purchase',
-          ], 403);
-        } else {
-          return new $this->resource($shop_campaign);
-        }
-      } else {
-        return new $this->resource($shop_campaign);
-      }
-    } else {
-      return response()->json([
-        'message' => 'no shop_campaign',
-      ], 200);
+    if (!$request->has('discount_code')) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('discount_code');
     }
+    $user          = Auth::user();
+    $shop_campaign = ShopHelper::getShopCampaignTodayDiscountCode($user, $request->discount_code);
 
+    if (!$shop_campaign) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_campaign');
+    }
+    return new $this->resource($shop_campaign);
   }
 
   /**

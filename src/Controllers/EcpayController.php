@@ -46,8 +46,9 @@ class EcpayController extends Controller
 
     $shop_order = ShopHelper::setShopOrderNo($shop_order);
 
-    $trade_date = Carbon::now()->setTimezone('Asia/Taipei')->format('Y/m/d H:i:s');
-    $order_price         = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
+    $trade_date  = Carbon::now()->setTimezone('Asia/Taipei')->format('Y/m/d H:i:s');
+    $order_price = $shop_order->order_price;
+    // $order_price         = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
     $order_product_names = ShopHelper::getOrderProductNames($shop_order->shop_order_shop_products);
 
     $user    = Auth::user();

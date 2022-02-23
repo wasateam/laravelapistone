@@ -517,7 +517,7 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       # Shop Cart Product
-      Route::resource('shop_cart', ShopCartProductController::class)->only([
+      Route::resource('shop_cart_product', ShopCartProductController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       # Shop Return Record

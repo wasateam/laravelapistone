@@ -4,7 +4,6 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
-use Wasateam\Laravelapistone\Helpers\ShopHelper;
 
 /**
  * 用來串接 LINE Pay 服務的動作
@@ -66,8 +65,9 @@ class LinePayHelper
    */
   public static function payment_confirm($transaction_id, $shop_order = null, $currency = 'TWD')
   {
-    $post_url     = self::getBaseUrl() . '/v3/payments/' . $transaction_id . '/confirm';
-    $amount       = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
+    $post_url = self::getBaseUrl() . '/v3/payments/' . $transaction_id . '/confirm';
+    // $amount       = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
+    $amount       = $shop_order->order_price;
     $request_body = [
       'amount'   => $amount,
       'currency' => $currency,
@@ -137,7 +137,8 @@ class LinePayHelper
 
   public static function getLinePayPackageProductsFromShopOrder($shop_order)
   {
-    $amount   = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
+    // $amount   = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
+    $amount   = $shop_order->order_price;
     $products = [];
     foreach ($shop_order->shop_order_shop_products as $shop_order_shop_product) {
       $price      = $shop_order_shop_product->discount_price ? $shop_order_shop_product->discount_price : $shop_order_shop_product->price;

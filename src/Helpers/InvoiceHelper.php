@@ -15,7 +15,8 @@ class InvoiceHelper
           $customer_email = $shop_order->orderer_email;
           $customer_tel   = $shop_order->orderer_tel;
           $customer_addr  = $shop_order->receive_address;
-          $order_amount   = ShopHelper::getOrderAmount($_my_cart_products);
+          // $order_amount   = ShopHelper::getOrderAmount($_my_cart_products);
+          $order_amount   = $shop_order->order_price;
           $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
           $customer_id    = Auth::user()->id;
           $post_data      = [

@@ -715,7 +715,7 @@ class ShopHelper
         $new_shop_product_spec_setting = ShopProductSpecSetting::find($shop_product_spec_setting['id']);
       }
       $new_shop_product_spec_setting->name            = $shop_product_spec_setting['name'];
-      $new_shop_product_spec_setting->sq              = $shop_product_spec_setting['sq'];
+      $new_shop_product_spec_setting->sq              = isset($shop_product_spec_setting['sq']) ? $shop_product_spec_setting['sq'] : null;
       $new_shop_product_spec_setting->shop_product_id = $shop_product_id;
       $new_shop_product_spec_setting->save();
 
@@ -729,7 +729,7 @@ class ShopHelper
           $new_shop_product_spec_setting_item = ShopProductSpecSettingItem::find($shop_product_spec_setting_item['id']);
         }
         $new_shop_product_spec_setting_item->name                         = $shop_product_spec_setting_item['name'];
-        $new_shop_product_spec_setting_item->sq                           = $shop_product_spec_setting_item['sq'];
+        $new_shop_product_spec_setting_item->sq                           = isset($shop_product_spec_setting_item['sq']) ? $shop_product_spec_setting_item['sq'] : null;
         $new_shop_product_spec_setting_item->shop_product_id              = $shop_product_id;
         $new_shop_product_spec_setting_item->shop_product_spec_setting_id = $new_shop_product_spec_setting->id;
         $new_shop_product_spec_setting_item->save();

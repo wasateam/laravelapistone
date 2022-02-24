@@ -1,3 +1,4 @@
 - config('stone.app_url') -> env('APP_URL)
 - combinateArray check and naming
 - shopShipTimeLimitCheck not from request
+- shop_product_specs, shop_product_spec_settings union for frontend

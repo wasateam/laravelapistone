@@ -322,12 +322,7 @@ class UserController extends Controller
    */
   public function export_excel_signedurl(Request $request)
   {
-    $users = $request->has('users') ? $request->users : null;
-    return URL::temporarySignedRoute(
-      'user_export_excel',
-      now()->addMinutes(30),
-      ['users' => $users]
-    );
+    return ModelHelper::ws_ExportExcelSignedurlHandler($this, $request);
   }
 
   /**

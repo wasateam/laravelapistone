@@ -3,11 +3,11 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
-use Wasateam\Laravelapistone\Exports\UserExport;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
@@ -103,7 +103,7 @@ class UserController extends Controller
     'email',
     'uuid',
     'tel',
-    'customer_id'
+    'customer_id',
   ];
   public $order_fields = [
     'id',
@@ -149,7 +149,28 @@ class UserController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) use ($request) {
+      if (config('stone.user.subscribe')) {
+        if ($request->has('subscribe_status')) {
+          $subscribe_status = $request->subscribe_status;
+          if ($subscribe_status == 'unsubscribe') {
+            $snap = $snap
+              ->whereNull('subscribe_start_at')
+              ->whereNull('subscribe_end_at');
+          } else if ($subscribe_status == 'subscribing') {
+            $today_datetime = Carbon::now();
+            $snap           = $snap
+              ->where('subscribe_start_at', '<=', $today_datetime)
+              ->where('subscribe_end_at', '>=', $today_datetime);
+          } else if ($subscribe_status == 'subscribe-expired') {
+            $today_datetime = Carbon::now();
+            $snap           = $snap
+              ->where('subscribe_end_at', '<', $today_datetime);
+          }
+        }
+      }
+      return $snap;
+    });
   }
 
   /**
@@ -315,7 +336,71 @@ class UserController extends Controller
    */
   public function export_excel(Request $request)
   {
-    $users = $request->has('users') ? $request->users : null;
-    return Excel::download(new UserExport($users), 'user.xlsx');
+    $headings = [
+      "會員編號",
+      "名稱",
+      "Email",
+      "電話",
+      "介紹",
+      "建立時間",
+      "最後更新時間",
+    ];
+    if (config('stone.user.is_bad')) {
+      $headings[] = "黑名單";
+    }
+    if (config('stone.user.bonus_points')) {
+      $headings[] = "紅利點數";
+    }
+    if (config('stone.user.subscribe')) {
+      $headings[] = "訂閱狀態";
+    }
+    return ModelHelper::ws_ExportExcelHandler(
+      $this,
+      $request,
+      $headings,
+      function ($model) {
+        $created_at = Carbon::parse($model->created_at)->format('Y-m-d');
+        $updated_at = Carbon::parse($model->updated_at)->format('Y-m-d');
+
+        $map = [
+          $model->uuid,
+          $model->name,
+          $model->email,
+          $model->tel,
+          $model->description,
+          $created_at,
+          $updated_at,
+        ];
+        if (config('stone.user.is_bad')) {
+          $map[] = $model->is_bad;
+        }
+        if (config('stone.user.bonus_points')) {
+          $map[] = $model->bonus_points;
+        }
+        if (config('stone.user.subscribe')) {
+          $today_datetime = Carbon::now();
+          $subscribe      = '未訂閱';
+          if (!$model->subscribe_start_at && !$model->subscribe_end_at) {
+            $subscribe = '未訂閱';
+          }
+          else if ($model->subscribe_start_at && $model->subscribe_end_at) {
+            $subscribe_start_at_datetime = Carbon::parse($model->subscribe_start_at);
+            $subscribe_end_at_datetime   = Carbon::parse($model->subscribe_end_at);
+            if (
+              $today_datetime->greaterThanOrEqualTo($subscribe_start_at_datetime) &&
+              $today_datetime->lessThanOrEqualTo($subscribe_end_at_datetime)
+            ) {
+              $subscribe = '訂閱中';
+            }
+            if ($today_datetime->greaterThanOrEqualTo($subscribe_end_at_datetime)) {
+              $subscribe = '訂閱逾期';
+            }
+          }
+          $map[] = $subscribe;
+        }
+
+        return $map;
+      }
+    );
   }
 }

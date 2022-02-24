@@ -83,6 +83,7 @@ return [
     'bonus_points'        => true,
     'reset_password_mail' => true,
     'carriers'            => true,
+    'subscribe'           => true,
     'address'             => [
       'delivery' => [
         'limit' => 3,

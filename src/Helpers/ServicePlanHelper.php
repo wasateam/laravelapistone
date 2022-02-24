@@ -30,6 +30,7 @@ class ServicePlanHelper
           'name'         => $acumaticaDetail['ServiceDescription']['value'],
           'total_count'  => $acumaticaDetail['LimitedCount']['value'],
           'remain_count' => $acumaticaDetail['RemainingCount']['value'],
+          'used_count'   => $acumaticaDetail['UsedCount']['value'],
           'due_date'     => $acumaticaDetail['EndDate']['value'],
         ];
       }

@@ -354,7 +354,6 @@ class ShopOrderController extends Controller
 
       return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($filtered_cart_products, $order_type, $request) {
 
-        // ShopHelper::changeShopOrderPrice($model->id, $order_type, $request);
         $model->status         = 'not-established';
         $model->products_price = ShopHelper::getOrderProductsAmount($model, $requeset->discount_code);
         $model->freight        = ShopHelper::getOrderFreight($model);
@@ -364,22 +363,6 @@ class ShopOrderController extends Controller
         $model->save();
 
         ShopHelper::createShopOrderShopProductsFromCartProducts($filtered_cart_products, $model);
-
-        // foreach ($filtered_cart_products as $filtered_cart_product) {
-        //   $cart_product         = ShopCartProduct::where('id', $filtered_cart_product['id'])->where('status', 1)->first();
-        //   $new_order_product    = ShopHelper::createShopOrderShopProduct($cart_product, $model->id);
-        //   $cart_product->status = 0;
-        //   $cart_product->save();
-        //   ShopHelper::shopOrderProductChangeCount($new_order_product->id);
-        // }
-
-        // foreach ($filtered_cart_products as $filtered_cart_product) {
-        //   $cart_product         = ShopCartProduct::where('id', $filtered_cart_product['id'])->where('status', 1)->first();
-        //   $new_order_product    = ShopHelper::createShopOrderShopProduct($cart_product, $model->id);
-        //   $cart_product->status = 0;
-        //   $cart_product->save();
-        //   ShopHelper::shopOrderProductChangeCount($new_order_product->id);
-        // }
 
       }, function ($model) use ($user) {
         $model->user_id = $user->id;
@@ -592,7 +575,6 @@ class ShopOrderController extends Controller
           $customer_email = $shop_order->orderer_email; //fix
           $customer_tel   = $shop_order->orderer_tel; //fix
           $customer_addr  = $shop_order->receive_address;
-          // $order_amount   = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
           $order_amount   = $shop_order->order_price;
           $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($shop_order->shop_order_shop_products);
           $customer_id    = $user->id;

@@ -109,7 +109,69 @@ class ShopCartProductController extends Controller
    */
   public function store(Request $request, $id = null)
   {
-    return ModelHelper::ws_StoreHandler($this, $request, $id);
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_StoreHandler($this, $request, $id);
+    } else if (config('stone.mode') == 'webapi') {
+
+      $user         = Auth::user();
+      $shop_cart    = ShopHelper::get_user_shop_cart($user);
+      $shop_product = ShopProduct::where('id', $request->shop_product)->where('is_active', 1)->first();
+      if (!$shop_product) {
+        throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_product');
+      }
+      $shop_cart_product_query = ShopCartProduct::where('shop_product_id', $request->shop_product)->where('status', 1)->where('user_id', $user->id);
+      if ($request->has('shop_product_spec')) {
+        $shop_cart_product_query->where('shop_product_spec_id', $request->shop_product_spec);
+        $shop_product_spec = ShopProductSpec::where('id', $request->shop_product_spec)->where('shop_product_id', $request->shop_product)->first();
+        if (!$shop_product_spec) {
+          throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_product_spec');
+        }
+      }
+      $shop_cart_product = $shop_cart_product_query->first();
+
+      $ori_count = $shop_cart_product ? $shop_cart_product->count : 0;
+      $to_count  = $ori_count + $request->count;
+
+      if ($request->has('shop_product_spec')) {
+        if ($to_count > $shop_product_spec->stock_count) {
+          throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_product_spec', 'shop_product_spec', $shop_product_spec->id);
+        }
+      } else {
+        if ($to_count > $shop_product->stock_count) {
+          throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_product', 'shop_product', $shop_product->id);
+        }
+      }
+      if (!$shop_cart_product) {
+        $shop_cart_product = new ShopCartProduct();
+      }
+      $shop_cart_product->count           = $to_count;
+      $shop_cart_product->shop_cart_id    = $shop_cart->id;
+      $shop_cart_product->shop_product_id = $shop_product->id;
+      if ($request->has('shop_product_spec')) {
+        $shop_cart_product->shop_product_spec_id = $shop_product_spec->id;
+        $shop_cart_product->price                = $shop_product_spec->price;
+        $shop_cart_product->discount_price       = $shop_product_spec->discount_price;
+      } else {
+        $shop_cart_product->price          = $shop_product->price;
+        $shop_cart_product->discount_price = $shop_product->discount_price;
+      }
+      $shop_cart_product->name       = $shop_product->name;
+      $shop_cart_product->subtitle   = $shop_product->subtitle;
+      $shop_cart_product->order_type = $shop_product->order_type;
+      $shop_cart_product->user_id    = $user->id;
+      $shop_cart_product->save();
+
+      $user_shop_cart = ShopCart::where('user_id', $user->id)->first();
+      if (!$user_shop_cart) {
+        $user_shop_cart          = new ShopCart;
+        $user_shop_cart->user_id = $user->id;
+        $user_shop_cart->save();
+      }
+      return response()->json([
+        'shop_cart'         => $user_shop_cart,
+        'shop_cart_product' => $shop_cart_product,
+      ], 200);
+    }
   }
 
   /**
@@ -181,80 +243,6 @@ class ShopCartProductController extends Controller
       $auth_shop_cart->user_id = $auth->id;
       $auth_shop_cart->save();
     }
-
-    // $shop_product = ShopProduct::where('id', $request->shop_product)->where('is_active', 1)->first();
-    // if (!$shop_product) {
-    //   return response()->json([
-    //     'message' => 'no data.',
-    //   ], 400);
-    // }
-    // $shop_cart_product_query = ShopCartProduct::where('shop_product_id', $request->shop_product)->where('status', 1)->where('user_id', $auth->id);
-    // //shop_product_spec
-    // if ($request->has('shop_product_spec')) {
-    //   $shop_cart_product = $shop_cart_product_query->where('shop_product_spec_id', $request->shop_product_spec)->first();
-    //   if ($shop_cart_product) {
-    //     //判斷shop_product_spec是否是shop_product的
-    //     $shop_product_spec = ShopProductSpec::where('id', $request->shop_product_spec)->where('shop_product_id', $request->shop_product)->first();
-    //     if (!$shop_product_spec) {
-    //       return response()->json([
-    //         'message' => 'no spec.',
-    //       ], 400);
-    //     }
-    //     $original_count      = $shop_cart_product && $shop_cart_product->count ? $shop_cart_product->count : 0;
-    //     $product_stock_count = $shop_product_spec->stock_count;
-    //     $count               = $original_count + $request->count;
-    //     //原本選的量＋新增的量
-    //     if ($count > $product_stock_count) {
-    //       return response()->json([
-    //         'message' => 'products not enough.',
-    //       ], 400);
-    //     }
-    //   }
-    // } else {
-    //   $shop_cart_product = $shop_cart_product_query->first();
-    //   //原本選的量
-    //   $original_count = $shop_cart_product && $shop_cart_product->count ? $shop_cart_product->count : 0;
-    //   //原本選的量＋新增的量
-    //   $count = $original_count + $request->count;
-    //   if ($shop_product->stock_count < $count) {
-    //     return response()->json([
-    //       'message' => 'products not enough.',
-    //     ], 400);
-    //   }
-    // }
-
-    // if ($shop_cart_product) {
-    //   return ModelHelper::ws_UpdateHandler($this, $request, $shop_cart_product->id, [], function ($model) use ($shop_product, $auth_shop_cart, $count, $request) {
-    //     $model->shop_cart_id    = $auth_shop_cart->id;
-    //     $model->shop_product_id = $shop_product->id;
-    //     if (isset($request->shop_product_spec)) {
-    //       $model->shop_product_spec_id = $request->shop_product_spec;
-    //     }
-    //     $model->name           = $shop_product->name;
-    //     $model->subtitle       = $shop_product->subtitle;
-    //     $model->price          = $shop_product->price;
-    //     $model->discount_price = $shop_product->discount_price;
-    //     $model->order_type     = $shop_product->order_type;
-    //     $model->count          = $count;
-    //     $model->save();
-    //   });
-    // } else {
-    //   return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($shop_product, $auth_shop_cart, $request) {
-    //     $model->shop_cart_id    = $auth_shop_cart->id;
-    //     $model->shop_product_id = $shop_product->id;
-    //     if (isset($request->shop_product_spec)) {
-    //       $model->shop_product_spec_id = $request->shop_product_spec;
-    //     }
-    //     $model->name           = $shop_product->name;
-    //     $model->subtitle       = $shop_product->subtitle;
-    //     $model->price          = $shop_product->price;
-    //     $model->discount_price = $shop_product->discount_price;
-    //     $model->order_type     = $shop_product->order_type;
-    //     $model->user_id        = Auth::user()->id;
-    //     $model->save();
-    //   });
-
-    // }
   }
 
   /**

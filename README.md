@@ -2,3 +2,6 @@
 - combinateArray check and naming
 - shopShipTimeLimitCheck not from request
 - shop_product_specs, shop_product_spec_settings union for frontend
+- get cart info to replace frontend get products way, include fright, order_types with shop_products
+- ecpay line init loading, submit unable to click
+- nuxt cart number not reset when store update

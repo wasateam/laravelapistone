@@ -37,9 +37,10 @@ class FindNoDataException extends Exception
     if ($this->check_value) {
       $response_json[$this->check_field] = $this->check_value;
     }
-    if ($this->model) {
+    error_log($this->model);
+    // if ($this->model) {
       $response_json['model'] = $this->model;
-    }
+    // }
     return response()->json($response_json, 400);
   }
 }

@@ -329,9 +329,10 @@ class EcpayHelper
     ];
   }
 
-  public static function getInvoiceItemsFromShopCartProducts($shop_cart_products)
+  public static function getInvoiceItemsFromShopOrder($shop_order)
   {
-    $items = [];
+    $shop_cart_products = $shop_order->shop_order_shop_products;
+    $items              = [];
     foreach ($shop_cart_products as $shop_cart_product) {
       $amount                  = ShopHelper::getOrderProductAmountPrice($shop_cart_product);
       $shop_cart_product_price = 0;
@@ -348,6 +349,15 @@ class EcpayHelper
         "ItemPrice"   => $shop_cart_product_price,
         "ItemTaxType" => "1",
         "ItemAmount"  => $amount,
+        "ItemRemark"  => "",
+      ];
+      $items[] = [
+        "ItemName"    => '運費',
+        "ItemCount"   => 1,
+        "ItemWord"    => "件",
+        "ItemPrice"   => $shop_order->freight,
+        "ItemTaxType" => "1",
+        "ItemAmount"  => $shop_order->freight,
         "ItemRemark"  => "",
       ];
     }

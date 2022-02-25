@@ -77,23 +77,17 @@ class ShopCartProductController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
-  }
-
-  /**
-   * Auth Product Index
-   * @queryParam search string 搜尋字串 No-example
-   *
-   */
-  public function auth_cart_product_index(Request $request, $id = null)
-  {
-    $auth = Auth::user();
-    return ModelHelper::ws_IndexHandler($this, $request, $id, $request->get_all, function ($snap) use ($auth) {
-      $snap = $snap->whereHas('shop_cart', function ($query) use ($auth) {
-        return $query->where('user_id', $auth->id);
-      })->where('status', 1);
-      return $snap;
-    });
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id);
+    } else if (config('stone.mode') == 'webapi') {
+      $user = Auth::user();
+      return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) use ($user) {
+        $snap = $snap->whereHas('shop_cart', function ($query) use ($user) {
+          return $query->where('user_id', $user->id);
+        })->where('status', 1);
+        return $snap;
+      });
+    }
   }
 
   /**
@@ -120,7 +114,8 @@ class ShopCartProductController extends Controller
         throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_product');
       }
       $shop_cart_product_query = ShopCartProduct::where('shop_product_id', $request->shop_product)->where('status', 1)->where('user_id', $user->id);
-      if ($request->has('shop_product_spec')) {
+      $shop_product_spec       = $request->has('shop_product_spec') ? $request->has('shop_product_spec') : null;
+      if ($shop_product_spec) {
         $shop_cart_product_query->where('shop_product_spec_id', $request->shop_product_spec);
         $shop_product_spec = ShopProductSpec::where('id', $request->shop_product_spec)->where('shop_product_id', $request->shop_product)->first();
         if (!$shop_product_spec) {
@@ -132,7 +127,7 @@ class ShopCartProductController extends Controller
       $ori_count = $shop_cart_product ? $shop_cart_product->count : 0;
       $to_count  = $ori_count + $request->count;
 
-      if ($request->has('shop_product_spec')) {
+      if ($shop_product_spec) {
         if ($to_count > $shop_product_spec->stock_count) {
           throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_product_spec', 'shop_product_spec', $shop_product_spec->id);
         }
@@ -161,14 +156,8 @@ class ShopCartProductController extends Controller
       $shop_cart_product->user_id    = $user->id;
       $shop_cart_product->save();
 
-      $user_shop_cart = ShopCart::where('user_id', $user->id)->first();
-      if (!$user_shop_cart) {
-        $user_shop_cart          = new ShopCart;
-        $user_shop_cart->user_id = $user->id;
-        $user_shop_cart->save();
-      }
       return response()->json([
-        'shop_cart'         => $user_shop_cart,
+        'shop_cart'         => $shop_cart,
         'shop_cart_product' => $shop_cart_product,
       ], 200);
     }

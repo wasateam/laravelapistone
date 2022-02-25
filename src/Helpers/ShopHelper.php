@@ -574,19 +574,20 @@ class ShopHelper
   {
 
     $today                = Carbon::now()->format('Y-m-d');
-    $today_bonus_campaign = ShopCampaign::whereDate('start_date', '<=', $today)->where('end_date', ">=", $today)->where('type', 'bonus-point-feedback')->first();
+    $today_bonus_campaign = ShopCampaign::whereDate('start_date', '<=', $today)
+      ->where('end_date', ">=", $today)
+      ->where('type', 'bonus_point_feedback')
+      ->first();
     if (!$today_bonus_campaign) {
       return;
     }
-    if ($today_bonus_campaign->condition == 'rate') {
-      $bonus_point_feedback = $shop_order->order_price * $today_bonus_campaign->feedback_rate;
+    if ($today_bonus_campaign->feedback_rate) {
+      $bonus_point_feedback = intval($shop_order->order_price) * floatval($today_bonus_campaign->feedback_rate) / 100;
 
       $user              = $shop_order->user;
-      $user->bonus_point = $user->bonus_point + $bonus_point_feedback;
+      $user->bonus_points = $user->bonus_points + $bonus_point_feedback;
       $user->save();
-      // create the_point_record
-      // @Q@
-      // self::createShopReturnRecord($shop_order, $today_bonus_campaign->id, $bonus_point_feedback, 'get');
+      self::createThePointRecord($shop_order, $today_bonus_campaign->id, $bonus_point_feedback, 'get');
     }
 
     // $stone_feedback_after_invoice_days = config('stone.shop_campaign.types.bonus_point_feedback.feedback_after_invoice_days');
@@ -1087,7 +1088,7 @@ class ShopHelper
       if (config('stone.invoice.service') == 'ecpay') {
         $invoice_type       = $shop_order->invoice_type;
         $SalesAmount        = $shop_order->order_price;
-        $Items              = EcpayHelper::getInvoiceItemsFromShopCartProducts($shop_order->shop_order_shop_products);
+        $Items              = EcpayHelper::getInvoiceItemsFromShopOrder($shop_order);
         $CustomerID         = $shop_order->user_id;
         $CustomerIdentifier = '';
         $CustomerName       = '';

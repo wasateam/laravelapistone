@@ -1008,8 +1008,12 @@ class RoutesHelper
       # Shop Cart
       Route::get('/auth/shop_cart', [ShopCartController::class, 'auth_cart']);
       # Shop Cart Product
-      Route::get('/auth/shop_cart_product/index', [ShopCartProductController::class, 'auth_cart_product_index']);
-      Route::post('/auth/shop_cart_product/store', [ShopCartProductController::class, 'product_store_auth_cart']);
+      Route::resource('shop_cart_product', ShopCartProductController::class)->only([
+        'index',
+        'store',
+      ])->shallow();
+      // Route::get('/auth/shop_cart_product/index', [ShopCartProductController::class, 'auth_cart_product_index']);
+      // Route::post('/auth/shop_cart_product/store', [ShopCartProductController::class, 'product_store_auth_cart']);
       Route::post('/auth/shop_cart_product/{shop_cart_product_id}/update', [ShopCartProductController::class, 'update_auth_cart_product']);
       Route::post('/shop_cart_product/{shop_cart_product_id}', [ShopCartProductController::class, 'disabled']);
       # Shop Return Record

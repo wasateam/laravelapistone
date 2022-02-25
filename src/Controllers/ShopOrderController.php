@@ -330,7 +330,7 @@ class ShopOrderController extends Controller
 
   public function store(Request $request, $id = null)
   {
-    if (config('stone.mode') == 'cms') {
+      if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_StoreHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
 
@@ -352,22 +352,31 @@ class ShopOrderController extends Controller
 
       ShopHelper::updateUserInfoFromShopOrderRequest(Auth::user(), $request);
 
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($filtered_cart_products, $order_type, $request) {
+      $discount_code = $request->has('discount_code') ? $request->discount_code : null;
 
-        $model->status         = 'not-established';
-        $model->products_price = ShopHelper::getOrderProductsAmount($model, $requeset->discount_code);
-        $model->freight        = ShopHelper::getOrderFreight($model);
-        $model->order_price    = ShopHelper::getOrderAmountFromShopOrder($model);
-        $model->pay_status     = 'waiting';
-        $model->order_type     = $order_type;
-        $model->save();
+      return ModelHelper::ws_StoreHandler(
+        $this,
+        $request, $id,
+        function ($model) use (
+          $filtered_cart_products,
+          $order_type,
+          $discount_code
+        ) {
 
-        ShopHelper::createShopOrderShopProductsFromCartProducts($filtered_cart_products, $model);
+          ShopHelper::createShopOrderShopProductsFromCartProducts($filtered_cart_products, $model);
 
-      }, function ($model) use ($user) {
-        $model->user_id = $user->id;
-        return $model;
-      });
+          $model->status         = 'not-established';
+          $model->products_price = ShopHelper::getOrderProductsAmount($model, $discount_code);
+          $model->freight        = ShopHelper::getOrderFreight($model);
+          $model->order_price    = ShopHelper::getOrderAmountFromShopOrder($model);
+          $model->pay_status     = 'waiting';
+          $model->order_type     = $order_type;
+          $model->save();
+
+        }, function ($model) use ($user) {
+          $model->user_id = $user->id;
+          return $model;
+        });
     }
   }
 
@@ -576,7 +585,7 @@ class ShopOrderController extends Controller
           $customer_tel   = $shop_order->orderer_tel; //fix
           $customer_addr  = $shop_order->receive_address;
           $order_amount   = $shop_order->order_price;
-          $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($shop_order->shop_order_shop_products);
+          $items          = EcpayHelper::getInvoiceItemsFromShopOrder($shop_order);
           $customer_id    = $user->id;
           $post_data      = [
             'Items'         => $items,

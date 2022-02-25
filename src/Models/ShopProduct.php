@@ -72,6 +72,11 @@ class ShopProduct extends Model
     return $this->belongsToMany(User::class, 'user_shop_product', 'shop_product_id', 'user_id');
   }
 
+  public function has_stock_shop_product_specs()
+  {
+    return $this->hasMany(ShopProductSpec::class, 'shop_product_id')->where('stock_count', '>', 0);
+  }
+
   public function shop_product_specs()
   {
     return $this->hasMany(ShopProductSpec::class, 'shop_product_id');
@@ -89,9 +94,9 @@ class ShopProduct extends Model
 
   public function shop_campaigns()
   {
-    return $this->belongsToMany(ShopCampaign::class, 'shop_product_shop_campaign','shop_product_id','shop_campaign_id');
+    return $this->belongsToMany(ShopCampaign::class, 'shop_product_shop_campaign', 'shop_product_id', 'shop_campaign_id');
   }
-  
+
   protected $casts = [
     'cover_image' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
     'images'      => \Wasateam\Laravelapistone\Casts\UrlsCast::class,

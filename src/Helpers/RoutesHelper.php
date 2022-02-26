@@ -87,6 +87,7 @@ use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanRecordController;
+use Wasateam\Laravelapistone\Controllers\UserServicePlanItemRecordController;
 use Wasateam\Laravelapistone\Controllers\WebLogController;
 use Wasateam\Laravelapistone\Controllers\WsBlogClassController;
 use Wasateam\Laravelapistone\Controllers\WsBlogController;
@@ -800,6 +801,8 @@ class RoutesHelper
   # Web 需符合對應使用者之
   public static function webapi_isuser_routes()
   {
+    # AcumaticaRecord
+    Route::get('acumatica_records',[UserServicePlanItemRecordController::class,'get_acumatica_records']);
 
     # UserServicePlan
     if (config('stone.service_plan')) {

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group Area
+ * @group Area 地區
  * @authenticated
  *
  * sequence 順序
@@ -31,6 +31,9 @@ class AreaController extends Controller
     'sequence',
     'updated_at',
     'created_at',
+  ];
+  public $search_fields = [
+    'name',
   ];
   public $order_by     = 'sequence';
   public $order_way    = 'asc';

@@ -116,7 +116,7 @@ class RoutesHelper
       $auth_scope = config('stone.auth.auth_scope');
       Route::group([
         'prefix' => 'auth',
-      ], function () use ($routes, $model_name, $auth_scope) {
+      ], function () use ($model_name, $auth_scope) {
         Route::post('/signin', [AuthController::class, 'signin']);
         if (config('stone.auth.signup')) {
           Route::post('/signup', [AuthController::class, 'signup']);
@@ -142,7 +142,7 @@ class RoutesHelper
         Route::group([
           "middleware" => ["auth:{$model_name}", "scopes:{$auth_scope}", "verified"],
           // "middleware" => $auth_middlewares,
-        ], function () use ($routes) {
+        ], function () {
           Route::post('/signout', [AuthController::class, 'signout']);
           Route::get('/user', [AuthController::class, 'user']);
           Route::patch('/user', [AuthController::class, 'update']);

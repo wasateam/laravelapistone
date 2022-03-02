@@ -268,6 +268,12 @@ class StoneServiceProvider extends ServiceProvider
     #
     $this->loadViewsFrom(__DIR__ . '/../resources/views', 'wasateam');
 
+    # Middleware
+    $router = $this->app->make(\Illuminate\Routing\Router::class);
+    $router->aliasMiddleware('scopes', \Laravel\Passport\Http\Middleware\CheckScopes::class);
+    $router->aliasMiddleware('scope', \Laravel\Passport\Http\Middleware\CheckForAnyScope::class);
+    $router->aliasMiddleware('isuser', \Wasateam\Laravelapistone\Middleware\IsUser::class);
+
     // OLD 2021-10
     $this->publishes([
       __DIR__ . '/../config/stone.php' => $this->app->configPath('stone.php'),

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
   "userget",
   "userpatch",
   "passwordpatch",
-  "avatarpatch",
   "forgetpassword",
   "email_verify",
 ]);

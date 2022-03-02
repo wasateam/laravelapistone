@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Route;
   "signout",
   "userget",
   "userpatch",
-  "avatarpatch",
 ]);
 
 Route::group([

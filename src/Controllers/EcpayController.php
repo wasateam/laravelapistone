@@ -17,6 +17,8 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * orderer_tel 訂購人電話
  * orderer_email 訂購人信箱
  * shop_cart_products 訂單商品
+ * PayToken 來自於綠界站內附的 PayToken
+ * MerchantTradeNo Get Inpay Merchant Init 產生的 MerchantTradeNo
  *
  * @authenticated
  */
@@ -64,6 +66,9 @@ class EcpayController extends Controller
 
   /**
    * Inpay Create Payment 站內付付款動作
+   * 
+   * @bodyParam PayToken string No-example
+   * @bodyParam MerchantTradeNo string No-example
    *
    */
   public function inpay_create_payment(Request $request)
@@ -86,7 +91,7 @@ class EcpayController extends Controller
   }
 
   /**
-   *  Callbacl Ecpay inpay order 站內付訂單回存狀態
+   *  (忽略) Callbacl Ecpay inpay order 站內付訂單回存狀態，僅供給綠界使用
    *
    */
   public function callback_ecpay_inpay_order(Request $request)

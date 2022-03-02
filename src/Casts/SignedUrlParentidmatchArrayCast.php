@@ -56,7 +56,6 @@ class SignedUrlParentidmatchArrayCast implements CastsAttributes
   public function set($model, $key, $value, $attributes)
   {
     if (!isset($value)) {
-      error_log('aa');
       return [];
     }
     $_value = $value;

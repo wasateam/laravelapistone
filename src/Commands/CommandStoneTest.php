@@ -52,7 +52,6 @@ class CommandStoneTest extends Command
       $tester->test();
     }
     if ($target == 'mail') {
-      error_log('sending_test_mail');
       EmailHelper::sending_test(config('stone.mail.test_mail'));
     }
     if ($target == 'fcm') {
@@ -64,8 +63,6 @@ class CommandStoneTest extends Command
     if ($target == 'ecpay-inpay-token') {
       $pay_data = EcpayHelper::getInpayInitData();
       $token    = EcpayHelper::getMerchantToken($pay_data);
-      error_log('token');
-      error_log($token);
     }
     return 0;
   }

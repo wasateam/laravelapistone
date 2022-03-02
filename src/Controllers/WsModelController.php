@@ -65,7 +65,6 @@ class WsModelController extends Controller
       ], 400);
     }
     $storage_path = "{$setting->parent_name}/{$parent_id}/{$setting->name}/{$repo}/{$filename}";
-    error_log($storage_path);
     try {
       $disk->put($storage_path, $content);
     } catch (\Throwable$th) {

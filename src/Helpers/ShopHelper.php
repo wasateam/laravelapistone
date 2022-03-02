@@ -374,7 +374,6 @@ class ShopHelper
       return null;
     }
     $model = ShopCartProduct::find($shop_cart_products[0]['id']);
-    error_log($model->shop_product->order_type);
     return $model->shop_product->order_type;
   }
 
@@ -1144,7 +1143,6 @@ class ShopHelper
           );
           $invoice_res = EcpayHelper::createDelayInvoice($post_data);
         } else {
-          error_log('immediate');
           $post_data = EcpayHelper::getInvoicePostData(
             $CustomerID,
             $CustomerIdentifier,

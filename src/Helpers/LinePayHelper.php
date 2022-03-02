@@ -26,7 +26,6 @@ class LinePayHelper
     $confirm_url = null,
     $cancel_url = null
   ) {
-    error_log('payment_request');
     if (!$confirm_url) {
       $confirm_url = env('WEB_URL') . '/line_pay/payment/confirm';
     }

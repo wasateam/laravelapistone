@@ -65,8 +65,6 @@ class EmailHelper
   public static function sending_test($email)
   {
     if (config('stone.mail.service') == 'smtp') {
-      error_log('smtp ok');
-      error_log('send to ' . $email);
       Mail::to($email)->send(new Test());
     } else if (config('stone.mail.service') == 'surenotify') {
       self::mail_send_surenotify('wasa.mail.test', [

@@ -168,7 +168,6 @@ class EcpayHelper
 
   public static function createInvoice($data)
   {
-    error_log('createInvoice');
     $mode         = config('stone.invoice.mode');
     $data_encrypt = self::getEncryptData($data, 'invoice');
     if ($mode == 'dev') {
@@ -252,7 +251,6 @@ class EcpayHelper
 
   public static function createDelayInvoice($data)
   {
-    error_log('createDelayInvoice');
     $mode         = config('stone.invoice.mode');
     $data_encrypt = self::getEncryptData($data, 'invoice');
     if ($mode == 'dev') {

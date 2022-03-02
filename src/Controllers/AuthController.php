@@ -436,7 +436,8 @@ class AuthController extends Controller
   /**
    * Email Verify
    *
-   * @bodyParam email No-example
+   * @queryParam expires int required Unix time format Example: 1645007253
+   * @queryParam signature int required Signature from verifying mail Example: 8e30b1e398646a1c153b620cfd4d31e7e4fdd813201a4eeb71f34c59069add4c
    *
    */
   public function email_verify($user_id)

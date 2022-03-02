@@ -131,12 +131,16 @@ class RoutesHelper
         Route::post('/signup', [AuthController::class, 'signup']);
       }
       if (in_array('email_verify', $routes)) {
-        Route::post('/email/verify/resend', [AuthController::class, 'email_verify_resend']);
-        Route::group([
-          "middleware" => ["signed"],
-        ], function () {
-          Route::post('/email/verify/{user_id}', [AuthController::class, 'email_verify'])->name('email_verify');
-        });
+        if (config('stone.auth.verify')) {
+          if (config('stone.auth.verify.email')) {
+            Route::post('/email/verify/resend', [AuthController::class, 'email_verify_resend']);
+            Route::group([
+              "middleware" => ["signed"],
+            ], function () {
+              Route::post('/email/verify/{user_id}', [AuthController::class, 'email_verify'])->name('email_verify');
+            });
+          }
+        }
       }
 
       $auth_middlewares = ["auth:{$model_name}", "scopes:{$auth_scope}"];

@@ -19,17 +19,21 @@ return [
   'web_url'             => env('WEB_URL'),
   // Auth
   'auth'                => [
-    'model_name'     => 'user',
-    'model'          => '\Wasateam\Laravelapistone\Models\User',
-    'resource'       => '\Wasateam\Laravelapistone\Resources\User',
-    'auth_scope'     => 'user',
-    'default_scopes' => [
+    'signup'          => true,
+    'passwordpatch'   => true,
+    'forgetpassword'  => true,
+    'model_name'      => 'user',
+    'model'           => '\Wasateam\Laravelapistone\Models\User',
+    'resource'        => '\Wasateam\Laravelapistone\Resources\User',
+    'auth_scope'      => 'user',
+    'default_scopes'  => [
       'user',
     ],
-    'active_check'   => true,
-    'verify'         => [
+    'active_check'    => true,
+    'verify'          => [
       'email' => true,
     ],
+    'forget_password' => true,
     // 'signup_complete_action' => '\App\Helpers\TestHelper',
   ],
   # Modules

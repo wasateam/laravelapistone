@@ -2,12 +2,7 @@
 use Illuminate\Support\Facades\Route;
 
 # Auth
-\Wasateam\Laravelapistone\Helpers\RoutesHelper::auth_routes([
-  "signin",
-  "signout",
-  "userget",
-  "userpatch",
-]);
+\Wasateam\Laravelapistone\Helpers\RoutesHelper::auth_routes();
 
 Route::group([
   "middleware" => ["auth:admin"],

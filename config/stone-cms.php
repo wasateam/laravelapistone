@@ -21,6 +21,7 @@ return [
   'web_api_url'        => env('WEB_API_URL'),
   # Auth
   'auth'               => [
+    'passwordpatch'  => true,
     'model_name'     => 'admin',
     'model'          => '\Wasateam\Laravelapistone\Models\Admin',
     'resource'       => '\Wasateam\Laravelapistone\Resources\Admin',

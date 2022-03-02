@@ -108,29 +108,19 @@ class RoutesHelper
   }
 
   # Auth 相關 (CMS, Webapi皆可用)
-  public static function auth_routes($routes = [
-    "signin",
-    "signup",
-    "signout",
-    "userget",
-    "userpatch",
-    "passwordpatch",
-    "avatarpatch",
-    "forgetpassword",
-    "email_verify",
-  ]) {
-    $model_name = config('stone.auth.model_name');
-    $auth_scope = config('stone.auth.auth_scope');
-    Route::group([
-      'prefix' => 'auth',
-    ], function () use ($routes, $model_name, $auth_scope) {
-      if (in_array('signin', $routes)) {
+  public static function auth_routes()
+  {
+
+    if (config('stone.auth')) {
+      $model_name = config('stone.auth.model_name');
+      $auth_scope = config('stone.auth.auth_scope');
+      Route::group([
+        'prefix' => 'auth',
+      ], function () use ($routes, $model_name, $auth_scope) {
         Route::post('/signin', [AuthController::class, 'signin']);
-      }
-      if (in_array('signup', $routes)) {
-        Route::post('/signup', [AuthController::class, 'signup']);
-      }
-      if (in_array('email_verify', $routes)) {
+        if (config('stone.auth.signup')) {
+          Route::post('/signup', [AuthController::class, 'signup']);
+        }
         if (config('stone.auth.verify')) {
           if (config('stone.auth.verify.email')) {
             Route::post('/email/verify/resend', [AuthController::class, 'email_verify_resend']);
@@ -141,49 +131,43 @@ class RoutesHelper
             });
           }
         }
-      }
 
-      $auth_middlewares = ["auth:{$model_name}", "scopes:{$auth_scope}"];
-      if (config('stone.auth.verify')) {
-        if (config('stone.auth.verify.email')) {
-          $auth_middlewares[] = 'verified';
-        }
-      }
+        // $auth_middlewares = ["auth:{$model_name}", "scopes:{$auth_scope}"];
+        // if (config('stone.auth.verify')) {
+        //   if (config('stone.auth.verify.email')) {
+        //     $auth_middlewares[] = 'verified';
+        //   }
+        // }
 
-      Route::group([
-        "middleware" => ["auth:{$model_name}", "scopes:{$auth_scope}", "verified"],
-        // "middleware" => $auth_middlewares,
-      ], function () use ($routes) {
-        if (in_array('signout', $routes)) {
+        Route::group([
+          "middleware" => ["auth:{$model_name}", "scopes:{$auth_scope}", "verified"],
+          // "middleware" => $auth_middlewares,
+        ], function () use ($routes) {
           Route::post('/signout', [AuthController::class, 'signout']);
-        }
-        if (in_array('userget', $routes)) {
           Route::get('/user', [AuthController::class, 'user']);
-        }
-        if (in_array('userpatch', $routes)) {
           Route::patch('/user', [AuthController::class, 'update']);
-        }
-        if (in_array('passwordpatch', $routes)) {
-          Route::patch('/user/password', [AuthController::class, 'password_update']);
-        }
-        if (in_array('avatarpatch', $routes)) {
-          if (env('SIGNED_URL_MODE') == 'gcs') {
-            Route::get("/avatar/upload_url/{filename}", [AuthController::class, 'get_avatar_upload_url']);
-          } else {
-            Route::put("/avatar/{filename}", [AuthController::class, 'avatar_upload']);
+          if (config('stone.auth.passwordpatch')) {
+            Route::patch('/user/password', [AuthController::class, 'password_update']);
           }
+          // if (in_array('avatarpatch', $routes)) {
+          //   if (env('SIGNED_URL_MODE') == 'gcs') {
+          //     Route::get("/avatar/upload_url/{filename}", [AuthController::class, 'get_avatar_upload_url']);
+          //   } else {
+          //     Route::put("/avatar/{filename}", [AuthController::class, 'avatar_upload']);
+          //   }
+          // }
+        });
+
+        if (config('stone.auth.forgetpassword')) {
+          Route::post("/forgetpassword/request", [AuthController::class, 'forget_password_request']);
+          Route::group([
+            "middleware" => ["signed"],
+          ], function () {
+            Route::post('/forgetpassword/patch/{user_id}', [AuthController::class, 'forget_password_patch'])->name('forget_password_patch');
+          });
         }
       });
-
-      if (in_array('forgetpassword', $routes)) {
-        Route::post("/forgetpassword/request", [AuthController::class, 'forget_password_request']);
-        Route::group([
-          "middleware" => ["signed"],
-        ], function () {
-          Route::post('/forgetpassword/patch/{user_id}', [AuthController::class, 'forget_password_patch'])->name('forget_password_patch');
-        });
-      }
-    });
+    }
   }
 
   # CMS 系統管理員

@@ -168,6 +168,8 @@ class EcpayHelper
 
   public static function createInvoice($data)
   {
+    error_log('createInvoice');
+    error_log(json_encode($data));
     $mode         = config('stone.invoice.mode');
     $data_encrypt = self::getEncryptData($data, 'invoice');
     if ($mode == 'dev') {
@@ -356,6 +358,24 @@ class EcpayHelper
         "ItemPrice"   => $shop_order->freight,
         "ItemTaxType" => "1",
         "ItemAmount"  => $shop_order->freight,
+        "ItemRemark"  => "",
+      ];
+      $items[] = [
+        "ItemName"    => '活動折抵',
+        "ItemCount"   => 1,
+        "ItemWord"    => "個",
+        "ItemPrice"   => $shop_order->campaign_deduct * -1,
+        "ItemTaxType" => "1",
+        "ItemPrice"   => $shop_order->campaign_deduct * -1,
+        "ItemRemark"  => "",
+      ];
+      $items[] = [
+        "ItemName"    => '紅利折抵',
+        "ItemCount"   => 1,
+        "ItemWord"    => "個",
+        "ItemPrice"   => $shop_order->bonus_points_deduct * -1,
+        "ItemTaxType" => "1",
+        "ItemPrice"   => $shop_order->bonus_points_deduct * -1,
         "ItemRemark"  => "",
       ];
     }

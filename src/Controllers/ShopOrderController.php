@@ -118,6 +118,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * card_total_success_amount 信用卡或銀聯卡_目前已成功授權的金額合計
  * bonus_points_deduct 訂單所使用(扣除)的紅利點數
  * discount_code 折扣碼
+ * campaign_deduct 活動折抵
  *
  * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立
@@ -173,6 +174,7 @@ class ShopOrderController extends Controller
     'invoice_address',
     'invoice_email',
     'invoice_uniform_number',
+    'bonus_points_deduct',
   ];
   public $search_fields = [
     'no',
@@ -330,7 +332,7 @@ class ShopOrderController extends Controller
 
   public function store(Request $request, $id = null)
   {
-      if (config('stone.mode') == 'cms') {
+    if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_StoreHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
 
@@ -348,33 +350,32 @@ class ShopOrderController extends Controller
 
       ShopHelper::checkBonusPointEnough($request);
 
-      ShopHelper::checkDiscountCode($request);
-
       ShopHelper::updateUserInfoFromShopOrderRequest(Auth::user(), $request);
 
       $discount_code = $request->has('discount_code') ? $request->discount_code : null;
+
+      // ShopHelper::checkDiscountCode($discount_code);
 
       return ModelHelper::ws_StoreHandler(
         $this,
         $request, $id,
         function ($model) use (
           $filtered_cart_products,
-          $order_type,
           $discount_code
         ) {
 
+          ShopHelper::deductBonusPointFromShopOrder($model);
           ShopHelper::createShopOrderShopProductsFromCartProducts($filtered_cart_products, $model);
+          ShopHelper::updateShopOrderPrice($model, $discount_code);
 
-          $model->status         = 'not-established';
-          $model->products_price = ShopHelper::getOrderProductsAmount($model, $discount_code);
-          $model->freight        = ShopHelper::getOrderFreight($model);
-          $model->order_price    = ShopHelper::getOrderAmountFromShopOrder($model);
-          $model->pay_status     = 'waiting';
-          $model->order_type     = $order_type;
-          $model->save();
-
-        }, function ($model) use ($user) {
-          $model->user_id = $user->id;
+        }, function ($model) use (
+          $user,
+          $order_type
+        ) {
+          $model->user_id    = $user->id;
+          $model->status     = 'not-established';
+          $model->pay_status = 'waiting';
+          $model->order_type = $order_type;
           return $model;
         });
     }
@@ -440,7 +441,8 @@ class ShopOrderController extends Controller
   public function update(Request $request, $id)
   {
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) {
-      ShopHelper::changeShopOrderPrice($model->id);
+      // ShopHelper::changeShopOrderPrice($model->id);
+      // ShopHelper::updateShopOrderPrice($model);
     });
   }
 

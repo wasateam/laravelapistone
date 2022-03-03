@@ -122,7 +122,7 @@ class ShopHelper
           }
         }
         //type has freight_sepe
-        if ($type['freight_separate']) {
+        if (array_key_exists('freight_separate', $type) && $type['freight_separate']) {
           $all_product_freight_arr = $shop_order_shop_products->map(function ($shop_order_shop_product) {
             $freight = 0;
             if (isset($shop_order_shop_product->shop_order_shop_product_spec)) {
@@ -165,6 +165,8 @@ class ShopHelper
     // $dicount_shop_product_price_total = 0;
     // discount_code
     // create discount_code shop_camapign
+
+    // @Q@ deifferent day change will cause error
     if ($request && $request->has('discount_code') && $request->discount_code) {
       $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($request->discount_code);
       if ($today_dicount_decode_campaign) {
@@ -289,7 +291,37 @@ class ShopHelper
     return "{$time}{$str}";
   }
 
-  public static function getOrderProductsAmount($shop_order, $discount_code = null)
+  public static function updateShopOrderPrice($shop_order, $discount_code)
+  {
+    $shop_order->products_price  = self::getOrderProductsAmount($shop_order);
+    $shop_order->freight         = self::getOrderFreight($shop_order);
+    $shop_order->campaign_deduct = self::setCampaignDeduct($shop_order, $discount_code);
+    $shop_order->order_price     = self::getOrderAmountFromShopOrder($shop_order);
+    $shop_order->save();
+  }
+
+  public static function setCampaignDeduct($shop_order, $discount_code)
+  {
+    $compaign_deduct = 0;
+    if ($discount_code) {
+      // $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($discount_code);
+      $today_dicount_decode_campaign = self::getAvailableShopCampaign($shop_order->user_id, $discount_code, $shop_order->created_at);
+      if ($today_dicount_decode_campaign) {
+        $products_price = $shop_order->products_price;
+        if ($products_price >= $today_dicount_decode_campaign->full_amount) {
+          self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
+          if ($today_dicount_decode_campaign->discount_percent) {
+            $compaign_deduct += $products_price - round($products_price * $today_dicount_decode_campaign->discount_percent / 10);
+          } else if ($today_dicount_decode_campaign->discount_amount) {
+            $compaign_deduct += $today_dicount_decode_campaign->discount_amount;
+          }
+        }
+      }
+    }
+    return $compaign_deduct;
+  }
+
+  public static function getOrderProductsAmount($shop_order)
   {
     $order_amount = 0;
     foreach ($shop_order->shop_order_shop_products as $shop_cart_product) {
@@ -302,26 +334,22 @@ class ShopHelper
       }
       $order_amount += $count * $price;
     }
-    if ($discount_code) {
-      $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($discount_code);
-      if ($today_dicount_decode_campaign) {
-        self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
-        if ($order_amount >= $today_dicount_decode_campaign->full_amount) {
-          if ($today_dicount_decode_campaign->discount_percent) {
-            $order_amount = $order_amount * $today_dicount_decode_campaign->discount_percent;
-          } else if ($today_dicount_decode_campaign->discount_amount) {
-            $order_amount = $order_amount - $today_dicount_decode_campaign->discount_amount;
-          }
-        }
-      }
-    }
     return $order_amount;
   }
 
   public static function getOrderAmountFromShopOrder($shop_order)
   {
-    $bonus_points_deduct = $shop_order->bonus_points_deduct ? $shop_order->bonus_points_deduct : 0;
-    return $shop_order->products_price + $shop_order->freight - $bonus_points_deduct;
+    $order_amount = $shop_order->products_price;
+    if ($shop_order->freight) {
+      $order_amount += $shop_order->freight;
+    }
+    if ($shop_order->bonus_points_deduct) {
+      $order_amount -= $shop_order->bonus_points_deduct;
+    }
+    if ($shop_order->campaign_deduct) {
+      $order_amount -= $shop_order->campaign_deduct;
+    }
+    return $order_amount;
   }
 
   public static function getOrderAmount($shop_cart_products)
@@ -583,7 +611,7 @@ class ShopHelper
     if ($today_bonus_campaign->feedback_rate) {
       $bonus_point_feedback = intval($shop_order->order_price) * floatval($today_bonus_campaign->feedback_rate) / 100;
 
-      $user              = $shop_order->user;
+      $user               = $shop_order->user;
       $user->bonus_points = $user->bonus_points + $bonus_point_feedback;
       $user->save();
       self::createThePointRecord($shop_order, $today_bonus_campaign->id, $bonus_point_feedback, 'get');
@@ -595,31 +623,44 @@ class ShopHelper
     // ->delay(Carbon::now()->addDays($feedback_after_invoice_days));
   }
 
-  public static function getShopCampaignTodayDiscountCode($user, $discount_code)
+  public static function getAvailableShopCampaign($user_id, $discount_code, $date = null)
   {
-    $today_date    = Carbon::now()->format('Y-m-d');
     $shop_campaign = ShopCampaign::where('type', 'discount_code')
       ->where('is_active', 1)
-      ->where('start_date', '<=', $today_date)
-      ->where('end_date', '>=', $today_date)
-      ->orWhere(function ($query) {
-        $query->whereNull('start_date');
-        $query->whereNull('end_date');
+      ->where(function ($query) use ($date) {
+        $query->where(function ($query) use ($date) {
+          if (!$date) {
+            $date = Carbon::now();
+          }
+          $today_date = Carbon::parse($date)->format('Y-m-d');
+          $query->where('start_date', '<=', $today_date);
+          $query->where('end_date', '>=', $today_date);
+        });
+        $query->orWhere(function ($query) {
+          $query->whereNull('start_date');
+          $query->whereNull('end_date');
+        });
       })
-      ->where('discount_code', $request->discount_code)
+      ->where('discount_code', $discount_code)
       ->first();
     if ($shop_campaign) {
+      if ($shop_campaign->limit) {
+        $count = $shop_campaign->shop_campaign_shop_products->count;
+        if ($count >= $shop_campaign->limit) {
+          return false;
+        }
+      }
       if ($shop_campaign->condition == 'first-purchase') {
-        $shop_order = ShopOrder::where('user_id', $user)
+        $shop_order = ShopOrder::where('user_id', $user_id)
           ->where('pay_status', 'paid')
           ->first();
         if ($shop_order) {
-          return null;
+          throw new \Wasateam\Laravelapistone\Exceptions\NotEligibleException();
         }
       }
-      return new $this->resource($shop_campaign);
+      return $shop_campaign;
     } else {
-      return null;
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_campaign');
     }
   }
 
@@ -668,13 +709,12 @@ class ShopHelper
     $today_discount_code_campaign = ShopCampaign::whereDate('start_date', '<=', $today_date)->whereDate('end_date', '>=', $today_date)->where('type', 'discount_code')->where('is_active', 1)->where('discount_code', $discount_code)->first();
 
     if (!$today_discount_code_campaign) {
-      return false;
+      return null;
     }
     // shop_campaign limit is enought or not
     if ($today_discount_code_campaign->limit) {
-      $shop_campaign_shop_product_count = $today_discount_code_campaign->shop_campaign_shop_products->count;
-      if ($shop_campaign_shop_product_count >= $today_discount_code_campaign->limit) {
-        return false;
+      if ($today_discount_code_campaign->shop_campaign_shop_orders->count >= $today_discount_code_campaign->limit) {
+        return null;
       }
     }
 
@@ -685,7 +725,7 @@ class ShopHelper
   {
     //建立訂單促銷活動紀錄
     $shop_campaign_shop_order                   = new ShopCampaignShopOrder;
-    $shop_campaign_shop_order->shop_camapign_id = $shop_campaign->id;
+    $shop_campaign_shop_order->shop_campaign_id = $shop_campaign->id;
     $shop_campaign_shop_order->shop_order_id    = $shop_order->id;
     $shop_campaign_shop_order->user_id          = $shop_order->user->id;
     $shop_campaign_shop_order->type             = $shop_campaign->type;
@@ -983,10 +1023,10 @@ class ShopHelper
     return $_filtered_cart_products;
   }
 
-  public static function checkDiscountCode($request)
+  public static function checkDiscountCode($discount_code = null)
   {
-    if ($request->has('discount_code') && $request->discount_code) {
-      $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($request->discount_code);
+    if ($discount_code) {
+      $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($discount_code);
       if (!$today_dicount_decode_campaign) {
         throw new \Wasateam\Laravelapistone\Exceptions\InvalidException('discount_code');
       }
@@ -1162,11 +1202,20 @@ class ShopHelper
         }
         $shop_order->invoice_status = 'done';
         $shop_order->invoice_number = $invoice_res->InvoiceNo;
-        self::createBonusPointFromShopOrder($shop_order);
         $shop_order->save();
         return response()->json($shop_order, 200);
       }
     }
+  }
+
+  public static function deductBonusPointFromShopOrder($shop_order){
+    if(!$shop_order->bonus_points_deduct){
+      return;
+    }
+    $user = User::find($shop_order->user_id);
+    $user->bonus_points = $user->bonus_points - $shop_order->bonus_points_deduct;
+    $user->save();
+    self::createThePointRecord($shop_order, null, $shop_order->bonus_points_deduct, 'deduct');
   }
 
   public static function setShopOrderNo($shop_order)

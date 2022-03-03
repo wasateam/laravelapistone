@@ -8,9 +8,9 @@ class EcpayException extends Exception
 {
   public function __construct($action = null, $rtn_code = null, $rtn_message = null)
   {
-    $this->action   = $action;
-    $this->rtn_code = $rtn_code;
-    $this->rtn_message  = $rtn_message;
+    $this->action      = $action;
+    $this->rtn_code    = $rtn_code;
+    $this->rtn_message = $rtn_message;
   }
 
   /**
@@ -33,10 +33,12 @@ class EcpayException extends Exception
   public function render($request)
   {
     $response_json = [
-      'action'   => $this->action,
-      'rtn_code' => $this->rtn_code,
-      'rtn_message'  => $this->rtn_message,
+      'action' => $this->action,
     ];
+    if (config('app.debug')) {
+      $response_json['rtn_code']    = $this->rtn_code;
+      $response_json['rtn_message'] = $this->rtn_message;
+    }
     return response()->json($response_json, 400);
   }
 }

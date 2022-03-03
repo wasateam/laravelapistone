@@ -41,6 +41,9 @@ class ShopProductCoverFrameController extends Controller
   public $filter_fields = [
     'order_type',
   ];
+  public $has_many = [
+    'shop_products',
+  ];
   public $uuid = false;
 
   public function __construct()

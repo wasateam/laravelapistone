@@ -38,6 +38,9 @@ class ShopProductCoverFrameController extends Controller
     'is_active',
     'order_type',
   ];
+  public $filter_fields = [
+    'order_type',
+  ];
   public $uuid = false;
 
   public function __construct()

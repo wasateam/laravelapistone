@@ -16,6 +16,8 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * type 類型
  * icon Icon Url
  * order_type 訂單類型
+ * ~ next-day 隔日配
+ * ~ pro-order 預購
  */
 class ShopClassController extends Controller
 {

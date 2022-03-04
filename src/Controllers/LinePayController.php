@@ -46,7 +46,6 @@ class LinePayController extends Controller
         $amount,
         'TWD',
         $shop_order->no,
-        $shop_order->freight,
         $packages,
         $confirm_url,
         $cancel_url
@@ -56,7 +55,6 @@ class LinePayController extends Controller
         $amount,
         'TWD',
         $shop_order->no,
-        $shop_order->freight,
         $packages,
       );
     }

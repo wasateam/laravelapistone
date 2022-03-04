@@ -304,8 +304,7 @@ class ShopHelper
   {
     $compaign_deduct = 0;
     if ($discount_code) {
-      // $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($discount_code);
-      $today_dicount_decode_campaign = self::getAvailableShopCampaign($shop_order->user_id, $discount_code, $shop_order->created_at);
+      $today_dicount_decode_campaign = self::getAvailableShopCampaign('discount_code', $shop_order->user_id, $shop_order->created_at, $discount_code);
       if ($today_dicount_decode_campaign) {
         $products_price = $shop_order->products_price;
         if ($products_price >= $today_dicount_decode_campaign->full_amount) {
@@ -600,32 +599,24 @@ class ShopHelper
   public static function createBonusPointFromShopOrder($shop_order)
   {
 
-    $today                = Carbon::now()->format('Y-m-d');
-    $today_bonus_campaign = ShopCampaign::whereDate('start_date', '<=', $today)
-      ->where('end_date', ">=", $today)
-      ->where('type', 'bonus_point_feedback')
-      ->first();
-    if (!$today_bonus_campaign) {
+    $shop_campaign = self::getAvailableShopCampaign('bonus_point_feedback', $shop_order->user_id, $shop_order->created_at);
+
+    if (!$shop_campaign) {
       return;
     }
-    if ($today_bonus_campaign->feedback_rate) {
-      $bonus_point_feedback = intval($shop_order->order_price) * floatval($today_bonus_campaign->feedback_rate) / 100;
 
-      $user               = $shop_order->user;
-      $user->bonus_points = $user->bonus_points + $bonus_point_feedback;
+    if ($shop_campaign->feedback_rate) {
+      $bonus_point_feedback = intval($shop_order->order_price) * floatval($shop_campaign->feedback_rate) / 100;
+      $user                 = $shop_order->user;
+      $user->bonus_points   = $user->bonus_points + $bonus_point_feedback;
       $user->save();
-      self::createThePointRecord($shop_order, $today_bonus_campaign->id, $bonus_point_feedback, 'get');
+      self::createThePointRecord($shop_order, $shop_campaign->id, $bonus_point_feedback, 'get');
     }
-
-    // $stone_feedback_after_invoice_days = config('stone.shop_campaign.types.bonus_point_feedback.feedback_after_invoice_days');
-    // $feedback_after_invoice_days       = $stone_feedback_after_invoice_days ? $stone_feedback_after_invoice_days : 3;
-    // BonusPointFeedbackJob::dispatch($shop_order_id);
-    // ->delay(Carbon::now()->addDays($feedback_after_invoice_days));
   }
 
-  public static function getAvailableShopCampaign($user_id, $discount_code, $date = null)
+  public static function getAvailableShopCampaign($type, $user_id, $date = null, $discount_code = null)
   {
-    $shop_campaign = ShopCampaign::where('type', 'discount_code')
+    $snap = ShopCampaign::where('type', $type)
       ->where('is_active', 1)
       ->where(function ($query) use ($date) {
         $query->where(function ($query) use ($date) {
@@ -640,9 +631,12 @@ class ShopHelper
           $query->whereNull('start_date');
           $query->whereNull('end_date');
         });
-      })
-      ->where('discount_code', $discount_code)
-      ->first();
+      });
+    if ($type == 'discount_code' && $discount_code) {
+      $snap->where('discount_code', $discount_code);
+    }
+
+    $shop_campaign = $snap->first();
     if ($shop_campaign) {
       if ($shop_campaign->limit) {
         $count = $shop_campaign->shop_campaign_shop_products->count;
@@ -655,12 +649,12 @@ class ShopHelper
           ->where('pay_status', 'paid')
           ->first();
         if ($shop_order) {
-          throw new \Wasateam\Laravelapistone\Exceptions\NotEligibleException();
+          return null;
         }
       }
       return $shop_campaign;
     } else {
-      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_campaign');
+      return null;
     }
   }
 
@@ -1125,94 +1119,103 @@ class ShopHelper
   {
     if (config('stone.invoice')) {
       if (config('stone.invoice.service') == 'ecpay') {
-        $invoice_type       = $shop_order->invoice_type;
-        $SalesAmount        = $shop_order->order_price;
-        $Items              = EcpayHelper::getInvoiceItemsFromShopOrder($shop_order);
-        $CustomerID         = $shop_order->user_id;
-        $CustomerIdentifier = '';
-        $CustomerName       = '';
-        $CustomerAddr       = $shop_order->receive_address;
-        $CustomerPhone      = $shop_order->orderer_tel;
-        $CustomerEmail      = $shop_order->orderer_email;
-        $Print              = '0';
-        $Donation           = '0';
-        $CarrierType        = '';
-        $CarrierNum         = '';
-        $TaxType            = '1';
-        if ($invoice_type == 'personal') {
-          $invoice_carrier_type   = $shop_order->invoice_carrier_type;
-          $invoice_carrier_number = $shop_order->invoice_carrier_number;
-          $Print                  = '0';
-          $CustomerName           = $shop_order->orderer;
-          if ($invoice_carrier_type == 'mobile') {
-            $CarrierType = '3';
-            $CarrierNum  = $invoice_carrier_number;
-          } else if ($invoice_carrier_type == 'certificate') {
-            $CarrierType = '2';
-            $CarrierNum  = $invoice_carrier_number;
-          } else if ($invoice_carrier_type == 'email') {
-            $CarrierType   = '1';
-            $CarrierNum    = '';
-            $CustomerEmail = $invoice_carrier_number;
+        try {
+          $invoice_type       = $shop_order->invoice_type;
+          $SalesAmount        = $shop_order->order_price;
+          $Items              = EcpayHelper::getInvoiceItemsFromShopOrder($shop_order);
+          $CustomerID         = $shop_order->user_id;
+          $CustomerIdentifier = '';
+          $CustomerName       = '';
+          $CustomerAddr       = $shop_order->receive_address;
+          $CustomerPhone      = $shop_order->orderer_tel;
+          $CustomerEmail      = $shop_order->orderer_email;
+          $Print              = '0';
+          $Donation           = '0';
+          $CarrierType        = '';
+          $CarrierNum         = '';
+          $TaxType            = '1';
+          if ($invoice_type == 'personal') {
+            $invoice_carrier_type   = $shop_order->invoice_carrier_type;
+            $invoice_carrier_number = $shop_order->invoice_carrier_number;
+            $Print                  = '0';
+            $CustomerName           = $shop_order->orderer;
+            if ($invoice_carrier_type == 'mobile') {
+              $CarrierType = '3';
+              $CarrierNum  = $invoice_carrier_number;
+            } else if ($invoice_carrier_type == 'certificate') {
+              $CarrierType = '2';
+              $CarrierNum  = $invoice_carrier_number;
+            } else if ($invoice_carrier_type == 'email') {
+              $CarrierType   = '1';
+              $CarrierNum    = '';
+              $CustomerEmail = $invoice_carrier_number;
+            }
+          } else if ($invoice_type == 'triple') {
+            $invoice_title          = $shop_order->invoice_title;
+            $invoice_uniform_number = $shop_order->invoice_uniform_number;
+            $CarrierType            = '';
+            $Print                  = '1';
+            $CustomerName           = $invoice_title;
+            $CustomerIdentifier     = $invoice_uniform_number;
           }
-        } else if ($invoice_type == 'triple') {
-          $invoice_title          = $shop_order->invoice_title;
-          $invoice_uniform_number = $shop_order->invoice_uniform_number;
-          $CarrierType            = '';
-          $Print                  = '1';
-          $CustomerName           = $invoice_title;
-          $CustomerIdentifier     = $invoice_uniform_number;
+          if (config('stone.invoice.delay')) {
+            $DelayDay  = config('stone.invoice.delay');
+            $post_data = EcpayHelper::getDelayInvoicePostData(
+              $CustomerID,
+              $CustomerIdentifier,
+              $CustomerName,
+              $CustomerAddr,
+              $CustomerPhone,
+              $CustomerEmail,
+              $Print,
+              $Donation,
+              $CarrierType,
+              $CarrierNum,
+              $TaxType,
+              $SalesAmount,
+              $Items,
+              $DelayDay,
+            );
+            $invoice_res = EcpayHelper::createDelayInvoice($post_data);
+          } else {
+            $post_data = EcpayHelper::getInvoicePostData(
+              $CustomerID,
+              $CustomerIdentifier,
+              $CustomerName,
+              $CustomerAddr,
+              $CustomerPhone,
+              $CustomerEmail,
+              $Print,
+              $Donation,
+              $CarrierType,
+              $CarrierNum,
+              $TaxType,
+              $SalesAmount,
+              $Items
+            );
+            $invoice_res = EcpayHelper::createInvoice($post_data);
+          }
+          $shop_order->invoice_status = 'done';
+          $shop_order->invoice_number = $invoice_res->InvoiceNo;
+          $shop_order->save();
+          return response()->json($shop_order, 200);
+          //code...
+        } catch (\Throwable $th) {
+          $shop_order->invoice_status = 'fail';
+          $shop_order->save();
+          error_log($th);
+          throw $th;
         }
-        if (config('stone.invoice.delay')) {
-          $DelayDay  = config('stone.invoice.delay');
-          $post_data = EcpayHelper::getDelayInvoicePostData(
-            $CustomerID,
-            $CustomerIdentifier,
-            $CustomerName,
-            $CustomerAddr,
-            $CustomerPhone,
-            $CustomerEmail,
-            $Print,
-            $Donation,
-            $CarrierType,
-            $CarrierNum,
-            $TaxType,
-            $SalesAmount,
-            $Items,
-            $DelayDay,
-          );
-          $invoice_res = EcpayHelper::createDelayInvoice($post_data);
-        } else {
-          $post_data = EcpayHelper::getInvoicePostData(
-            $CustomerID,
-            $CustomerIdentifier,
-            $CustomerName,
-            $CustomerAddr,
-            $CustomerPhone,
-            $CustomerEmail,
-            $Print,
-            $Donation,
-            $CarrierType,
-            $CarrierNum,
-            $TaxType,
-            $SalesAmount,
-            $Items
-          );
-          $invoice_res = EcpayHelper::createInvoice($post_data);
-        }
-        $shop_order->invoice_status = 'done';
-        $shop_order->invoice_number = $invoice_res->InvoiceNo;
-        $shop_order->save();
-        return response()->json($shop_order, 200);
       }
     }
   }
 
-  public static function deductBonusPointFromShopOrder($shop_order){
-    if(!$shop_order->bonus_points_deduct){
+  public static function deductBonusPointFromShopOrder($shop_order)
+  {
+    if (!$shop_order->bonus_points_deduct) {
       return;
     }
-    $user = User::find($shop_order->user_id);
+    $user               = User::find($shop_order->user_id);
     $user->bonus_points = $user->bonus_points - $shop_order->bonus_points_deduct;
     $user->save();
     self::createThePointRecord($shop_order, null, $shop_order->bonus_points_deduct, 'deduct');

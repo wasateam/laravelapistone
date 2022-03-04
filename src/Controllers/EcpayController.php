@@ -85,6 +85,7 @@ class EcpayController extends Controller
     }
     $payment_res = EcpayHelper::createPayment($request->PayToken, $request->MerchantTradeNo);
     $shop_order  = EcpayHelper::updateShopOrderFromEcpayPaymentRes($payment_res);
+    ShopHelper::createBonusPointFromShopOrder($shop_order);
     if ($shop_order->pay_status == 'paid' && $shop_order->status == 'established') {
       ShopHelper::createInvoice($shop_order);
     }

@@ -271,7 +271,7 @@ class ShopCampaignController extends Controller
       throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('discount_code');
     }
     $user          = Auth::user();
-    $shop_campaign = ShopHelper::getAvailableShopCampaign($user->id, $request->discount_code);
+    $shop_campaign = ShopHelper::getAvailableShopCampaign('discount_code', $user->id, null, $request->discount_code);
 
     if (!$shop_campaign) {
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_campaign');

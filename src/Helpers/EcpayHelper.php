@@ -168,8 +168,6 @@ class EcpayHelper
 
   public static function createInvoice($data)
   {
-    error_log('createInvoice');
-    error_log(json_encode($data));
     $mode         = config('stone.invoice.mode');
     $data_encrypt = self::getEncryptData($data, 'invoice');
     if ($mode == 'dev') {

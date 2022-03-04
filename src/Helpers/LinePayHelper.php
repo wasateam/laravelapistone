@@ -22,6 +22,7 @@ class LinePayHelper
     $amount = null,
     $currency = 'TWD',
     $orderId = null,
+    $freight,
     $packages = null,
     $confirm_url = null,
     $cancel_url = null
@@ -42,12 +43,20 @@ class LinePayHelper
         'confirmUrl' => $confirm_url,
         'cancelUrl'  => $cancel_url,
       ],
+      'options'      => [
+        'shipping' => [
+          'feeAmount' => $freight,
+        ],
+      ],
     ];
+    error_log(json_encode($request_body));
     $header   = self::get_request_header($request_body, '/v3/payments/request');
     $response = Http::withHeaders($header)
       ->post($post_url, $request_body);
     $res_json = $response->json();
 
+    error_log('$res_json');
+    error_log(json_encode($res_json));
     if ($res_json['returnCode'] != '0000') {
       throw new \Wasateam\Laravelapistone\Exceptions\LinePayException(
         'payment_request',
@@ -137,7 +146,7 @@ class LinePayHelper
   public static function getLinePayPackageProductsFromShopOrder($shop_order)
   {
     // $amount   = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
-    $amount   = $shop_order->order_price;
+    $amount   = $shop_order->products_price - $shop_order->campaign_deduct - $shop_order->bonus_points_deduct;
     $products = [];
     foreach ($shop_order->shop_order_shop_products as $shop_order_shop_product) {
       $price      = $shop_order_shop_product->discount_price ? $shop_order_shop_product->discount_price : $shop_order_shop_product->price;
@@ -148,6 +157,18 @@ class LinePayHelper
         'imageUrl' => '',
       ];
     }
+    $products[] = [
+      'name'     => '活動折抵',
+      'quantity' => 1,
+      'price'    => $shop_order->campaign_deduct * -1,
+      'imageUrl' => '',
+    ];
+    $products[] = [
+      'name'     => '紅利折抵',
+      'quantity' => 1,
+      'price'    => $shop_order->bonus_points_deduct * -1,
+      'imageUrl' => '',
+    ];
     return [
       [
         'id'       => $shop_order->no,

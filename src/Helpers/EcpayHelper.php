@@ -349,34 +349,34 @@ class EcpayHelper
         "ItemAmount"  => $amount,
         "ItemRemark"  => "",
       ];
-      $items[] = [
-        "ItemName"    => '運費',
-        "ItemCount"   => 1,
-        "ItemWord"    => "件",
-        "ItemPrice"   => $shop_order->freight,
-        "ItemTaxType" => "1",
-        "ItemAmount"  => $shop_order->freight,
-        "ItemRemark"  => "",
-      ];
-      $items[] = [
-        "ItemName"    => '活動折抵',
-        "ItemCount"   => 1,
-        "ItemWord"    => "個",
-        "ItemPrice"   => $shop_order->campaign_deduct * -1,
-        "ItemTaxType" => "1",
-        "ItemPrice"   => $shop_order->campaign_deduct * -1,
-        "ItemRemark"  => "",
-      ];
-      $items[] = [
-        "ItemName"    => '紅利折抵',
-        "ItemCount"   => 1,
-        "ItemWord"    => "個",
-        "ItemPrice"   => $shop_order->bonus_points_deduct * -1,
-        "ItemTaxType" => "1",
-        "ItemPrice"   => $shop_order->bonus_points_deduct * -1,
-        "ItemRemark"  => "",
-      ];
     }
+    $items[] = [
+      "ItemName"    => '運費',
+      "ItemCount"   => 1,
+      "ItemWord"    => "件",
+      "ItemPrice"   => $shop_order->freight,
+      "ItemTaxType" => "1",
+      "ItemAmount"  => $shop_order->freight,
+      "ItemRemark"  => "",
+    ];
+    $items[] = [
+      "ItemName"    => '活動折抵',
+      "ItemCount"   => 1,
+      "ItemWord"    => "個",
+      "ItemPrice"   => $shop_order->campaign_deduct * -1,
+      "ItemTaxType" => "1",
+      "ItemAmount"   => $shop_order->campaign_deduct * -1,
+      "ItemRemark"  => "",
+    ];
+    $items[] = [
+      "ItemName"    => '紅利折抵',
+      "ItemCount"   => 1,
+      "ItemWord"    => "個",
+      "ItemPrice"   => $shop_order->bonus_points_deduct * -1,
+      "ItemTaxType" => "1",
+      "ItemAmount"   => $shop_order->bonus_points_deduct * -1,
+      "ItemRemark"  => "",
+    ];
     return $items;
   }
 

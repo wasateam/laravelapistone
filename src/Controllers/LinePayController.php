@@ -37,7 +37,6 @@ class LinePayController extends Controller
     $shop_order = ShopHelper::setShopOrderNo($shop_order);
 
     $amount = $shop_order->order_price;
-    // $amount   = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
     $packages = LinePayHelper::getLinePayPackageProductsFromShopOrder($shop_order);
 
     if ($request->has('mode') && $request->mode == 'test') {
@@ -47,6 +46,7 @@ class LinePayController extends Controller
         $amount,
         'TWD',
         $shop_order->no,
+        $shop_order->freight,
         $packages,
         $confirm_url,
         $cancel_url
@@ -56,6 +56,7 @@ class LinePayController extends Controller
         $amount,
         'TWD',
         $shop_order->no,
+        $shop_order->freight,
         $packages,
       );
     }

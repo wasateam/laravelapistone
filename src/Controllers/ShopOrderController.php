@@ -65,6 +65,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * ~ CVS: CVS
  * ~ ATM: ATM
  * ~ BARCODE: 超商條碼
+ * ~ line_pay: LINE Pay
  * pay_status 付款狀態
  * ~ sumulate-paid: 模擬測試付款
  * ~ waiting: 待付款

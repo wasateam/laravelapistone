@@ -16,4 +16,9 @@ class UserDevice extends Model
   {
     return $this->belongsTo(User::class, 'user_id');
   }
+
+  public function user_service_plans()
+  {
+    return $this->belongsToMany(UserServicePlan::class, 'user_device_user_service_plan', 'user_device_id', 'user_service_plan_id');
+  }
 }

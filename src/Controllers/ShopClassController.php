@@ -9,6 +9,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
  * @group ShopClass 商品分類
+ * @authenticated
  *
  * name 分類名稱
  * sq 排序設定值

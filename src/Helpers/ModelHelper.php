@@ -1059,7 +1059,7 @@ class ModelHelper
       if (!$request->has($key)) {
         continue;
       }
-      $model[$key] = $request->{$key};
+      $model[$key] = htmlentities($request->{$key});
     }
     return $model;
   }

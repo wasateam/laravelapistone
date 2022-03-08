@@ -35,6 +35,7 @@ class ShopNotice extends Model
   }
 
   protected $casts = [
-    'tags' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'content' => \Wasateam\Laravelapistone\Casts\HtmlCast::class,
+    'tags'    => \Wasateam\Laravelapistone\Casts\JsonCast::class,
   ];
 }

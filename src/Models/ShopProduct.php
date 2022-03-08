@@ -98,6 +98,7 @@ class ShopProduct extends Model
   }
 
   protected $casts = [
+    'description' => \Wasateam\Laravelapistone\Casts\HtmlCast::class,
     'cover_image' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
     'images'      => \Wasateam\Laravelapistone\Casts\UrlsCast::class,
   ];

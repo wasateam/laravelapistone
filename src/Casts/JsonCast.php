@@ -30,6 +30,7 @@ class JsonCast implements CastsAttributes
    */
   public function set($model, $key, $value, $attributes)
   {
-    return json_encode($value,JSON_UNESCAPED_UNICODE);
+    return json_encode($value, JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS);
+
   }
 }

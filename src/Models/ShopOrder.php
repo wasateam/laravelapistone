@@ -60,9 +60,9 @@ class ShopOrder extends Model
     return $this->hasMany(ShopCampaignShopOrder::class);
   }
 
-  public function the_point_records()
+  public function bonus_point_records()
   {
-    return $this->hasMany(ThePointRecord::class);
+    return $this->hasMany(BonusPointRecord::class);
   }
 
   protected $casts = [

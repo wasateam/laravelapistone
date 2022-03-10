@@ -144,5 +144,5 @@ return [
   'xc_milestone'       => true,
   'xc_project'         => true,
   //點數系統
-  'the_point'          => true,
+  'bonus_point'          => true,
 ];

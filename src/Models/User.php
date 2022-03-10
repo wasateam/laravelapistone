@@ -93,9 +93,9 @@ class User extends Authenticatable
     return $this->belongsToMany(ShopProduct::class, 'user_shop_product', 'user_id', 'shop_product_id');
   }
 
-  public function the_point_records()
+  public function bonus_point_records()
   {
-    return $this->hasMany(ThePointRecord::class, 'user_id');
+    return $this->hasMany(BonusPointRecord::class, 'user_id');
   }
 
   /**

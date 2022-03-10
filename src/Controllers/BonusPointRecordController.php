@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
-use Wasateam\Laravelapistone\Models\ThePointRecord;
+use Wasateam\Laravelapistone\Models\BonusPointRecord;
 
 /**
- * @group ThePointRecord 點數紀錄
+ * @group BonusPointRecord 點數紀錄
  *
- * APIs for the_point_record
+ * APIs for bonus_point_record
  *
  * type 類型
  * ~ get 取得
@@ -26,11 +26,11 @@ use Wasateam\Laravelapistone\Models\ThePointRecord;
  *
  * @authenticated
  */
-class ThePointRecordController extends Controller
+class BonusPointRecordController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Models\ThePointRecord';
-  public $name         = 'the_point_record';
-  public $resource     = 'Wasateam\Laravelapistone\Resources\ThePointRecord';
+  public $model        = 'Wasateam\Laravelapistone\Models\BonusPointRecord';
+  public $name         = 'bonus_point_record';
+  public $resource     = 'Wasateam\Laravelapistone\Resources\BonusPointRecord';
   public $input_fields = [
     'type',
     'source',
@@ -110,13 +110,13 @@ class ThePointRecordController extends Controller
   /**
    * Show
    *
-   * @urlParam  the_point_record required The ID of the_point_record. Example: 1
+   * @urlParam  bonus_point_record required The ID of bonus_point_record. Example: 1
    */
   public function show(Request $request, $id = null)
   {
     if (config('stone.mode' == 'webapi')) {
-      $the_point_record = ThePointRecord::find($id);
-      if (isset($the_point_record) && $the_point_record->user_id != Auth::user()->id) {
+      $bonus_point_record = BonusPointRecord::find($id);
+      if (isset($bonus_point_record) && $bonus_point_record->user_id != Auth::user()->id) {
         return response()->json([
           'message' => 'not your record',
         ], 400);
@@ -128,7 +128,7 @@ class ThePointRecordController extends Controller
   /**
    * Update
    *
-   * @urlParam  the_point_record required The ID of the_point_record. Example: 1
+   * @urlParam  bonus_point_record required The ID of bonus_point_record. Example: 1
    * @bodyParam type string Example:get
    * @bodyParam source string Example:new_shop_order
    * @bodyParam user int Example:1
@@ -144,7 +144,7 @@ class ThePointRecordController extends Controller
   /**
    * Delete
    *
-   * @urlParam  the_point_record required The ID of the_point_record. Example: 1
+   * @urlParam  bonus_point_record required The ID of bonus_point_record. Example: 1
    */
   public function destroy($id)
   {

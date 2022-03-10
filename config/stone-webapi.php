@@ -191,5 +191,5 @@ return [
   'page_cover'          => true,
   'excute_class'        => true,
   //點數系統
-  'the_point'           => true,
+  'bonus_point'         => true,
 ];

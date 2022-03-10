@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ThePointRecord extends JsonResource
+class BonusPointRecord extends JsonResource
 {
   /**
    * Transform the resource into an array.

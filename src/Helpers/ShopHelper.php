@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Models\Area;
 use Wasateam\Laravelapistone\Models\AreaSection;
+use Wasateam\Laravelapistone\Models\BonusPointRecord;
 use Wasateam\Laravelapistone\Models\ShopCampaign;
 use Wasateam\Laravelapistone\Models\ShopCampaignShopOrder;
 use Wasateam\Laravelapistone\Models\ShopCart;
@@ -22,7 +23,6 @@ use Wasateam\Laravelapistone\Models\ShopProductSpecSetting;
 use Wasateam\Laravelapistone\Models\ShopProductSpecSettingItem;
 use Wasateam\Laravelapistone\Models\ShopReturnRecord;
 use Wasateam\Laravelapistone\Models\ShopShipTimeSetting;
-use Wasateam\Laravelapistone\Models\ThePointRecord;
 use Wasateam\Laravelapistone\Models\User;
 use Wasateam\Laravelapistone\Models\UserAddress;
 
@@ -183,7 +183,7 @@ class ShopHelper
     //紅利點數
     //create bonus_points record
     $bonus_points = $shop_order->bonus_points_deduct ? $shop_order->bonus_points_deduct : 0;
-    // self::createThePointRecord($shop_order, null, $bonus_points, 'deduct');
+    // self::createBonusPointRecord($shop_order, null, $bonus_points, 'deduct');
 
     //運費 default = 100
     $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
@@ -610,7 +610,7 @@ class ShopHelper
       $user                 = $shop_order->user;
       $user->bonus_points   = $user->bonus_points + $bonus_point_feedback;
       $user->save();
-      self::createThePointRecord($shop_order, $shop_campaign->id, $bonus_point_feedback, 'get');
+      self::createBonusPointRecord($shop_order, $shop_campaign->id, $bonus_point_feedback, 'get');
     }
   }
 
@@ -1102,17 +1102,17 @@ class ShopHelper
     return $shop_return_record;
   }
 
-  public static function createThePointRecord($shop_order, $shop_campaign_id = null, $point_count, $type)
+  public static function createBonusPointRecord($shop_order, $shop_campaign_id = null, $point_count, $type)
   {
-    //create the_point_record when get/deduct bonus_points
-    $the_point_record                   = new ThePointRecord;
-    $the_point_record->user_id          = $shop_order->user_id;
-    $the_point_record->shop_order_id    = $shop_order->id;
-    $the_point_record->shop_campaign_id = $shop_campaign_id;
-    $the_point_record->type             = $type;
-    $the_point_record->source           = 'new_shop_order';
-    $the_point_record->count            = $point_count;
-    $the_point_record->save();
+    //create bonus_point_record when get/deduct bonus_points
+    $bonus_point_record                   = new BonusPointRecord;
+    $bonus_point_record->user_id          = $shop_order->user_id;
+    $bonus_point_record->shop_order_id    = $shop_order->id;
+    $bonus_point_record->shop_campaign_id = $shop_campaign_id;
+    $bonus_point_record->type             = $type;
+    $bonus_point_record->source           = 'new_shop_order';
+    $bonus_point_record->count            = $point_count;
+    $bonus_point_record->save();
   }
 
   public static function createInvoice($shop_order)
@@ -1221,7 +1221,7 @@ class ShopHelper
     $user               = User::find($shop_order->user_id);
     $user->bonus_points = $user->bonus_points - $shop_order->bonus_points_deduct;
     $user->save();
-    self::createThePointRecord($shop_order, null, $shop_order->bonus_points_deduct, 'deduct');
+    self::createBonusPointRecord($shop_order, null, $shop_order->bonus_points_deduct, 'deduct');
   }
 
   public static function setShopOrderNo($shop_order)

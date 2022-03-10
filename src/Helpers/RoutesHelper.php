@@ -14,6 +14,7 @@ use Wasateam\Laravelapistone\Controllers\AppRoleController;
 use Wasateam\Laravelapistone\Controllers\AreaController;
 use Wasateam\Laravelapistone\Controllers\AreaSectionController;
 use Wasateam\Laravelapistone\Controllers\AuthController;
+use Wasateam\Laravelapistone\Controllers\BonusPointRecordController;
 use Wasateam\Laravelapistone\Controllers\CalendarHighlightController;
 use Wasateam\Laravelapistone\Controllers\CMSAdminController;
 use Wasateam\Laravelapistone\Controllers\CmsLogController;
@@ -73,7 +74,6 @@ use Wasateam\Laravelapistone\Controllers\SystemClassController;
 use Wasateam\Laravelapistone\Controllers\SystemSubclassController;
 use Wasateam\Laravelapistone\Controllers\TagController;
 use Wasateam\Laravelapistone\Controllers\TermsController;
-use Wasateam\Laravelapistone\Controllers\ThePointRecordController;
 use Wasateam\Laravelapistone\Controllers\TulpaCrossItemController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
@@ -759,10 +759,10 @@ class RoutesHelper
       ])->shallow();
     }
 
-    # ThePoint
-    if (config('stone.the_point')) {
-      # ThePointRecord
-      Route::resource('the_point_record', THePointRecordController::class)->only([
+    # BonusPoint
+    if (config('stone.bonus_point')) {
+      # BonusPointRecord
+      Route::resource('bonus_point_record', BonusPointRecordController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
@@ -1217,14 +1217,14 @@ class RoutesHelper
       ])->shallow();
     }
 
-    # ThePoint
-    if (config('stone.the_point')) {
-      # ThePointRecord
-      Route::resource('the_point_record', ThePointRecordController::class)->only([
+    # BonusPoint
+    if (config('stone.bonus_point')) {
+      # BonusPointRecord
+      Route::resource('bonus_point_record', BonusPointRecordController::class)->only([
         'index',
         'show',
       ])->shallow();
-      // Route::get('the_point_record/auth/index', [ThePointRecordController::class, 'auth_index']);
+      // Route::get('bonus_point_record/auth/index', [BonusPointRecordController::class, 'auth_index']);
     }
   }
 

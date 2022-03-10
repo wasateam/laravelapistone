@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ThePointRecord_R1 extends JsonResource
+class BonusPointRecord_R2 extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -22,13 +22,17 @@ class ThePointRecord_R1 extends JsonResource
         'type'       => $this->type,
         'source'     => $this->source,
         'count'      => $this->count,
+        'shop_order' => new ShopOrder_R2($this->shop_order),
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
-        'id'     => $this->id,
-        'type'   => $this->type,
-        'source' => $this->source,
-        'count'  => $this->count,
+        'id'         => $this->id,
+        'created_at' => $this->created_at,
+        'updated_at' => $this->updated_at,
+        'type'       => $this->type,
+        'source'     => $this->source,
+        'count'      => $this->count,
+        'shop_order' => new ShopOrder_R2($this->shop_order),
       ];
     }
   }

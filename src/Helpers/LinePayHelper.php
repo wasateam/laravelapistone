@@ -4,7 +4,6 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
-use Wasateam\Laravelapistone\Helpers\ShopHelper;
 
 /**
  * 用來串接 LINE Pay 服務的動作
@@ -27,7 +26,6 @@ class LinePayHelper
     $confirm_url = null,
     $cancel_url = null
   ) {
-    error_log('payment_request');
     if (!$confirm_url) {
       $confirm_url = env('WEB_URL') . '/line_pay/payment/confirm';
     }
@@ -66,8 +64,9 @@ class LinePayHelper
    */
   public static function payment_confirm($transaction_id, $shop_order = null, $currency = 'TWD')
   {
-    $post_url     = self::getBaseUrl() . '/v3/payments/' . $transaction_id . '/confirm';
-    $amount       = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
+    $post_url = self::getBaseUrl() . '/v3/payments/' . $transaction_id . '/confirm';
+    // $amount       = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
+    $amount       = $shop_order->order_price;
     $request_body = [
       'amount'   => $amount,
       'currency' => $currency,
@@ -137,7 +136,6 @@ class LinePayHelper
 
   public static function getLinePayPackageProductsFromShopOrder($shop_order)
   {
-    $amount   = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
     $products = [];
     foreach ($shop_order->shop_order_shop_products as $shop_order_shop_product) {
       $price      = $shop_order_shop_product->discount_price ? $shop_order_shop_product->discount_price : $shop_order_shop_product->price;
@@ -148,10 +146,28 @@ class LinePayHelper
         'imageUrl' => '',
       ];
     }
+    $products[] = [
+      'name'     => '活動折抵',
+      'quantity' => 1,
+      'price'    => $shop_order->campaign_deduct * -1,
+      'imageUrl' => '',
+    ];
+    $products[] = [
+      'name'     => '紅利折抵',
+      'quantity' => 1,
+      'price'    => $shop_order->bonus_points_deduct * -1,
+      'imageUrl' => '',
+    ];
+    $products[] = [
+      'name'     => '運費',
+      'quantity' => 1,
+      'price'    => $shop_order->freight,
+      'imageUrl' => '',
+    ];
     return [
       [
         'id'       => $shop_order->no,
-        'amount'   => $amount,
+        'amount'   => $shop_order->order_price,
         'name'     => $shop_order->no,
         'products' => $products,
       ],

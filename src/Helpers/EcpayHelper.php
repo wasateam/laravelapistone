@@ -43,7 +43,6 @@ class EcpayHelper
 
   public static function getMerchantToken($data)
   {
-    error_log('getMerchantToken');
     $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData($data);
     if ($mode == 'dev') {
@@ -63,7 +62,6 @@ class EcpayHelper
     if ($res->status() == '200') {
       $res_json = $res->json();
       $res_data = self::getDecryptData($res_json['Data']);
-      error_log(json_encode($res_data));
       if ($res_data->RtnCode != '1') {
         throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('getMerchantToken', $res_data->RtnCode, $res_data->RtnMsg);
       }
@@ -112,7 +110,6 @@ class EcpayHelper
 
   public static function createPayment($PayToken, $MerchantTradeNo)
   {
-    error_log('createPayment');
     $mode         = env('THIRD_PARTY_PAYMENT_MODE');
     $data_encrypt = self::getEncryptData([
       "MerchantID"      => config('stone.third_party_payment.ecpay_inpay.merchant_id'),
@@ -141,13 +138,11 @@ class EcpayHelper
     if ($res_data->RtnCode != '1') {
       throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('createPayment', $res_data->RtnCode, $res_data->RtnMsg);
     }
-    error_log(json_encode($res_data));
     return $res_data;
   }
 
   public static function updateShopOrderFromEcpayPaymentRes($payment_res)
   {
-    error_log('updateShopOrderFromEcpayPaymentRes');
     $shop_order = ShopOrder::where('no', $payment_res->OrderInfo->MerchantTradeNo)->first();
     if (!$shop_order) {
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order', $payment_res->OrderInfo->MerchantTradeNo, 'no');
@@ -168,14 +163,11 @@ class EcpayHelper
     $shop_order->pay_type         = $payment_res->OrderInfo->PaymentType;
     $shop_order->ecpay_charge_fee = $payment_res->OrderInfo->ChargeFee;
     $shop_order->save();
-    error_log('$shop_order');
-    error_log(json_encode($shop_order));
     return $shop_order;
   }
 
   public static function createInvoice($data)
   {
-    error_log('createInvoice');
     $mode         = config('stone.invoice.mode');
     $data_encrypt = self::getEncryptData($data, 'invoice');
     if ($mode == 'dev') {
@@ -259,7 +251,6 @@ class EcpayHelper
 
   public static function createDelayInvoice($data)
   {
-    error_log('createDelayInvoice');
     $mode         = config('stone.invoice.mode');
     $data_encrypt = self::getEncryptData($data, 'invoice');
     if ($mode == 'dev') {
@@ -336,9 +327,10 @@ class EcpayHelper
     ];
   }
 
-  public static function getInvoiceItemsFromShopCartProducts($shop_cart_products)
+  public static function getInvoiceItemsFromShopOrder($shop_order)
   {
-    $items = [];
+    $shop_cart_products = $shop_order->shop_order_shop_products;
+    $items              = [];
     foreach ($shop_cart_products as $shop_cart_product) {
       $amount                  = ShopHelper::getOrderProductAmountPrice($shop_cart_product);
       $shop_cart_product_price = 0;
@@ -358,6 +350,33 @@ class EcpayHelper
         "ItemRemark"  => "",
       ];
     }
+    $items[] = [
+      "ItemName"    => '運費',
+      "ItemCount"   => 1,
+      "ItemWord"    => "件",
+      "ItemPrice"   => $shop_order->freight,
+      "ItemTaxType" => "1",
+      "ItemAmount"  => $shop_order->freight,
+      "ItemRemark"  => "",
+    ];
+    $items[] = [
+      "ItemName"    => '活動折抵',
+      "ItemCount"   => 1,
+      "ItemWord"    => "個",
+      "ItemPrice"   => $shop_order->campaign_deduct * -1,
+      "ItemTaxType" => "1",
+      "ItemAmount"   => $shop_order->campaign_deduct * -1,
+      "ItemRemark"  => "",
+    ];
+    $items[] = [
+      "ItemName"    => '紅利折抵',
+      "ItemCount"   => 1,
+      "ItemWord"    => "個",
+      "ItemPrice"   => $shop_order->bonus_points_deduct * -1,
+      "ItemTaxType" => "1",
+      "ItemAmount"   => $shop_order->bonus_points_deduct * -1,
+      "ItemRemark"  => "",
+    ];
     return $items;
   }
 

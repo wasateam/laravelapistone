@@ -3,12 +3,12 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Models\ShopCampaign;
-use Wasateam\Laravelapistone\Models\ShopOrder;
 
 /**
  * @group ShopCampaign 促銷活動
@@ -37,7 +37,9 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  *
  * Index 篩選
  * status
- * ~ 1 進行中 2 未開始 3 已結束
+ * ~ in-progress 進行中
+ * ~ not-started 未開始
+ * ~ end 已結束
  *
  * Store,Update相關補充
  * 需要送condition，condition要送什麼會依據type而不同
@@ -115,13 +117,13 @@ class ShopCampaignController extends Controller
       $status = ($request != null) && $request->filled('status') ? $request->status : null;
       if (isset($status)) {
         $today = Carbon::now()->format('Y-m-d');
-        if ($status == 1) {
+        if ($status == 'in-progress') {
           $snap = $snap->where(function ($query) use ($today) {
             $query->whereDate('end_date', '>=', $today)->whereDate('start_date', '<=', $today);
           })->orWhereNull('start_date');
-        } else if ($status == 2) {
+        } else if ($status == 'not-started') {
           $snap = $snap->whereDate('start_date', '>', $today);
-        } else if ($status == 3) {
+        } else if ($status == 'end') {
           $snap = $snap->whereDate('end_date', '<', $today);
         }
       }
@@ -182,16 +184,16 @@ class ShopCampaignController extends Controller
    */
   public function show(Request $request, $id = null)
   {
-    return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) use ($request){
+    return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) use ($request) {
       //篩選狀態
       $status = $request->has('status') ? $request->status : null;
       if (isset($status)) {
         $today = Carbon::now()->format('Y-m-d');
-        if ($status == 'progressing') {
+        if ($status == 'in-progress') {
           $snap = $snap->where(function ($query) use ($today) {
             $query->whereDate('end_date', '>=', $today)->whereDate('start_date', '<=', $today);
           })->orWhereNull('start_date');
-        } else if ($status == 'non-start') {
+        } else if ($status == 'not-started') {
           $snap = $snap->whereDate('start_date', '>', $today);
         } else if ($status == 'end') {
           $snap = $snap->whereDate('end_date', '<', $today);
@@ -228,7 +230,7 @@ class ShopCampaignController extends Controller
     }
     if ($request->has('type')) {
       //get types from stone.php
-      $types    = config('stone.shop.shop_campaign.items');
+      $types    = config('stone.shop.shop_campaign.types');
       $req_type = str_replace('-', '_', $request->type);
       $has_key  = array_key_exists($req_type, $types);
       if ($has_key) {
@@ -259,36 +261,22 @@ class ShopCampaignController extends Controller
 
   /**
    * Today DiscountCode Get 取得今日折扣碼活動
-   * 
+   *
    * @queryParam user int user_id Example:1
    * @bodyParam discount_code string 折扣碼 Example:LittleChicken
    */
   public function get_today_discount_code(Request $request)
-  { 
-    //today
-    $today_date = Carbon::now()->format('Y-m-d'); 
-    //shop_campaign
-    $shop_campaign = ShopCampaign::where('type', 'discount_code')->where('is_active',1)->where('start_date', '<=', $today_date)->where('end_date', '>=', $today_date)->where('discount_code', $request->discount_code)->first();
-    if ($shop_campaign) {
-      if ($shop_campaign->condition == 'first-purchase') {
-        //is user first purchase or not
-        $shop_order = ShopOrder::where('user_id',$request->user)->where('pay_status','paid')->first();
-        if ($shop_order) {
-          return response()->json([
-            'message' => 'you are not first purchase',
-          ],403);
-        } else {
-          return new $this->resource($shop_campaign);
-        }
-      } else {
-        return new $this->resource($shop_campaign);
-      }
-    } else {
-      return response()->json([
-        'message' => 'no shop_campaign',
-      ], 200);
+  {
+    if (!$request->has('discount_code')) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('discount_code');
     }
-    
+    $user          = Auth::user();
+    $shop_campaign = ShopHelper::getAvailableShopCampaign('discount_code', $user->id, null, $request->discount_code);
+
+    if (!$shop_campaign) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_campaign');
+    }
+    return new $this->resource($shop_campaign);
   }
 
   /**

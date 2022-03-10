@@ -22,6 +22,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * order_type 管別 -> 搭配商品、訂單類別
  * ~ next-day 隔日配
  * ~ pro-order 預購
+ * shop_products 套用商品
  *
  * @authenticated
  */
@@ -37,6 +38,12 @@ class ShopProductCoverFrameController extends Controller
     'end_date',
     'is_active',
     'order_type',
+  ];
+  public $filter_fields = [
+    'order_type',
+  ];
+  public $has_many = [
+    'shop_products',
   ];
   public $uuid = false;
 
@@ -66,6 +73,7 @@ class ShopProductCoverFrameController extends Controller
    * @bodyParam end_date date Example:2022-05-10
    * @bodyParam is_active boolean Example:1
    * @bodyParam order_type string Example:next-day
+   * @bodyParam shop_products ids Example:1,2,3
    */
   public function store(Request $request, $id = null)
   {
@@ -92,6 +100,7 @@ class ShopProductCoverFrameController extends Controller
    * @bodyParam end_date date Example:2022-05-10
    * @bodyParam is_active boolean Example:1
    * @bodyParam order_type string Example:next-day
+   * @bodyParam shop_products ids Example:1,2,3
    */
   public function update(Request $request, $id)
   {

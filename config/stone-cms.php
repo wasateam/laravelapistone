@@ -14,13 +14,14 @@ return [
     'service'    => 'gmail', # gmail, surenotify,smtp
     'api_key'    => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
-    'test_mail'  => env('MAIL_API_DOMAIN', 'wasalearn@gmail.com'),
+    'test_mail'  => env('MAIL_TEST_MAIL', 'wasalearn@gmail.com'),
   ],
   'app_url'            => env('APP_URL'),
   'web_url'            => env('WEB_URL'),
   'web_api_url'        => env('WEB_API_URL'),
   # Auth
   'auth'               => [
+    'passwordpatch'  => true,
     'model_name'     => 'admin',
     'model'          => '\Wasateam\Laravelapistone\Models\Admin',
     'resource'       => '\Wasateam\Laravelapistone\Resources\Admin',
@@ -80,7 +81,9 @@ return [
     'notifiable_type_user' => 'Wasateam\Laravelapistone\Models\Admin',
   ],
   'service_store'      => false,
-  'appointment'        => true,
+  'appointment'        => [
+    'export' => true,
+  ],
   'service_plan'       => false,
   'pin_card'           => false,
   'calendar_highlight' => false,
@@ -131,8 +134,6 @@ return [
   ],
   //banner
   'news_banner'        => true,
-  //banner 群組
-  'news_banner_group'  => true,
   'news'               => true,
   //頁面設定
   'page_setting'       => true,

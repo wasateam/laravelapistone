@@ -32,6 +32,9 @@ class AreaController extends Controller
     'updated_at',
     'created_at',
   ];
+  public $search_fields = [
+    'name',
+  ];
   public $order_by     = 'sequence';
   public $order_way    = 'asc';
   public $country_code = true;

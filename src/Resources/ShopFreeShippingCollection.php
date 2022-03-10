@@ -21,6 +21,7 @@ class ShopFreeShippingCollection extends JsonResource
       "start_date"    => $this->start_date,
       "end_date"      => $this->end_date,
       "is_no_limited" => $this->is_no_limited,
+      "order_type"    => $this->order_type,
     ];
   }
 }

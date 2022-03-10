@@ -15,7 +15,6 @@ use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\EmailHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
-use Wasateam\Laravelapistone\Mail\PasswordResetRequest;
 use Wasateam\Laravelapistone\Models\Admin;
 
 /**
@@ -146,14 +145,10 @@ class AuthController extends Controller
     }
     $user = $snap->first();
     if (!$user) {
-      return response()->json([
-        'message' => 'find no email.',
-      ], 401);
+      throw new \Wasateam\Laravelapistone\Exceptions\AuthException();
     }
     if (!Hash::check($request->password, $user->password)) {
-      return response()->json([
-        'message' => 'password not correct.',
-      ], 401);
+      throw new \Wasateam\Laravelapistone\Exceptions\AuthException();
     }
     $tokenResult = $user->createToken('Personal Access Token', AuthHelper::getUserScopes($user));
     $token       = $tokenResult->token;
@@ -291,6 +286,9 @@ class AuthController extends Controller
     if ($request->has('carrier_certificate')) {
       $user->carrier_certificate = $request->carrier_certificate;
     }
+    if (config('stone.user.update_before_action')) {
+      config('stone.user.update_before_action')::update_before_action($user);
+    }
     $user->save();
     return response()->json([
       'user' => new $resource($user),
@@ -426,14 +424,15 @@ class AuthController extends Controller
     return response()->json([
       'message' => 'password reset.',
       'email'   => $user->email,
-      'token'   => $tokenResult->accessToken
+      'token'   => $tokenResult->accessToken,
     ], 200);
   }
 
   /**
    * Email Verify
    *
-   * @bodyParam email No-example
+   * @queryParam expires int required Unix time format Example: 1645007253
+   * @queryParam signature int required Signature from verifying mail Example: 8e30b1e398646a1c153b620cfd4d31e7e4fdd813201a4eeb71f34c59069add4c
    *
    */
   public function email_verify($user_id)

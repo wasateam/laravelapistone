@@ -36,6 +36,7 @@ use Wasateam\Laravelapistone\Controllers\PocketImageController;
 use Wasateam\Laravelapistone\Controllers\PrivacyController;
 use Wasateam\Laravelapistone\Controllers\ServicePlanController;
 use Wasateam\Laravelapistone\Controllers\ServicePlanItemController;
+use Wasateam\Laravelapistone\Controllers\ServicePlanUsingRecordController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreCloseController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreController;
 use Wasateam\Laravelapistone\Controllers\ServiceStoreNotiController;
@@ -235,78 +236,66 @@ class RoutesHelper
   }
 
   # Auth 相關 (CMS, Webapi皆可用)
-  public static function auth_routes($routes = [
-    "signin",
-    "signup",
-    "signout",
-    "userget",
-    "userpatch",
-    "passwordpatch",
-    "avatarpatch",
-    "forgetpassword",
-    "email_verify",
-  ]) {
-    $model_name = config('stone.auth.model_name');
-    $auth_scope = config('stone.auth.auth_scope');
-    Route::group([
-      'prefix' => 'auth',
-    ], function () use ($routes, $model_name, $auth_scope) {
-      if (in_array('signin', $routes)) {
-        Route::post('/signin', [AuthController::class, 'signin']);
-      }
-      if (in_array('signup', $routes)) {
-        Route::post('/signup', [AuthController::class, 'signup']);
-      }
-      if (in_array('email_verify', $routes)) {
-        Route::post('/email/verify/resend', [AuthController::class, 'email_verify_resend']);
-        Route::group([
-          "middleware" => ["signed"],
-        ], function () {
-          Route::post('/email/verify/{user_id}', [AuthController::class, 'email_verify'])->name('email_verify');
-        });
-      }
+  public static function auth_routes()
+  {
 
-      $auth_middlewares = ["auth:{$model_name}", "scopes:{$auth_scope}"];
-      if (config('stone.auth.verify')) {
-        if (config('stone.auth.verify.email')) {
-          $auth_middlewares[] = 'verified';
-        }
-      }
-
+    if (config('stone.auth')) {
+      $model_name = config('stone.auth.model_name');
+      $auth_scope = config('stone.auth.auth_scope');
       Route::group([
-        "middleware" => ["auth:{$model_name}", "scopes:{$auth_scope}", "verified"],
-        // "middleware" => $auth_middlewares,
-      ], function () use ($routes) {
-        if (in_array('signout', $routes)) {
-          Route::post('/signout', [AuthController::class, 'signout']);
+        'prefix' => 'auth',
+      ], function () use ($model_name, $auth_scope) {
+        Route::post('/signin', [AuthController::class, 'signin'])->middleware('throttle:5,3');;
+        if (config('stone.auth.signup')) {
+          Route::post('/signup', [AuthController::class, 'signup']);
         }
-        if (in_array('userget', $routes)) {
-          Route::get('/user', [AuthController::class, 'user']);
-        }
-        if (in_array('userpatch', $routes)) {
-          Route::patch('/user', [AuthController::class, 'update']);
-        }
-        if (in_array('passwordpatch', $routes)) {
-          Route::patch('/user/password', [AuthController::class, 'password_update']);
-        }
-        if (in_array('avatarpatch', $routes)) {
-          if (env('SIGNED_URL_MODE') == 'gcs') {
-            Route::get("/avatar/upload_url/{filename}", [AuthController::class, 'get_avatar_upload_url']);
-          } else {
-            Route::put("/avatar/{filename}", [AuthController::class, 'avatar_upload']);
+        if (config('stone.auth.verify')) {
+          if (config('stone.auth.verify.email')) {
+            Route::post('/email/verify/resend', [AuthController::class, 'email_verify_resend']);
+            Route::group([
+              "middleware" => ["signed"],
+            ], function () {
+              Route::post('/email/verify/{user_id}', [AuthController::class, 'email_verify'])->name('email_verify');
+            });
           }
         }
-      });
 
-      if (in_array('forgetpassword', $routes)) {
-        Route::post("/forgetpassword/request", [AuthController::class, 'forget_password_request']);
+        // $auth_middlewares = ["auth:{$model_name}", "scopes:{$auth_scope}"];
+        // if (config('stone.auth.verify')) {
+        //   if (config('stone.auth.verify.email')) {
+        //     $auth_middlewares[] = 'verified';
+        //   }
+        // }
+
         Route::group([
-          "middleware" => ["signed"],
+          "middleware" => ["auth:{$model_name}", "scopes:{$auth_scope}", "verified"],
+          // "middleware" => $auth_middlewares,
         ], function () {
-          Route::post('/forgetpassword/patch/{user_id}', [AuthController::class, 'forget_password_patch'])->name('forget_password_patch');
+          Route::post('/signout', [AuthController::class, 'signout']);
+          Route::get('/user', [AuthController::class, 'user']);
+          Route::patch('/user', [AuthController::class, 'update']);
+          if (config('stone.auth.passwordpatch')) {
+            Route::patch('/user/password', [AuthController::class, 'password_update']);
+          }
+          // if (in_array('avatarpatch', $routes)) {
+          //   if (env('SIGNED_URL_MODE') == 'gcs') {
+          //     Route::get("/avatar/upload_url/{filename}", [AuthController::class, 'get_avatar_upload_url']);
+          //   } else {
+          //     Route::put("/avatar/{filename}", [AuthController::class, 'avatar_upload']);
+          //   }
+          // }
         });
-      }
-    });
+
+        if (config('stone.auth.forgetpassword')) {
+          Route::post("/forgetpassword/request", [AuthController::class, 'forget_password_request']);
+          Route::group([
+            "middleware" => ["signed"],
+          ], function () {
+            Route::post('/forgetpassword/patch/{user_id}', [AuthController::class, 'forget_password_patch'])->name('forget_password_patch');
+          });
+        }
+      });
+    }
   }
 
   # CMS 系統管理員
@@ -517,6 +506,10 @@ class RoutesHelper
       Route::resource('appointment', AppointmentController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      # Export
+      if (config('stone.appointment.export')) {
+        Route::get('appointment/export/excel/signedurl', [AppointmentController::class, 'export_excel_signedurl']);
+      }
     }
 
     # ServicePlan
@@ -640,7 +633,7 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       # Shop Cart Product
-      Route::resource('shop_cart', ShopCartProductController::class)->only([
+      Route::resource('shop_cart_product', ShopCartProductController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       # Shop Return Record
@@ -738,10 +731,6 @@ class RoutesHelper
       Route::resource('news_banner', NewsBannerController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
-    }
-
-    # News Banner Group
-    if (config('stone.news_banner_group')) {
       Route::resource('news_banner_group', NewsBannerGroupController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
@@ -798,6 +787,16 @@ class RoutesHelper
           Route::get('user/export/excel', [UserController::class, 'export_excel'])->name('user_export_excel');
         }
 
+      });
+    }
+
+    if (config('stone.appointment')) {
+      Route::group([
+        "middleware" => ["signed"],
+      ], function () {
+        if (config('stone.appointment.export')) {
+          Route::get('appointment/export/excel', [AppointmentController::class, 'export_excel'])->name('appointment_export_excel');
+        }
       });
     }
 
@@ -861,7 +860,17 @@ class RoutesHelper
 
     # UserServicePlan
     if (config('stone.service_plan')) {
-      Route::get('user_service_plan/my_current_plan', [UserServicePlanController::class, 'my_current_plan']);
+      Route::get('user_service_plan/current', [UserServicePlanController::class, 'get_current']);
+      Route::resource('user_service_plan', UserServicePlanController::class)->only([
+        'index', 'show',
+      ])->shallow();
+      if (config('stone.service_plan.using_record')) {
+        if (config('stone.service_plan.using_record.from') == 'acumatica') {
+          Route::resource('service_plan_using_record', ServicePlanUsingRecordController::class)->only([
+            'index',
+          ])->shallow();
+        }
+      }
     }
 
     # Shop
@@ -879,17 +888,17 @@ class RoutesHelper
 
     # UserServicePlan
     if (config('stone.service_plan')) {
-      Route::resource('user_service_plan', UserServicePlanController::class)->only([
-        'index',
-        'show',
-      ])->shallow();
-      Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only([
-        'index',
-        'show',
-      ])->shallow();
-      Route::resource('user_service_plan_record', UserServicePlanRecordController::class)->only([
-        'index', 'show',
-      ])->shallow();
+      // Route::resource('user_service_plan', UserServicePlanController::class)->only([
+      //   'index',
+      //   'show',
+      // ])->shallow();
+      // Route::resource('user_service_plan_item', UserServicePlanItemController::class)->only([
+      //   'index',
+      //   'show',
+      // ])->shallow();
+      // Route::resource('user_service_plan_record', UserServicePlanRecordController::class)->only([
+      //   'index', 'show',
+      // ])->shallow();
     }
 
     # User
@@ -1084,8 +1093,12 @@ class RoutesHelper
       # Shop Cart
       Route::get('/auth/shop_cart', [ShopCartController::class, 'auth_cart']);
       # Shop Cart Product
-      Route::get('/auth/shop_cart_product/index', [ShopCartProductController::class, 'auth_cart_product_index']);
-      Route::post('/auth/shop_cart_product/store', [ShopCartProductController::class, 'product_store_auth_cart']);
+      Route::resource('shop_cart_product', ShopCartProductController::class)->only([
+        'index',
+        'store',
+      ])->shallow();
+      // Route::get('/auth/shop_cart_product/index', [ShopCartProductController::class, 'auth_cart_product_index']);
+      // Route::post('/auth/shop_cart_product/store', [ShopCartProductController::class, 'product_store_auth_cart']);
       Route::post('/auth/shop_cart_product/{shop_cart_product_id}/update', [ShopCartProductController::class, 'update_auth_cart_product']);
       Route::post('/shop_cart_product/{shop_cart_product_id}', [ShopCartProductController::class, 'disabled']);
       # Shop Return Record
@@ -1187,10 +1200,6 @@ class RoutesHelper
       Route::resource('news_banner', NewsBannerController::class)->only([
         'index', 'show',
       ])->shallow();
-    }
-
-    # News Banner Group
-    if (config('stone.news_banner_group')) {
       Route::resource('news_banner_group', NewsBannerGroupController::class)->only([
         'index', 'show',
       ])->shallow();
@@ -1198,9 +1207,7 @@ class RoutesHelper
 
     # Page Setting
     if (config('stone.page_setting')) {
-      Route::resource('page_setting', PageSettingController::class)->only([
-        'index', 'show',
-      ])->shallow();
+      Route::get('page_setting/page', [PageSettingController::class, 'show']);
     }
 
     # Page Setting
@@ -1214,9 +1221,10 @@ class RoutesHelper
     if (config('stone.the_point')) {
       # ThePointRecord
       Route::resource('the_point_record', ThePointRecordController::class)->only([
+        'index',
         'show',
       ])->shallow();
-      Route::get('the_point_record/auth/index', [ThePointRecordController::class, 'auth_index']);
+      // Route::get('the_point_record/auth/index', [ThePointRecordController::class, 'auth_index']);
     }
   }
 

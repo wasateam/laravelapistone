@@ -17,6 +17,8 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * orderer_tel 訂購人電話
  * orderer_email 訂購人信箱
  * shop_cart_products 訂單商品
+ * PayToken 來自於綠界站內附的 PayToken
+ * MerchantTradeNo Get Inpay Merchant Init 產生的 MerchantTradeNo
  *
  * @authenticated
  */
@@ -46,8 +48,9 @@ class EcpayController extends Controller
 
     $shop_order = ShopHelper::setShopOrderNo($shop_order);
 
-    $trade_date = Carbon::now()->setTimezone('Asia/Taipei')->format('Y/m/d H:i:s');
-    $order_price         = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
+    $trade_date  = Carbon::now()->setTimezone('Asia/Taipei')->format('Y/m/d H:i:s');
+    $order_price = $shop_order->order_price;
+    // $order_price         = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
     $order_product_names = ShopHelper::getOrderProductNames($shop_order->shop_order_shop_products);
 
     $user    = Auth::user();
@@ -63,6 +66,9 @@ class EcpayController extends Controller
 
   /**
    * Inpay Create Payment 站內付付款動作
+   * 
+   * @bodyParam PayToken string No-example
+   * @bodyParam MerchantTradeNo string No-example
    *
    */
   public function inpay_create_payment(Request $request)
@@ -79,13 +85,14 @@ class EcpayController extends Controller
     }
     $payment_res = EcpayHelper::createPayment($request->PayToken, $request->MerchantTradeNo);
     $shop_order  = EcpayHelper::updateShopOrderFromEcpayPaymentRes($payment_res);
+    ShopHelper::createBonusPointFromShopOrder($shop_order);
     if ($shop_order->pay_status == 'paid' && $shop_order->status == 'established') {
       ShopHelper::createInvoice($shop_order);
     }
   }
 
   /**
-   *  Callbacl Ecpay inpay order 站內付訂單回存狀態
+   *  (忽略) Callbacl Ecpay inpay order 站內付訂單回存狀態，僅供給綠界使用
    *
    */
   public function callback_ecpay_inpay_order(Request $request)
@@ -95,6 +102,7 @@ class EcpayController extends Controller
       return '1|OK';
     }
     $shop_order = EcpayHelper::updateShopOrderFromEcpayOrderCallbackRes($request);
+    ShopHelper::createBonusPointFromShopOrder($shop_order);
     if ($shop_order->pay_status == 'paid' && $shop_order->status == 'established') {
       ShopHelper::createInvoice($shop_order);
     }

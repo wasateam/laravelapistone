@@ -13,23 +13,27 @@ return [
     'service'    => env('MAIL_MAILER'), // gmail, surenotify , smtp
     'api_key'    => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
-    'test_mail'  => env('MAIL_API_DOMAIN', 'wasalearn@gmail.com'),
+    'test_mail'  => env('MAIL_TEST_MAIL', 'wasalearn@gmail.com'),
   ],
   'app_url'             => env('APP_URL'),
   'web_url'             => env('WEB_URL'),
   // Auth
   'auth'                => [
-    'model_name'     => 'user',
-    'model'          => '\Wasateam\Laravelapistone\Models\User',
-    'resource'       => '\Wasateam\Laravelapistone\Resources\User',
-    'auth_scope'     => 'user',
-    'default_scopes' => [
+    'signup'          => true,
+    'passwordpatch'   => true,
+    'forgetpassword'  => true,
+    'model_name'      => 'user',
+    'model'           => '\Wasateam\Laravelapistone\Models\User',
+    'resource'        => '\Wasateam\Laravelapistone\Resources\User',
+    'auth_scope'      => 'user',
+    'default_scopes'  => [
       'user',
     ],
-    'active_check'   => true,
-    'verify'         => [
+    'active_check'    => true,
+    'verify'          => [
       'email' => true,
     ],
+    'forget_password' => true,
     // 'signup_complete_action' => '\App\Helpers\TestHelper',
   ],
   # Modules
@@ -68,7 +72,11 @@ return [
       'before_houres' => 1,
     ],
   ],
-  'service_plan'        => true,
+  'service_plan'        => [
+    'using_record' => [
+      'from' => 'acumatica',
+    ],
+  ],
   // 'pin_card'            => [
   //   'register_complete_action'=>
   // ],
@@ -79,6 +87,7 @@ return [
     'bonus_points'        => true,
     'reset_password_mail' => true,
     'carriers'            => true,
+    'subscribe'           => true,
     'address'             => [
       'delivery' => [
         'limit' => 3,
@@ -115,7 +124,7 @@ return [
       ],
     ],
     'shop_campaign'     => [
-      'items' => [ //活動類型分別設定
+      'types' => [ //活動類型分別設定
         'bonus_point_feedback' => [
           'feedback_after_invoice_days' => 3, //開立發票後多久發紅利
           'date_no_repeat'              => true, //日期是否重複
@@ -175,8 +184,6 @@ return [
   ],
   //banner
   'news_banner'         => true,
-  //banner 群組
-  'news_banner_group'   => true,
   'news'                => true,
   //頁面設定
   'page_setting'        => true,

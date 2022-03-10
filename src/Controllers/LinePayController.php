@@ -36,7 +36,7 @@ class LinePayController extends Controller
 
     $shop_order = ShopHelper::setShopOrderNo($shop_order);
 
-    $amount   = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
+    $amount = $shop_order->order_price;
     $packages = LinePayHelper::getLinePayPackageProductsFromShopOrder($shop_order);
 
     if ($request->has('mode') && $request->mode == 'test') {
@@ -77,7 +77,8 @@ class LinePayController extends Controller
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
     }
     $shop_order = LinePayHelper::payment_confirm($request->transaction_id, $shop_order);
-    
+    ShopHelper::createBonusPointFromShopOrder($shop_order);
+
     if ($shop_order->pay_status == 'paid' && $shop_order->status == 'established') {
       ShopHelper::createInvoice($shop_order);
     }

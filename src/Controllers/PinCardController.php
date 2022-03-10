@@ -13,7 +13,7 @@ use Wasateam\Laravelapistone\Exports\PinCardExport;
 use Wasateam\Laravelapistone\Helpers\LogHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StrHelper;
-use Wasateam\Laravelapistone\Helpers\UserServicePlanHelper;
+use Wasateam\Laravelapistone\Helpers\ServicePlanHelper;
 use Wasateam\Laravelapistone\Models\PinCard;
 use Wasateam\Laravelapistone\Models\ServicePlanItem;
 use Wasateam\Laravelapistone\Models\UserServicePlan;
@@ -166,7 +166,7 @@ class PinCardController extends Controller
     $user_service_plan->service_plan_id = $model->service_plan_id;
     $user_service_plan->pin_card_id     = $model->id;
     $user_service_plan->save();
-    UserServicePlanHelper::setExpiredAt($user_service_plan, $user);
+    ServicePlanHelper::setExpiredAt($user_service_plan, $user);
     $plan_content = $user_service_plan->service_plan ? $user_service_plan->service_plan->payload : null;
     if ($plan_content) {
       foreach ($plan_content as $item_uuid => $item_content) {

@@ -2,16 +2,15 @@
 
 namespace Wasateam\Laravelapistone\Helpers;
 
-use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
-use Wasateam\Laravelapistone\Jobs\BonusPointFeedbackJob;
 use Wasateam\Laravelapistone\Models\Area;
 use Wasateam\Laravelapistone\Models\AreaSection;
 use Wasateam\Laravelapistone\Models\ShopCampaign;
 use Wasateam\Laravelapistone\Models\ShopCampaignShopOrder;
+use Wasateam\Laravelapistone\Models\ShopCart;
 use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopFreeShipping;
 use Wasateam\Laravelapistone\Models\ShopOrder;
@@ -68,21 +67,76 @@ class ShopHelper
     }
   }
 
+  public static function createShopOrderShopProductsFromCartProducts($cart_products, $shop_order)
+  {
+
+    foreach ($cart_products as $cart_product) {
+      $_cart_product          = ShopCartProduct::where('id', $cart_product['id'])->where('status', 1)->first();
+      $new_shop_order_product = self::createShopOrderShopProduct($cart_product, $shop_order->id);
+      $_cart_product->status  = 0;
+      $_cart_product->save();
+      self::shopOrderProductChangeCount($new_shop_order_product->id);
+    }
+
+  }
+
   public static function shopOrderProductChangeCount($shop_order_product_id)
   {
     //成立訂單，更改商品庫存
     $shop_order_product = ShopOrderShopProduct::where('id', $shop_order_product_id)->first();
     $buy_count          = $shop_order_product->count;
     if (isset($shop_order_product->shop_order_shop_proudct_spec)) {
-      $shop_order_shop_proudct_spec              = $shop_order_product->shop_order_shop_proudct_spec;
-      $shop_order_shop_proudct_spec->stock_count = $shop_order_shop_proudct_spec->stock_count - $buy_count;
-      $shop_order_shop_proudct_spec->save();
+      $shop_product_spec              = $shop_order_product->shop_order_shop_proudct_spec->shop_product_spec;
+      $shop_product_spec->stock_count = $shop_product_spec->stock_count - $buy_count;
+      $shop_product_spec->save();
     } else {
       $shop_product = ShopProduct::where('id', $shop_order_product->shop_product_id)->first();
       //減少商品庫存
       $shop_product->stock_count = $shop_product->stock_count - $buy_count;
       $shop_product->save();
     }
+  }
+
+  public static function getOrderFreight($shop_order)
+  {
+    $freight    = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
+    $order_type = $shop_order->order_type;
+    if ($order_type) {
+      $order_types     = config('stone.shop.order_type') ? config('stone.shop.order_type') : [];
+      $curr_order_type = str_replace('-', '_', $order_type);
+      $has_type        = array_key_exists($curr_order_type, $order_types);
+      if ($has_type) {
+        $today_date               = Carbon::now()->format('Y-m-d');
+        $order_price              = $shop_order->products_price;
+        $shop_order_shop_products = $shop_order->shop_order_shop_products;
+        $type                     = $order_types[$curr_order_type];
+        if ($type['freight_default']) {
+          $freight = $type['freight_default'];
+        }
+        if ($type['has_shop_free_shipping']) {
+          $free_freight_price = ShopFreeShipping::where('end_date', '>=', $today_date)->where('start_date', '<=', $today_date)->first();
+          if ($free_freight_price) {
+            if ($order_price >= $free_freight_price->price) {
+              $freight = 0;
+            }
+          }
+        }
+        //type has freight_sepe
+        if (array_key_exists('freight_separate', $type) && $type['freight_separate']) {
+          $all_product_freight_arr = $shop_order_shop_products->map(function ($shop_order_shop_product) {
+            $freight = 0;
+            if (isset($shop_order_shop_product->shop_order_shop_product_spec)) {
+              $freight = $shop_order_shop_product->shop_order_shop_prdouct_spec->freight ? $shop_order_shop_product->shop_order_shop_prdouct_spec->freight : 0;
+            } else {
+              $freight = $shop_order_shop_product->freight ? $shop_order_shop_product->freight : 0;
+            }
+            return $freight * $shop_order_shop_product->count;
+          });
+          $freight = Self::sum_total($all_product_freight_arr);
+        }
+      }
+    }
+    return $freight;
   }
 
   //取得訂單金額、運費、商品總金額
@@ -108,18 +162,20 @@ class ShopHelper
     });
     $shop_product_price_total = Self::sum_total($shop_product_price_arr);
 
-    $dicount_shop_product_price_total = 0;
+    // $dicount_shop_product_price_total = 0;
     // discount_code
     // create discount_code shop_camapign
+
+    // @Q@ deifferent day change will cause error
     if ($request && $request->has('discount_code') && $request->discount_code) {
-      $today_dicount_decode_campaign = Self::getTodayDiscountCodeCampaign($request->discount_code);
+      $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($request->discount_code);
       if ($today_dicount_decode_campaign) {
-        Self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
+        self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
         if ($shop_product_price_total >= $today_dicount_decode_campaign->full_amount) {
           if ($today_dicount_decode_campaign->discount_percent) {
-            $dicount_shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
+            $shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
           } else if ($today_dicount_decode_campaign->discount_amount) {
-            $dicount_shop_product_price_total = $shop_product_price_total - $today_dicount_decode_campaign->discount_amount;
+            $shop_product_price_total = $shop_product_price_total - $today_dicount_decode_campaign->discount_amount;
           }
         }
       }
@@ -127,7 +183,7 @@ class ShopHelper
     //紅利點數
     //create bonus_points record
     $bonus_points = $shop_order->bonus_points_deduct ? $shop_order->bonus_points_deduct : 0;
-    Self::createThePointRecord($shop_order, null, $bonus_points, 'deduct');
+    // self::createThePointRecord($shop_order, null, $bonus_points, 'deduct');
 
     //運費 default = 100
     $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
@@ -167,7 +223,7 @@ class ShopHelper
     }
 
     //訂單金額 產品總和+運費
-    $order_price = $dicount_shop_product_price_total + $freight - $bonus_points;
+    $order_price = $shop_product_price_total + $freight - $bonus_points;
 
     return [
       "products_price" => $shop_product_price_total,
@@ -183,7 +239,7 @@ class ShopHelper
     $shop_order = ShopOrder::where('id', $shop_order_id)->first();
     //取得訂單類型
     $_order_type                = $order_type ? $order_type : $shop_order->order_type;
-    $price_array                = Self::calculateShopOrderPrice($shop_order_id, $_order_type, $request);
+    $price_array                = self::calculateShopOrderPrice($shop_order_id, $_order_type, $request);
     $shop_order->products_price = $price_array['products_price'];
     $shop_order->freight        = $price_array['freight'];
     $shop_order->order_price    = $price_array['order_price'];
@@ -233,6 +289,66 @@ class ShopHelper
     $time = Carbon::now()->timestamp;
     $str  = Str::random(8);
     return "{$time}{$str}";
+  }
+
+  public static function updateShopOrderPrice($shop_order, $discount_code)
+  {
+    $shop_order->products_price  = self::getOrderProductsAmount($shop_order);
+    $shop_order->freight         = self::getOrderFreight($shop_order);
+    $shop_order->campaign_deduct = self::setCampaignDeduct($shop_order, $discount_code);
+    $shop_order->order_price     = self::getOrderAmountFromShopOrder($shop_order);
+    $shop_order->save();
+  }
+
+  public static function setCampaignDeduct($shop_order, $discount_code)
+  {
+    $compaign_deduct = 0;
+    if ($discount_code) {
+      $today_dicount_decode_campaign = self::getAvailableShopCampaign('discount_code', $shop_order->user_id, $shop_order->created_at, $discount_code);
+      if ($today_dicount_decode_campaign) {
+        $products_price = $shop_order->products_price;
+        if ($products_price >= $today_dicount_decode_campaign->full_amount) {
+          self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
+          if ($today_dicount_decode_campaign->discount_percent) {
+            $compaign_deduct += $products_price - round($products_price * $today_dicount_decode_campaign->discount_percent / 10);
+          } else if ($today_dicount_decode_campaign->discount_amount) {
+            $compaign_deduct += $today_dicount_decode_campaign->discount_amount;
+          }
+        }
+      }
+    }
+    return $compaign_deduct;
+  }
+
+  public static function getOrderProductsAmount($shop_order)
+  {
+    $order_amount = 0;
+    foreach ($shop_order->shop_order_shop_products as $shop_cart_product) {
+      $count = $shop_cart_product['count'];
+      $price = 0;
+      if (isset($shop_cart_product->shop_product_spec)) {
+        $price = $shop_cart_product->shop_product_spec['discount_price'] ? $shop_cart_product->shop_product_spec['discount_price'] : $shop_cart_product->shop_product_spec['price'];
+      } else {
+        $price = $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
+      }
+      $order_amount += $count * $price;
+    }
+    return $order_amount;
+  }
+
+  public static function getOrderAmountFromShopOrder($shop_order)
+  {
+    $order_amount = $shop_order->products_price;
+    if ($shop_order->freight) {
+      $order_amount += $shop_order->freight;
+    }
+    if ($shop_order->bonus_points_deduct) {
+      $order_amount -= $shop_order->bonus_points_deduct;
+    }
+    if ($shop_order->campaign_deduct) {
+      $order_amount -= $shop_order->campaign_deduct;
+    }
+    return $order_amount;
   }
 
   public static function getOrderAmount($shop_cart_products)
@@ -285,7 +401,6 @@ class ShopHelper
       return null;
     }
     $model = ShopCartProduct::find($shop_cart_products[0]['id']);
-    error_log($model->shop_product->order_type);
     return $model->shop_product->order_type;
   }
 
@@ -481,12 +596,66 @@ class ShopHelper
     return $snap;
   }
 
-  public static function createBonusPointFeedbackJob($shop_order_id)
+  public static function createBonusPointFromShopOrder($shop_order)
   {
-    $stone_feedback_after_invoice_days = config('stone.shop_campaign.items.bonus_point_feedback.feedback_after_invoice_days');
-    $feedback_after_invoice_days       = $stone_feedback_after_invoice_days ? $stone_feedback_after_invoice_days : 3;
-    BonusPointFeedbackJob::dispatch($shop_order_id);
-      // ->delay(Carbon::now()->addDays($feedback_after_invoice_days));
+
+    $shop_campaign = self::getAvailableShopCampaign('bonus_point_feedback', $shop_order->user_id, $shop_order->created_at);
+
+    if (!$shop_campaign) {
+      return;
+    }
+
+    if ($shop_campaign->feedback_rate) {
+      $bonus_point_feedback = intval($shop_order->order_price) * floatval($shop_campaign->feedback_rate) / 100;
+      $user                 = $shop_order->user;
+      $user->bonus_points   = $user->bonus_points + $bonus_point_feedback;
+      $user->save();
+      self::createThePointRecord($shop_order, $shop_campaign->id, $bonus_point_feedback, 'get');
+    }
+  }
+
+  public static function getAvailableShopCampaign($type, $user_id, $date = null, $discount_code = null)
+  {
+    $snap = ShopCampaign::where('type', $type)
+      ->where('is_active', 1)
+      ->where(function ($query) use ($date) {
+        $query->where(function ($query) use ($date) {
+          if (!$date) {
+            $date = Carbon::now();
+          }
+          $today_date = Carbon::parse($date)->format('Y-m-d');
+          $query->where('start_date', '<=', $today_date);
+          $query->where('end_date', '>=', $today_date);
+        });
+        $query->orWhere(function ($query) {
+          $query->whereNull('start_date');
+          $query->whereNull('end_date');
+        });
+      });
+    if ($type == 'discount_code' && $discount_code) {
+      $snap->where('discount_code', $discount_code);
+    }
+
+    $shop_campaign = $snap->first();
+    if ($shop_campaign) {
+      if ($shop_campaign->limit) {
+        $count = $shop_campaign->shop_campaign_shop_products->count;
+        if ($count >= $shop_campaign->limit) {
+          return false;
+        }
+      }
+      if ($shop_campaign->condition == 'first-purchase') {
+        $shop_order = ShopOrder::where('user_id', $user_id)
+          ->where('pay_status', 'paid')
+          ->first();
+        if ($shop_order) {
+          return null;
+        }
+      }
+      return $shop_campaign;
+    } else {
+      return null;
+    }
   }
 
   public static function samePageCoverDuration($start_date, $end_date, $id = null, $page_settings = null)
@@ -534,13 +703,12 @@ class ShopHelper
     $today_discount_code_campaign = ShopCampaign::whereDate('start_date', '<=', $today_date)->whereDate('end_date', '>=', $today_date)->where('type', 'discount_code')->where('is_active', 1)->where('discount_code', $discount_code)->first();
 
     if (!$today_discount_code_campaign) {
-      return false;
+      return null;
     }
     // shop_campaign limit is enought or not
     if ($today_discount_code_campaign->limit) {
-      $shop_campaign_shop_product_count = $today_discount_code_campaign->shop_campaign_shop_products->count;
-      if ($shop_campaign_shop_product_count >= $today_discount_code_campaign->limit) {
-        return false;
+      if ($today_discount_code_campaign->shop_campaign_shop_orders->count >= $today_discount_code_campaign->limit) {
+        return null;
       }
     }
 
@@ -551,7 +719,7 @@ class ShopHelper
   {
     //建立訂單促銷活動紀錄
     $shop_campaign_shop_order                   = new ShopCampaignShopOrder;
-    $shop_campaign_shop_order->shop_camapign_id = $shop_campaign->id;
+    $shop_campaign_shop_order->shop_campaign_id = $shop_campaign->id;
     $shop_campaign_shop_order->shop_order_id    = $shop_order->id;
     $shop_campaign_shop_order->user_id          = $shop_order->user->id;
     $shop_campaign_shop_order->type             = $shop_campaign->type;
@@ -581,7 +749,7 @@ class ShopHelper
         $new_shop_product_spec_setting = ShopProductSpecSetting::find($shop_product_spec_setting['id']);
       }
       $new_shop_product_spec_setting->name            = $shop_product_spec_setting['name'];
-      $new_shop_product_spec_setting->sq              = $shop_product_spec_setting['sq'];
+      $new_shop_product_spec_setting->sq              = isset($shop_product_spec_setting['sq']) ? $shop_product_spec_setting['sq'] : null;
       $new_shop_product_spec_setting->shop_product_id = $shop_product_id;
       $new_shop_product_spec_setting->save();
 
@@ -595,7 +763,7 @@ class ShopHelper
           $new_shop_product_spec_setting_item = ShopProductSpecSettingItem::find($shop_product_spec_setting_item['id']);
         }
         $new_shop_product_spec_setting_item->name                         = $shop_product_spec_setting_item['name'];
-        $new_shop_product_spec_setting_item->sq                           = $shop_product_spec_setting_item['sq'];
+        $new_shop_product_spec_setting_item->sq                           = isset($shop_product_spec_setting_item['sq']) ? $shop_product_spec_setting_item['sq'] : null;
         $new_shop_product_spec_setting_item->shop_product_id              = $shop_product_id;
         $new_shop_product_spec_setting_item->shop_product_spec_setting_id = $new_shop_product_spec_setting->id;
         $new_shop_product_spec_setting_item->save();
@@ -681,33 +849,45 @@ class ShopHelper
     }
   }
 
+  public static function get_user_shop_cart($user)
+  {
+    $shop_cart = ShopCart::where('user_id', $user->id)->first();
+    if (!$shop_cart) {
+      $shop_cart          = new ShopCart;
+      $shop_cart->user_id = $user->id;
+      $shop_cart->save();
+    }
+    return $shop_cart;
+  }
+
   public static function createShopOrderShopProduct($shop_cart_product, $shop_order_id)
   {
     # 建立訂單時建立訂單商品(用購物車商品判斷)
-    $new_order_product                       = new ShopOrderShopProduct;
-    $shop_product                            = $shop_cart_product->shop_product;
-    $new_order_product->name                 = $shop_product->name;
-    $new_order_product->subtitle             = $shop_product->subtitle;
-    $new_order_product->count                = $shop_cart_product->count;
-    $new_order_product->original_count       = $shop_cart_product->count;
-    $new_order_product->price                = $shop_product->price;
-    $new_order_product->discount_price       = $shop_product->discount_price;
-    $new_order_product->spec                 = $shop_product->spec;
-    $new_order_product->weight_capacity      = $shop_product->weight_capacity;
-    $new_order_product->cover_image          = $shop_product->cover_image;
-    $new_order_product->order_type           = $shop_product->order_type;
-    $new_order_product->freight              = $shop_product->freight;
-    $new_order_product->shop_product_id      = $shop_product->id;
-    $new_order_product->cost                 = $shop_product->cost;
-    $new_order_product->shop_cart_product_id = $shop_cart_product['id'];
-    $new_order_product->shop_order_id        = $shop_order_id;
-    $new_order_product->save();
+    $shop_order_shop_product                       = new ShopOrderShopProduct;
+    $shop_product                                  = $shop_cart_product->shop_product;
+    $shop_order_shop_product->name                 = $shop_product->name;
+    $shop_order_shop_product->subtitle             = $shop_product->subtitle;
+    $shop_order_shop_product->count                = $shop_cart_product->count;
+    $shop_order_shop_product->original_count       = $shop_cart_product->count;
+    $shop_order_shop_product->price                = $shop_product->price;
+    $shop_order_shop_product->discount_price       = $shop_product->discount_price;
+    $shop_order_shop_product->spec                 = $shop_product->spec;
+    $shop_order_shop_product->weight_capacity      = $shop_product->weight_capacity;
+    $shop_order_shop_product->cover_image          = $shop_product->cover_image;
+    $shop_order_shop_product->order_type           = $shop_product->order_type;
+    $shop_order_shop_product->freight              = $shop_product->freight;
+    $shop_order_shop_product->shop_product_id      = $shop_product->id;
+    $shop_order_shop_product->cost                 = $shop_product->cost;
+    $shop_order_shop_product->shop_cart_product_id = $shop_cart_product['id'];
+    $shop_order_shop_product->shop_order_id        = $shop_order_id;
+    $shop_order_shop_product->save();
     if (isset($shop_cart_product->shop_product_spec)) {
-      # create shop_order_shop_prdouct_spec
-      $shop_product_spec = $shop_cart_product->shop_product_spec;
-      Self::createShopOrderShopProductSpec($shop_product_spec, $new_order_product->id);
+      self::createShopOrderShopProductSpec($shop_cart_product->shop_product_spec, $shop_order_shop_product->id);
+    } else {
+
     }
-    return $new_order_product;
+    $shop_order_shop_product->save();
+    return $shop_order_shop_product;
   }
 
   public static function createShopOrderShopProductSpec($shop_product_spec, $shop_order_shop_product_id)
@@ -791,13 +971,6 @@ class ShopHelper
     return $stock_count;
   }
 
-  public static function checkShopCartProductsExist($request)
-  {
-    if (!$request->has('shop_cart_products') || !is_array($request->shop_cart_products)) {
-      throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('shop_cart_products');
-    }
-  }
-
   public static function shopShipTimeLimitCheck($request)
   {
     if (config('stone.shop.ship_time')) {
@@ -813,7 +986,7 @@ class ShopHelper
     }
   }
 
-  public static function getShopCartOrderType($shop_cart_products = [])
+  public static function getOrderTypeFromShopCartProducts($shop_cart_products = [])
   {
     $shop_cart_product = $shop_cart_products[0];
     $cart_product      = ShopCartProduct::where('id', $shop_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
@@ -823,93 +996,37 @@ class ShopHelper
     return $cart_product->shop_product->order_type;
   }
 
-  public static function getMyCartProducts($request, $order_type)
+  // public static function getMyCartProducts($request, $order_type)
+  public static function filterCartProducts($shop_cart_products, $user, $order_type)
   {
-    $my_cart_products  = $request->shop_cart_products;
-    $_my_cart_products = [];
-    foreach ($my_cart_products as $my_cart_product) {
-      $cart_product = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
+    $_filtered_cart_products = [];
+    foreach ($shop_cart_products as $shop_cart_product) {
+      $cart_product = ShopCartProduct::where('id', $shop_cart_product['id'])->where('status', 1)->where('count', ">", 0)->first();
       if (!$cart_product) {
-        throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_cart_product', $my_cart_product['id']);
+        throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_cart_product', $shop_cart_product['id']);
       }
-      if ($cart_product->user_id != Auth::user()->id) {
+      if ($cart_product->user_id != $user->id) {
         throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_cart_product', $cart_product->id);
       }
-      self::checkProductStockEnough($cart_product);
       if ($order_type && $cart_product->shop_product->order_type != $order_type) {
         throw new \Wasateam\Laravelapistone\Exceptions\FieldNotMatchException('order_type', $order_type);
       }
-      $order_type          = $cart_product->shop_product->order_type;
-      $_my_cart_products[] = $cart_product;
+      self::checkProductStockEnough($cart_product);
+      $_filtered_cart_products[] = $cart_product;
     }
-    return $_my_cart_products;
+    return $_filtered_cart_products;
   }
 
-  public static function checkDiscountCode($request)
+  public static function checkDiscountCode($discount_code = null)
   {
-    if ($request->has('discount_code') && $request->discount_code) {
-      $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($request->discount_code);
+    if ($discount_code) {
+      $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($discount_code);
       if (!$today_dicount_decode_campaign) {
         throw new \Wasateam\Laravelapistone\Exceptions\InvalidException('discount_code');
       }
     }
   }
 
-  // public static function createShopInvoice($shop_order)
-  // {
-  //   // @Q@ 待調整完成
-  //   if (config('stone.invoice')) {
-  //     if (config('stone.invoice.service') == 'ecpay') {
-  //       try {
-  //         $invoice_type   = $shop_order->invoice_type;
-  //         $customer_email = $shop_order->orderer_email;
-  //         $customer_tel   = $shop_order->orderer_tel;
-  //         $customer_addr  = $shop_order->receive_address;
-  //         $order_amount   = ShopHelper::getOrderAmount($_my_cart_products);
-  //         $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
-  //         $customer_id    = Auth::user()->id;
-  //         $post_data      = [
-  //           'Items'         => $items,
-  //           'SalesAmount'   => $order_amount,
-  //           'TaxType'       => 1,
-  //           'CustomerEmail' => $customer_email,
-  //           'CustomerAddr'  => $customer_addr,
-  //           'CustomerPhone' => $customer_tel,
-  //           'CustomerID'    => $customer_id,
-  //         ];
-  //         if ($invoice_type == 'personal') {
-  //           $invoice_carrier_type      = $shop_order->invoice_carrier_type;
-  //           $invoice_carrier_number    = $shop_order->invoice_carrier_number;
-  //           $post_data['Print']        = 0;
-  //           $post_data['CustomerName'] = $shop_order->orderer;
-  //           if ($invoice_carrier_type == 'mobile') {
-  //             $post_data['CarrierType'] = 3;
-  //             $post_data['CarrierNum']  = $invoice_carrier_number;
-  //           } else if ($invoice_carrier_type == 'certificate') {
-  //             $post_data['CarrierType'] = 2;
-  //             $post_data['CarrierNum']  = $invoice_carrier_number;
-  //           } else if ($invoice_carrier_type == 'email') {
-  //             $post_data['CarrierType']   = 1;
-  //             $post_data['CarrierNum']    = '';
-  //             $post_data['CustomerEmail'] = $invoice_carrier_number;
-  //           }
-  //         } else if ($invoice_type == 'triple') {
-  //           $invoice_title                   = $shop_order->invoice_title;
-  //           $invoice_uniform_number          = $shop_order->invoice_uniform_number;
-  //           $post_data['CarrierType']        = '';
-  //           $post_data['Print']              = 1;
-  //           $post_data['CustomerName']       = $invoice_title;
-  //           $post_data['CustomerIdentifier'] = $invoice_uniform_number;
-  //         }
-  //         $post_data      = EcpayHelper::getInvoicePostData($post_data);
-  //         $invoice_number = EcpayHelper::createInvoice($post_data);
-  //         $invoice_status = 'done';
-  //       } catch (\Throwable $th) {
-  //         $invoice_status = 'fail';
-  //       }
-  //     }
-  //   }
-  // }
   public static function checkSettingItemsMatchSpecs($settings, $specs)
   {
     // check combination of all setting items count match specs count or not;
@@ -1002,91 +1119,106 @@ class ShopHelper
   {
     if (config('stone.invoice')) {
       if (config('stone.invoice.service') == 'ecpay') {
-        // try {
-        $invoice_type       = $shop_order->invoice_type;
-        $SalesAmount        = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
-        $Items              = EcpayHelper::getInvoiceItemsFromShopCartProducts($shop_order->shop_order_shop_products);
-        $CustomerID         = $shop_order->user_id;
-        $CustomerIdentifier = '';
-        $CustomerName       = '';
-        $CustomerAddr       = $shop_order->receive_address;
-        $CustomerPhone      = $shop_order->orderer_tel;
-        $CustomerEmail      = $shop_order->orderer_email;
-        $Print              = '0';
-        $Donation           = '0';
-        $CarrierType        = '';
-        $CarrierNum         = '';
-        $TaxType            = '1';
-        if ($invoice_type == 'personal') {
-          $invoice_carrier_type   = $shop_order->invoice_carrier_type;
-          $invoice_carrier_number = $shop_order->invoice_carrier_number;
-          $Print                  = '0';
-          $CustomerName           = $shop_order->orderer;
-          if ($invoice_carrier_type == 'mobile') {
-            $CarrierType = '3';
-            $CarrierNum  = $invoice_carrier_number;
-          } else if ($invoice_carrier_type == 'certificate') {
-            $CarrierType = '2';
-            $CarrierNum  = $invoice_carrier_number;
-          } else if ($invoice_carrier_type == 'email') {
-            $CarrierType   = '1';
-            $CarrierNum    = '';
-            $CustomerEmail = $invoice_carrier_number;
+        try {
+          $invoice_type       = $shop_order->invoice_type;
+          $SalesAmount        = $shop_order->order_price;
+          $Items              = EcpayHelper::getInvoiceItemsFromShopOrder($shop_order);
+          $CustomerID         = $shop_order->user_id;
+          $CustomerIdentifier = '';
+          $CustomerName       = '';
+          $CustomerAddr       = $shop_order->receive_address;
+          $CustomerPhone      = $shop_order->orderer_tel;
+          $CustomerEmail      = $shop_order->orderer_email;
+          $Print              = '0';
+          $Donation           = '0';
+          $CarrierType        = '';
+          $CarrierNum         = '';
+          $TaxType            = '1';
+          if ($invoice_type == 'personal') {
+            $invoice_carrier_type   = $shop_order->invoice_carrier_type;
+            $invoice_carrier_number = $shop_order->invoice_carrier_number;
+            $Print                  = '0';
+            $CustomerName           = $shop_order->orderer;
+            if ($invoice_carrier_type == 'mobile') {
+              $CarrierType = '3';
+              $CarrierNum  = $invoice_carrier_number;
+            } else if ($invoice_carrier_type == 'certificate') {
+              $CarrierType = '2';
+              $CarrierNum  = $invoice_carrier_number;
+            } else if ($invoice_carrier_type == 'email') {
+              $CarrierType   = '1';
+              $CarrierNum    = '';
+              $CustomerEmail = $invoice_carrier_number;
+            }
+          } else if ($invoice_type == 'triple') {
+            $invoice_title          = $shop_order->invoice_title;
+            $invoice_uniform_number = $shop_order->invoice_uniform_number;
+            $CarrierType            = '';
+            $Print                  = '1';
+            $CustomerName           = $invoice_title;
+            $CustomerIdentifier     = $invoice_uniform_number;
           }
-        } else if ($invoice_type == 'triple') {
-          $invoice_title          = $shop_order->invoice_title;
-          $invoice_uniform_number = $shop_order->invoice_uniform_number;
-          $CarrierType            = '';
-          $Print                  = '1';
-          $CustomerName           = $invoice_title;
-          $CustomerIdentifier     = $invoice_uniform_number;
+          if (config('stone.invoice.delay')) {
+            $DelayDay  = config('stone.invoice.delay');
+            $post_data = EcpayHelper::getDelayInvoicePostData(
+              $CustomerID,
+              $CustomerIdentifier,
+              $CustomerName,
+              $CustomerAddr,
+              $CustomerPhone,
+              $CustomerEmail,
+              $Print,
+              $Donation,
+              $CarrierType,
+              $CarrierNum,
+              $TaxType,
+              $SalesAmount,
+              $Items,
+              $DelayDay,
+            );
+            $invoice_res = EcpayHelper::createDelayInvoice($post_data);
+          } else {
+            $post_data = EcpayHelper::getInvoicePostData(
+              $CustomerID,
+              $CustomerIdentifier,
+              $CustomerName,
+              $CustomerAddr,
+              $CustomerPhone,
+              $CustomerEmail,
+              $Print,
+              $Donation,
+              $CarrierType,
+              $CarrierNum,
+              $TaxType,
+              $SalesAmount,
+              $Items
+            );
+            $invoice_res = EcpayHelper::createInvoice($post_data);
+          }
+          $shop_order->invoice_status = 'done';
+          $shop_order->invoice_number = $invoice_res->InvoiceNo;
+          $shop_order->save();
+          return response()->json($shop_order, 200);
+          //code...
+        } catch (\Throwable $th) {
+          $shop_order->invoice_status = 'fail';
+          $shop_order->save();
+          error_log($th);
+          throw $th;
         }
-        if (config('stone.invoice.delay')) {
-          error_log('delay');
-          $DelayDay  = config('stone.invoice.delay');
-          $post_data = EcpayHelper::getDelayInvoicePostData(
-            $CustomerID,
-            $CustomerIdentifier,
-            $CustomerName,
-            $CustomerAddr,
-            $CustomerPhone,
-            $CustomerEmail,
-            $Print,
-            $Donation,
-            $CarrierType,
-            $CarrierNum,
-            $TaxType,
-            $SalesAmount,
-            $Items,
-            $DelayDay,
-          );
-          $invoice_res = EcpayHelper::createDelayInvoice($post_data);
-        } else {
-          error_log('immediate');
-          $post_data = EcpayHelper::getInvoicePostData(
-            $CustomerID,
-            $CustomerIdentifier,
-            $CustomerName,
-            $CustomerAddr,
-            $CustomerPhone,
-            $CustomerEmail,
-            $Print,
-            $Donation,
-            $CarrierType,
-            $CarrierNum,
-            $TaxType,
-            $SalesAmount,
-            $Items
-          );
-          $invoice_res = EcpayHelper::createInvoice($post_data);
-        }
-        $shop_order->invoice_status = 'done';
-        $shop_order->invoice_number = $invoice_res->InvoiceNo;
-        self::createBonusPointFeedbackJob($shop_order->id);
-        $shop_order->save();
-        return response()->json($shop_order,200);
       }
     }
+  }
+
+  public static function deductBonusPointFromShopOrder($shop_order)
+  {
+    if (!$shop_order->bonus_points_deduct) {
+      return;
+    }
+    $user               = User::find($shop_order->user_id);
+    $user->bonus_points = $user->bonus_points - $shop_order->bonus_points_deduct;
+    $user->save();
+    self::createThePointRecord($shop_order, null, $shop_order->bonus_points_deduct, 'deduct');
   }
 
   public static function setShopOrderNo($shop_order)

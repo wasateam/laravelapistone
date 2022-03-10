@@ -22,7 +22,8 @@
   "minimum-stability": "dev",
   "require": {
     "doctrine/dbal": "^3.1",
-    "laravel/passport": "^10.1"
+    "laravel/passport": "^10.1",
+    "kreait/laravel-firebase": "2.4"
   },
   "require-dev": {
     "knuckleswtf/scribe": "^2.7"

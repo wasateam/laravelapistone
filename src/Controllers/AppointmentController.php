@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\TimeHelper;
 use Wasateam\Laravelapistone\Models\Appointment;
@@ -40,7 +41,7 @@ class AppointmentController extends Controller
     'remark',
   ];
   public $search_relationship_fields = [
-    'user' =>[
+    'user' => [
       'name',
     ],
   ];
@@ -48,7 +49,16 @@ class AppointmentController extends Controller
     'user',
     'service_store',
   ];
+  public $filter_belongs_to = [
+    'user',
+    'service_store',
+  ];
   public $order_fields = [
+    'updated_at',
+    'created_at',
+    'date',
+  ];
+  public $filter_time_fields = [
     'updated_at',
     'created_at',
     'date',
@@ -187,5 +197,49 @@ class AppointmentController extends Controller
         }
       });
     }
+  }
+
+  /**
+   * Export Excel Signedurl
+   *
+   */
+  public function export_excel_signedurl(Request $request)
+  {
+    return ModelHelper::ws_ExportExcelSignedurlHandler($this, $request);
+
+  }
+
+  /**
+   * Export Excel
+   *
+   */
+  public function export_excel(Request $request)
+  {
+    return ModelHelper::ws_ExportExcelHandler(
+      $this,
+      $request,
+      [
+        '預約日期',
+        '預約時段(起訖時間)',
+        '服務中心名稱',
+        '會員編號',
+        '會員名稱',
+        '電話',
+        'Email',
+        '備註',
+      ],
+      function ($model) {
+        return [
+          Carbon::parse($model->created_at)->format('Y-m-d'),
+          $model->start_time . " ~ " . $model->end_time,
+          $model->service_store ? $model->service_store->name : null,
+          $model->user ? $model->user->customer_id : null,
+          $model->user ? $model->user->name : null,
+          $model->user ? $model->user->email : null,
+          $model->user ? $model->user->tel : null,
+          $model->remark,
+        ];
+      }
+    );
   }
 }

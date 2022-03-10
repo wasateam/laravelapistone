@@ -7,11 +7,14 @@ use Auth;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use Storage;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
+use Wasateam\Laravelapistone\Helpers\UrlHelper;
 use Wasateam\Laravelapistone\Models\Locale;
 
 class ModelHelper
@@ -112,6 +115,7 @@ class ModelHelper
     }
 
     $model = self::setUUID($model, $setting);
+    error_log(json_encode($model));
 
     // Save
     $model->save();
@@ -264,15 +268,15 @@ class ModelHelper
 
     // Belongs To Value
     $model = ModelHelper::setBelongsTo($model, $setting, $request);
-
+    error_log(json_encode($model));
     // Save
-    try {
-      $model->save();
-    } catch (\Throwable $th) {
-      return response()->json([
-        'message' => 'data update fail.',
-      ], 400);
-    }
+    // try {
+    $model->save();
+    // } catch (\Throwable $th) {
+    //   return response()->json([
+    //     'message' => 'data update fail.',
+    //   ], 400);
+    // }
 
     // Belongs To Many Value
     $model = ModelHelper::setBelongsToMany($model, $setting, $request);
@@ -379,6 +383,38 @@ class ModelHelper
         "message" => 'delete error.',
       ], 400);
     }
+  }
+
+  public static function ws_ExportExcelSignedurlHandler($controller, $request)
+  {
+
+    // Setting
+    $setting = self::getSetting($controller);
+
+    $url = URL::temporarySignedRoute(
+      $setting->name . '_export_excel',
+      now()->addMinutes(30),
+      $request->all()
+    );
+    $url = UrlHelper::getFormatedUrl($url, true, true);
+    return $url;
+  }
+
+  public static function ws_ExportExcelHandler($controller, $request, $headings, $map)
+  {
+    // Setting
+    $setting = self::getSetting($controller);
+
+    // Snap
+    $snap = self::indexGetSnap($setting, $request, null, false);
+
+    # IDs Filter
+    $snap = self::idsFilterSnap($snap, $request);
+
+    // Collection
+    $collection = self::indexGetPaginate($setting, $snap, $request, true);
+
+    return Excel::download(new \Wasateam\Laravelapistone\Exports\ModelExport($collection, $headings, $map), $setting->name . '.xlsx');
   }
 
   public static function ws_OrderGetHandler($controller)
@@ -641,6 +677,7 @@ class ModelHelper
     $setting->country_code                    = isset($controller->country_code) ? $controller->country_code : null;
     $setting->resource_for_order              = isset($controller->resource_for_order) ? $controller->resource_for_order : $controller->resource;
     $setting->order_layers_setting            = isset($controller->order_layers_setting) ? $controller->order_layers_setting : [];
+    $setting->filter_time_fields              = isset($controller->filter_time_fields) ? $controller->filter_time_fields : [];
     return $setting;
   }
 
@@ -673,20 +710,31 @@ class ModelHelper
     return $rules;
   }
 
+  public static function getOrderWay($request, $setting)
+  {
+    $avaliables = [
+      'asc',
+      'desc',
+    ];
+    if (($request != null) && $request->filled('order_way')) {
+      if (in_array($request->order_way, $avaliables)) {
+        return $request->order_way;
+      }
+    } else {
+      return $setting->order_way;
+    }
+  }
+
   public static function indexGetSnap($setting, $request, $parent_id, $limit = true)
   {
     // Variable
     $order_by   = ($request != null) && $request->filled('order_by') ? $request->order_by : $setting->order_by;
-    $order_way  = ($request != null) && $request->filled('order_way') ? $request->order_way : $setting->order_way;
+    $order_way  = self::getOrderWay($request, $setting);
     $start_time = ($request != null) && $request->filled('start_time') ? Carbon::parse($request->start_time) : null;
     $end_time   = ($request != null) && $request->filled('end_time') ? Carbon::parse($request->end_time) : null;
     $time_field = ($request != null) && $request->filled('time_field') ? $request->time_field : 'created_at';
     $search     = ($request != null) && $request->filled('search') ? str_replace(' ', '', $request->search) : null;
     $excludes   = ($request != null) && $request->filled('excludes') ? $request->excludes : null;
-
-    if (isset($end_time) && $end_time->hour == 0 && $end_time->minute == 0 && $end_time->second == 0) {
-      $end_time->setTime(23, 59, 59);
-    }
 
     // Snap
     $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many);
@@ -752,6 +800,9 @@ class ModelHelper
     }
 
     // Time
+    if (isset($end_time) && $end_time->hour == 0 && $end_time->minute == 0 && $end_time->second == 0) {
+      $end_time->setTime(23, 59, 59);
+    }
     if ($start_time && $end_time) {
       if ($limit) {
         $totalDuration = $end_time->diffInDays($start_time);
@@ -840,6 +891,27 @@ class ModelHelper
           $snap     = $snap->whereHas($filter_relationship_field_value[0], function ($query) use ($filter_relationship_field_value, $item_arr) {
             return $query->whereIn('id', $item_arr);
           });
+        }
+      }
+    }
+    if (($request != null) && count($setting->filter_time_fields)) {
+      foreach ($setting->filter_time_fields as $filter_time_field) {
+        if ($request->filled($filter_time_field)) {
+          $item_arr = explode(',', $request->{$filter_time_field});
+          if (count($item_arr) == 1) {
+            $filter_date = Carbon::parse($item_arr[0])->format('Y-m-d');
+            $snap        = $snap->whereDate($filter_time_field, '=', $filter_date);
+          } else {
+            $filter_start_time = Carbon::parse($item_arr[0]);
+            $filter_end_time   = Carbon::parse($item_arr[1]);
+            if (count($item_arr[1]) == 10 &&
+              (Srt::contains($item_arr[1], '/' || Srt::contains($item_arr[1], '-'))
+              )) {
+              $filter_end_time->setTime(23, 59, 59);
+            }
+            $snap = $snap->where($filter_time_field, '>=', $filter_start_time);
+            $snap = $snap->where($filter_time_field, '<=', $filter_end_time);
+          }
         }
       }
     }
@@ -988,7 +1060,10 @@ class ModelHelper
       if (!$request->has($key)) {
         continue;
       }
-      $model[$key] = $request->{$key};
+      if ($request->{$key} === null) {
+        continue;
+      }
+      $model[$key] = htmlentities($request->{$key});
     }
     return $model;
   }

@@ -203,11 +203,6 @@ class StoneServiceProvider extends ServiceProvider
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/news_banner');
         }
 
-        # News Banner Group
-        if (config('stone.news_banner_group')) {
-          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/news_banner_group');
-        }
-
         # Page Setting
         if (config('stone.page_setting')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/page_setting');
@@ -280,6 +275,12 @@ class StoneServiceProvider extends ServiceProvider
 
     #
     $this->loadViewsFrom(__DIR__ . '/../resources/views', 'wasateam');
+
+    # Middleware
+    $router = $this->app->make(\Illuminate\Routing\Router::class);
+    $router->aliasMiddleware('scopes', \Laravel\Passport\Http\Middleware\CheckScopes::class);
+    $router->aliasMiddleware('scope', \Laravel\Passport\Http\Middleware\CheckForAnyScope::class);
+    $router->aliasMiddleware('isuser', \Wasateam\Laravelapistone\Middleware\IsUser::class);
 
     // OLD 2021-10
     $this->publishes([

@@ -40,12 +40,14 @@ class EcpayInvoiceException extends Exception
   public function render($request)
   {
     $response_json = [
-      'action'        => $this->action,
-      'trans_code'    => $this->trans_code,
-      'trans_message' => $this->trans_message,
-      'rtn_code'      => $this->rtn_code,
-      'rtn_message'   => $this->rtn_message,
+      'action' => $this->action,
     ];
+    if (config('app.debug')) {
+      $response_json['trans_code']    = $this->trans_code;
+      $response_json['trans_message'] = $this->trans_message;
+      $response_json['rtn_code']      = $this->rtn_code;
+      $response_json['rtn_message']   = $this->rtn_message;
+    }
     return response()->json($response_json, 400);
   }
 }

@@ -43,7 +43,12 @@ class ThePointRecordController extends Controller
   ];
   public $filter_belongs_to = [
   ];
-  public $uuid = false;
+  public $uuid         = false;
+  public $order_by     = 'created_at';
+  public $order_way    = 'desc';
+  public $order_fields = [
+    'created_at',
+  ];
 
   public function __construct()
   {
@@ -64,21 +69,28 @@ class ThePointRecordController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id, );
+
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id);
+    } else if (config('stone.mode') == 'webapi') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) {
+        return $snap->where('user_id', Auth::user()->id);
+      });
+    }
   }
 
-  /**
-   * Auth Index 使用者點數記錄列表
-   *
-   * @queryParam get_all string No-example 1,0
-   *
-   */
-  public function auth_index(Request $request, $id = null)
-  {
-    return ModelHelper::ws_IndexHandler($this, $request, $id, $request->get_all, function ($snap) {
-      return $snap->where('user_id', Auth::user()->id);
-    });
-  }
+  // /**
+  //  * Auth Index 使用者點數記錄列表
+  //  *
+  //  * @queryParam get_all string No-example 1,0
+  //  *
+  //  */
+  // public function auth_index(Request $request, $id = null)
+  // {
+  //   return ModelHelper::ws_IndexHandler($this, $request, $id, $request->get_all, function ($snap) {
+  //     return $snap->where('user_id', Auth::user()->id);
+  //   });
+  // }
 
   /**
    * Store

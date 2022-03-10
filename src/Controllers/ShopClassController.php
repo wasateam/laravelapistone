@@ -9,6 +9,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
  * @group ShopClass 商品分類
+ * @authenticated
  *
  * name 分類名稱
  * sq 排序設定值
@@ -16,6 +17,8 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * type 類型
  * icon Icon Url
  * order_type 訂單類型
+ * ~ next-day 隔日配
+ * ~ pro-order 預購
  */
 class ShopClassController extends Controller
 {

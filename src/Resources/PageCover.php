@@ -17,16 +17,16 @@ class PageCover extends JsonResource
 
     if (config('stone.mode') == 'cms') {
       $res = [
-        'id'         => $this->id,
-        'updated_at' => $this->updated_at,
-        'created_at' => $this->created_at,
-        'name'       => $this->name,
-        'start_date' => $this->start_date,
-        'end_date'   => $this->end_date,
-        'is_active'  => $this->is_active,
-        'link'       => $this->link,
-        'image'      => $this->image,
-        'page_settings' => $this->page_settings
+        'id'            => $this->id,
+        'updated_at'    => $this->updated_at,
+        'created_at'    => $this->created_at,
+        'name'          => $this->name,
+        'start_date'    => $this->start_date,
+        'end_date'      => $this->end_date,
+        'is_active'     => $this->is_active,
+        'link'          => $this->link,
+        'image'         => $this->image,
+        'page_settings' => PageSetting_R1::collection($this->page_settings),
       ];
     } else if (config('stone.mode') == 'webapi') {
       $res = [
@@ -34,7 +34,6 @@ class PageCover extends JsonResource
         'name'  => $this->name,
         'link'  => $this->link,
         'image' => $this->image,
-        'page_settings' => $this->page_settings
       ];
     }
     return $res;

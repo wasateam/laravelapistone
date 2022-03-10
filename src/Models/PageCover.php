@@ -18,5 +18,6 @@ class PageCover extends Model
 
   protected $casts = [
     'image' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
+    'link' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
   ];
 }

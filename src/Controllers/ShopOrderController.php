@@ -13,7 +13,6 @@ use Wasateam\Laravelapistone\Exports\ShopOrderExport;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
-use Wasateam\Laravelapistone\Models\ShopCartProduct;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 
 /**
@@ -66,6 +65,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * ~ CVS: CVS
  * ~ ATM: ATM
  * ~ BARCODE: 超商條碼
+ * ~ line_pay: LINE Pay
  * pay_status 付款狀態
  * ~ sumulate-paid: 模擬測試付款
  * ~ waiting: 待付款
@@ -119,6 +119,10 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * card_total_success_amount 信用卡或銀聯卡_目前已成功授權的金額合計
  * bonus_points_deduct 訂單所使用(扣除)的紅利點數
  * discount_code 折扣碼
+ * campaign_deduct 活動折抵
+ * freight 運費
+ * products_price 商品價格總計
+ * order_price 訂單費用總計
  *
  * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立
@@ -174,6 +178,7 @@ class ShopOrderController extends Controller
     'invoice_address',
     'invoice_email',
     'invoice_uniform_number',
+    'bonus_points_deduct',
   ];
   public $search_fields = [
     'no',
@@ -283,7 +288,7 @@ class ShopOrderController extends Controller
    * Store
    *
    * @bodyParam user int 人員 Example:1
-   * @bodyParam no string 訂單編號 No-example
+   * @bodyParam no string 訂單編號 Example:AC12342
    * @bodyParam orderer string 訂購者 Example:orderer_name
    * @bodyParam orderer_tel string 訂購者電話 Example:0900-000-000
    * @bodyParam orderer_birthday string 訂購者生日 Example:1000-10-10
@@ -334,137 +339,49 @@ class ShopOrderController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_StoreHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      // return AuthHelper::checkRequestUser($request);
-      // if ($request->user != Auth::user()->id) {
-      //   return response()->json([
-      //     'message' => 'not you',
-      //   ], 400);
-      // }
+
       if (!$request->has('shop_cart_products') || !is_array($request->shop_cart_products)) {
-        return response()->json([
-          'message' => 'products required.',
-        ], 400);
+        throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('shop_cart_products');
       }
 
       $user = Auth::user();
 
-      // AuthHelper::checkRequestUser($request);
-
-      ShopHelper::checkShopCartProductsExist($request);
-
       ShopHelper::shopShipTimeLimitCheck($request);
 
-      $order_type = ShopHelper::getShopCartOrderType($request->shop_cart_products);
+      $order_type = ShopHelper::getOrderTypeFromShopCartProducts($request->shop_cart_products);
 
-      $_my_cart_products = ShopHelper::getMyCartProducts($request, $order_type);
+      $filtered_cart_products = ShopHelper::filterCartProducts($request->shop_cart_products, $user, $order_type);
 
       ShopHelper::checkBonusPointEnough($request);
 
-      ShopHelper::checkDiscountCode($request);
-
       ShopHelper::updateUserInfoFromShopOrderRequest(Auth::user(), $request);
 
-      // REMOVE FOR PAY
-      # invoice
-      // $invoice_status = null;
-      // $invoice_number = null;
-      // if (config('stone.invoice')) {
-      //   if (config('stone.invoice.service') == 'ecpay') {
-      //     if ($request->has('invoice_type')) {
-      //       try {
-      //         $invoice_type   = $request->invoice_type;
-      //         $customer_email = $request->orderer_email;
-      //         $customer_tel   = $request->orderer_tel;
-      //         $customer_addr  = $request->receive_address;
-      //         $order_amount   = ShopHelper::getOrderAmount($_my_cart_products);
-      //         $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($_my_cart_products);
-      //         $customer_id    = Auth::user()->id;
-      //         $post_data      = [
-      //           'Items'         => $items,
-      //           'SalesAmount'   => $order_amount,
-      //           'TaxType'       => 1,
-      //           'CustomerEmail' => $customer_email,
-      //           'CustomerAddr'  => $customer_addr,
-      //           'CustomerPhone' => $customer_tel,
-      //           'CustomerID'    => $customer_id,
-      //         ];
-      //         if ($invoice_type == 'personal') {
-      //           $invoice_carrier_type      = $request->invoice_carrier_type;
-      //           $invoice_carrier_number    = $request->invoice_carrier_number;
-      //           $post_data['Print']        = 0;
-      //           $post_data['CustomerName'] = $request->orderer;
-      //           if ($invoice_carrier_type == 'mobile') {
-      //             $post_data['CarrierType'] = 3;
-      //             $post_data['CarrierNum']  = $invoice_carrier_number;
-      //           } else if ($invoice_carrier_type == 'certificate') {
-      //             $post_data['CarrierType'] = 2;
-      //             $post_data['CarrierNum']  = $invoice_carrier_number;
-      //           } else if ($invoice_carrier_type == 'email') {
-      //             $post_data['CarrierType']   = 1;
-      //             $post_data['CarrierNum']    = '';
-      //             $post_data['CustomerEmail'] = $invoice_carrier_number;
-      //           }
-      //         } else if ($invoice_type == 'triple') {
-      //           $invoice_title                   = $request->invoice_title;
-      //           $invoice_uniform_number          = $request->invoice_uniform_number;
-      //           $post_data['CarrierType']        = '';
-      //           $post_data['Print']              = 1;
-      //           $post_data['CustomerName']       = $invoice_title;
-      //           $post_data['CustomerIdentifier'] = $invoice_uniform_number;
-      //         }
-      //         $post_data      = EcpayHelper::getInvoicePostData($post_data);
-      //         $invoice_number = EcpayHelper::createInvoice($post_data);
-      //         $invoice_status = 'done';
-      //       } catch (\Throwable $th) {
-      //         $invoice_status = 'fail';
-      //       }
-      //     }
-      //   }
-      // }
+      $discount_code = $request->has('discount_code') ? $request->discount_code : null;
 
-      // return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($_my_cart_products, $invoice_status, $invoice_number, $order_type, $request) {
-      return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($_my_cart_products, $order_type, $request) {
-        # Shop Order Shop Product
-        foreach ($_my_cart_products as $my_cart_product) {
-          $cart_product = ShopCartProduct::where('id', $my_cart_product['id'])->where('status', 1)->first();
-          # create shop_order_shop_product
-          $new_order_product    = ShopHelper::createShopOrderShopProduct($cart_product, $model->id);
-          $cart_product->status = 0;
-          $cart_product->save();
-          ShopHelper::shopOrderProductChangeCount($new_order_product->id);
-        }
-        ShopHelper::changeShopOrderPrice($model->id, $order_type, $request);
-        $model->status     = 'not-established';
-        $model->pay_status = 'waiting';
+      // ShopHelper::checkDiscountCode($discount_code);
 
-        // if (config('stone.shop.custom_shop_order')) {
-        //   $model->no = \App\Helpers\AppHelper::newShopOrderNo($order_type);
-        // } else {
-        //   $model->no = ShopHelper::newShopOrderNo();
-        // }
+      return ModelHelper::ws_StoreHandler(
+        $this,
+        $request, $id,
+        function ($model) use (
+          $filtered_cart_products,
+          $discount_code
+        ) {
 
-        $model->save();
+          ShopHelper::deductBonusPointFromShopOrder($model);
+          ShopHelper::createShopOrderShopProductsFromCartProducts($filtered_cart_products, $model);
+          ShopHelper::updateShopOrderPrice($model, $discount_code);
 
-        # Order Type
-        if ($order_type) {
+        }, function ($model) use (
+          $user,
+          $order_type
+        ) {
+          $model->user_id    = $user->id;
+          $model->status     = 'not-established';
+          $model->pay_status = 'waiting';
           $model->order_type = $order_type;
-          $model->save();
-        }
-
-        // REMOVE FOR PAY
-        // # Invoice
-        // if ($invoice_status) {
-        //   $model->invoice_status = $invoice_status;
-        //   if ($invoice_status == 'done') {
-        //     $model->invoice_number = $invoice_number;
-        //     ShopHelper::createBonusPointFeedbackJob($model->id);
-        //   }
-        //   $model->save();
-        // }
-      }, function ($model) use ($user) {
-        $model->user_id = $user->id;
-        return $model;
-      });
+          return $model;
+        });
     }
   }
 
@@ -482,7 +399,7 @@ class ShopOrderController extends Controller
    * update
    *
    * @urlParam  shop_order required The ID of shop_order. Example: 1
-   * @bodyParam no string 訂單編號 No-example
+   * @bodyParam no string 訂單編號 Example:AC12342
    * @bodyParam orderer string 訂購者 Example:orderer_name
    * @bodyParam orderer_tel string 訂購者電話 Example:0900-000-000
    * @bodyParam orderer_birthday string 訂購者生日 Example:1000-10-10
@@ -528,7 +445,8 @@ class ShopOrderController extends Controller
   public function update(Request $request, $id)
   {
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) {
-      ShopHelper::changeShopOrderPrice($model->id);
+      // ShopHelper::changeShopOrderPrice($model->id);
+      // ShopHelper::updateShopOrderPrice($model);
     });
   }
 
@@ -672,8 +590,8 @@ class ShopOrderController extends Controller
           $customer_email = $shop_order->orderer_email; //fix
           $customer_tel   = $shop_order->orderer_tel; //fix
           $customer_addr  = $shop_order->receive_address;
-          $order_amount   = ShopHelper::getOrderAmount($shop_order->shop_order_shop_products);
-          $items          = EcpayHelper::getInvoiceItemsFromShopCartProducts($shop_order->shop_order_shop_products);
+          $order_amount   = $shop_order->order_price;
+          $items          = EcpayHelper::getInvoiceItemsFromShopOrder($shop_order);
           $customer_id    = $user->id;
           $post_data      = [
             'Items'         => $items,
@@ -710,7 +628,7 @@ class ShopOrderController extends Controller
         $shop_order->invoice_carrier_type   = 'email';
         $shop_order->invoice_type           = 'personal';
         $shop_order->invoice_carrier_number = $shop_order->orderer_email;
-        ShopHelper::createBonusPointFeedbackJob($shop_order->id);
+        ShopHelper::createBonusPointFromShopOrder($shop_order->id);
       }
       $shop_order->reinvoice_at = Carbon::now();
       $shop_order->save();

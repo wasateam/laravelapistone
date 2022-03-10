@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\UserDeviceHelper;
+use Wasateam\Laravelapistone\Models\UserDeviceModifyRecord;
+use Wasateam\Laravelapistone\Models\UserServicePlan;
 
 /**
  * @group UserDevice 使用者綁定裝置
@@ -59,7 +61,7 @@ class UserDeviceController extends Controller
   ];
   public $search_relationship_fields = [
     'user' => [
-      'name'
+      'name',
     ],
   ];
   public $uuid = true;
@@ -166,8 +168,13 @@ class UserDeviceController extends Controller
 
   /**
    * Register 註冊
-   * @bodyParam user string Example: 1
-   *
+   * 
+   * @bodyParam brand string Example: Wasateam
+   * @bodyParam is_diy boolean Example: 0
+   * @bodyParam model_number string Example: a_model_number
+   * @bodyParam serial_number string Example: a_serial_number
+   * @bodyParam type string Example: NOTEBOOK
+   * 
    */
   public function register(Request $request)
   {
@@ -194,11 +201,24 @@ class UserDeviceController extends Controller
       $is_diy        = $request->is_diy;
       $model_number  = $request->model_number ? $request->model_number : $uuid;
       $serial_number = $is_diy ? $uuid : $request->serial_number;
-      $exist         = $this->model::where('serial_number', $serial_number)->first();
-      if ($exist) {
-        return response()->json([
-          'message' => 'existed.',
-        ], 400);
+      $model         = $this->model::where('serial_number', $serial_number)->first();
+      if ($model) {
+        if ($model->status == 'active') {
+          return response()->json([
+            'message' => 'device already exists.',
+          ], 400);
+        } else if ($model->status == 'deactive') {
+          $model->status = 'active';
+          if (config('stone.user.device.active_before_action')) {
+            config('stone.user.device.active_before_action')::device_active_before_action($model, $user);
+          }
+          $model->save();
+          # UserDeviceModifyRecord
+          UserDeviceHelper::user_device_record('active', $model, $user);
+          return response()->json([
+            'message' => 'activated',
+          ], 200);
+        }
       }
       $model                = new $this->model;
       $model->type          = $type;
@@ -232,16 +252,18 @@ class UserDeviceController extends Controller
    */
   public function get_info_user_binding_status()
   {
-    $limit = 0;
-    if (config('stone.user.device.limit')) {
-      $limit = config('stone.user.device.limit');
-    }
-    $user                      = Auth::user();
-    $active_user_devices_count = $this->model::where('user_id', $user->id)
+    $user                           = Auth::user();
+    $user_service_plan              = UserServicePlan::where('user_id', $user->id)->latest()->first();
+    $user_device_update_count_limit = $user_service_plan->service_plan->user_device_update_count_limit;
+    $active_user_devices_count      = $this->model::where('user_id', $user->id)
       ->where('status', 'active')->count();
+    $changed_times = UserDeviceModifyRecord::where('user_id', $user->id)->where('service_plan_id', $user_service_plan->service_plan_id)->count();
     return response()->json([
-      'limit'                     => $limit,
-      'active_user_devices_count' => $active_user_devices_count,
+      'active_user_devices_count'      => $active_user_devices_count,
+      'changed_times'                  => $changed_times,
+      'user_device_update_count_limit' => $user_device_update_count_limit,
+      'limit'                          => config('stone.user.device.limit') ? config('stone.user.device.limit') : 2,
+      'available_change_times'         => config('stone.user.device.limit') ? config('stone.user.device.limit') : 2,
     ], 200);
   }
 

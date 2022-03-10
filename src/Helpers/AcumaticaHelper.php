@@ -16,6 +16,23 @@ use Wasateam\Laravelapistone\Models\UserServicePlan;
  */
 class AcumaticaHelper
 {
+
+  public static function getHighcareServiceHistory($user, $app = null)
+  {
+    $customerId = $user->customer_id;
+    $token      = self::getToken($app);
+    $post_url   = config('stone.acumatica.api_url') . '/HighcareServiceHistory?$expand=HighcareServiceHistoryDetails';
+    $post_data  = [
+      "CustomerID" => [
+        'value' => $customerId,
+      ],
+    ];
+    $response = Http::withHeaders([
+      'Authorization' => "Bearer {$token}",
+    ])->put($post_url, $post_data);
+    return $response->json();
+  }
+
   /**
    * 建立裝置
    * user 使用者物件
@@ -125,8 +142,11 @@ class AcumaticaHelper
     $token     = self::getToken($app);
     $post_url  = config('stone.acumatica.api_url') . "/FSEquipment";
     $post_data = [
-      'id'     => $equipment_id,
-      'Status' => [
+      'id'        => $equipment_id,
+      "SerialNbr" => [
+        "value" => $serial_number,
+      ],
+      'Status'    => [
         'value' => 'Suspended',
       ],
     ];
@@ -147,12 +167,14 @@ class AcumaticaHelper
     $token     = self::getToken($app);
     $post_url  = config('stone.acumatica.api_url') . "/FSEquipment";
     $post_data = [
-      'id'     => $equipment_id,
-      'Status' => [
+      'id'        => $equipment_id,
+      "SerialNbr" => [
+        "value" => $serial_number,
+      ],
+      'Status'    => [
         'value' => 'Active',
       ],
     ];
-
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",
     ])->put($post_url, $post_data);
@@ -226,13 +248,13 @@ class AcumaticaHelper
         'value' => $price_class,
       ],
       'MainContact'   => [
-        'Email' => [
+        'Email'      => [
           'value' => $user->email,
         ],
         'Phone1Type' => [
           'value' => 'Cell',
         ],
-        'Phone1' => [
+        'Phone1'     => [
           'value' => $user->tel,
         ],
       ],
@@ -246,10 +268,10 @@ class AcumaticaHelper
         'Email'       => [
           'value' => $user->email,
         ],
-        'Phone1Type'       => [
+        'Phone1Type'  => [
           'value' => 'Cell',
         ],
-        'Phone1'       => [
+        'Phone1'      => [
           'value' => $user->tel,
         ],
       ],
@@ -263,7 +285,7 @@ class AcumaticaHelper
   }
 
   /**
-   * 更新使用者資訊
+   * 更新使用者id資訊
    * user 使用者
    */
   public static function updateUserCustomerId($user)
@@ -283,6 +305,54 @@ class AcumaticaHelper
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",
     ])->post($post_url, $post_data);
+    return $response->json();
+  }
+
+  /**
+   * 更新使用者資訊
+   * user 使用者
+   */
+  public static function updateCustomer($user)
+  {
+    $token     = self::getToken();
+    $post_url  = config('stone.acumatica.api_url') . "/Customer";
+    $post_data = [
+      "id"            => $user->acumatica_id,
+      "CustomerName"  => [
+        "value" => $user->name,
+      ],
+      "MainContact"   => [
+        "Email"      => [
+          "value" => $user->email,
+        ],
+        'Phone1Type' => [
+          'value' => 'Cell',
+        ],
+        'Phone1'     => [
+          'value' => $user->tel,
+        ],
+      ],
+      "PrimayContact" => [
+        "DateOfBirth" => [
+          "value" => $user->birthday,
+        ],
+        "LastName"    => [
+          "value" => $user->name,
+        ],
+        "Email"       => [
+          "value" => $user->email,
+        ],
+        'Phone1Type'  => [
+          'value' => 'Cell',
+        ],
+        'Phone1'      => [
+          'value' => $user->tel,
+        ],
+      ],
+    ];
+    $response = Http::withHeaders([
+      'Authorization' => "Bearer {$token}",
+    ])->put($post_url, $post_data);
     return $response->json();
   }
 

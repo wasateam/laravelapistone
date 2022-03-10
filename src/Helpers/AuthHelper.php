@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\SpareHelper;
+use Wasateam\Laravelapistone\Helpers\UrlHelper;
 
 class AuthHelper
 {
@@ -142,13 +143,9 @@ class AuthHelper
     $api_url = URL::temporarySignedRoute(
       'email_verify', now()->addMinutes(60), ['user_id' => $user->id]
     );
-    if (str_contains(config('stone.web_url'), 'https') && str_contains(config('stone.app_url'), 'https')) {
-      $api_url = Str::replace('http', 'https', $api_url);
-    }
-    if (str_contains(config('stone.web_url'), 'http://localhost') && str_contains(config('stone.app_url'), 'http://localhost')) {
-      $api_url = Str::replace('127.0.0.1', 'localhost', $api_url);
-    }
-    $url = Str::replace(config('stone.app_url') . '/api', config('stone.web_url'), $api_url);
+
+    $url = UrlHelper::getFormatedUrl($api_url, true, true, true);
+
     return $url;
   }
 
@@ -158,13 +155,8 @@ class AuthHelper
       'forget_password_patch', now()->addMinutes(60), ['user_id' => $user->id]
     );
 
-    if (str_contains(config('stone.web_url'), 'https') && str_contains(config('stone.app_url'), 'https')) {
-      $api_url = Str::replace('http', 'https', $api_url);
-    }
-    if (str_contains(config('stone.web_url'), 'http://localhost') && str_contains(config('stone.app_url'), 'http://localhost')) {
-      $api_url = Str::replace('127.0.0.1', 'localhost', $api_url);
-    }
-    $url = Str::replace(config('stone.app_url') . '/api', config('stone.web_url'), $api_url);
+    $url = UrlHelper::getFormatedUrl($api_url, true, true, true);
+
     return $url;
   }
 

@@ -138,9 +138,14 @@ class TulpaPageController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_ShowHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      $tulpa_page = TulpaPage::where('route', $request->route_name)->where('is_active', 1)->first();
+      $model = $this->model::where('route', $request->route_name)
+        ->where('is_active', 1)
+        ->first();
+      if (!$model) {
+        throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('tulpa_page');
+      }
       return response()->json([
-        'data' => new \Wasateam\Laravelapistone\Resources\TulpaPage($tulpa_page),
+        'data' => new \Wasateam\Laravelapistone\Resources\TulpaPage($model),
       ], 200);
     };
   }

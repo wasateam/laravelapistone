@@ -15,9 +15,10 @@ class NewsBanner_R_Order extends JsonResource
   public function toArray($request)
   {
     $res = [
-      'id'   => $this->id,
-      'name' => $this->name,
-      'sq'   => $this->sq,
+      'id'    => $this->id,
+      'name'  => $this->name,
+      'title' => $this->title,
+      'sq'    => $this->sq,
     ];
     return $res;
   }

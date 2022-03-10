@@ -1110,9 +1110,7 @@ class RoutesHelper
 
     # Page Setting
     if (config('stone.page_setting')) {
-      Route::resource('page_setting', PageSettingController::class)->only([
-        'index', 'show',
-      ])->shallow();
+      Route::get('page_setting/page', [PageSettingController::class, 'show']);
     }
 
     # Page Setting

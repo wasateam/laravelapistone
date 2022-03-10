@@ -115,6 +115,7 @@ class ModelHelper
     }
 
     $model = self::setUUID($model, $setting);
+    error_log(json_encode($model));
 
     // Save
     $model->save();
@@ -267,15 +268,15 @@ class ModelHelper
 
     // Belongs To Value
     $model = ModelHelper::setBelongsTo($model, $setting, $request);
-
+    error_log(json_encode($model));
     // Save
-    try {
-      $model->save();
-    } catch (\Throwable $th) {
-      return response()->json([
-        'message' => 'data update fail.',
-      ], 400);
-    }
+    // try {
+    $model->save();
+    // } catch (\Throwable $th) {
+    //   return response()->json([
+    //     'message' => 'data update fail.',
+    //   ], 400);
+    // }
 
     // Belongs To Many Value
     $model = ModelHelper::setBelongsToMany($model, $setting, $request);
@@ -1057,6 +1058,9 @@ class ModelHelper
   {
     foreach ($setting->input_fields as $key) {
       if (!$request->has($key)) {
+        continue;
+      }
+      if ($request->{$key} === null) {
         continue;
       }
       $model[$key] = htmlentities($request->{$key});

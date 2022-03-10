@@ -16,23 +16,23 @@ class NewsBanner extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       $res = [
-        'id'          => $this->id,
-        'created_at'  => $this->created_at,
-        'updated_at'  => $this->updated_at,
-        'sq'          => $this->sq,
-        'name'        => $this->name,
-        'bg_img_1440' => $this->bg_img_1440,
-        'bg_img_768'  => $this->bg_img_768,
-        'bg_img_320'  => $this->bg_img_320,
-        'link'        => $this->link,
-        'title'       => $this->title,
-        'title_color' => $this->title_color,
-        'des'         => $this->des,
-        'des_color'   => $this->des_color,
-        'start_date'  => $this->start_date,
-        'end_date'    => $this->end_date,
-        'is_active'   => $this->is_active,
-        'news_banner_groups' => NewsBannerGroup::collection($this->news_banner_groups)
+        'id'            => $this->id,
+        'created_at'    => $this->created_at,
+        'updated_at'    => $this->updated_at,
+        'sq'            => $this->sq,
+        'name'          => $this->name,
+        'bg_img_1440'   => $this->bg_img_1440,
+        'bg_img_768'    => $this->bg_img_768,
+        'bg_img_320'    => $this->bg_img_320,
+        'link'          => $this->link,
+        'title'         => $this->title,
+        'title_color'   => $this->title_color,
+        'des'           => $this->des,
+        'des_color'     => $this->des_color,
+        'start_date'    => $this->start_date,
+        'end_date'      => $this->end_date,
+        'is_active'     => $this->is_active,
+        'page_settings' => PageSetting_R1::collection($this->page_settings),
       ];
     } else if (config('stone.mode') == 'webapi') {
       $res = [
@@ -48,7 +48,6 @@ class NewsBanner extends JsonResource
         'title_color' => $this->title_color,
         'des'         => $this->des,
         'des_color'   => $this->des_color,
-        'news_banner_groups' => NewsBannerGroup::collection($this->news_banner_groups)
       ];
     }
     return $res;

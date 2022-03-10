@@ -39,7 +39,7 @@ class PageSettingController extends Controller
    * Store
    *
    * @bodyParam name string Example:index
-   * @bodyParam route id Example:/index
+   * @bodyParam route string Example:/index
    */
   public function store(Request $request, $id = null)
   {
@@ -50,10 +50,21 @@ class PageSettingController extends Controller
    * Show
    *
    * @urlParam  page_setting required The ID of page_setting. Example: 1
+   * @queryParam route_name string No-Example
    */
   public function show(Request $request, $id = null)
   {
-    return ModelHelper::ws_ShowHandler($this, $request, $id);
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_ShowHandler($this, $request, $id);
+    } else if (config('stone.mode') == 'webapi') {
+      $model = $this->model::where('route', $request->route_name)->first();
+      if (!$model) {
+        throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('page_setting');
+      }
+      return response()->json([
+        'data' => new $this->resource($model),
+      ], 200);
+    };
   }
 
   /**

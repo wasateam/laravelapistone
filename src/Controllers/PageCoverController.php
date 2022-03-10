@@ -9,8 +9,7 @@ use Wasateam\Laravelapistone\Helpers\ShopHelper;
 
 /**
  * @group PageCover 彈跳視窗
- *
- * APIs for page_cover
+ * @authenticated
  *
  * name 名稱
  * start_date 起始日期
@@ -20,8 +19,7 @@ use Wasateam\Laravelapistone\Helpers\ShopHelper;
  * ~ 0 未上架
  * link 連結
  * image 圖片
- * page_settings 所屬頁面id
- * @authenticated
+ * page_settings 頁面設定
  */
 class PageCoverController extends Controller
 {
@@ -35,6 +33,15 @@ class PageCoverController extends Controller
     'is_active',
     'link',
     'image',
+  ];
+  public $filter_fields = [
+    'is_active',
+  ];
+  public $belongs_to_many = [
+    'page_settings',
+  ];
+  public $filter_belongs_to_many = [
+    'page_settings',
   ];
   public $uuid = false;
 
@@ -66,7 +73,7 @@ class PageCoverController extends Controller
    * @bodyParam is_active boolean Example:1
    * @bodyParam link string Example:"wasatema.com"
    * @bodyParam image string Example:""
-   * @bodyParam page_settings object Example:[1,2,3]
+   * @bodyParam page_settings ids 頁面設定 Example:1,2
    */
   public function store(Request $request, $id = null)
   {
@@ -101,7 +108,7 @@ class PageCoverController extends Controller
    * @bodyParam is_active boolean Example:1
    * @bodyParam link string Example:"wasatema.com"
    * @bodyParam image string Example:""
-   * @bodyParam page_settings object Example:[1,2,3]
+   * @bodyParam page_settings ids 頁面設定 Example:1,2
    */
   public function update(Request $request, $id)
   {

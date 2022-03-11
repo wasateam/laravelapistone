@@ -1063,9 +1063,29 @@ class ModelHelper
       if ($request->{$key} === null) {
         continue;
       }
-      $model[$key] = htmlentities($request->{$key});
+      if (is_array($model[$key]) || is_object($model[$key])) {
+        $arr = $request->{$key};
+        array_walk_recursive($arr, function ($value) {
+          $_value = self::removeScriptFromString($value);
+          $value = htmlentities($_value);
+        });
+        $model[$key] = $arr;
+      } else {
+        $_value = self::removeScriptFromString($request->{$key});
+        $model[$key] = htmlentities($_value);
+      }
     }
     return $model;
+  }
+
+  public static function removeScriptFromString($string)
+  {
+    $_string = $string;
+    $_string = str_replace('<script>', 'XXX', $_string);
+    $_string = str_replace('<script', 'XXX', $_string);
+    $_string = str_replace('</script>', 'XXX', $_string);
+    $_string = str_replace('</script', 'XXX', $_string);
+    return $_string;
   }
 
   public static function setUserRecord($model, $setting)

@@ -690,7 +690,7 @@ class ShopHelper
 
     $user                = User::find($request->user);
     $bonus_points_deduct = $request->bonus_points_deduct;
-    if ($bonus_points_deduct > $user->bonus_points) {
+    if ($bonus_points_deduct-> $user->bonus_points) {
       return false;
       throw new \Wasateam\Laravelapistone\Exceptions\OutOfException('bonus_points');
     }

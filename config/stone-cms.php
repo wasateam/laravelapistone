@@ -144,5 +144,7 @@ return [
   'xc_milestone'       => true,
   'xc_project'         => true,
   //點數系統
-  'bonus_point'          => true,
+  'bonus_point'        => [
+    'shop_freight_deduct' => true,
+  ],
 ];

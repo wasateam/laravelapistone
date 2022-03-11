@@ -9,3 +9,5 @@
 - nuxt coupon and discount_code same time using
 - changeShopOrderPrice need to change to updateShopOrderPrice
 - news_banner add is_on_shelf for start,end check
+- array, object html encode issue on ModelHelper->inputFields
+- shop_freight deduct switch

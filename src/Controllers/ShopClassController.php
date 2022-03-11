@@ -31,10 +31,13 @@ class ShopClassController extends Controller
     'sq',
     'type',
     'icon',
-    'order_type'
+    'order_type',
+  ];
+  public $search_fields = [
+    'name',
   ];
   public $filter_fields = [
-    'order_type'
+    'order_type',
   ];
   public $belongs_to = [
   ];

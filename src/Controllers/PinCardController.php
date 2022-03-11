@@ -9,11 +9,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use Wasateam\Laravelapistone\Exports\PinCardExport;
 use Wasateam\Laravelapistone\Helpers\LogHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
-use Wasateam\Laravelapistone\Helpers\StrHelper;
 use Wasateam\Laravelapistone\Helpers\ServicePlanHelper;
+use Wasateam\Laravelapistone\Helpers\StrHelper;
 use Wasateam\Laravelapistone\Models\PinCard;
 use Wasateam\Laravelapistone\Models\ServicePlanItem;
 use Wasateam\Laravelapistone\Models\UserServicePlan;
@@ -47,7 +46,7 @@ class PinCardController extends Controller
     'created_at',
   ];
   public $search_relationship_fields = [
-    'user' =>[
+    'user' => [
       'name',
     ],
   ];
@@ -205,17 +204,46 @@ class PinCardController extends Controller
    * Export Excel Signedurl
    *
    */
-  public function export_excel_signedurl()
+  public function export_excel_signedurl(Request $request)
   {
-    return URL::signedRoute('pin_card_export_excel', []);
+    return ModelHelper::ws_ExportExcelSignedurlHandler($this, $request);
   }
 
   /**
    * Export Excel
    *
    */
-  public function export_excel()
+  public function export_excel(Request $request)
   {
-    return Excel::download(new PinCardExport, 'pin_card.xlsx');
+    // return Excel::download(new PinCardExport, 'pin_card.xlsx');
+    $headings = [
+      "id",
+      "Created at",
+      "Updated at",
+      "PIN",
+      "Plan",
+      "Status",
+      "User ID",
+    ];
+
+    return ModelHelper::ws_ExportExcelHandler(
+      $this,
+      $request,
+      $headings,
+      function ($model) {
+        $created_at = Carbon::parse($model->created_at)->format('Y-m-d');
+        $updated_at = Carbon::parse($model->updated_at)->format('Y-m-d');
+        $map        = [
+          $model->id,
+          $created_at,
+          $updated_at,
+          $model->pin,
+          $model->service_plan ? $model->service_plan->name : null,
+          $model->status,
+          $model->user_id,
+        ];
+        return $map;
+      }
+    );
   }
 }

@@ -386,6 +386,39 @@ class ShopOrderController extends Controller
   }
 
   /**
+   * Calc 計算購物車資訊
+   *
+   * @bodyParam user int 人員 Example:1
+   * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1}]
+   * @bodyParam bonus_points_deduct int 紅利點數 Example:30
+   * @bodyParam discount_code string 折扣碼 Example:SEXYAPPLE
+   */
+  public function calc(Request $request, $id = null)
+  {
+    $user = Auth::user();
+
+    ShopHelper::shopShipTimeLimitCheck($request);
+
+    $order_type = ShopHelper::getOrderTypeFromShopCartProducts($request->shop_cart_products);
+
+    $filtered_cart_products = ShopHelper::filterCartProducts($request->shop_cart_products, $user, $order_type);
+
+    ShopHelper::checkBonusPointEnough($request);
+
+    $discount_code = $request->has('discount_code') ? $request->discount_code : null;
+
+    $products_price  = ShopHelper::getOrderProductsAmount($filtered_cart_products);
+    $freight         = ShopHelper::getOrderFreight($order_type, $filtered_cart_products);
+    $compaign_deduct = ShopHelper::getCampaignDeduct($user, Carbon::now(), $products_price, $discount_code);
+
+    return response()->json([
+      'products_price'  => $products_price,
+      'freight'         => $freight,
+      'compaign_deduct' => $compaign_deduct,
+    ], 200);
+  }
+
+  /**
    * Show
    *
    * @urlParam  shop_order required The ID of shop_order. Example: 1

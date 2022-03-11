@@ -97,19 +97,20 @@ class ShopHelper
     }
   }
 
-  public static function getOrderFreight($shop_order)
+  // public static function getOrderFreight($shop_order)
+  public static function getOrderFreight($order_type, $shop_order_shop_products)
   {
     $freight    = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
-    $order_type = $shop_order->order_type;
     if ($order_type) {
       $order_types     = config('stone.shop.order_type') ? config('stone.shop.order_type') : [];
       $curr_order_type = str_replace('-', '_', $order_type);
       $has_type        = array_key_exists($curr_order_type, $order_types);
       if ($has_type) {
-        $today_date               = Carbon::now()->format('Y-m-d');
-        $order_price              = $shop_order->products_price;
-        $shop_order_shop_products = $shop_order->shop_order_shop_products;
-        $type                     = $order_types[$curr_order_type];
+        $today_date = Carbon::now()->format('Y-m-d');
+        // $order_price              = $shop_order->products_price;
+        $order_price = self::getOrderProductsAmount($shop_order_shop_products);
+        // $shop_order_shop_products = $shop_order->shop_order_shop_products;
+        $type = $order_types[$curr_order_type];
         if ($type['freight_default']) {
           $freight = $type['freight_default'];
         }
@@ -293,8 +294,8 @@ class ShopHelper
 
   public static function updateShopOrderPrice($shop_order, $discount_code)
   {
-    $shop_order->products_price  = self::getOrderProductsAmount($shop_order);
-    $shop_order->freight         = self::getOrderFreight($shop_order);
+    $shop_order->products_price  = self::getOrderProductsAmount($shop_order->shop_order_shop_products);
+    $shop_order->freight         = self::getOrderFreight($shop_order->order_type, $shop_order->shop_order_shop_products);
     $shop_order->campaign_deduct = self::setCampaignDeduct($shop_order, $discount_code);
     $shop_order->order_price     = self::getOrderAmountFromShopOrder($shop_order);
     $shop_order->save();
@@ -320,10 +321,32 @@ class ShopHelper
     return $compaign_deduct;
   }
 
-  public static function getOrderProductsAmount($shop_order)
+  public static function getCampaignDeduct(
+    $user,
+    $datetime,
+    $products_price,
+    $discount_code
+  ) {
+    $compaign_deduct = 0;
+    if ($discount_code) {
+      $today_dicount_decode_campaign = self::getAvailableShopCampaign('discount_code', $user->id, $datetime, $discount_code);
+      if ($today_dicount_decode_campaign) {
+        if ($products_price >= $today_dicount_decode_campaign->full_amount) {
+          if ($today_dicount_decode_campaign->discount_percent) {
+            $compaign_deduct += $products_price - round($products_price * $today_dicount_decode_campaign->discount_percent / 10);
+          } else if ($today_dicount_decode_campaign->discount_amount) {
+            $compaign_deduct += $today_dicount_decode_campaign->discount_amount;
+          }
+        }
+      }
+    }
+    return $compaign_deduct;
+  }
+
+  public static function getOrderProductsAmount($shop_order_shop_products)
   {
     $order_amount = 0;
-    foreach ($shop_order->shop_order_shop_products as $shop_cart_product) {
+    foreach ($shop_order_shop_products as $shop_cart_product) {
       $count = $shop_cart_product['count'];
       $price = 0;
       if (isset($shop_cart_product->shop_product_spec)) {
@@ -690,7 +713,7 @@ class ShopHelper
 
     $user                = User::find($request->user);
     $bonus_points_deduct = $request->bonus_points_deduct;
-    if ($bonus_points_deduct-> $user->bonus_points) {
+    if ($bonus_points_deduct > $user->bonus_points) {
       return false;
       throw new \Wasateam\Laravelapistone\Exceptions\OutOfException('bonus_points');
     }

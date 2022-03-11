@@ -11,3 +11,4 @@
 - news_banner add is_on_shelf for start,end check
 - array, object html encode issue on ModelHelper->inputFields
 - shop_freight deduct switch
+- shop order store freight generate from backend

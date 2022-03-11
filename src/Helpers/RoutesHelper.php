@@ -929,8 +929,10 @@ class RoutesHelper
     # Shop
     if (config('stone.shop')) {
       # Shop Order
+      Route::get('shop_order/calc', [ShopOrderController::class, 'calc']);
       Route::resource('shop_order', ShopOrderController::class)->only([
-        'index', 'show',
+        'index', 
+        'show',
       ])->shallow();
     }
   }

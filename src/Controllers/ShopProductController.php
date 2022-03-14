@@ -68,7 +68,12 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * freight 運費
  * store_temperature 溫層
  * shop_product_spec_settings 商品規格設定
- * shop_product_specs 商品規格
+ * purchaser 採購人
+ * cold_chain_type 溫層
+ * ~ 冷凍 freezing
+ * ~ 常溫 normal
+ * ~ 低溫 cold
+ * 
  *
  * Store/Update
  * shop_product_spec_settings 底下需要帶 shop_product_spec_setting_items
@@ -112,6 +117,8 @@ class ShopProductController extends Controller
     'store_temperature',
     'ranking_score',
     'freight',
+    'purchaser',
+    'cold_chain_type',
   ];
   public $search_fields = [
     'no',
@@ -130,6 +137,8 @@ class ShopProductController extends Controller
     'order_type',
     'source',
     'store_temperature',
+    'purchaser',
+    'cold_chain_type',
   ];
   public $belongs_to_many = [
     'suggests',
@@ -181,8 +190,10 @@ class ShopProductController extends Controller
    * @queryParam area_sections ids 子地區  No-example
    * @queryParam type ids 類型  No-example
    * @queryParam order_type ids 訂單類型  No-example
-   * @queryParam stock_level ids 篩選庫存狀態  No-example 1,2
-   * @queryParam shop_product_cover_frame 篩選活動框  No-example 1,2
+   * @queryParam stock_level ids 篩選庫存狀態  No-example
+   * @queryParam shop_product_cover_frame 篩選活動框  No-example
+   * @queryParam purchaser 採購人 No-example
+   * @queryParam cold_chain_type 溫層 No-example
    *
    */
   public function index(Request $request, $id = null)
@@ -257,6 +268,8 @@ class ShopProductController extends Controller
    * @bodyParam area_sections ids 子地區 Example: [1,2]
    * @bodyParam shop_product_spec_settings object 商品規格設定 Example:[{"name":"name","sq":"1","shop_product_spec_setting_items":[{"name":"name","sq":"1"}]}]
    * @bodyParam shop_product_specs object 商品規格 Example: [{"no":"SexyMonkey","cost":"100","price":"1000","discount_price":"900","start_at":"2021-10-10","end_at":"2021-10-20","freight":"100","max_buyable_count":"100","storage_space":"AA","stock_count":"1000","stock_alert_count":"100"}]
+   * @bodyParam purchaser 採購人 Example: 我是一顆蛋
+   * @bodyParam cold_chain_type 溫層 Example: freezing
    */
   public function store(Request $request, $id = null)
   {
@@ -324,6 +337,8 @@ class ShopProductController extends Controller
    * @bodyParam area_sections ids 子地區 Example: [1,2]
    * @bodyParam shop_product_spec_settings object 商品規格設定 Example:[{"name":"name","sq":"1","shop_product_spec_setting_items":[{"name":"name","sq":"1"}]}]
    * @bodyParam shop_product_specs object 商品規格 Example: [{"no":"SexyMonkey","cost":"100","price":"1000","discount_price":"900","start_at":"2021-10-10","end_at":"2021-10-20","freight":"100","max_buyable_count":"100","storage_space":"AA","stock_count":"1000","stock_alert_count":"100"}]
+   * @bodyParam purchaser 採購人 Example: 我是一顆蛋
+   * @bodyParam cold_chain_type 溫層 Example: freezing
    */
   public function update(Request $request, $id)
   {

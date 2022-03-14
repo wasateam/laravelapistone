@@ -46,13 +46,15 @@ class ShopProduct extends JsonResource
         'images'                     => $this->images,
         'description'                => $this->description,
         'ranking_score'              => $this->ranking_score,
+        'purchaser'                  => $this->purchaser,
+        'cold_chain_type'            => $this->cold_chain_type,
         'shop_product_cover_frame'   => new ShopProductCoverFrame_R1($this->shop_product_cover_frame),
         'suggests'                   => ShopProduct_R1::collection($this->suggests),
         'shop_classes'               => ShopClass_R1::collection($this->shop_classes),
         'shop_subclasses'            => ShopSubclass_R1::collection($this->shop_subclasses),
         'shop_product_specs'         => ShopProductSpec::collection($this->shop_product_specs),
         'shop_product_spec_settings' => ShopProductSpecSetting_R1::collection($this->shop_product_spec_settings),
-        'shop_campaigns'              => ShopCampaign_R1::collection($this->shop_campaigns),
+        'shop_campaigns'             => ShopCampaign_R1::collection($this->shop_campaigns),
       ];
       if (config('stone.area')) {
         $res['areas']         = Area_R1::collection($this->areas);
@@ -87,13 +89,14 @@ class ShopProduct extends JsonResource
         'description'                => $this->description,
         'freight'                    => $this->freight,
         'store_temperature'          => $this->store_temperature,
+        'cold_chain_type'            => $this->cold_chain_type,
         'shop_product_cover_frame'   => new ShopProductCoverFrame_R1($this->shop_product_cover_frame),
         'suggests'                   => ShopProduct_R1::collection($this->suggests),
         'shop_classes'               => ShopClass_R1::collection($this->shop_classes),
         'shop_subclasses'            => ShopSubclass_R1::collection($this->shop_subclasses),
         'shop_product_specs'         => ShopProductSpec::collection($this->shop_product_specs),
         'shop_product_spec_settings' => ShopProductSpecSetting_R1::collection($this->shop_product_spec_settings),
-        'shop_campaigns'              => ShopCampaign_R1::collection($this->shop_campaigns),
+        'shop_campaigns'             => ShopCampaign_R1::collection($this->shop_campaigns),
       ];
       if (config('stone.area')) {
         $res['areas']         = Area_R1::collection($this->areas);

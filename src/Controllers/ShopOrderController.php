@@ -126,6 +126,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * freight 運費
  * products_price 商品價格總計
  * order_price 訂單費用總計
+ * user 訂購會員
  *
  * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立

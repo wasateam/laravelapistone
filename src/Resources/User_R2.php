@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class User_R0 extends JsonResource
+class User_R2 extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -15,7 +15,9 @@ class User_R0 extends JsonResource
   public function toArray($request)
   {
     return [
-      'id' => $this->id,
+      'id'   => $this->id,
+      'uuid' => $this->uuid,
+      'name' => $this->name,
     ];
   }
 }

@@ -22,9 +22,9 @@ class BonusPointRecord extends JsonResource
         'type'          => $this->type,
         'source'        => $this->source,
         'count'         => $this->count,
-        'user'          => new User_R0($this->user),
+        'user'          => new User_R1($this->user),
         'shop_order'    => new ShopOrder_R2($this->shop_order),
-        'shop_campaign' => new User_R0($this->shop_campaign),
+        'shop_campaign' => new User_R1($this->shop_campaign),
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
@@ -34,9 +34,9 @@ class BonusPointRecord extends JsonResource
         'type'          => $this->type,
         'source'        => $this->source,
         'count'         => $this->count,
-        'user'          => new User_R0($this->user),
+        'user'          => new User_R1($this->user),
         'shop_order'    => new ShopOrder_R2($this->shop_order),
-        'shop_campaign' => new User_R0($this->shop_campaign),
+        'shop_campaign' => new User_R1($this->shop_campaign),
       ];
     }
   }

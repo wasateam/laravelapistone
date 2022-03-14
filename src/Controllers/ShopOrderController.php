@@ -48,6 +48,9 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * ~ 訂單完成 complete
  * status_remark 狀態備註
  * receive_way 收貨方式
+ * ~ 電話聯絡收件人 phone-contact
+ * ~ 電聯收件人後，交由管理室代收 phone-contact-building-manager
+ * ~ 不需電聯，直接交由管理室代收 building-manager
  * ship_way 物流方式
  * ship_start_time 運送開始時間
  * ship_end_time 運送結束時間

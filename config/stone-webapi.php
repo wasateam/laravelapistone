@@ -108,7 +108,8 @@ return [
     ],
     'invite'              => [
       'general' => [
-        'invited_shop_deduct_rate'     => 9,
+        // 'invited_shop_deduct_rate'     => 9,
+        'invited_shop_deduct'          => 200,
         'invite_feedback_bonus_points' => 100,
       ],
       // 'each'    => true,

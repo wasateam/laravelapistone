@@ -399,16 +399,19 @@ class ShopHelper
       if (config('stone.user.invite.general.invited_shop_deduct_rate')) {
         $invited_shop_deduct_rate = config('stone.user.invite.general.invited_shop_deduct_rate');
       }
-    }
-    $general_user_invite = GeneralContent::where('name', 'general_user_invite')->first();
-    if ($general_user_invite) {
-      if ($general_user_invite->content) {
-        if ($general_user_invite->content['invited_shop_deduct_rate']) {
-          $invited_shop_deduct_rate = $general_user_invite->content['invited_shop_deduct_rate'];
+      $general_user_invite = GeneralContent::where('name', 'general_user_invite')->first();
+      if ($general_user_invite) {
+        if ($general_user_invite->content) {
+          if ($general_user_invite->content['invited_shop_deduct_rate']) {
+            $invited_shop_deduct_rate = $general_user_invite->content['invited_shop_deduct_rate'];
+            $invite_no_deduct         = $products_price - round($products_price * $invited_shop_deduct_rate / 10);
+          }
+          if ($general_user_invite->content['invited_shop_deduct']) {
+            $invite_no_deduct = $general_user_invite->content['invited_shop_deduct'];
+          }
         }
       }
     }
-    $invite_no_deduct = $products_price - round($products_price * $invited_shop_deduct_rate / 10);
     return $invite_no_deduct;
   }
 

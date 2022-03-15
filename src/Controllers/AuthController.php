@@ -15,6 +15,7 @@ use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\EmailHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
+use Wasateam\Laravelapistone\Helpers\UserHelper;
 use Wasateam\Laravelapistone\Models\Admin;
 
 /**
@@ -87,6 +88,11 @@ class AuthController extends Controller
     }
     $user->scopes = $default_scopes;
     $user->save();
+    if (config('stone.mode') == 'webapi') {
+      if (config('stone.user.invite')) {
+        $user = UserHelper::generateInviteNo($user, 'Wasateam\Laravelapistone\Models\User');
+      }
+    }
     if (config('stone.auth.customer_id')) {
       $user->customer_id = AuthHelper::getCustomerId($model, config('stone.auth.customer_id'));
       $user->save();

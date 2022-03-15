@@ -16,16 +16,17 @@ use Wasateam\Laravelapistone\Models\ShopCampaign;
  * 促銷活動 API
  *
  * 類型 type
- * ~紅利點數回饋 bonus_point_feedback
- * ~折扣碼 discount_code
+ * ~ 紅利點數回饋 bonus_point_feedback
+ * ~ 折扣碼 discount_code
+ * ~ 會員邀請 member_invite
  * 活動名稱 name
  * 啟用狀態 is_active
  * 起始時間 start_date
  * 結束時間 end_date
  * 折扣碼 discount_code
  * 活動內容 condition
- * ~首購 first-purchase
- * ~不限 null
+ * ~ 首購 first-purchase
+ * ~ 不限 null
  * ~紅利點數回饋 比例 rate
  * 滿額限制(金額) full_amount
  * 打折折數 discount_percent

@@ -61,6 +61,10 @@ return [
     'device'              => [
       'acumatica' => true,
     ],
+    'invite'              => [
+      'general' => true,
+      'each'    => true,
+    ],
   ],
   'user_device_token'  => true,
   'socialite'          => [

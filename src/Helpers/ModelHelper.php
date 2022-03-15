@@ -1063,7 +1063,7 @@ class ModelHelper
       if ($request->{$key} === null) {
         continue;
       }
-      if (is_array($model[$key]) || is_object($model[$key])) {
+      if (is_array($request->{$key}) || is_object($request->{$key})) {
         $arr = $request->{$key};
         array_walk_recursive($arr, function ($value) {
           $_value = self::removeScriptFromString($value);

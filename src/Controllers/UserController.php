@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\UserHelper;
 
 /**
  * @group User
@@ -49,6 +50,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * color 顏色
  * customer_id 系統自動生成之客戶ID
  * acumatica_id Acumatica ID
+ * invite_no 邀請碼
  *
  * @authenticated
  */
@@ -207,6 +209,9 @@ class UserController extends Controller
       if (config('stone.auth.customer_id')) {
         $user->customer_id = AuthHelper::getCustomerId($model, config('stone.auth.customer_id'));
         $user->save();
+      }
+      if (config('stone.user.invite')) {
+        UserHelper::generateInviteNo($model, $this->model);
       }
     });
   }
@@ -377,8 +382,7 @@ class UserController extends Controller
           $subscribe      = '未訂閱';
           if (!$model->subscribe_start_at && !$model->subscribe_end_at) {
             $subscribe = '未訂閱';
-          }
-          else if ($model->subscribe_start_at && $model->subscribe_end_at) {
+          } else if ($model->subscribe_start_at && $model->subscribe_end_at) {
             $subscribe_start_at_datetime = Carbon::parse($model->subscribe_start_at);
             $subscribe_end_at_datetime   = Carbon::parse($model->subscribe_end_at);
             if (

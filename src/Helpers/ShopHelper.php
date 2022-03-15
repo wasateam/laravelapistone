@@ -6,9 +6,11 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
+use Wasateam\Laravelapistone\Helpers\UserInviteHelper;
 use Wasateam\Laravelapistone\Models\Area;
 use Wasateam\Laravelapistone\Models\AreaSection;
 use Wasateam\Laravelapistone\Models\BonusPointRecord;
+use Wasateam\Laravelapistone\Models\GeneralContent;
 use Wasateam\Laravelapistone\Models\ShopCampaign;
 use Wasateam\Laravelapistone\Models\ShopCampaignShopOrder;
 use Wasateam\Laravelapistone\Models\ShopCart;
@@ -97,10 +99,34 @@ class ShopHelper
     }
   }
 
-  // public static function getOrderFreight($shop_order)
+  public static function getFreight(
+    $order_type,
+    $products_price,
+    $compaign_deduct,
+    $invite_no_deduct
+  ) {
+    $freight     = config('stone.shop.freight_default');
+    $order_price = $products_price - $compaign_deduct - $invite_no_deduct;
+    if (config("stone.shop.order_type.{$order_type}")) {
+      if (config("stone.shop.order_type.{$order_type}.freight_default")) {
+        $freight = config("stone.shop.order_type.{$order_type}.freight_default");
+      }
+    }
+    $today_date         = Carbon::now()->format('Y-m-d');
+    $free_freight_price = ShopFreeShipping::where('end_date', '>=', $today_date)
+      ->where('start_date', '<=', $today_date)
+      ->first();
+    if ($free_freight_price) {
+      if ($order_price >= $free_freight_price->price) {
+        $freight = 0;
+      }
+    }
+    return $freight;
+  }
+
   public static function getOrderFreight($order_type, $shop_order_shop_products)
   {
-    $freight    = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
+    $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
     if ($order_type) {
       $order_types     = config('stone.shop.order_type') ? config('stone.shop.order_type') : [];
       $curr_order_type = str_replace('-', '_', $order_type);
@@ -141,6 +167,7 @@ class ShopHelper
   }
 
   //取得訂單金額、運費、商品總金額
+  // @Q@ 要拿掉，目前使用於退訂
   public static function calculateShopOrderPrice($shop_order_id, $order_type, $request = null)
   {
     //計算訂單金額
@@ -184,7 +211,7 @@ class ShopHelper
     //紅利點數
     //create bonus_points record
     $bonus_points = $shop_order->bonus_points_deduct ? $shop_order->bonus_points_deduct : 0;
-    // self::createBonusPointRecord($shop_order, null, $bonus_points, 'deduct');
+    // self::createBonusPointRecordFromShopOrder($shop_order, null, $bonus_points, 'deduct');
 
     //運費 default = 100
     $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
@@ -292,12 +319,22 @@ class ShopHelper
     return "{$time}{$str}";
   }
 
-  public static function updateShopOrderPrice($shop_order, $discount_code)
+  public static function updateShopOrderPrice($shop_order, $discount_code, $bonus_points, $invite_no)
   {
-    $shop_order->products_price  = self::getOrderProductsAmount($shop_order->shop_order_shop_products);
-    $shop_order->freight         = self::getOrderFreight($shop_order->order_type, $shop_order->shop_order_shop_products);
-    $shop_order->campaign_deduct = self::setCampaignDeduct($shop_order, $discount_code);
-    $shop_order->order_price     = self::getOrderAmountFromShopOrder($shop_order);
+
+    $products_price      = self::getOrderProductsAmount($shop_order->shop_order_shop_products);
+    $campaign_deduct     = self::getCampaignDeduct($shop_order->user, Carbon::now(), $products_price, $discount_code);
+    $invite_no_deduct    = self::getInviteNoDeduct($products_price, $invite_no, $shop_order->user);
+    $bonus_points_deduct = self::getBonusPointsDeduct($bonus_points, $products_price, $campaign_deduct, $invite_no_deduct);
+    $freight             = self::getFreight($shop_order->order_type, $products_price, $campaign_deduct, $invite_no_deduct);
+    $order_price         = self::getOrderPrice($products_price, $freight, $bonus_points_deduct, $campaign_deduct, $invite_no_deduct);
+
+    $shop_order->products_price      = $products_price;
+    $shop_order->campaign_deduct     = $campaign_deduct;
+    $shop_order->invite_no_deduct    = $invite_no_deduct;
+    $shop_order->bonus_points_deduct = $bonus_points_deduct;
+    $shop_order->freight             = $freight;
+    $shop_order->order_price         = $order_price;
     $shop_order->save();
   }
 
@@ -343,6 +380,38 @@ class ShopHelper
     return $compaign_deduct;
   }
 
+  public static function getInviteNoDeduct(
+    $products_price,
+    $invite_no,
+    $user
+  ) {
+    if (!$invite_no) {
+      return 0;
+    }
+
+    $check = UserInviteHelper::check($invite_no, $user);
+    if (!$check) {
+      return 0;
+    }
+
+    $invited_shop_deduct_rate = 87;
+    if (config('stone.user.invite.general')) {
+      if (config('stone.user.invite.general.invited_shop_deduct_rate')) {
+        $invited_shop_deduct_rate = config('stone.user.invite.general.invited_shop_deduct_rate');
+      }
+    }
+    $general_user_invite = GeneralContent::where('name', 'general_user_invite')->first();
+    if ($general_user_invite) {
+      if ($general_user_invite->content) {
+        if ($general_user_invite->content['invited_shop_deduct_rate']) {
+          $invited_shop_deduct_rate = $general_user_invite->content['invited_shop_deduct_rate'];
+        }
+      }
+    }
+    $invite_no_deduct = $products_price - round($products_price * $invited_shop_deduct_rate / 10);
+    return $invite_no_deduct;
+  }
+
   public static function getOrderProductsAmount($shop_order_shop_products)
   {
     $order_amount = 0;
@@ -370,6 +439,24 @@ class ShopHelper
     }
     if ($shop_order->campaign_deduct) {
       $order_amount -= $shop_order->campaign_deduct;
+    }
+    return $order_amount;
+  }
+
+  public static function getOrderPrice($products_price, $freight, $bonus_points_deduct, $campaign_deduct, $invite_no_deduct)
+  {
+    $order_amount = $products_price;
+    if ($freight) {
+      $order_amount += $freight;
+    }
+    if ($bonus_points_deduct) {
+      $order_amount -= $bonus_points_deduct;
+    }
+    if ($campaign_deduct) {
+      $order_amount -= $campaign_deduct;
+    }
+    if ($invite_no_deduct) {
+      $order_amount -= $invite_no_deduct;
     }
     return $order_amount;
   }
@@ -633,7 +720,32 @@ class ShopHelper
       $user                 = $shop_order->user;
       $user->bonus_points   = $user->bonus_points + $bonus_point_feedback;
       $user->save();
-      self::createBonusPointRecord($shop_order, $shop_campaign->id, $bonus_point_feedback, 'get');
+      self::createBonusPointRecordFromShopOrder($shop_order, $shop_campaign->id, $bonus_point_feedback, 'get');
+    }
+
+    if (config('stone.user.invite')) {
+      if ($shop_order->invite_no) {
+        $invite_feedback_bonus_points = 87;
+        if (config('stone.user.invite.general')) {
+          if (config('stone.user.invite.general.invite_feedback_bonus_points')) {
+            $invite_feedback_bonus_points = config('stone.user.invite.general.invite_feedback_bonus_points');
+          }
+        }
+        $general_user_invite = GeneralContent::where('name', 'general_user_invite')->first();
+        if ($general_user_invite) {
+          if ($general_user_invite->content) {
+            if ($general_user_invite->content['invite_feedback_bonus_points']) {
+              $invite_feedback_bonus_points = $general_user_invite->content['invite_feedback_bonus_points'];
+            }
+          }
+        }
+        $target_user = User::where('invite_no', $shop_order->invite_no)
+          ->whereNull('deleted_at')
+          ->first();
+        $target_user->bonus_points = $target_user->bonus_points + $invite_feedback_bonus_points;
+        $target_user->save();
+        self::createBonusPointRecordFromInvite($target_user, $invite_feedback_bonus_points);
+      }
     }
   }
 
@@ -707,15 +819,29 @@ class ShopHelper
   public static function checkBonusPointEnough($request)
   {
 
-    if (!$request->has('bonus_points_deduct')) {
+    if (!$request->has('bonus_points')) {
       return;
     }
 
-    $user                = User::find($request->user);
-    $bonus_points_deduct = $request->bonus_points_deduct;
-    if ($bonus_points_deduct > $user->bonus_points) {
+    $user         = User::find($request->user);
+    $bonus_points = $request->bonus_points;
+    if ($bonus_points > $user->bonus_points) {
       return false;
       throw new \Wasateam\Laravelapistone\Exceptions\OutOfException('bonus_points');
+    }
+  }
+
+  public static function checkShopOrderInviteNo($request, $user)
+  {
+
+    if (!$request->has('invite_no')) {
+      return;
+    }
+
+    $check = UserInviteHelper::check($request->invite_no, $user);
+
+    if (!$check) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('invite_no');
     }
   }
 
@@ -1125,9 +1251,8 @@ class ShopHelper
     return $shop_return_record;
   }
 
-  public static function createBonusPointRecord($shop_order, $shop_campaign_id = null, $point_count, $type)
+  public static function createBonusPointRecordFromShopOrder($shop_order, $shop_campaign_id = null, $point_count, $type)
   {
-    //create bonus_point_record when get/deduct bonus_points
     $bonus_point_record                   = new BonusPointRecord;
     $bonus_point_record->user_id          = $shop_order->user_id;
     $bonus_point_record->shop_order_id    = $shop_order->id;
@@ -1135,6 +1260,16 @@ class ShopHelper
     $bonus_point_record->type             = $type;
     $bonus_point_record->source           = 'new_shop_order';
     $bonus_point_record->count            = $point_count;
+    $bonus_point_record->save();
+  }
+
+  public static function createBonusPointRecordFromInvite($user, $point_count)
+  {
+    $bonus_point_record          = new BonusPointRecord;
+    $bonus_point_record->user_id = $user->id;
+    $bonus_point_record->type    = 'get';
+    $bonus_point_record->source  = 'member_invite';
+    $bonus_point_record->count   = $point_count;
     $bonus_point_record->save();
   }
 
@@ -1244,7 +1379,7 @@ class ShopHelper
     $user               = User::find($shop_order->user_id);
     $user->bonus_points = $user->bonus_points - $shop_order->bonus_points_deduct;
     $user->save();
-    self::createBonusPointRecord($shop_order, null, $shop_order->bonus_points_deduct, 'deduct');
+    self::createBonusPointRecordFromShopOrder($shop_order, null, $shop_order->bonus_points_deduct, 'deduct');
   }
 
   public static function setShopOrderNo($shop_order)
@@ -1256,6 +1391,24 @@ class ShopHelper
     }
     $shop_order->save();
     return $shop_order;
+  }
+
+  public static function getBonusPointsDeduct(
+    $bonus_points,
+    $products_price,
+    $compaign_deduct,
+    $invite_no_deduct
+  ) {
+    $order_price = $products_price - $compaign_deduct - $invite_no_deduct;
+    if ($bonus_points > $order_price) {
+      $bonus_points_deduct = $order_price;
+    } else {
+      $bonus_points_deduct = $bonus_points;
+    }
+    if (!$bonus_points_deduct) {
+      $bonus_points_deduct = 0;
+    }
+    return $bonus_points_deduct;
   }
 
 }

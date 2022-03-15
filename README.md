@@ -12,3 +12,4 @@
 - array, object html encode issue on ModelHelper->inputFields
 - shop_freight deduct switch
 - shop order store freight generate from backend
+- campaign, invite_no deduct multiple times issue

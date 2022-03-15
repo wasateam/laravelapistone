@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
@@ -73,7 +74,7 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * ~ 冷凍 freezing
  * ~ 常溫 normal
  * ~ 低溫 cold
- * 
+ *
  *
  * Store/Update
  * shop_product_spec_settings 底下需要帶 shop_product_spec_setting_items
@@ -146,7 +147,7 @@ class ShopProductController extends Controller
     'shop_subclasses',
   ];
   public $filter_belongs_to = [
-    'shop_product_cover_frame'
+    'shop_product_cover_frame',
   ];
   public $filter_belongs_to_many = [
     'shop_classes',
@@ -216,7 +217,12 @@ class ShopProductController extends Controller
     } else if (config('stone.mode') == 'webapi') {
       if (config('stone.featured_class') && $request->has('featured_classes')) {
         return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
-          $snap = $snap->where('is_active', 1);
+          $snap = $snap->where('is_active', 1)
+            ->where(function ($query) {
+              $now = Carbon::now();
+              $query->where('off_time', '>', $now);
+            })
+            ->orWhereNull('off_time');
           return $snap;
         });
       } else if (!$request->has('shop_classes') && !$request->has('shop_subclasses')) {
@@ -225,7 +231,12 @@ class ShopProductController extends Controller
         ], 400);
       }
       return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
-        $snap = $snap->where('is_active', 1);
+        $snap = $snap->where('is_active', 1)
+          ->where(function ($query) {
+            $now = Carbon::now();
+            $query->where('off_time', '>', $now);
+          })
+          ->orWhereNull('off_time');
         return $snap;
       });
     }

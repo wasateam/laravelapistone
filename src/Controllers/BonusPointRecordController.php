@@ -18,6 +18,7 @@ use Wasateam\Laravelapistone\Models\BonusPointRecord;
  * ~ deduct 扣除
  * source 來源
  * ~ new_shop_order 新訂單
+ * ~ member_invite 會員邀請
  * user 所綁定之使用者
  * shop_order 所綁定之訂單
  * shop_campagin 所綁定之促銷活動

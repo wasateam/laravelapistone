@@ -106,6 +106,13 @@ return [
       'active_before_action'   => '\App\Helpers\AppHelper',
       'deactive_before_action' => '\App\Helpers\AppHelper',
     ],
+    'invite'              => [
+      'general' => [
+        'invited_shop_deduct_rate'     => 9,
+        'invite_feedback_bonus_points' => 100,
+      ],
+      // 'each'    => true,
+    ],
   ],
   'shop'                => [
     'uuid'              => true,

@@ -120,13 +120,16 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * card_period_amount 信用卡或銀聯卡_訂單建立時的每次要授權金額
  * card_total_success_times 信用卡或銀聯卡_目前已成功授權的次數
  * card_total_success_amount 信用卡或銀聯卡_目前已成功授權的金額合計
- * bonus_points_deduct 訂單所使用(扣除)的紅利點數
+ * bonus_points 訂單想使用(扣除)的紅利點數
+ * bonus_points_deduct 訂單可使用(扣除)的紅利點數
  * discount_code 折扣碼
  * campaign_deduct 活動折抵
  * freight 運費
  * products_price 商品價格總計
  * order_price 訂單費用總計
  * user 訂購會員
+ * invite_no 邀請碼
+ * invite_no_deduct 邀請碼折抵
  *
  * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立
@@ -182,7 +185,7 @@ class ShopOrderController extends Controller
     'invoice_address',
     'invoice_email',
     'invoice_uniform_number',
-    'bonus_points_deduct',
+    'invite_no',
   ];
   public $search_fields = [
     'no',
@@ -334,8 +337,9 @@ class ShopOrderController extends Controller
    * @bodyParam invoice_email string 發票信箱 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
    * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1}]
-   * @bodyParam bonus_points_deduct int 紅利點數 Example:30
+   * @bodyParam bonus_points int 紅利點數 Example:30
    * @bodyParam discount_code string 折扣碼 Example:SEXYAPPLE
+   * @bodyParam invite_no string 邀請碼 Example:SEXYORANGE
    */
 
   public function store(Request $request, $id = null)
@@ -358,23 +362,29 @@ class ShopOrderController extends Controller
 
       ShopHelper::checkBonusPointEnough($request);
 
+      ShopHelper::checkShopOrderInviteNo($request, $user);
+
       ShopHelper::updateUserInfoFromShopOrderRequest(Auth::user(), $request);
 
       $discount_code = $request->has('discount_code') ? $request->discount_code : null;
-
-      // ShopHelper::checkDiscountCode($discount_code);
+      $invite_no     = $request->has('invite_no') ? $request->invite_no : null;
+      $bonus_points  = $request->has('bonus_points') ? $request->bonus_points : null;
 
       return ModelHelper::ws_StoreHandler(
         $this,
         $request, $id,
         function ($model) use (
           $filtered_cart_products,
-          $discount_code
+          $discount_code,
+          $invite_no,
+          $bonus_points
         ) {
 
+          // @Q@
           ShopHelper::deductBonusPointFromShopOrder($model);
           ShopHelper::createShopOrderShopProductsFromCartProducts($filtered_cart_products, $model);
-          ShopHelper::updateShopOrderPrice($model, $discount_code);
+          ShopHelper::setCampaignDeduct($model, $discount_code);
+          ShopHelper::updateShopOrderPrice($model, $discount_code, $bonus_points, $invite_no);
 
         }, function ($model) use (
           $user,
@@ -394,8 +404,9 @@ class ShopOrderController extends Controller
    *
    * @bodyParam user int 人員 Example:1
    * @bodyParam shop_cart_products object 訂單商品 Example:[{"id":1}]
-   * @bodyParam bonus_points_deduct int 紅利點數 Example:30
+   * @bodyParam bonus_points int 紅利點數 Example:30
    * @bodyParam discount_code string 折扣碼 Example:SEXYAPPLE
+   * @bodyParam invite_no string 邀請碼 Example:SEXYORANGE
    */
   public function calc(Request $request, $id = null)
   {
@@ -410,15 +421,23 @@ class ShopOrderController extends Controller
     ShopHelper::checkBonusPointEnough($request);
 
     $discount_code = $request->has('discount_code') ? $request->discount_code : null;
+    $invite_no     = $request->has('invite_no') ? $request->invite_no : null;
+    $bonus_points  = $request->has('bonus_points') ? $request->bonus_points : null;
 
-    $products_price  = ShopHelper::getOrderProductsAmount($filtered_cart_products);
-    $freight         = ShopHelper::getOrderFreight($order_type, $filtered_cart_products);
-    $compaign_deduct = ShopHelper::getCampaignDeduct($user, Carbon::now(), $products_price, $discount_code);
+    $products_price      = ShopHelper::getOrderProductsAmount($filtered_cart_products);
+    $campaign_deduct     = ShopHelper::getCampaignDeduct($user, Carbon::now(), $products_price, $discount_code);
+    $invite_no_deduct    = ShopHelper::getInviteNoDeduct($products_price, $invite_no, $user);
+    $bonus_points_deduct = ShopHelper::getBonusPointsDeduct($bonus_points, $products_price, $campaign_deduct, $invite_no_deduct);
+    $freight             = ShopHelper::getFreight($order_type, $products_price, $campaign_deduct, $invite_no_deduct);
+    $order_price         = ShopHelper::getOrderPrice($products_price, $freight, $bonus_points_deduct, $campaign_deduct, $invite_no_deduct);
 
     return response()->json([
-      'products_price'  => $products_price,
-      'freight'         => $freight,
-      'compaign_deduct' => $compaign_deduct,
+      'products_price'      => $products_price,
+      'freight'             => $freight,
+      'campaign_deduct'     => $campaign_deduct,
+      'invite_no_deduct'    => $invite_no_deduct,
+      'bonus_points_deduct' => $bonus_points_deduct,
+      'order_price'         => $order_price,
     ], 200);
   }
 

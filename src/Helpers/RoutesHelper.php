@@ -84,6 +84,8 @@ use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceModifyRecordController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
+use Wasateam\Laravelapistone\Controllers\GeneralUserInviteController;
+use Wasateam\Laravelapistone\Controllers\UserInviteController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanItemController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanRecordController;
@@ -407,6 +409,17 @@ class RoutesHelper
         Route::resource('user_device_modify_record', UserDeviceModifyRecordController::class)->only([
           'index', 'show', 'store', 'update', 'destroy',
         ])->shallow();
+      }
+      # UserInvite
+      if (config('stone.user.invite')) {
+
+        # Privacy Terms
+        if (config('stone.user.invite.general')) {
+          Route::get('general_user_invite', [GeneralUserInviteController::class, 'show']);
+          Route::patch('general_user_invite', [GeneralUserInviteController::class, 'update']);
+          Route::get('general_user_invite', [GeneralUserInviteController::class, 'show']);
+          Route::patch('general_user_invite', [GeneralUserInviteController::class, 'update']);
+        }
       }
     }
 
@@ -880,6 +893,11 @@ class RoutesHelper
         'store',
       ])->shallow();
     }
+
+    if (config('stone.user.invite')) {
+      # Invite Check
+      Route::post('user_invite/check', [UserInviteController::class, 'check']);
+    }
   }
 
   # Web 需符合對應使用者之
@@ -929,9 +947,9 @@ class RoutesHelper
     # Shop
     if (config('stone.shop')) {
       # Shop Order
-      Route::get('shop_order/calc', [ShopOrderController::class, 'calc']);
+      Route::post('shop_order/calc', [ShopOrderController::class, 'calc']);
       Route::resource('shop_order', ShopOrderController::class)->only([
-        'index', 
+        'index',
         'show',
       ])->shallow();
     }

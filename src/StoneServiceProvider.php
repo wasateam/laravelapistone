@@ -407,6 +407,7 @@ class StoneServiceProvider extends ServiceProvider
       $this->commands([
         CommandStoneTest::class,
         CommandStoneWork::class,
+        \Wasateam\Laravelapistone\Commands\CommandGenerateUserInviteNo::class,
       ]);
     }
   }

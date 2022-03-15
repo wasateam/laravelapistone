@@ -95,6 +95,7 @@ class ShopOrderCollection extends JsonResource
         'card_total_success_amount' => $this->card_total_success_amount,
         'bonus_points_deduct'       => $this->bonus_points_deduct,
         'campaign_deduct'           => $this->campaign_deduct,
+        'invite_no_deduct'          => $this->invite_no_deduct,
         'user'                      => new User_R2($this->user),
       ];
       if (config('stone.shop.uuid')) {
@@ -180,6 +181,7 @@ class ShopOrderCollection extends JsonResource
         'card_total_success_amount' => $this->card_total_success_amount,
         'bonus_points_deduct'       => $this->bonus_points_deduct,
         'campaign_deduct'           => $this->campaign_deduct,
+        'invite_no_deduct'          => $this->invite_no_deduct,
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;

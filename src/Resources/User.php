@@ -69,6 +69,9 @@ class User extends JsonResource
     if (config('stone.user.customer_id')) {
       $res['customer_id'] = $this->customer_id;
     }
+    if (config('stone.user.invite')) {
+      $res['invite_no'] = $this->invite_no;
+    }
     return $res;
   }
 }

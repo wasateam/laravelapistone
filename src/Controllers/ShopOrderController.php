@@ -79,6 +79,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * invoice_status 發票狀態
  * ~ done: 完成
  * ~ fail: 失敗
+ * ~ no-need: 無需開發票
  * invoice_type 發票類型
  * ~ 電子發票 personal,電子三聯式發票 triple
  * invoice_carrier_type 發票載具類型
@@ -385,6 +386,7 @@ class ShopOrderController extends Controller
           ShopHelper::createShopOrderShopProductsFromCartProducts($filtered_cart_products, $model);
           ShopHelper::setCampaignDeduct($model, $discount_code);
           ShopHelper::updateShopOrderPrice($model, $discount_code, $bonus_points, $invite_no);
+          ShopHelper::ShopOrderNoPriceCheck($model);
 
         }, function ($model) use (
           $user,

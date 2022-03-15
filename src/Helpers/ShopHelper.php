@@ -840,6 +840,9 @@ class ShopHelper
     if (!$request->has('invite_no')) {
       return;
     }
+    if (!$request->invite_no) {
+      return;
+    }
 
     $check = UserInviteHelper::check($request->invite_no, $user);
 
@@ -1412,6 +1415,17 @@ class ShopHelper
       $bonus_points_deduct = 0;
     }
     return $bonus_points_deduct;
+  }
+
+  public static function ShopOrderNoPriceCheck($shop_order)
+  {
+    if (!$shop_order->order_price) {
+      $shop_order->pay_status     = 'paid';
+      $shop_order->status         = 'established';
+      $shop_order->ship_status    = 'unfulfilled';
+      $shop_order->invoice_status = 'no-need';
+      $shop_order->save();
+    }
   }
 
 }

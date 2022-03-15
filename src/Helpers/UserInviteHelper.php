@@ -9,6 +9,9 @@ class UserInviteHelper
 {
   public static function check($invite_no, $user)
   {
+    if(!$invite_no){
+      return false;
+    }
     $target_user = User::where('invite_no', $invite_no)
       ->whereNull('deleted_at')->first();
     if (!$target_user) {

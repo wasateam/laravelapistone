@@ -115,7 +115,6 @@ class ModelHelper
     }
 
     $model = self::setUUID($model, $setting);
-    error_log(json_encode($model));
 
     // Save
     $model->save();
@@ -1067,12 +1066,14 @@ class ModelHelper
         $arr = $request->{$key};
         array_walk_recursive($arr, function ($value) {
           $_value = self::removeScriptFromString($value);
-          $value = htmlentities($_value);
+          $value  = htmlentities($_value);
         });
         $model[$key] = $arr;
-      } else {
-        $_value = self::removeScriptFromString($request->{$key});
+      } else if ($request->{$key}) {
+        $_value      = self::removeScriptFromString($request->{$key});
         $model[$key] = htmlentities($_value);
+      } else {
+        $model[$key] = $request->{$key};
       }
     }
     return $model;

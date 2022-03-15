@@ -1425,6 +1425,7 @@ class ShopHelper
       $shop_order->ship_status    = 'unfulfilled';
       $shop_order->invoice_status = 'no-need';
       $shop_order->save();
+      self::setShopOrderNo($shop_order);
     }
   }
 

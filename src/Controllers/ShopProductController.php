@@ -239,31 +239,6 @@ class ShopProductController extends Controller
         }
         return $snap;
       });
-
-      // if (config('stone.featured_class') && $request->has('featured_classes')) {
-      //   return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
-      //     $snap = $snap->where('is_active', 1)
-      //       ->where(function ($query) {
-      //         $now = Carbon::now();
-      //         $query->where('off_time', '>', $now);
-      //       })
-      //       ->orWhereNull('off_time');
-      //     return $snap;
-      //   });
-      // } else if (!$request->has('shop_classes') && !$request->has('shop_subclasses')) {
-      //   return response()->json([
-      //     'message' => 'shop_classes or shop_subclasses is required.',
-      //   ], 400);
-      // }
-      // return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
-      //   $snap = $snap->where('is_active', 1)
-      //     ->where(function ($query) {
-      //       $now = Carbon::now();
-      //       $query->where('off_time', '>', $now);
-      //     })
-      //     ->orWhereNull('off_time');
-      //   return $snap;
-      // });
     }
   }
 

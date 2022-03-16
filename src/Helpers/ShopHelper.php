@@ -718,8 +718,10 @@ class ShopHelper
       return;
     }
 
+    $calc_order_price = $shop_order->order_price - $shop_order->freight;
+
     if ($shop_campaign->feedback_rate) {
-      $bonus_point_feedback = intval($shop_order->order_price) * floatval($shop_campaign->feedback_rate) / 100;
+      $bonus_point_feedback = intval($calc_order_price) * floatval($shop_campaign->feedback_rate) / 100;
       $user                 = $shop_order->user;
       $user->bonus_points   = $user->bonus_points + $bonus_point_feedback;
       $user->save();

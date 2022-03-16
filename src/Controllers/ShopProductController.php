@@ -195,6 +195,7 @@ class ShopProductController extends Controller
    * @queryParam shop_product_cover_frame 篩選活動框  No-example
    * @queryParam purchaser 採購人 No-example
    * @queryParam cold_chain_type 溫層 No-example
+   * @queryParam has_stock boolean 有庫存 Example:1
    *
    */
   public function index(Request $request, $id = null)
@@ -215,30 +216,54 @@ class ShopProductController extends Controller
         }
       });
     } else if (config('stone.mode') == 'webapi') {
-      if (config('stone.featured_class') && $request->has('featured_classes')) {
-        return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
+      return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) use ($request) {
+        if (config('stone.featured_class') && $request->filled('featured_classes')) {
           $snap = $snap->where('is_active', 1)
             ->where(function ($query) {
-              $now = Carbon::now();
-              $query->where('off_time', '>', $now);
-            })
-            ->orWhereNull('off_time');
-          return $snap;
-        });
-      } else if (!$request->has('shop_classes') && !$request->has('shop_subclasses')) {
-        return response()->json([
-          'message' => 'shop_classes or shop_subclasses is required.',
-        ], 400);
-      }
-      return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
-        $snap = $snap->where('is_active', 1)
-          ->where(function ($query) {
-            $now = Carbon::now();
-            $query->where('off_time', '>', $now);
-          })
-          ->orWhereNull('off_time');
+              $query->where(function ($query) {
+                $now = Carbon::now();
+                $query->where('off_time', '>', $now);
+              });
+              $query->orWhereNull('off_time');
+            });
+        } else if (!$request->filled('shop_classes') && !$request->filled('shop_subclasses')) {
+          if (!$request->has('shop_classes')) {
+            throw new \Wasateam\Laravelapistone\Exceptions\ParamRequiredException('shop_classes or shop_subclasses');
+          }
+        }
+        if ($request->filled('has_stock')) {
+          $snap = $snap->where(function ($query) {
+            $query->where('stock_count', '>', 0)
+              ->orWhereHas('has_stock_shop_product_specs');
+          });
+        }
         return $snap;
       });
+
+      // if (config('stone.featured_class') && $request->has('featured_classes')) {
+      //   return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
+      //     $snap = $snap->where('is_active', 1)
+      //       ->where(function ($query) {
+      //         $now = Carbon::now();
+      //         $query->where('off_time', '>', $now);
+      //       })
+      //       ->orWhereNull('off_time');
+      //     return $snap;
+      //   });
+      // } else if (!$request->has('shop_classes') && !$request->has('shop_subclasses')) {
+      //   return response()->json([
+      //     'message' => 'shop_classes or shop_subclasses is required.',
+      //   ], 400);
+      // }
+      // return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
+      //   $snap = $snap->where('is_active', 1)
+      //     ->where(function ($query) {
+      //       $now = Carbon::now();
+      //       $query->where('off_time', '>', $now);
+      //     })
+      //     ->orWhereNull('off_time');
+      //   return $snap;
+      // });
     }
   }
 

@@ -377,6 +377,9 @@ class ShopHelper
         }
       }
     }
+    if ($compaign_deduct < 0) {
+      $compaign_deduct = 0;
+    }
     return $compaign_deduct;
   }
 

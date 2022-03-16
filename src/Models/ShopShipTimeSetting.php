@@ -13,7 +13,9 @@ class ShopShipTimeSetting extends Model
 
   public function today_shop_orders()
   {
+    // $target_day = Carbon::now();
+    // return $this->hasMany(ShopOrder::class, 'shop_ship_time_setting_id')->where('ship_date', $target_day->format('Y-m-d'));
     $target_day = Carbon::now();
-    return $this->hasMany(ShopOrder::class, 'shop_ship_time_setting_id')->where('ship_date', $target_day->format('Y-m-d'));
+    return $this->hasMany(ShopOrder::class, 'shop_ship_time_setting_id')->whereDate('created_at', '=', $target_day->format('Y-m-d'));
   }
 }

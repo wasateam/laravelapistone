@@ -18,7 +18,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * orderer_email 訂購人信箱
  * shop_cart_products 訂單商品
  * PayToken 來自於綠界站內附的 PayToken
- * MerchantTradeNo Get Inpay Merchant Init 產生的 MerchantTradeNo
+ * MerchantTradeNo 來自於 Get Inpay Merchant Init 產生的 MerchantTradeNo
  *
  * @authenticated
  */

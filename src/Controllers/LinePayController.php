@@ -19,6 +19,8 @@ class LinePayController extends Controller
 
   /**
    * Init 付款初始化
+   * mode 模式 string Example:test
+   * 
    */
   public function payment_init(Request $request)
   {

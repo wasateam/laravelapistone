@@ -64,7 +64,6 @@ class ShopClassController extends Controller
   /**
    * Index
    * @queryParam search string 搜尋字串 No-example
-   * @queryParam page int 頁碼(前台全抓)  No-example
    * @queryParam order_type string 訂單類型  No-example next-day,pre-order
    *
    */

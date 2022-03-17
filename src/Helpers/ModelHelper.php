@@ -19,7 +19,7 @@ use Wasateam\Laravelapistone\Models\Locale;
 
 class ModelHelper
 {
-  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null, $limit = true, $custom_scope_handler = null)
+  public static function ws_IndexSnap($controller, $request, $id = null, $custom_snap_handler = null, $limit = true, $custom_scope_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -46,16 +46,23 @@ class ModelHelper
     # IDs Filter
     $snap = self::idsFilterSnap($snap, $request);
 
-    // Collection
-    $collection = self::indexGetPaginate($setting, $snap, $request, $getall);
+    return $snap;
+  }
+
+  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null, $limit = true, $custom_scope_handler = null)
+  {
+
+    $snap = self::ws_IndexSnap($controller, $request, $id, $custom_snap_handler, $limit, $custom_scope_handler);
+
+    // Setting
+    $setting = self::getSetting($controller);
+
     try {
+      $collection = self::indexGetPaginate($setting, $snap, $request, $getall);
     } catch (\Throwable $th) {
-      return response()->json([
-        'message' => 'get index error.',
-      ]);
+      throw $th;
     }
 
-    // Return Result
     return self::indexGetResourceCollection($collection, $setting);
   }
 
@@ -1059,9 +1066,9 @@ class ModelHelper
       if (!$request->has($key)) {
         continue;
       }
-      if ($request->{$key} === null) {
-        continue;
-      }
+      // if ($request->{$key} === null) {
+      //   continue;
+      // }
       if (is_array($request->{$key}) || is_object($request->{$key})) {
         $arr = $request->{$key};
         array_walk_recursive($arr, function ($value) {

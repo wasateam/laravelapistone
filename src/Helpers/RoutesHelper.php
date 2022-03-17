@@ -1075,12 +1075,6 @@ class RoutesHelper
         Route::get('/auth/collected_shop_product/index', [ShopProductController::class, 'collected_shop_product_index']);
         Route::get('/auth/collected_shop_product/ids', [ShopProductController::class, 'collected_shop_product_ids']);
       }
-      Route::resource('shop_product_cover_frame', ShopProductCoverFrameController::class)->only([
-        'index', 'show',
-      ])->shallow();
-      Route::resource('shop_product_expect_ship', ShopProductExpectShipController::class)->only([
-        'index', 'show',
-      ])->shallow();
       Route::resource('shop_class', ShopClassController::class)->only([
         'index', 'show',
       ])->shallow();
@@ -1093,23 +1087,6 @@ class RoutesHelper
       Route::resource('shop_ship_time_setting', ShopShipTimeSettingController::class)->only([
         'index', 'show',
       ])->shallow();
-      // Route::get('/auth/shop_order', [ShopOrderController::class, 'auth_shop_order_index']);
-      # Shop Order Product
-      Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
-        'index', 'show',
-      ])->shallow();
-      # Shop Order Shop Product Spec
-      Route::resource('shop_order_shop_product_spec', ShopOrderShopProductSpecController::class)->only([
-        'index', 'show',
-      ])->shallow();
-      # Shop Order Shop Product Spec Setting
-      Route::resource('shop_ord_shop_pro_spec_set', ShopOrderShopProductSpecSettingController::class)->only([
-        'index', 'show',
-      ])->shallow();
-      # Shop Order Shop Product Spec Setting Item
-      Route::resource('shop_ord_shop_pro_spec_set_item', ShopOrderShopProductSpecSettingItemController::class)->only([
-        'index', 'show',
-      ])->shallow();
       # Shop Cart
       Route::get('/auth/shop_cart', [ShopCartController::class, 'auth_cart']);
       # Shop Cart Product
@@ -1117,8 +1094,6 @@ class RoutesHelper
         'index',
         'store',
       ])->shallow();
-      // Route::get('/auth/shop_cart_product/index', [ShopCartProductController::class, 'auth_cart_product_index']);
-      // Route::post('/auth/shop_cart_product/store', [ShopCartProductController::class, 'product_store_auth_cart']);
       Route::post('/auth/shop_cart_product/{shop_cart_product_id}/update', [ShopCartProductController::class, 'update_auth_cart_product']);
       Route::post('/shop_cart_product/{shop_cart_product_id}', [ShopCartProductController::class, 'disabled']);
       # Shop Return Record
@@ -1134,23 +1109,6 @@ class RoutesHelper
         'index', 'show',
       ])->shallow();
       Route::get('/shop_campaign/today/index', [ShopCampaignController::class, 'today_index']);
-      # Shop Campaign Shop Order
-      Route::resource('shop_campaign_shop_order', ShopCampaignShopOrderController::class)->only([
-        'index', 'show',
-      ])->shallow();
-
-      # Shop Product Spec
-      Route::resource('shop_product_spec', ShopProductSpecController::class)->only([
-        'index', 'show',
-      ])->shallow();
-      # Shop Product Spec Setting
-      Route::resource('shop_product_spec_setting', ShopProductSpecSettingController::class)->only([
-        'index', 'show',
-      ])->shallow();
-      # Shop Product Spec
-      Route::resource('shop_product_spec_setting_item', ShopProductSpecSettingItemController::class)->only([
-        'index', 'show',
-      ])->shallow();
     }
 
     # Shop Notice

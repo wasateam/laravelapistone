@@ -17,6 +17,22 @@ use Wasateam\Laravelapistone\Models\UserServicePlan;
 class AcumaticaHelper
 {
 
+  public static function getPinCodeActivationHistory($user)
+  {
+    $customerId = $user->customer_id;
+    $token      = self::getToken($app);
+    $post_url   = config('stone.acumatica.api_url') . '/PINCodeActivationHistory?$expand=PINCodeActivationHistoryDetails';
+    $post_data  = [
+      "CustomerID" => [
+        'value' => $customerId,
+      ],
+    ];
+    $response = Http::withHeaders([
+      'Authorization' => "Bearer {$token}",
+    ])->put($post_url, $post_data);
+    return $response->json();
+  }
+
   public static function getHighcareServiceHistory($user, $app = null)
   {
     $customerId = $user->customer_id;

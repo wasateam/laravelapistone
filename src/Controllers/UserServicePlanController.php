@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Wasateam\Laravelapistone\Helpers\AcumaticaHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Resources\UserServicePlan;
 
@@ -65,7 +66,7 @@ class UserServicePlanController extends Controller
 
   /**
    * Index
-   * 
+   *
    * @queryParam search string No-example
    *
    */
@@ -74,10 +75,20 @@ class UserServicePlanController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_IndexHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) {
-        $snap = $snap->where('user_id', Auth::user()->id);
-        return $snap;
-      });
+
+      if (config('stone.service_plan.user_service_plan.from') == 'acumatica') {
+        $user              = Auth::user();
+        $acumatica_history = AcumaticaHelper::getHighcareServiceHistory($user);
+        $models            = ModelHelper::ws_IndexSnap($this, $request, $id)->get();
+        $models            = AcumaticaHelper::formatedUserServicePlanFromServiceHistory($models, $acumatica_history);
+        return $this->resource::collection($models);
+
+      } else {
+        return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) {
+          $snap = $snap->where('user_id', Auth::user()->id);
+          return $snap;
+        });
+      }
     }
   }
 

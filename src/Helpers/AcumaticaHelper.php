@@ -17,6 +17,23 @@ use Wasateam\Laravelapistone\Models\UserServicePlan;
 class AcumaticaHelper
 {
 
+  public static function formatedUserServicePlanFromServiceHistory($user_service_plans, $service_history)
+  {
+    $history_details = $service_history['PINCodeActivationHistoryDetails'];
+    foreach ($user_service_plans as $user_service_plan) {
+      if (!$user_service_plan->pin_card) {
+        continue;
+      }
+      foreach ($history_details as $history_detail) {
+        if ($history_detail['PinCode']['value'] == $user_service_plan->pin_card->pin) {
+          $user_service_plan->created_at = $history_detail['StartDate']['value'];
+          $user_service_plan->expired_at = $history_detail['EndDate']['value'];
+        }
+      }
+    }
+    return $user_service_plans;
+  }
+
   public static function getPinCodeActivationHistory($user)
   {
     $customerId = $user->customer_id;

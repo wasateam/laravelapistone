@@ -73,7 +73,10 @@ return [
     ],
   ],
   'service_plan'        => [
-    'using_record' => [
+    'using_record'      => [
+      'from' => 'acumatica',
+    ],
+    'user_service_plan' => [
       'from' => 'acumatica',
     ],
   ],

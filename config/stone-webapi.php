@@ -168,6 +168,7 @@ return [
       'card_no'                 => env('ECPAY_CARD_NO', "4311-9522-2222-2222"),
       'card_safe_no'            => env('ECPAY_CARD_SAFE_NO', "222"),
     ],
+    'line_pay'    => true,
   ],
   'invoice'             => [
     'service'    => 'ecpay',

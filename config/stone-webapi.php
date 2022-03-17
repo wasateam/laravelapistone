@@ -145,11 +145,14 @@ return [
   'file_upload'         => 'laravel_signed',
   'privacy_terms'       => true,
   'third_party_payment' => [
-    'service'     => [
-      'ecpay_inpay' => true,
-      'line_pay'    => true,
-    ],
     'ecpay_inpay' => [
+      'pay_way'                 => [
+        'credit_card'             => true,
+        'credit_card_installment' => true,
+        'atm'                     => true,
+        'supermarket_code'        => true,
+        'supermarket_barcode'     => true,
+      ],
       'insite_order_return_url' => env('APP_URL') . env('ECPAY_INSITE_ORDER_RETURN_URL', "/api/callback/ecpay/inpay/order"),
       'cardinfo'                => [
         'order_return_url'  => env('APP_URL') . env('ECPAY_CARDINFO_3DORDER_RETURN_URL', "/api/callback/ecpay/cardinfo/3dorder"),

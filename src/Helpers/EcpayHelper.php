@@ -71,11 +71,33 @@ class EcpayHelper
 
   public static function getInpayInitData($shop_order_no, $trade_date, $order_price, $order_product_names, $user_id, $orderer_email, $orderer_tel, $orderer)
   {
+    $pay_ways = [];
+
+    if (config('stone.third_party_payment.ecpay_inpay.pay_way')) {
+      if (config('stone.third_party_payment.ecpay_inpay.pay_way.credit_card')) {
+        $pay_ways[] = 1;
+      }
+      if (config('stone.third_party_payment.ecpay_inpay.pay_way.credit_card_installment')) {
+        $pay_ways[] = 2;
+      }
+      if (config('stone.third_party_payment.ecpay_inpay.pay_way.atm')) {
+        $pay_ways[] = 3;
+      }
+      if (config('stone.third_party_payment.ecpay_inpay.pay_way.supermarket_code')) {
+        $pay_ways[] = 4;
+      }
+      if (config('stone.third_party_payment.ecpay_inpay.pay_way.supermarket_barcode')) {
+        $pay_ways[] = 5;
+      }
+    }
+
+    $pay_ways_str = implode(',', $pay_ways);
+
     $initData = [
       "MerchantID"        => config('stone.third_party_payment.ecpay_inpay.merchant_id'),
       "RememberCard"      => 1,
       "PaymentUIType"     => 2,
-      "ChoosePaymentList" => "1,2,3,4,5",
+      "ChoosePaymentList" => $pay_ways_str,
       "OrderInfo"         => [
         "MerchantTradeNo"   => $shop_order_no,
         "MerchantTradeDate" => $trade_date,
@@ -365,7 +387,7 @@ class EcpayHelper
       "ItemWord"    => "個",
       "ItemPrice"   => $shop_order->campaign_deduct * -1,
       "ItemTaxType" => "1",
-      "ItemAmount"   => $shop_order->campaign_deduct * -1,
+      "ItemAmount"  => $shop_order->campaign_deduct * -1,
       "ItemRemark"  => "",
     ];
     $items[] = [
@@ -374,7 +396,7 @@ class EcpayHelper
       "ItemWord"    => "個",
       "ItemPrice"   => $shop_order->bonus_points_deduct * -1,
       "ItemTaxType" => "1",
-      "ItemAmount"   => $shop_order->bonus_points_deduct * -1,
+      "ItemAmount"  => $shop_order->bonus_points_deduct * -1,
       "ItemRemark"  => "",
     ];
     return $items;

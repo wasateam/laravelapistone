@@ -217,20 +217,19 @@ class ShopProductController extends Controller
       });
     } else if (config('stone.mode') == 'webapi') {
       return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) use ($request) {
-        if (config('stone.featured_class') && $request->filled('featured_classes')) {
-          $snap = $snap->where('is_active', 1)
-            ->where(function ($query) {
-              $query->where(function ($query) {
-                $now = Carbon::now();
-                $query->where('off_time', '>', $now);
-              });
-              $query->orWhereNull('off_time');
-            });
-        } else if (!$request->filled('shop_classes') && !$request->filled('shop_subclasses')) {
+        if (!$request->filled('shop_classes') && !$request->filled('shop_subclasses')) {
           if (!$request->has('shop_classes')) {
             throw new \Wasateam\Laravelapistone\Exceptions\ParamRequiredException('shop_classes or shop_subclasses');
           }
         }
+        $snap = $snap->where('is_active', 1)
+          ->where(function ($query) {
+            $query->where(function ($query) {
+              $now = Carbon::now();
+              $query->where('off_time', '>', $now);
+            });
+            $query->orWhereNull('off_time');
+          });
         if ($request->filled('has_stock')) {
           $snap = $snap->where(function ($query) {
             $query->where('stock_count', '>', 0)

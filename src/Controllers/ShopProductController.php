@@ -217,10 +217,10 @@ class ShopProductController extends Controller
       });
     } else if (config('stone.mode') == 'webapi') {
       return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) use ($request) {
-        if (!$request->filled('shop_classes') && !$request->filled('shop_subclasses')) {
-          if (!$request->has('shop_classes')) {
-            throw new \Wasateam\Laravelapistone\Exceptions\ParamRequiredException('shop_classes or shop_subclasses');
-          }
+        if (!$request->filled('shop_classes') &&
+          !$request->filled('shop_subclasses') &&
+          !$request->filled('featured_classes')) {
+          throw new \Wasateam\Laravelapistone\Exceptions\ParamRequiredException('shop_classes, shop_subclasses or featured_classes');
         }
         $snap = $snap->where('is_active', 1)
           ->where(function ($query) {

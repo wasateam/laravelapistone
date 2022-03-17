@@ -372,13 +372,14 @@ class ShopHelper
           if ($today_dicount_decode_campaign->discount_percent) {
             $compaign_deduct += $products_price - round($products_price * $today_dicount_decode_campaign->discount_percent / 10);
           } else if ($today_dicount_decode_campaign->discount_amount) {
-            $compaign_deduct += $today_dicount_decode_campaign->discount_amount;
+            if ($today_dicount_decode_campaign->discount_amount > $products_price) {
+              $compaign_deduct = $products_price;
+            } else {
+              $compaign_deduct += $today_dicount_decode_campaign->discount_amount;
+            }
           }
         }
       }
-    }
-    if ($compaign_deduct < 0) {
-      $compaign_deduct = 0;
     }
     return $compaign_deduct;
   }

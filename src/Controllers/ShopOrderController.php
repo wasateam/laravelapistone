@@ -131,6 +131,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * user 訂購會員
  * invite_no 邀請碼
  * invite_no_deduct 邀請碼折抵
+ * need_handle 需要處理
  *
  * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立
@@ -236,9 +237,11 @@ class ShopOrderController extends Controller
       $this->input_fields[]  = 'products_price';
       $this->input_fields[]  = 'order_price';
       $this->input_fields[]  = 'delivery_date';
+      $this->input_fields[]  = 'need_handle';
       $this->filter_fields[] = 'id';
       $this->filter_fields[] = 'reinvoice_at';
       $this->filter_fields[] = 'status';
+      $this->filter_fields[] = 'need_handle';
     }
   }
 
@@ -498,6 +501,7 @@ class ShopOrderController extends Controller
    * @bodyParam invoice_address string 發票地址 No-example
    * @bodyParam invoice_email string 發票信箱 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
+   * @bodyParam need_handle boolean 需要處理  Example:1
    *
    */
   public function update(Request $request, $id)

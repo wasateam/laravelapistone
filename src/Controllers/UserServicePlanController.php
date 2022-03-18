@@ -78,7 +78,7 @@ class UserServicePlanController extends Controller
 
       if (config('stone.service_plan.user_service_plan.from') == 'acumatica') {
         $user              = Auth::user();
-        $acumatica_history = AcumaticaHelper::getHighcareServiceHistory($user);
+        $acumatica_history = AcumaticaHelper::getPinCodeActivationHistory($user);
         $models            = ModelHelper::ws_IndexSnap($this, $request, $id)->get();
         $models            = AcumaticaHelper::formatedUserServicePlanFromServiceHistory($models, $acumatica_history);
         return $this->resource::collection($models);

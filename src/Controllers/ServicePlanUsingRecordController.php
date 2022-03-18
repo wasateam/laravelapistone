@@ -40,10 +40,11 @@ class ServicePlanUsingRecordController extends Controller
           throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('user_service_plan');
         }
         $pin                           = $user_service_plan->pin_card->pin;
+        $code                          = $user_service_plan->service_plan->code;
         $user                          = Auth::user();
-        $acumatica_res                 = AcumaticaHelper::getHighcareServiceHistory(Auth::user());
+        $acumatica_res                 = AcumaticaHelper::getHighcareServiceHistory(Auth::user(), $code);
         $HighcareServiceHistoryDetails = $acumatica_res['HighcareServiceHistoryDetails'];
-        $models                        = ServicePlanHelper::getServicePlanUsingRecordsFromAcumatica($HighcareServiceHistoryDetails, $user, $pin);
+        $models = ServicePlanHelper::getServicePlanUsingRecordsFromAcumatica($HighcareServiceHistoryDetails, $user, $pin);
         return response()->json([
           'data' => $models,
         ], 200);

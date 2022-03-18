@@ -34,7 +34,7 @@ class AcumaticaHelper
     return $user_service_plans;
   }
 
-  public static function getPinCodeActivationHistory($user)
+  public static function getPinCodeActivationHistory($user, $app = null)
   {
     $customerId = $user->customer_id;
     $token      = self::getToken($app);
@@ -50,14 +50,17 @@ class AcumaticaHelper
     return $response->json();
   }
 
-  public static function getHighcareServiceHistory($user, $app = null)
+  public static function getHighcareServiceHistory($user, $service_plan_code, $app = null)
   {
     $customerId = $user->customer_id;
     $token      = self::getToken($app);
     $post_url   = config('stone.acumatica.api_url') . '/HighcareServiceHistory?$expand=HighcareServiceHistoryDetails';
     $post_data  = [
-      "CustomerID" => [
+      "CustomerID"    => [
         'value' => $customerId,
+      ],
+      "HighcareClass" => [
+        'value' => $service_plan_code,
       ],
     ];
     $response = Http::withHeaders([
@@ -441,6 +444,9 @@ class AcumaticaHelper
       $last_token = new AcumaticaAccessToken;
       if ($app) {
         $last_token->acumatica_app_id = $app->id;
+      }
+      if ($response->status() != '200') {
+        throw new \Wasateam\Laravelapistone\Exceptions\AcumaticaException();
       }
       $last_token->access_token = $response->json()['access_token'];
       $last_token->expires_in   = $response->json()['expires_in'];

@@ -411,7 +411,11 @@ class ShopHelper
             $invite_no_deduct         = $products_price - round($products_price * $invited_shop_deduct_rate / 10);
           }
           if ($general_user_invite->content['invited_shop_deduct']) {
-            $invite_no_deduct = $general_user_invite->content['invited_shop_deduct'];
+            if ($general_user_invite->content['invited_shop_deduct'] > $products_price) {
+              $invite_no_deduct = $products_price;
+            } else {
+              $invite_no_deduct = $general_user_invite->content['invited_shop_deduct'];
+            }
           }
         }
       }

@@ -98,6 +98,7 @@ class ShopOrder extends JsonResource
         'campaign_deduct'           => $this->campaign_deduct,
         'invite_no_deduct'          => $this->invite_no_deduct,
         'need_handle'               => $this->need_handle,
+        'return_at'                 => $this->return_at,
         'shop_campaign_shop_orders' => ShopCampaignShopOrder::collection($this->shop_campaign_shop_orders),
         'user'                      => new User_R2($this->user),
       ];

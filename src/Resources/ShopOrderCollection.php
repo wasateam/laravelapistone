@@ -97,6 +97,7 @@ class ShopOrderCollection extends JsonResource
         'campaign_deduct'           => $this->campaign_deduct,
         'invite_no_deduct'          => $this->invite_no_deduct,
         'need_handle'               => $this->need_handle,
+        'return_at'                 => $this->return_at,
         'user'                      => new User_R2($this->user),
       ];
       if (config('stone.shop.uuid')) {

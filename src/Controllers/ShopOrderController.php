@@ -131,7 +131,11 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * user 訂購會員
  * invite_no 邀請碼
  * invite_no_deduct 邀請碼折抵
- * need_handle 需要處理
+ * need_handle 有問題待處理
+ * remark_status 備註狀態
+ * ~ waiting-handle 問題待處理
+ * ~ customer-service-remarked 有客服備註
+ * return_at 退貨時間
  *
  * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立
@@ -215,6 +219,10 @@ class ShopOrderController extends Controller
     'area_section',
     'shop_ship_time_setting',
   ];
+  public $filter_time_fields = [
+    'ship_date',
+    'return_at',
+  ];
   public $time_fields = [
     'created_at',
     'updated_at',
@@ -263,10 +271,20 @@ class ShopOrderController extends Controller
    * @queryParam end_time string  No-example 2021-10-11
    * @queryParam time_field string  No-example created_at,updated_at
    * @queryParam user number  No-example 1
+   * @queryParam remark_status 備註狀態 string  No-example 1
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) use ($request) {
+      if ($request->filled('remark_status')) {
+        if ($request->remark_status == 'waiting-handle') {
+          $snap = $snap->where('need_handle', 1);
+        } else if ($request->remark_status == 'customer-service-remarked') {
+          $snap = $snap->whereNotNull('customer_service_remark');
+        }
+      }
+      return $snap;
+    });
   }
 
   // /**

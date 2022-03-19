@@ -910,8 +910,8 @@ class ModelHelper
           } else {
             $filter_start_time = Carbon::parse($item_arr[0]);
             $filter_end_time   = Carbon::parse($item_arr[1]);
-            if (count($item_arr[1]) == 10 &&
-              (Srt::contains($item_arr[1], '/' || Srt::contains($item_arr[1], '-'))
+            if (strlen($item_arr[1]) == 10 &&
+              (Str::contains($item_arr[1], '/' || Str::contains($item_arr[1], '-'))
               )) {
               $filter_end_time->setTime(23, 59, 59);
             }

@@ -30,7 +30,6 @@ class ShopProductCollection extends JsonResource
         'spec'                                => $this->spec,
         'cost'                                => $this->cost,
         'price'                               => $this->price,
-        'discount_price'                      => $this->discount_price,
         'weight_capacity'                     => $this->weight_capacity,
         'weight_capacity_unit'                => $this->weight_capacity_unit,
         'show_weight_capacity'                => $this->show_weight_capacity,
@@ -58,6 +57,9 @@ class ShopProductCollection extends JsonResource
       if (config('stone.featured_class')) {
         $res['featured_classes'] = FeaturedClass_R0::collection($this->featured_classes);
       }
+      if (config('stone.shop.discount_price')) {
+        $res['discount_price'] = $this->discount_price;
+      }
     } else if (config('stone.mode') == 'webapi') {
       $price       = ShopHelper::getShopProductPriceRange($this);
       $stock_count = ShopHelper::getShopProductAllStockCount($this);
@@ -71,7 +73,6 @@ class ShopProductCollection extends JsonResource
         'status'                     => $this->status,
         'spec'                       => $this->spec,
         'price'                      => $price,
-        'discount_price'             => $this->discount_price,
         'weight_capacity'            => $this->show_weight_capacity ? $this->weight_capacity : null,
         'weight_capacity_unit'       => $this->show_weight_capacity ? $this->weight_capacity_unit : null,
         'show_weight_capacity'       => $this->show_weight_capacity,
@@ -96,6 +97,9 @@ class ShopProductCollection extends JsonResource
       }
       if (config('stone.featured_class')) {
         $res['featured_classes'] = FeaturedClass_R0::collection($this->featured_classes);
+      }
+      if (config('stone.shop.discount_price')) {
+        $res['discount_price'] = $this->discount_price;
       }
     }
     return $res;

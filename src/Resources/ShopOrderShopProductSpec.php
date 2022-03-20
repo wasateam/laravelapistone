@@ -21,7 +21,6 @@ class ShopOrderShopProductSpec extends JsonResource
         'created_at'                                 => $this->created_at,
         'cost'                                       => $this->cost,
         'price'                                      => $this->price,
-        'discount_price'                             => $this->discount_price,
         'freight'                                    => $this->freight,
         'stock_count'                                => $this->stock_count,
         'stock_alert_count'                          => $this->stock_alert_count,
@@ -31,12 +30,14 @@ class ShopOrderShopProductSpec extends JsonResource
         'shop_order_shop_product_spec_settings'      => ShopOrderShopProductSpecSetting_R0::collection($this->shop_order_shop_product_spec_settings),
         'shop_order_shop_product_spec_setting_items' => ShopOrderShopProductSpecSettingItem_R0::collection($this->shop_order_shop_product_spec_setting_items),
       ];
+      if (config('stone.shop.discount_price')) {
+        $res['discount_price'] = $this->discount_price;
+      }
     } else if (config('stone.mode') == 'webapi') {
       $res = [
         'id'                                         => $this->id,
         'cost'                                       => $this->cost,
         'price'                                      => $this->price,
-        'discount_price'                             => $this->discount_price,
         'freight'                                    => $this->freight,
         'stock_count'                                => $this->stock_count,
         'stock_alert_count'                          => $this->stock_alert_count,
@@ -46,6 +47,9 @@ class ShopOrderShopProductSpec extends JsonResource
         'shop_order_shop_product_spec_settings'      => ShopOrderShopProductSpecSetting_R0::collection($this->shop_order_shop_product_spec_settings),
         'shop_order_shop_product_spec_setting_items' => ShopOrderShopProductSpecSettingItem_R0::collection($this->shop_order_shop_product_spec_setting_items),
       ];
+      if (config('stone.shop.discount_price')) {
+        $res['discount_price'] = $this->discount_price;
+      }
     }
     return $res;
   }

@@ -59,7 +59,6 @@ class ShopOrderShopProductController extends Controller
       $this->input_fields[]      = 'count';
       $this->input_fields[]      = 'original_count';
       $this->input_fields[]      = 'price';
-      $this->input_fields[]      = 'discount_price';
       $this->input_fields[]      = 'spec';
       $this->input_fields[]      = 'weight_capacity';
       $this->input_fields[]      = 'cost';
@@ -74,6 +73,9 @@ class ShopOrderShopProductController extends Controller
       $this->belongs_to_many[]   = 'shop_order_shop_product_spec_settings';
       $this->belongs_to_many[]   = 'shop_order_shop_product_spec_setting_items';
       $this->filter_belongs_to[] = 'shop_product';
+    }
+    if (config('stone.shop.discount_price')) {
+      $input_fields[] = 'discount_price';
     }
   }
 

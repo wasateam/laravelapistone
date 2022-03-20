@@ -23,12 +23,14 @@ class ShopCartProduct extends JsonResource
         'subtitle'          => $this->subtitle,
         'count'             => $this->count,
         'price'             => $this->price,
-        'discount_price'    => $this->discount_price,
         'order_type'        => $this->order_type,
         'shop_cart'         => new ShopCart($this->shop_cart),
         'shop_product'      => new ShopProduct($this->shop_product),
         'shop_product_spec' => new ShopProductSpec($this->shop_product_spec),
       ];
+      if (config('stone.shop.discount_price')) {
+        $res['discount_price'] = $this->discount_price;
+      }
     } else {
       $res = [
         'id'                => $this->id,
@@ -36,12 +38,14 @@ class ShopCartProduct extends JsonResource
         'subtitle'          => $this->subtitle,
         'count'             => $this->count,
         'price'             => $this->price,
-        'discount_price'    => $this->discount_price,
         'order_type'        => $this->order_type,
         'shop_cart'         => new ShopCart($this->shop_cart),
         'shop_product'      => new ShopProduct($this->shop_product),
         'shop_product_spec' => new ShopProductSpec($this->shop_product_spec),
       ];
+      if (config('stone.shop.discount_price')) {
+        $res['discount_price'] = $this->discount_price;
+      }
     }
     return $res;
   }

@@ -30,7 +30,7 @@ class ShopOrderShopProductSpecController extends Controller
   public $input_fields = [
     'cost',
     'price',
-    'discount_price',
+    // 'discount_price',
     'freight',
   ];
   public $filter_fields = [
@@ -59,6 +59,9 @@ class ShopOrderShopProductSpecController extends Controller
       $belongs_to[]      = 'shop_product_spec';
       $belongs_to_many[] = 'shop_order_shop_product_spec_settings';
       $belongs_to_many[] = 'shop_ordeshop_order_shop_product_spec_setting_itemsr_shop_product';
+    }
+    if (config('stone.shop.discount_price')) {
+      $input_fields[] = 'discount_price';
     }
   }
 

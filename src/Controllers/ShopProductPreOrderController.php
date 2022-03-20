@@ -32,7 +32,7 @@ class ShopProductPreOrderController extends Controller
     'spec',
     'cost',
     'price',
-    'discount_price',
+    // 'discount_price',
     'weight_capacity',
     'tax',
     'stock_count',
@@ -73,7 +73,7 @@ class ShopProductPreOrderController extends Controller
     'updated_at',
     'created_at',
     'price',
-    'discount_price',
+    // 'discount_price',
     'stock_count',
   ];
   public $uuid = false;
@@ -89,6 +89,10 @@ class ShopProductPreOrderController extends Controller
     if (config('stone.area')) {
       $this->belongs_to_many[] = 'areas';
       $this->belongs_to_many[] = 'area_sections';
+    }
+    if (config('stone.shop.discount_price')) {
+      $input_fields[] = 'discount_price';
+      $order_fields[] = 'discount_price';
     }
   }
 

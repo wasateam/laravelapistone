@@ -59,11 +59,13 @@ class ShopCartProductController extends Controller
       $this->input_fields[] = 'subtitle';
       $this->input_fields[] = 'count';
       $this->input_fields[] = 'price';
-      $this->input_fields[] = 'discount_price';
       $this->input_fields[] = 'order_type';
       $this->belongs_to[]   = 'shop_cart';
       $this->belongs_to[]   = 'shop_product';
       $this->belongs_to[]   = 'shop_product_spec';
+    }
+    if (config('stone.shop.discount_price')) {
+      $input_fields[] = 'discount_price';
     }
   }
 

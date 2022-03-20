@@ -125,6 +125,7 @@ return [
     'custom_shop_order' => true,
     'notice'            => true,
     'freight_default'   => 100,
+    // 'discount_price'    => true,
     'order_type'        => [
       'next_day'  => [
         'freight_default'        => 100,

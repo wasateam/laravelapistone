@@ -23,14 +23,12 @@ class ShopOrderShopProductCollection extends JsonResource
         'name'                                       => $this->name,
         'subtitle'                                   => $this->subtitle,
         'price'                                      => $this->price,
-        'discount_price'                             => $this->discount_price,
         'spec'                                       => $this->spec,
         'weight_capacity'                            => $this->weight_capacity,
         'cover_image'                                => $this->cover_image,
         'count'                                      => $this->count,
         'original_count'                             => $this->original_count,
         'cost'                                       => $this->cost,
-        'discount_price'                             => $this->discount_price,
         'order_type'                                 => $this->order_type,
         'freight'                                    => $this->freight,
         'shop_order'                                 => new ShopOrder_R1($this->shop_order),
@@ -41,6 +39,9 @@ class ShopOrderShopProductCollection extends JsonResource
         'shop_order_shop_product_spec_settings'      => ShopOrderShopProductSpecSetting_R0::collection($this->shop_order_shop_product_spec_settings),
         'shop_order_shop_product_spec_setting_items' => ShopOrderShopProductSpecSettingItem_R0::collection($this->shop_order_shop_product_spec_setting_items),
       ];
+      if (config('stone.shop.discount_price')) {
+        $res['discount_price'] = $this->discount_price;
+      }
     } else if (config('stone.mode') == 'webapi') {
       $res = [
         'id'                                         => $this->id,
@@ -50,14 +51,12 @@ class ShopOrderShopProductCollection extends JsonResource
         'name'                                       => $this->name,
         'subtitle'                                   => $this->subtitle,
         'price'                                      => $this->price,
-        'discount_price'                             => $this->discount_price,
         'spec'                                       => $this->spec,
         'weight_capacity'                            => $this->weight_capacity,
         'cover_image'                                => $this->cover_image,
         'count'                                      => $this->count,
         'original_count'                             => $this->original_count,
         'cost'                                       => $this->cost,
-        'discount_price'                             => $this->discount_price,
         'order_type'                                 => $this->order_type,
         'freight'                                    => $this->freight,
         'shop_order'                                 => new ShopOrder_R1($this->shop_order),
@@ -68,6 +67,9 @@ class ShopOrderShopProductCollection extends JsonResource
         'shop_order_shop_product_spec_settings'      => ShopOrderShopProductSpecSetting_R0::collection($this->shop_order_shop_product_spec_settings),
         'shop_order_shop_product_spec_setting_items' => ShopOrderShopProductSpecSettingItem_R0::collection($this->shop_order_shop_product_spec_setting_items),
       ];
+      if (config('stone.shop.discount_price')) {
+        $res['discount_price'] = $this->discount_price;
+      }
     }
     return $res;
   }

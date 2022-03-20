@@ -39,7 +39,7 @@ class ShopProductSpecController extends Controller
     'end_at',
     'cost',
     'price',
-    'discount_price',
+    // 'discount_price',
     'freight',
     'stock_count',
     'stock_alert_count',
@@ -66,6 +66,9 @@ class ShopProductSpecController extends Controller
 
   public function __construct()
   {
+    if (config('stone.shop.discount_price')) {
+      $input_fields[] = 'discount_price';
+    }
   }
 
   /**

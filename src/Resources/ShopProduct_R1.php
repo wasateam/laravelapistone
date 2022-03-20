@@ -29,7 +29,6 @@ class ShopProduct_R1 extends JsonResource
         'spec'                 => $this->spec,
         'cost'                 => $this->cost,
         'price'                => $this->price,
-        'discount_price'       => $this->discount_price,
         'weight_capacity'      => $this->weight_capacity,
         'weight_capacity_unit' => $this->weight_capacity_unit,
         'show_weight_capacity' => $this->show_weight_capacity,
@@ -53,6 +52,9 @@ class ShopProduct_R1 extends JsonResource
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
       }
+      if (config('stone.shop.discount_price')) {
+        $res['discount_price'] = $this->discount_price;
+      }
     } else if (config('stone.mode') == 'webapi') {
       $res = [
         'id'                   => $this->id,
@@ -65,7 +67,6 @@ class ShopProduct_R1 extends JsonResource
         'status'               => $this->status,
         'spec'                 => $this->spec,
         'price'                => $this->price,
-        'discount_price'       => $this->discount_price,
         'weight_capacity'      => $this->show_weight_capacity ? $this->weight_capacity : null,
         'weight_capacity_unit' => $this->show_weight_capacity ? $this->weight_capacity_unit : null,
         'show_weight_capacity' => $this->show_weight_capacity,
@@ -84,6 +85,9 @@ class ShopProduct_R1 extends JsonResource
       }
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
+      }
+      if (config('stone.shop.discount_price')) {
+        $res['discount_price'] = $this->discount_price;
       }
     }
     return $res;

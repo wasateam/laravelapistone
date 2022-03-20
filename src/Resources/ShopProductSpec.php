@@ -24,7 +24,6 @@ class ShopProductSpec extends JsonResource
         'end_at'                          => $this->end_at,
         'cost'                            => $this->cost,
         'price'                           => $this->price,
-        'discount_price'                  => $this->discount_price,
         'freight'                         => $this->freight,
         'stock_count'                     => $this->stock_count,
         'stock_alert_count'               => $this->stock_alert_count,
@@ -33,18 +32,23 @@ class ShopProductSpec extends JsonResource
         'shop_product'                    => new ShopProduct_R2($this->shop_product),
         'shop_product_spec_setting_items' => ShopProductSpecSettingItem_R2::collection($this->shop_product_spec_setting_items),
       ];
+      if (config('stone.shop.discount_price')) {
+        $res['discount_price'] = $this->discount_price;
+      }
     } else if (config('stone.mode') == 'webapi') {
       $res = [
         'id'                              => $this->id,
         'no'                              => $this->no,
         'price'                           => $this->price,
-        'discount_price'                  => $this->discount_price,
         'freight'                         => $this->freight,
         'stock_count'                     => $this->stock_count,
         'max_buyable_count'               => $this->max_buyable_count,
         'shop_product'                    => new ShopProduct_R2($this->shop_product),
         'shop_product_spec_setting_items' => ShopProductSpecSettingItem_R2::collection($this->shop_product_spec_setting_items),
       ];
+      if (config('stone.shop.discount_price')) {
+        $res['discount_price'] = $this->discount_price;
+      }
     }
     return $res;
   }

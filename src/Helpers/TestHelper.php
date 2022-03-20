@@ -3,10 +3,46 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
+use Wasateam\Laravelapistone\Models\Admin;
 use Wasateam\Laravelapistone\Models\User;
 
 class TestHelper
 {
+  public static function testIndex($tester, $url, $params = [], $scopes = null, $guard = null)
+  {
+    if (!$guard) {
+      if (config('stone.mode') == 'cms') {
+        $guard = 'admin';
+      }
+      if (config('stone.mode') == 'webapi') {
+        $guard = 'user';
+      }
+    }
+    if (!$scopes) {
+      if (config('stone.mode') == 'cms') {
+        $scopes = ['admin'];
+      }
+      if (config('stone.mode') == 'webapi') {
+        $scopes = ['user'];
+      }
+    }
+    if ($guard == 'user') {
+      $user = self::getTestUser();
+    }
+    if ($guard == 'admin') {
+      $user = self::getTestAdmin();
+    }
+    \Laravel\Passport\Passport::actingAs(
+      $user, $scopes, $guard
+    );
+    $response = $tester->get($url, $params);
+    if ($response->status() != 200) {
+      \Log::info("{$url}");
+      \Log::info($response->json());
+    }
+    $response->assertStatus(200);
+  }
+
   public static function getTestUserToken()
   {
     $user        = self::getTestUser();
@@ -24,6 +60,11 @@ class TestHelper
         ->create();
       $user = User::where('email', 'cowabunga@haha.com')->first();
     }
+    return $user;
+  }
+  public static function getTestAdmin()
+  {
+    $user = Admin::where('email', 'boss@wasateam.com')->first();
     return $user;
   }
 }

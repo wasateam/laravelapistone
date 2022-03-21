@@ -82,7 +82,6 @@ class UserServicePlanController extends Controller
         $models            = ModelHelper::ws_IndexSnap($this, $request, $id)->get();
         $models            = AcumaticaHelper::formatedUserServicePlanFromServiceHistory($models, $acumatica_history);
         return $this->resource::collection($models);
-
       } else {
         return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) {
           $snap = $snap->where('user_id', Auth::user()->id);
@@ -115,6 +114,16 @@ class UserServicePlanController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_ShowHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
+      if (config('stone.service_plan.user_service_plan.from') == 'acumatica') {
+        $user   = Auth::user();
+        $models = ModelHelper::ws_IndexSnap($this, $request, $id, function ($snap) use ($id) {
+          $snap = $snap->where('id', $id);
+          return $snap;
+        })->get();
+        $acumatica_history = AcumaticaHelper::getPinCodeActivationHistory($user, $models[0]->pin_card->pin);
+        $models            = AcumaticaHelper::formatedUserServicePlanFromServiceHistory($models, $acumatica_history);
+        return new $this->resource($models[0]);
+      }
       return ModelHelper::ws_ShowHandler($this, $request, $id, function ($snap) {
         $snap = $snap->where('user_id', Auth::user()->id);
         return $snap;

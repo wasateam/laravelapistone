@@ -34,7 +34,7 @@ class AcumaticaHelper
     return $user_service_plans;
   }
 
-  public static function getPinCodeActivationHistory($user, $app = null)
+  public static function getPinCodeActivationHistory($user, $pin = '', $app = null)
   {
     $customerId = $user->customer_id;
     $token      = self::getToken($app);
@@ -42,6 +42,9 @@ class AcumaticaHelper
     $post_data  = [
       "CustomerID" => [
         'value' => $customerId,
+      ],
+      "PinCode"    => [
+        'value' => $pin,
       ],
     ];
     $response = Http::withHeaders([

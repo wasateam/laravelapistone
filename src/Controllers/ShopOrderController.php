@@ -136,6 +136,9 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * ~ waiting-handle 問題待處理
  * ~ customer-service-remarked 有客服備註
  * return_at 退貨時間
+ * return_price 退貨金額
+ * return_reason 退貨原由
+ * return_remark 退貨備註
  *
  * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立
@@ -232,6 +235,9 @@ class ShopOrderController extends Controller
     'updated_at',
     'created_at',
   ];
+  public $child_models = [
+    'shop_return_records' => '\Wasateam\Laravelapistone\Controllers\ShopReturnRecordController',
+  ];
   public $uuid = false;
 
   public function __construct()
@@ -247,6 +253,9 @@ class ShopOrderController extends Controller
       $this->input_fields[]  = 'order_price';
       $this->input_fields[]  = 'delivery_date';
       $this->input_fields[]  = 'need_handle';
+      $this->input_fields[]  = 'return_price';
+      $this->input_fields[]  = 'return_reason';
+      $this->input_fields[]  = 'return_remark';
       $this->filter_fields[] = 'id';
       $this->filter_fields[] = 'reinvoice_at';
       $this->filter_fields[] = 'status';

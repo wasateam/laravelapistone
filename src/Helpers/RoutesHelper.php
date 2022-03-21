@@ -23,6 +23,7 @@ use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
+use Wasateam\Laravelapistone\Controllers\GeneralUserInviteController;
 use Wasateam\Laravelapistone\Controllers\LinePayController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerController;
@@ -84,7 +85,6 @@ use Wasateam\Laravelapistone\Controllers\UserController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceModifyRecordController;
 use Wasateam\Laravelapistone\Controllers\UserDeviceTokenController;
-use Wasateam\Laravelapistone\Controllers\GeneralUserInviteController;
 use Wasateam\Laravelapistone\Controllers\UserInviteController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanController;
 use Wasateam\Laravelapistone\Controllers\UserServicePlanItemController;
@@ -1161,6 +1161,11 @@ class RoutesHelper
       if (config('stone.third_party_payment.ecpay_inpay')) {
         Route::post('callback/ecpay/inpay/order', [EcpayController::class, 'callback_ecpay_inpay_order']);
       }
+    }
+
+    # Invoice
+    if (config('stone.invoice')) {
+      Route::post('callback/invoice/notify', [EcpayController::class, 'callback_invoice_notify']);
     }
 
     # ContactRequest

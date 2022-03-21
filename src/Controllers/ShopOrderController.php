@@ -204,6 +204,7 @@ class ShopOrderController extends Controller
     'pay_status',
     'invoice_status',
     'ship_remark',
+    'status',
   ];
   public $belongs_to = [
     // 'user',

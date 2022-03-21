@@ -1306,6 +1306,7 @@ class ShopHelper
           $CustomerAddr       = $shop_order->receive_address;
           $CustomerPhone      = $shop_order->orderer_tel;
           $CustomerEmail      = $shop_order->orderer_email;
+          $Tsr                = $shop_order->no;
           $Print              = '0';
           $Donation           = '0';
           $CarrierType        = '';
@@ -1352,7 +1353,10 @@ class ShopHelper
               $SalesAmount,
               $Items,
               $DelayDay,
+              $Tsr,
             );
+            \Log::info('$post_data');
+            \Log::info($post_data);
             $invoice_res = EcpayHelper::createDelayInvoice($post_data);
           } else {
             $post_data = EcpayHelper::getInvoicePostData(
@@ -1371,10 +1375,10 @@ class ShopHelper
               $Items
             );
             $invoice_res = EcpayHelper::createInvoice($post_data);
+            $shop_order->invoice_status = 'done';
+            $shop_order->invoice_number = $invoice_res->InvoiceNo;
+            $shop_order->save();
           }
-          $shop_order->invoice_status = 'done';
-          $shop_order->invoice_number = $invoice_res->InvoiceNo;
-          $shop_order->save();
           return response()->json($shop_order, 200);
           //code...
         } catch (\Throwable $th) {

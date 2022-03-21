@@ -66,7 +66,7 @@ class EcpayController extends Controller
 
   /**
    * Inpay Create Payment 站內付付款動作
-   * 
+   *
    * @bodyParam PayToken string No-example
    * @bodyParam MerchantTradeNo string No-example
    *
@@ -107,5 +107,16 @@ class EcpayController extends Controller
       ShopHelper::createInvoice($shop_order);
     }
     return '1|OK';
+  }
+
+  /**
+   *  (忽略) Callbacl Ecpay invoice notify 站內付訂單回存狀態，僅供給綠界使用
+   *
+   */
+  public function callback_invoice_notify(Request $request)
+  {
+    // \Log::info('callback_invoice_notify');
+    // \Log::info($request->all());
+    // \Log::info(EcpayHelper::getDecryptData($request->Data));
   }
 }

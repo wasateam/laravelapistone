@@ -1374,7 +1374,7 @@ class ShopHelper
               $SalesAmount,
               $Items
             );
-            $invoice_res = EcpayHelper::createInvoice($post_data);
+            $invoice_res                = EcpayHelper::createInvoice($post_data);
             $shop_order->invoice_status = 'done';
             $shop_order->invoice_number = $invoice_res->InvoiceNo;
             $shop_order->save();
@@ -1443,4 +1443,23 @@ class ShopHelper
     }
   }
 
+  public static function ShopProductStorageSpaceCheck($storage_space, $on_time, $off_time = null, $shop_product_id = null)
+  {
+    $snap = ShopProduct::where('storage_space', $storage_space)
+      ->where(function ($query) {
+        $query->where(function ($query) {
+          $query->where('off_time', '<', $on_time);
+        });
+        $query->orWhere(function ($query) {
+          $query->where('on_time', '>', $off_time);
+        });
+      });
+    if ($shop_product_id) {
+      $snap = $snap->where('id', '!=', $shop_product_id);
+    }
+    $exist = $snap->first();
+    if ($exist) {
+      throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('storage_space repeat.');
+    }
+  }
 }

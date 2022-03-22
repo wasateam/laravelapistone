@@ -257,6 +257,7 @@ class ShopOrderController extends Controller
       $this->input_fields[]  = 'return_price';
       $this->input_fields[]  = 'return_reason';
       $this->input_fields[]  = 'return_remark';
+      $this->input_fields[]  = 'status';
       $this->filter_fields[] = 'id';
       $this->filter_fields[] = 'reinvoice_at';
       $this->filter_fields[] = 'status';

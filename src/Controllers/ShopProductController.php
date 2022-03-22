@@ -160,6 +160,7 @@ class ShopProductController extends Controller
     'price',
     // 'discount_price',
     'stock_count',
+    'storage_space',
   ];
   public $validation_rules = [
     'no' => "required|unique:shop_products",

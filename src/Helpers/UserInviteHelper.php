@@ -9,7 +9,7 @@ class UserInviteHelper
 {
   public static function check($invite_no, $user)
   {
-    if(!$invite_no){
+    if (!$invite_no) {
       return false;
     }
     $target_user = User::where('invite_no', $invite_no)
@@ -24,6 +24,16 @@ class UserInviteHelper
       ->where('pay_status', '!=', 'not-paid')
       ->whereNull('deleted_at')
       ->where('invite_no', $invite_no)
+      ->whereIn('status',
+        [
+          'established',
+          'not-established',
+          'return-part-apply',
+          'return-all-apply',
+          'return-part-complete',
+          'return-all-complete',
+          'complete',
+        ])
       ->first();
     if ($exist_shop_order) {
       return false;

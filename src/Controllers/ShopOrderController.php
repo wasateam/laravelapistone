@@ -45,6 +45,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * ~ 申請全部退訂 return-all-apply
  * ~ 部分退訂完成 return-part-complete
  * ~ 全部退訂完成 return-all-complete
+ * ~ 取消 cancel
  * ~ 訂單完成 complete
  * status_remark 狀態備註
  * receive_way 收貨方式

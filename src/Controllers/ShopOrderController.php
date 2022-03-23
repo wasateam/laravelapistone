@@ -143,8 +143,8 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  *
  * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立
- * 
- * Update 
+ *
+ * Update
  * shop_return_records 內帶陣列資料
  *
  * @authenticated
@@ -740,14 +740,10 @@ class ShopOrderController extends Controller
     //FIXME ಠ_ಠ
     $shop_order = ShopOrder::where('id', $id)->first();
     if (!$shop_order) {
-      return response()->json([
-        'message' => 'no data.',
-      ], 400);
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
     }
     if (!$request->no || !isset($request->no)) {
-      return response()->json([
-        'message' => 'no is required.',
-      ], 400);
+      throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('no');
     }
     //new shop order
     $new_shop_order       = $shop_order->replicate();
@@ -765,5 +761,22 @@ class ShopOrderController extends Controller
 
     $shop_order->repay_shop_order_id = $new_shop_order->id;
     $shop_order->save();
+  }
+
+  /**
+   * Cancel
+   *
+   */
+  public function cancel($id)
+  {
+    $shop_order = ShopOrder::find($id);
+    if ($shop_order) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
+    }
+    $shop_order->status = 'cancel';
+    $shop_order->save();
+    return response()->json([
+      'message' => "shop_order canceled.",
+    ], 200);
   }
 }

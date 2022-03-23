@@ -13,6 +13,7 @@ use Wasateam\Laravelapistone\Exports\ShopOrderExport;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
+use Wasateam\Laravelapistone\Helpers\StrHelper;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 
 /**
@@ -593,16 +594,16 @@ class ShopOrderController extends Controller
         ], 400);
       }
       $delivery_time = Carbon::parse($shop_order->delivery_date)->format('Y-m-d') . '/' . $shop_order->ship_start_time . '-' . $shop_order->ship_end_time;
-      $orderer       = $shop_order->orderer . '/' . $shop_order->orderer_tel;
+      $orderer       = StrHelper::encodeString($shop_order->orderer, 'name') . '/' . StrHelper::encodeString($shop_order->orderer_tel, 'tel');
       $order_data    = [
         'id'              => $shop_order->id,
         'delivery_time'   => $delivery_time,
         'no'              => $shop_order->no,
         'orderer'         => $orderer,
         'activity'        => '',
-        'receiver'        => $shop_order->receiver,
+        'receiver'        => StrHelper::encodeString($shop_order->receiver, 'name'),
         'order_date'      => Carbon::parse($shop_order->created_at)->format('Y-m-d'),
-        'receiver_tel'    => $shop_order->receiver_tel,
+        'receiver_tel'    => StrHelper::encodeString($shop_order->receiver_tel, 'tel'),
         'receive_address' => $shop_order->receive_address,
         'receive_way'     => $shop_order->receive_way,
         'receive_remark'  => $shop_order->receive_remark,

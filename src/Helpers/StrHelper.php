@@ -30,4 +30,19 @@ class StrHelper
     }
     return $randomString;
   }
+
+  public static function encodeString($str, $type)
+  {
+    if ($type == 'name') {
+      $sub = Str::substr($str, 1, iconv_strlen($str) - 2);
+      $_str = '*' . $sub . '*';
+    }
+    if ($type == 'tel') {
+      $_str    = $str;
+      $_str[4] = '*';
+      $_str[5] = '*';
+      $_str[6] = '*';
+    }
+    return $_str;
+  }
 }

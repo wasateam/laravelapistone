@@ -215,7 +215,6 @@ class PinCardController extends Controller
    */
   public function export_excel(Request $request)
   {
-    // return Excel::download(new PinCardExport, 'pin_card.xlsx');
     $headings = [
       "id",
       "Created at",

@@ -616,6 +616,7 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       # Shop Order
+      Route::post('shop_order/{id}/cancel', [ShopOrderController::class, 'cancel']);
       Route::resource('shop_order', ShopOrderController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
@@ -1190,6 +1191,7 @@ class RoutesHelper
 
     # Page Setting
     if (config('stone.page_setting')) {
+      Route::get('page_setting', [PageSettingController::class, 'index']);
       Route::get('page_setting/page', [PageSettingController::class, 'show']);
     }
 

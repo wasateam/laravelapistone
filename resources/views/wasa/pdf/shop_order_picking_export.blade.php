@@ -122,17 +122,17 @@
             <td class="title w-10per">訂單編號</td>
             <td class="content w-40per">{{$shop_order['no']}}</td>
             <td class="title w-10per">訂購資訊</td>
-            <td class="content w-40per">{{$shop_order['orderer']}}</td>
+            <td class="content w-40per">{{$shop_order['orderer_encode']}}</td>
           </tr>
           <tr class="table-item">
             <td class="title w-10per">收件姓名</td>
-            <td class="content w-40per">{{$shop_order['receiver']}}</td>
+            <td class="content w-40per">{{$shop_order['receiver_encode']}}</td>
             <td class="title w-10per">訂購時間</td>
             <td class="content w-40per">{{$shop_order['order_date']}}</td>
           </tr>
           <tr class="table-item">
             <td class="title w-10per">電話</td>
-            <td class="content w-40per">{{$shop_order['receiver_tel']}}</td>
+            <td class="content w-40per">{{$shop_order['receiver_tel_encode']}}</td>
             <td class="title w-10per">收件方式</td>
             <td class="content w-40per">{{$shop_order['receive_way']}}</td>
           </tr>

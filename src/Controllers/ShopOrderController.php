@@ -577,36 +577,50 @@ class ShopOrderController extends Controller
    */
   public function export_pdf(Request $request)
   {
-    $_shop_orders = $request->has('shop_orders') ? $request->shop_orders : null;
-    if (!$_shop_orders) {
+    $_shop_order_ids_str = $request->has('shop_orders') ? $request->shop_orders : null;
+    if (!$_shop_order_ids_str) {
       return response()->json([
         'message' => 'required shop_orders;',
       ], 400);
     }
-    $shop_order_ids = array_map('intval', explode(',', $_shop_orders));
-    $datas          = [];
-    foreach ($shop_order_ids as $shop_order_id) {
+    $shop_order_ids = array_map('intval', explode(',', $_shop_order_ids_str));
+    $shop_orders    = ShopOrder::whereIn('id', $shop_order_ids)
+      ->whereNull('deleted_at')
+      ->orderBy('area_id', 'asc')
+      ->orderBy('area_section_id', 'asc')
+      ->orderBy('receive_address', 'asc')
+      ->get();
+    $datas = [];
+    foreach ($shop_orders as $shop_order) {
       //order data
-      $shop_order = ShopOrder::find($shop_order_id);
-      if (!$shop_order) {
-        return response()->json([
-          'message' => 'no shop_order;',
-        ], 400);
-      }
-      $delivery_time = Carbon::parse($shop_order->delivery_date)->format('Y-m-d') . '/' . $shop_order->ship_start_time . '-' . $shop_order->ship_end_time;
-      $orderer       = StrHelper::encodeString($shop_order->orderer, 'name') . '/' . StrHelper::encodeString($shop_order->orderer_tel, 'tel');
-      $order_data    = [
-        'id'              => $shop_order->id,
-        'delivery_time'   => $delivery_time,
-        'no'              => $shop_order->no,
-        'orderer'         => $orderer,
-        'activity'        => '',
-        'receiver'        => StrHelper::encodeString($shop_order->receiver, 'name'),
-        'order_date'      => Carbon::parse($shop_order->created_at)->format('Y-m-d'),
-        'receiver_tel'    => StrHelper::encodeString($shop_order->receiver_tel, 'tel'),
-        'receive_address' => $shop_order->receive_address,
-        'receive_way'     => $shop_order->receive_way,
-        'receive_remark'  => $shop_order->receive_remark,
+      // $shop_order = ShopOrder::find($shop_order_id);
+      // if (!$shop_order) {
+      //   return response()->json([
+      //     'message' => 'no shop_order;',
+      //   ], 400);
+      // }
+      $delivery_time       = Carbon::parse($shop_order->delivery_date)->format('Y-m-d') . '/' . $shop_order->ship_start_time . '-' . $shop_order->ship_end_time;
+      $orderer             = $shop_order->orderer . '/' . $shop_order->orderer_tel;
+      $orderer_encode      = StrHelper::encodeString($shop_order->orderer, 'name') . '/' . StrHelper::encodeString($shop_order->orderer_tel, 'tel');
+      $receiver            = $shop_order->receiver;
+      $receiver_tel        = $shop_order->receiver_tel;
+      $receiver_encode     = StrHelper::encodeString($shop_order->receiver, 'name');
+      $receiver_tel_encode = StrHelper::encodeString($shop_order->receiver_tel, 'tel');
+      $order_data          = [
+        'id'                  => $shop_order->id,
+        'delivery_time'       => $delivery_time,
+        'no'                  => $shop_order->no,
+        'orderer'             => $orderer,
+        'orderer_encode'      => $orderer_encode,
+        'activity'            => '',
+        'receiver'            => $receiver,
+        'receiver_encode'     => $receiver_encode,
+        'order_date'          => Carbon::parse($shop_order->created_at)->format('Y-m-d'),
+        'receiver_tel'        => $receiver_tel,
+        'receiver_tel_encode' => $receiver_tel_encode,
+        'receive_address'     => $shop_order->receive_address,
+        'receive_way'         => $shop_order->receive_way,
+        'receive_remark'      => $shop_order->receive_remark,
       ];
 
       //products in shop order

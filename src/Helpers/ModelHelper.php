@@ -406,6 +406,11 @@ class ModelHelper
     return $url;
   }
 
+  public static function ws_ImportExcelHandler($request, $map)
+  {
+    return Excel::import(new \Wasateam\Laravelapistone\Imports\ModelImport($request,$map), $request->file('file'));
+  }
+
   public static function ws_ExportExcelHandler($controller, $request, $headings, $map)
   {
     // Setting

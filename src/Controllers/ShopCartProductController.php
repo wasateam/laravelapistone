@@ -310,9 +310,26 @@ class ShopCartProductController extends Controller
   {
     $shop_cart_product = ShopCartProduct::where('id', $id)->first();
     if (!$shop_cart_product) {
-      return response()->json([
-        'message' => 'no data.',
-      ], 400);
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_cart_product');
+    }
+    $shop_cart_product->status = 0;
+    $shop_cart_product->save();
+
+    return response()->json([
+      "message" => 'data disabled.',
+    ], 200);
+  }
+
+  /**
+   * Delete
+   *
+   * @urlParam  shop_cart_product required The ID of shop_cart_product. Example: 2
+   */
+  public function delete($id)
+  {
+    $shop_cart_product = ShopCartProduct::where('id', $id)->first();
+    if (!$shop_cart_product) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_cart_product');
     }
     $shop_cart_product->status = 0;
     $shop_cart_product->save();

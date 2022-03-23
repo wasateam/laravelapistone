@@ -1094,6 +1094,7 @@ class RoutesHelper
       Route::resource('shop_cart_product', ShopCartProductController::class)->only([
         'index',
         'store',
+        'delete',
       ])->shallow();
       Route::post('/auth/shop_cart_product/{shop_cart_product_id}/update', [ShopCartProductController::class, 'update_auth_cart_product']);
       Route::post('/shop_cart_product/{shop_cart_product_id}', [ShopCartProductController::class, 'disabled']);

@@ -84,24 +84,26 @@ class ShopHelper
 
   public static function shopOrderProductChangeCount($shop_order_product_id)
   {
-    //成立訂單，更改商品庫存
     $shop_order_product = ShopOrderShopProduct::where('id', $shop_order_product_id)->first();
     $buy_count          = $shop_order_product->count;
+    $origin_stock_count = 0;
+    $after_stock_count  = 0;
+    $shop_product       = null;
+    $shop_product_spec  = null;
     if (isset($shop_order_product->shop_order_shop_proudct_spec)) {
+      $origin_stock_count             = $shop_product_spec->stock_count;
       $shop_product_spec              = $shop_order_product->shop_order_shop_proudct_spec->shop_product_spec;
       $shop_product_spec->stock_count = $shop_product_spec->stock_count - $buy_count;
       $shop_product_spec->save();
-      if ($shop_product_spec->stock_count <= $shop_product_spec->stock_alert_count) {
-        EmailHelper::notify_shop_order_stock_alert($shop_product_spec->shop_product, $shop_product_spec);
-      }
+      $shop_product = $shop_product_spec->shop_product;
     } else {
-      $shop_product = ShopProduct::where('id', $shop_order_product->shop_product_id)->first();
-      //減少商品庫存
+      $shop_product              = ShopProduct::where('id', $shop_order_product->shop_product_id)->first();
+      $origin_stock_count        = $shop_product->stock_count;
       $shop_product->stock_count = $shop_product->stock_count - $buy_count;
       $shop_product->save();
-      if ($shop_product->stock_count <= $shop_product->stock_alert_count) {
-        EmailHelper::notify_shop_order_stock_alert($shop_product);
-      }
+    }
+    if ($shop_product->stock_count <= $shop_product->stock_alert_count && $origin_stock_count > $shop_product->stock_alert_count) {
+      EmailHelper::notify_shop_order_stock_alert($shop_product, $shop_product_spec);
     }
   }
 

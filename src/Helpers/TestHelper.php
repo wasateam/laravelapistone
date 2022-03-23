@@ -8,7 +8,7 @@ use Wasateam\Laravelapistone\Models\User;
 
 class TestHelper
 {
-  public static function testIndex($tester, $url, $params = [], $scopes = null, $guard = null)
+  public static function testIndex($tester, $url, $params = [], $status = 200, $scopes = null, $guard = null)
   {
     if (!$guard) {
       if (config('stone.mode') == 'cms') {
@@ -35,12 +35,12 @@ class TestHelper
     \Laravel\Passport\Passport::actingAs(
       $user, $scopes, $guard
     );
-    $response = $tester->get($url, $params);
-    if ($response->status() != 200) {
+    $response = $tester->call('GET', $url, $params);
+    if ($response->status() != $status) {
       \Log::info("{$url}");
       \Log::info($response->json());
     }
-    $response->assertStatus(200);
+    $response->assertStatus($status);
   }
 
   public static function getTestUserToken()

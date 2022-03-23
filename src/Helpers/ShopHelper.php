@@ -91,11 +91,17 @@ class ShopHelper
       $shop_product_spec              = $shop_order_product->shop_order_shop_proudct_spec->shop_product_spec;
       $shop_product_spec->stock_count = $shop_product_spec->stock_count - $buy_count;
       $shop_product_spec->save();
+      if ($shop_product_spec->stock_count <= $shop_product_spec->stock_alert_count) {
+        EmailHelper::notify_shop_order_stock_alert($shop_product_spec->shop_product, $shop_product_spec);
+      }
     } else {
       $shop_product = ShopProduct::where('id', $shop_order_product->shop_product_id)->first();
       //減少商品庫存
       $shop_product->stock_count = $shop_product->stock_count - $buy_count;
       $shop_product->save();
+      if ($shop_product->stock_count <= $shop_product->stock_alert_count) {
+        EmailHelper::notify_shop_order_stock_alert($shop_product);
+      }
     }
   }
 
@@ -1461,5 +1467,17 @@ class ShopHelper
     if ($exist) {
       throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('storage_space repeat.');
     }
+  }
+
+  public static function getShopProductSpecName($shop_product_spec)
+  {
+    $spec_name = '';
+    foreach ($shop_product_spec->shop_product_spec_setting_items as $index => $shop_product_spec_setting_item) {
+      if ($index > 0) {
+        $spec_name .= ', ';
+      }
+      $spec_name .= $shop_product_spec_setting_item->name;
+    }
+    return $spec_name;
   }
 }

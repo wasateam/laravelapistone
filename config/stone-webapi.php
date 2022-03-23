@@ -143,6 +143,11 @@ return [
         ],
       ],
     ],
+    'stock_alert'       => [
+      'contact_emails' => [
+        'davidturtle0313@gmail.com',
+      ],
+    ],
     //我的最愛
     'favorite'          => true,
   ],

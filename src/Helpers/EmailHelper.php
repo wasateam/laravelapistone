@@ -45,6 +45,16 @@ class EmailHelper
     }
   }
 
+  public static function notify_shop_order_stock_alert($shop_product, $shop_product_spec = null, $mails = null)
+  {
+    if (config('stone.mail.service') == 'smtp') {
+      if (!$mails && config('stone.shop.stock_alert.contact_emails')) {
+        $mails = config('stone.shop.stock_alert.contact_emails');
+      }
+      Mail::to($mails)->send(new \Wasateam\Laravelapistone\Mail\MailShopProductStockAlert($shop_product, $shop_product_spec));
+    }
+  }
+
   public static function notify_contact_request($contact_request, $mails)
   {
     if (config('stone.mail.service') == 'smtp') {

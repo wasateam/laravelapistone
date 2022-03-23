@@ -38,8 +38,7 @@ class PageSetting extends Model
   public function page_covers()
   {
     return $this->belongsToMany(PageCover::class, 'page_setting_page_cover', 'page_setting_id', 'page_cover_id')
-      ->orderBy('updated_at')
-      ->orderWay('desc')
+      ->orderBy('updated_at', 'desc')
       ->where('is_active', 1)
       ->where(function ($query) {
         $query->where(function ($query) {

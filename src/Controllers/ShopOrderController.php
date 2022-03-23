@@ -123,7 +123,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * card_total_success_times 信用卡或銀聯卡_目前已成功授權的次數
  * card_total_success_amount 信用卡或銀聯卡_目前已成功授權的金額合計
  * bonus_points 訂單想使用(扣除)的紅利點數
- * bonus_points_deduct 訂單可使用(扣除)的紅利點數
+ * bonus_points_deduct 紅利點數折抵
  * discount_code 折扣碼
  * campaign_deduct 活動折抵
  * freight 運費
@@ -764,7 +764,7 @@ class ShopOrderController extends Controller
   }
 
   /**
-   * Cancel
+   * Cancel 取消訂單
    *
    */
   public function cancel($id)

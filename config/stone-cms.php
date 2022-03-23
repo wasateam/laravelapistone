@@ -2,6 +2,7 @@
 
 return [
   'mode'               => 'cms',
+  'timezone'           => 'Asia/Taipei',
   'migration'          => true,
   'storage'            => [
     'service' => 'gcs', # gcs, s3, local

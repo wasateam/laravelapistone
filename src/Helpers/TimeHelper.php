@@ -7,8 +7,11 @@ use Carbon\Carbon;
 class TimeHelper
 {
   // convert country to timezone
-  public static function getTimeZone($country_code)
+  public static function getTimeZone($country_code = null)
   {
+    if (!$country_code) {
+      return config('stone.timezone');
+    }
     if ($country_code == 'tw') {
       return 'Asia/Taipei';
     } else if ($country_code == 'my') {

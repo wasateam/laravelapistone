@@ -143,6 +143,9 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  *
  * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立
+ * 
+ * Update 
+ * shop_return_records 內帶陣列資料
  *
  * @authenticated
  *

@@ -8,10 +8,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
-use Wasateam\Laravelapistone\Exports\ShopProductExport;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
-use Wasateam\Laravelapistone\Imports\ShopProductImport;
 use Wasateam\Laravelapistone\Models\ShopProduct;
 
 /**
@@ -392,7 +390,27 @@ class ShopProductController extends Controller
    */
   public function import_excel(Request $request)
   {
-    Excel::import(new ShopProductImport, $request->file('file'));
+    ModelHelper::ws_ImportExcelHandler($request, function ($datas) {
+      foreach ($datas as $data) {
+        if ($data[0] == '系統流水號') {
+          continue;
+        }
+        if ($data[2]) {
+          $shop_product = ShopProduct::where('no', $data[2])->first();
+          if ($shop_product) {
+            $import_record                  = new ShopProductImportRecord;
+            $import_record->shop_product_id = $shop_product->id;
+            $import_record->no              = $data[2];
+            $import_record->stock_count     = $data[8];
+            $import_record->storage_space   = $data[9];
+            $import_record->save();
+            $shop_product->stock_count   = $data[8];
+            $shop_product->storage_space = $data[9];
+            $shop_product->save();
+          }
+        }
+      }
+    });
     return response()->json([
       'message' => 'import success.',
     ], 201);
@@ -411,18 +429,20 @@ class ShopProductController extends Controller
    */
   public function export_excel_signedurl(Request $request)
   {
-    $shop_classes    = $request->has('shop_classes') ? $request->shop_classes : null;
-    $shop_subclasses = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
-    $is_active       = $request->has('is_active') ? $request->is_active : null;
-    $get_all         = $request->has('get_all') ? $request->get_all : 0;
-    $stock_level     = $request->has('stock_level') ? $request->stock_level : null;
-    $start_date      = $request->has('start_date') ? $request->start_date : null;
-    $end_date        = $request->has('end_date') ? $request->end_date : null;
-    return URL::temporarySignedRoute(
-      'shop_product_export_excel',
-      now()->addMinutes(30),
-      ['shop_classes' => $shop_classes, 'shop_subclasses' => $shop_subclasses, 'is_active' => $is_active, 'get_all' => $get_all, 'stock_level' => $stock_level, 'start_date' => $start_date, 'end_date' => $end_date]
-    );
+    // $shop_classes    = $request->has('shop_classes') ? $request->shop_classes : null;
+    // $shop_subclasses = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
+    // $is_active       = $request->has('is_active') ? $request->is_active : null;
+    // $get_all         = $request->has('get_all') ? $request->get_all : 0;
+    // $stock_level     = $request->has('stock_level') ? $request->stock_level : null;
+    // $start_date      = $request->has('start_date') ? $request->start_date : null;
+    // $end_date        = $request->has('end_date') ? $request->end_date : null;
+    // return URL::temporarySignedRoute(
+    //   'shop_product_export_excel',
+    //   now()->addMinutes(30),
+    //   ['shop_classes' => $shop_classes, 'shop_subclasses' => $shop_subclasses, 'is_active' => $is_active, 'get_all' => $get_all, 'stock_level' => $stock_level, 'start_date' => $start_date, 'end_date' => $end_date]
+    // );
+
+    return ModelHelper::ws_ExportExcelSignedurlHandler($this, $request);
   }
 
   /**
@@ -430,14 +450,50 @@ class ShopProductController extends Controller
    */
   public function export_excel(Request $request)
   {
-    $shop_classes    = $request->has('shop_classes') ? $request->shop_classes : null;
-    $shop_subclasses = $request->has('shop_subclasses') ? $request->shop_subclasses : null;
-    $is_active       = $request->has('is_active') ? $request->is_active : null;
-    $get_all         = $request->has('get_all') ? $request->get_all : 0;
-    $stock_level     = $request->has('stock_level') ? $request->stock_level : null;
-    $start_date      = $request->has('start_date') ? $request->start_date : null;
-    $end_date        = $request->has('end_date') ? $request->end_date : null;
-    return Excel::download(new ShopProductExport($shop_classes, $shop_subclasses, $is_active, $get_all, $stock_level, $start_date, $end_date), 'shop_products.xlsx');
+    $date_arr    = array_map('intval', explode(',', $request->created_at));
+    $sales_title = '當日銷售數量';
+    if (count($date_arr) > 1) {
+      $sales_title = "銷售數量";
+    }
+
+    $headings = [
+      "系統流水號",
+      "商品編號",
+      "商品名稱",
+      "規格",
+      "重量/容量",
+      "成本",
+      "售價",
+      "庫存",
+      "儲位",
+      "採購者姓名",
+      $sales_title,
+    ];
+
+    return ModelHelper::ws_ExportExcelHandler(
+      $this,
+      $request,
+      $headings,
+      function ($model) use ($request) {
+        $weight      = $model->weight_capacity . ' ' . $model->weight_capacity_unit;
+        $date_arr    = explode(',', $request->created_at);
+        $sales_count = ShopHelper::getShopProductSalesCount($model->id, $date_arr[0], $date_arr[1]);
+        $map         = [
+          $model->uuid,
+          $model->no,
+          $model->name,
+          $model->spec,
+          $weight,
+          $model->cost,
+          $model->price,
+          $model->stock_count,
+          $model->storage_space,
+          $model->purchaser,
+          $sales_count,
+        ];
+        return $map;
+      }
+    );
   }
 
   /**

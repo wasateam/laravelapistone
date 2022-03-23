@@ -34,8 +34,11 @@ class StrHelper
   public static function encodeString($str, $type)
   {
     if ($type == 'name') {
-      $sub = Str::substr($str, 1, iconv_strlen($str) - 2);
-      $_str = '*' . $sub . '*';
+      $_str = Str::substr($str, 0, 1);
+      for ($i = 1; $i < iconv_strlen($str) - 1; $i++) {
+        $_str .= '*';
+      }
+      $_str .= Str::substr($str, iconv_strlen($str) - 1, 1);
     }
     if ($type == 'tel') {
       $_str    = $str;

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
+use Wasateam\Laravelapistone\Imports\ShopProductImport;
+use Wasateam\Laravelapistone\Imports\ModelImport;
 use Wasateam\Laravelapistone\Models\ShopProduct;
 
 /**
@@ -390,27 +392,7 @@ class ShopProductController extends Controller
    */
   public function import_excel(Request $request)
   {
-    ModelHelper::ws_ImportExcelHandler($request, function ($datas) {
-      foreach ($datas as $data) {
-        if ($data[0] == '系統流水號') {
-          continue;
-        }
-        if ($data[2]) {
-          $shop_product = ShopProduct::where('no', $data[2])->first();
-          if ($shop_product) {
-            $import_record                  = new ShopProductImportRecord;
-            $import_record->shop_product_id = $shop_product->id;
-            $import_record->no              = $data[2];
-            $import_record->stock_count     = $data[8];
-            $import_record->storage_space   = $data[9];
-            $import_record->save();
-            $shop_product->stock_count   = $data[8];
-            $shop_product->storage_space = $data[9];
-            $shop_product->save();
-          }
-        }
-      }
-    });
+    Excel::import(new ShopProductImport, $request->file('file'));
     return response()->json([
       'message' => 'import success.',
     ], 201);
@@ -475,8 +457,8 @@ class ShopProductController extends Controller
       $request,
       $headings,
       function ($model) use ($request) {
-        $weight      = $model->weight_capacity . ' ' . $model->weight_capacity_unit;
-        $date_arr    = explode(',', $request->created_at);
+        $weight = $model->weight_capacity . ' ' . $model->weight_capacity_unit;
+        $date_arr = explode(',', $request->created_at);
         $sales_count = ShopHelper::getShopProductSalesCount($model->id, $date_arr[0], $date_arr[1]);
         $map         = [
           $model->uuid,

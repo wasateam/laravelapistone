@@ -186,20 +186,20 @@
 }
 
 .pdf-file {
-    padding: 72px;
+    padding: 0px 24px;
 }
 .wrap {
     border: 1px solid #eaedf1;
 }
 .header {
     height: 32px;
-    background-color: #656d79;
+    background-color: #efeeee;
     color: #393d43;
     padding: 8px 10px;
 }
 .title {
     padding: 8px 10px;
-    font-size: 10px;
+    font-size: 12px;
 }
 .w-10per {
     width: 10%;
@@ -212,17 +212,16 @@
 }
 .content {
     padding: 8px 10px;
-    font-size: 10px;
+    font-size: 12px;
 }
 td {
     border: 1px solid #eaedf1;
 }
 h1 {
-    font-size: 12px;
+    font-size: 14px;
 }
 h2 {
-    font-size: 10px;
+    font-size: 12px;
 }
-
 
 </style>

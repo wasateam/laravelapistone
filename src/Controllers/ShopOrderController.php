@@ -619,7 +619,7 @@ class ShopOrderController extends Controller
       $datas[] = $order_data;
       //pdf
     }
-    $pdf = PDF::loadView('wasa.pdf.shop_order_picking_export', [
+    $pdf = PDF::loadView('wasateam::wasa.pdf.shop_order_picking_export', [
       'export_time' => Carbon::now()->format('Y.m.d H:i:s'),
       'shop_orders' => $datas,
     ]);

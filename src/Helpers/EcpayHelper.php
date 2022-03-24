@@ -172,6 +172,7 @@ class EcpayHelper
     $shop_order->ecpay_merchant_id = $payment_res->MerchantID;
     if (isset($payment_res->OrderInfo->TradeStatus)) {
       if ($payment_res->OrderInfo->TradeStatus == 1) {
+        $shop_order->pay_at      = Carbon::now();
         $shop_order->pay_status  = 'paid';
         $shop_order->status      = 'established';
         $shop_order->ship_status = 'unfulfilled';
@@ -347,7 +348,7 @@ class EcpayHelper
       "PayAct"             => 'ECPAY',
       "Tsr"                => $Tsr,
       // "NotifyURL"          => config('stone.invoice.notify_url'),
-      'NotifyURL' => 'https://laravelapiservice.showroom.wasateam.com/api/test/request_check',
+      'NotifyURL'          => 'https://laravelapiservice.showroom.wasateam.com/api/test/request_check',
     ];
   }
 
@@ -406,7 +407,7 @@ class EcpayHelper
 
   public static function updateShopOrderFromEcpayOrderCallbackRes($res)
   {
-    $res_data = self::getDecryptData($res['Data']);
+    $res_data   = self::getDecryptData($res['Data']);
     $shop_order = ShopOrder::where('no', $res_data->OrderInfo->MerchantTradeNo)->first();
     if (!$shop_order) {
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order', $res_data->OrderInfo->MerchantTradeNo, 'no');
@@ -414,6 +415,7 @@ class EcpayHelper
     $shop_order->ecpay_merchant_id = $res_data->MerchantID;
     if (isset($res_data->SimulatePaid)) {
       if ($res_data->SimulatePaid == 1) {
+        $shop_order->pay_at      = Carbon::now();
         $shop_order->pay_status  = 'sumulate-paid';
         $shop_order->status      = 'established';
         $shop_order->ship_status = 'unfulfilled';
@@ -421,6 +423,7 @@ class EcpayHelper
     }
     if (isset($res_data->OrderInfo->TradeStatus)) {
       if ($res_data->OrderInfo->TradeStatus == 1) {
+        $shop_order->pay_at      = Carbon::now();
         $shop_order->pay_status  = 'paid';
         $shop_order->status      = 'established';
         $shop_order->ship_status = 'unfulfilled';

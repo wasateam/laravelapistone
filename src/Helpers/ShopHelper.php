@@ -1462,7 +1462,7 @@ class ShopHelper
             $query->where('on_time', '<', $off_time);
             $query->whereNull('off_time');
           });
-          $query->orWhere(function ($query) use ($on_time,$off_time) {
+          $query->orWhere(function ($query) use ($on_time, $off_time) {
             $query->where('off_time', '>', $on_time);
             $query->where('off_time', '<', $off_time);
           });
@@ -1470,14 +1470,8 @@ class ShopHelper
           $query->where(function ($query) use ($on_time) {
             $query->where('off_time', '>', $on_time);
           });
-        }
-
-        $query->where(function ($query) use ($on_time) {
-          $query->where('off_time', '<', $on_time);
-        });
-        if ($off_time) {
-          $query->orWhere(function ($query) use ($off_time) {
-            $query->where('on_time', '>', $off_time);
+          $query->orWhere(function ($query) use ($on_time) {
+            $query->whereNotNull('off_time');
           });
         }
       });

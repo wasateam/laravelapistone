@@ -105,6 +105,18 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
       $order_count = ShopHelper::getOrderCost($order_products);
       //order_original_count
       $order_original_count = ShopHelper::getOrderCost($order_products);
+      $user                 = $shop_order->user;
+      $first_purchase_check = 0;
+
+      $current_year_paid_shop_orders = ShopOrder::where('user_id', $shop_order->user->id)
+        ->whereYear('created_at', \Carbon\Carbon::parse($shop_order->created_at)->format('Y'))
+        ->orderBy('pay_at', 'asc')
+        ->get();
+      if (count($current_year_paid_shop_orders) == 0) {
+        $first_purchase_check = 1;
+      } else if ($current_year_paid_shop_orders[0]->id == $shop_order->id) {
+        $first_purchase_check = 1;
+      }
 
       foreach ($order_products as $index => $order_product) {
         $shop_product = $order_product->shop_product;
@@ -114,7 +126,7 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
         $return_count = ShopHelper::getProductReturnCount($order_product);
         if ($index == 0) {
           $array[] = [
-            null,
+            $first_purchase_check ? 'v' : null,
             $shop_order->user->id,
             $shop_order->orderer,
             $shop_order->orderer_tel,

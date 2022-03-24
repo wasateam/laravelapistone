@@ -75,8 +75,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * ~ sumulate-paid: 模擬測試付款
  * ~ waiting: 待付款
  * ~ paid: 已付款
- * ~ not-paid: 未付款
- * ~ expired: 付款逾期
+ * ~ not-paid: 沒付款
  * ~ returned: 已退款
  * invoice_number 發票號碼
  * reinvoice_at 發票重新開立時間

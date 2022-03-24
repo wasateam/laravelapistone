@@ -1522,7 +1522,7 @@ class ShopHelper
     $shop_orders = ShopOrder::where('pay_status', 'waiting')
       ->where('created_at', '<', $check_time)
       ->update([
-        'pay_status' => 'expired',
+        'pay_status' => 'not-paid',
       ]);
   }
 }

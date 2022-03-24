@@ -1441,6 +1441,7 @@ class ShopHelper
   public static function ShopOrderNoPriceCheck($shop_order)
   {
     if (!$shop_order->order_price) {
+      $shop_order->pay_at         = Carbon::now();
       $shop_order->pay_status     = 'paid';
       $shop_order->status         = 'established';
       $shop_order->ship_status    = 'unfulfilled';
@@ -1523,5 +1524,14 @@ class ShopHelper
       ->update([
         'pay_status' => 'not-paid',
       ]);
+  }
+
+  public static function ShopOrderShipTimeSet($shop_order)
+  {
+    $shop_ship_time_setting      = $shop_order->shop_ship_time_setting;
+    $shop_order->ship_start_time = $shop_ship_time_setting->start_time;
+    $shop_order->ship_end_time   = $shop_ship_time_setting->end_time;
+    $shop_order->ship_date       = Carbon::parse($shop_order->created_at)->addDays(1);
+    $shop_order->save();
   }
 }

@@ -84,6 +84,7 @@ class LinePayHelper
       );
     }
 
+    $shop_order->pay_at      = Carbon::now();
     $shop_order->pay_status  = 'paid';
     $shop_order->status      = 'established';
     $shop_order->ship_status = 'unfulfilled';

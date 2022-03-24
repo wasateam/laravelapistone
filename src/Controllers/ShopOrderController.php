@@ -76,6 +76,8 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * ~ waiting: 待付款
  * ~ paid: 已付款
  * ~ not-paid: 未付款
+ * ~ expired: 付款逾期
+ * ~ returned: 已退款
  * invoice_number 發票號碼
  * reinvoice_at 發票重新開立時間
  * invoice_status 發票狀態
@@ -141,6 +143,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * return_price 退貨金額
  * return_reason 退貨原由
  * return_remark 退貨備註
+ * created_at 訂單建立時間
  *
  * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立

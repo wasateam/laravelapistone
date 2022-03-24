@@ -1510,4 +1510,19 @@ class ShopHelper
     }
     return $sales_count;
   }
+
+  public static function checkShopOrderPayExpire()
+  {
+    \Log::info('checkShopOrderPayExpire');
+    $expire_time = config('stone.shop.pay_expire.time_limit');
+    if (!$expire_time) {
+      throw new \Wasateam\Laravelapistone\Exceptions\StoneConfigNotSetException('stone.shop.pay_expire.time_limit');
+    }
+    $check_time  = Carbon::now()->addSeconds($expire_time * -1);
+    $shop_orders = ShopOrder::where('pay_status', 'waiting')
+      ->where('created_at', '<', $check_time)
+      ->update([
+        'pay_status' => 'expired',
+      ]);
+  }
 }

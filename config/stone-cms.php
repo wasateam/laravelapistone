@@ -2,6 +2,8 @@
 
 return [
   'mode'               => 'cms',
+  'schedule'           => true,
+  'queue'              => true,
   'timezone'           => 'Asia/Taipei',
   'migration'          => true,
   'storage'            => [
@@ -117,6 +119,9 @@ return [
       'pre_order' => [
         'freight_separate' => true,
       ],
+    ],
+    'pay_expire'      => [
+      'time_limit' => 600,
     ],
   ],
   // multiple layers

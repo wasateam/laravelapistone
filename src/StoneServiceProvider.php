@@ -2,6 +2,7 @@
 
 namespace Wasateam\Laravelapistone;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Wasateam\Laravelapistone\Commands\CommandStoneTest;
@@ -273,7 +274,6 @@ class StoneServiceProvider extends ServiceProvider
       $this->publishes($publishes, 'stone-setup-webapi');
     }
 
-    #
     $this->loadViewsFrom(__DIR__ . '/../resources/views', 'wasateam');
 
     # Middleware
@@ -408,7 +408,16 @@ class StoneServiceProvider extends ServiceProvider
         CommandStoneTest::class,
         CommandStoneWork::class,
         \Wasateam\Laravelapistone\Commands\CommandGenerateUserInviteNo::class,
+        \Wasateam\Laravelapistone\Commands\CommandStoneSchedule::class,
       ]);
     }
+    $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+      if (config('stone.schedule')) {
+        $schedule->command('stone:schedule')->everyMinute();
+      }
+      if (config('stone.queue')) {
+        $schedule->command('queue:work --stop-when-empty')->everyMinute();
+      }
+    });
   }
 }

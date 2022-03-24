@@ -24,12 +24,11 @@ class ShopProductImport implements ToCollection
         if ($shop_product) {
           $import_record                  = new ShopProductImportRecord;
           $import_record->shop_product_id = $shop_product->id;
-          $import_record->no              = $data[2];
-          $import_record->stock_count     = $data[8];
-          $import_record->storage_space   = $data[9];
+          $import_record->stock_count     = $data[10];
+          $import_record->storage_space   = $data[11];
           $import_record->save();
-          $shop_product->stock_count   = $data[8];
-          $shop_product->storage_space = $data[9];
+          $shop_product->stock_count   = $data[10];
+          $shop_product->storage_space = $data[11];
           $shop_product->save();
         }
       }

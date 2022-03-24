@@ -10,6 +10,32 @@ class TestHelper
 {
   public static function testIndex($tester, $url, $params = [], $status = 200, $scopes = null, $guard = null)
   {
+
+    self::setPsasportAct($scopes, $guard);
+
+    $response = $tester->call('GET', $url, $params);
+    if ($response->status() != $status) {
+      \Log::info("{$url}");
+      \Log::info($response->json());
+    }
+    $response->assertStatus($status);
+  }
+
+  public static function testUpdate($tester, $url, $body = [], $status = 200, $scopes = null, $guard = null)
+  {
+
+    self::setPsasportAct($scopes, $guard);
+
+    $response = $tester->call('PATCH', $url, $body);
+    if ($response->status() != $status) {
+      \Log::info("{$url}");
+      \Log::info($response->json());
+    }
+    $response->assertStatus($status);
+  }
+
+  public static function setPsasportAct($scopes = null, $guard = null)
+  {
     if (!$guard) {
       if (config('stone.mode') == 'cms') {
         $guard = 'admin';
@@ -32,15 +58,10 @@ class TestHelper
     if ($guard == 'admin') {
       $user = self::getTestAdmin();
     }
+
     \Laravel\Passport\Passport::actingAs(
       $user, $scopes, $guard
     );
-    $response = $tester->call('GET', $url, $params);
-    if ($response->status() != $status) {
-      \Log::info("{$url}");
-      \Log::info($response->json());
-    }
-    $response->assertStatus($status);
   }
 
   public static function getTestUserToken()
@@ -62,6 +83,7 @@ class TestHelper
     }
     return $user;
   }
+
   public static function getTestAdmin()
   {
     $user = Admin::where('email', 'boss@wasateam.com')->first();

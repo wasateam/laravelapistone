@@ -190,9 +190,9 @@ class ShopHelper
       $price = 0;
       if (isset($item->shop_order_shop_product_sepc)) {
         $spec  = $item->shop_order_shop_product_sepc;
-        $price = $spec->discount_price ? $spec->discount_price : $spec->price;
+        $price = $spec->discount_price && config('stone.shop.discount_price') ? $spec->discount_price : $spec->price;
       } else {
-        $price = $item->discount_price ? $item->discount_price : $item->price;
+        $price = $item->discount_price && config('stone.shop.discount_price') ? $item->discount_price : $item->price;
       }
       return $price * $item->count;
     });
@@ -438,9 +438,9 @@ class ShopHelper
       $count = $shop_cart_product['count'];
       $price = 0;
       if (isset($shop_cart_product->shop_product_spec)) {
-        $price = $shop_cart_product->shop_product_spec['discount_price'] ? $shop_cart_product->shop_product_spec['discount_price'] : $shop_cart_product->shop_product_spec['price'];
+        $price = $shop_cart_product->shop_product_spec['discount_price'] && config('stone.shop.discount_price') ? $shop_cart_product->shop_product_spec['discount_price'] : $shop_cart_product->shop_product_spec['price'];
       } else {
-        $price = $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
+        $price = $shop_cart_product['discount_price'] && config('stone.shop.discount_price') ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
       }
       $order_amount += $count * $price;
     }
@@ -490,9 +490,9 @@ class ShopHelper
       $count = $shop_cart_product['count'];
       $price = 0;
       if (isset($shop_cart_product->shop_product_spec)) {
-        $price = $shop_cart_product->shop_product_spec['discount_price'] ? $shop_cart_product->shop_product_spec['discount_price'] : $shop_cart_product->shop_product_spec['price'];
+        $price = $shop_cart_product->shop_product_spec['discount_price'] && config('stone.shop.discount_price') ? $shop_cart_product->shop_product_spec['discount_price'] : $shop_cart_product->shop_product_spec['price'];
       } else {
-        $price = $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
+        $price = $shop_cart_product['discount_price'] && config('stone.shop.discount_price') ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
       }
       $order_amount += $count * $price;
     }
@@ -504,9 +504,9 @@ class ShopHelper
     $count = $order_product['count'];
     $price = 0;
     if (isset($order_product->shop_product_spec)) {
-      $price = $order_product->shop_product_spec['discount_price'] ? $order_product->shop_product_spec['discount_price'] : $order_product->shop_product_spec['price'];
+      $price = $order_product->shop_product_spec['discount_price'] && config('stone.shop.discount_price') ? $order_product->shop_product_spec['discount_price'] : $order_product->shop_product_spec['price'];
     } else {
-      $price = $order_product['discount_price'] ? $order_product['discount_price'] : $order_product['price'];
+      $price = $order_product['discount_price'] && config('stone.shop.discount_price') ? $order_product['discount_price'] : $order_product['price'];
     }
     return $count * $price;
   }
@@ -1115,7 +1115,7 @@ class ShopHelper
     if (isset($shop_product->shop_product_specs) && $shop_product->shop_product_specs->count()) {
       $all_price = [];
       foreach ($shop_product->shop_product_specs as $shop_product_spec) {
-        $all_price[] = $shop_product_spec->discount_price ? $shop_product_spec->discount_price : $shop_product_spec->price;
+        $all_price[] = $shop_product_spec->discount_price && config('stone.shop.discount_price') ? $shop_product_spec->discount_price : $shop_product_spec->price;
       }
       if (count($all_price) > 1) {
         sort($all_price);
@@ -1252,9 +1252,9 @@ class ShopHelper
     $price = 0;
     if (isset($shop_order_shop_product->shop_order_shop_product_spec)) {
       $spec  = $shop_order_shop_product->shop_order_shop_product_spec;
-      $price = $spec->discount_price ? $spec->discount_price : $spec->price;
+      $price = $spec->discount_price && config('stone.shop.discount_price') ? $spec->discount_price : $spec->price;
     } else {
-      $price = $shop_order_shop_product->discount_price ? $shop_order_shop_product->dicount_price : $shop_order_shop_product->price;
+      $price = $shop_order_shop_product->discount_price && config('stone.shop.discount_price') ? $shop_order_shop_product->dicount_price : $shop_order_shop_product->price;
     }
     return $price * $count;
   }
@@ -1392,7 +1392,6 @@ class ShopHelper
         } catch (\Throwable $th) {
           $shop_order->invoice_status = 'fail';
           $shop_order->save();
-          error_log($th);
           throw $th;
         }
       }

@@ -1062,8 +1062,8 @@ class ModelHelper
       $class_name::whereIn($related_key_name, $has_many_value)->update([
         $related_foreign_key => $model->id,
       ]);
-      return $model;
     }
+    return $model;
   }
 
   public static function setBelongsToMany($model, $setting, $request)

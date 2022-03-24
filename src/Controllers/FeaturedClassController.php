@@ -55,6 +55,7 @@ class FeaturedClassController extends Controller
    * Index
    * @queryParam search string No-example
    * @queryParam order_type string No-example pre-order,next-day
+   * @queryParam is_outstanding boolean Example:1
    *
    */
   public function index(Request $request, $id = null)

@@ -132,7 +132,8 @@ class ModelHelper
       ], 400);
     }
 
-    // Belongs To Many Value
+    $model = self::setHasMany($model, $setting, $request);
+
     $model = self::setBelongsToMany($model, $setting, $request);
 
     // Admin Group
@@ -273,7 +274,7 @@ class ModelHelper
     $model = self::setUserRecord($model, $setting);
 
     // Belongs To Value
-    $model = ModelHelper::setBelongsTo($model, $setting, $request);
+    $model = self::setBelongsTo($model, $setting, $request);
     // Save
     // try {
     $model->save();
@@ -283,8 +284,9 @@ class ModelHelper
     //   ], 400);
     // }
 
-    // Belongs To Many Value
-    $model = ModelHelper::setBelongsToMany($model, $setting, $request);
+    $model = self::setHasMany($model, $setting, $request);
+
+    $model = self::setBelongsToMany($model, $setting, $request);
 
     // Locale Set
     try {
@@ -407,7 +409,7 @@ class ModelHelper
 
   public static function ws_ImportExcelHandler($request, $map)
   {
-    return Excel::import(new \Wasateam\Laravelapistone\Imports\ModelImport($request,$map), $request->file('file'));
+    return Excel::import(new \Wasateam\Laravelapistone\Imports\ModelImport($request, $map), $request->file('file'));
   }
 
   public static function ws_ExportExcelHandler($controller, $request, $headings, $map)
@@ -1030,6 +1032,38 @@ class ModelHelper
       }
     }
     return $model;
+  }
+
+  public static function setHasMany($model, $setting, $request)
+  {
+    foreach ($setting->has_many as $key) {
+      if (!$request->has($key)) {
+        continue;
+      }
+
+      $related = $model->{$key}()->getRelated();
+
+      $class_name     = get_class($related);
+      $has_many_value = $request->{$key};
+      if (is_string($request->{$key})) {
+        $check = json_decode($request->{$key});
+        if (json_last_error() === 0) {
+          $has_many_value = json_decode($request->{$key});
+        }
+      }
+
+      $related_foreign_key = $model->{$key}()->getForeignKeyName();
+      $related_key_name    = $related->getKeyName();
+
+      $model->{$key}()->update([
+        $related_foreign_key => null,
+      ]);
+
+      $class_name::whereIn($related_key_name, $has_many_value)->update([
+        $related_foreign_key => $model->id,
+      ]);
+      return $model;
+    }
   }
 
   public static function setBelongsToMany($model, $setting, $request)

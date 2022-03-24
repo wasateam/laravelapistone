@@ -274,7 +274,6 @@ class ModelHelper
 
     // Belongs To Value
     $model = ModelHelper::setBelongsTo($model, $setting, $request);
-    error_log(json_encode($model));
     // Save
     // try {
     $model->save();

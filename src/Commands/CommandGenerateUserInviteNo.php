@@ -43,7 +43,6 @@ class CommandGenerateUserInviteNo extends Command
     foreach ($users as $user) {
       $user = UserHelper::generateInviteNo($user, 'Wasateam\Laravelapistone\Models\User');
     }
-    error_log('ok');
     return 0;
   }
 }

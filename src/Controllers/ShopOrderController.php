@@ -143,6 +143,10 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * return_reason 退貨原由
  * return_remark 退貨備註
  * created_at 訂單建立時間
+ * source 來源
+ * ~ web-pc
+ * ~ web-mobile
+ * ~ app
  *
  * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立
@@ -202,6 +206,7 @@ class ShopOrderController extends Controller
     'invoice_email',
     'invoice_uniform_number',
     'invite_no',
+    'source',
   ];
   public $search_fields = [
     'no',
@@ -380,6 +385,7 @@ class ShopOrderController extends Controller
    * @bodyParam bonus_points int 紅利點數 Example:30
    * @bodyParam discount_code string 折扣碼 Example:SEXYAPPLE
    * @bodyParam invite_no string 邀請碼 Example:SEXYORANGE
+   * @bodyParam source string 來源 Example:web-pc,web-mobile,app
    */
 
   public function store(Request $request, $id = null)
@@ -412,7 +418,8 @@ class ShopOrderController extends Controller
 
       return ModelHelper::ws_StoreHandler(
         $this,
-        $request, $id,
+        $request,
+        $id,
         function ($model) use (
           $filtered_cart_products,
           $discount_code,
@@ -426,6 +433,7 @@ class ShopOrderController extends Controller
           ShopHelper::setCampaignDeduct($model, $discount_code);
           ShopHelper::updateShopOrderPrice($model, $discount_code, $bonus_points, $invite_no);
           ShopHelper::ShopOrderNoPriceCheck($model);
+          ShopHelper::ShopOrderShipTimeSet($model);
 
         }, function ($model) use (
           $user,
@@ -538,6 +546,7 @@ class ShopOrderController extends Controller
    * @bodyParam invoice_email string 發票信箱 No-example
    * @bodyParam invoice_uniform_number string 發票統一編號 No-example
    * @bodyParam need_handle boolean 需要處理  Example:1
+   * @bodyParam source string 來源 Example:web-pc,web-mobile,app
    *
    */
   public function update(Request $request, $id)

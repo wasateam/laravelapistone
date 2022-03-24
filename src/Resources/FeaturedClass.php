@@ -16,20 +16,22 @@ class FeaturedClass extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       return [
-        'id'         => $this->id,
-        'updated_at' => $this->updated_at,
-        'created_at' => $this->created_at,
-        'name'       => $this->name,
-        'icon'       => $this->icon,
-        'sequence'   => $this->sequence,
-        'order_type' => $this->order_type 
+        'id'             => $this->id,
+        'updated_at'     => $this->updated_at,
+        'created_at'     => $this->created_at,
+        'name'           => $this->name,
+        'icon'           => $this->icon,
+        'sequence'       => $this->sequence,
+        'is_outstanding' => $this->is_outstanding,
+        'order_type'     => $this->order_type,
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
-        'id'   => $this->id,
-        'name' => $this->name,
-        'icon' => $this->icon,
-        'order_type' => $this->order_type 
+        'id'             => $this->id,
+        'name'           => $this->name,
+        'icon'           => $this->icon,
+        'order_type'     => $this->order_type,
+        'is_outstanding' => $this->is_outstanding,
       ];
     }
   }

@@ -12,7 +12,11 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  *
  * @authenticated
  *
- * APIs for featured_class
+ * name 名稱
+ * icon
+ * sequence
+ * is_outstanding 是否為精選中的精選
+ * order_type 訂單類型
  */
 class FeaturedClassController extends Controller
 {
@@ -23,10 +27,12 @@ class FeaturedClassController extends Controller
     'name',
     'icon',
     'sequence',
-    'order_type'
+    'is_outstanding',
+    'order_type',
   ];
   public $filter_fields = [
-    'order_type'
+    'order_type',
+    'is_outstanding',
   ];
   public $order_fields = [
     'sequence',
@@ -60,7 +66,10 @@ class FeaturedClassController extends Controller
    * Store
    *
    * @bodyParam name string Example:name
-   * @bodyParam shop_product id Example:1
+   * @bodyParam icon string No-example
+   * @bodyParam sequence string Example:123
+   * @bodyParam is_outstanding boolean Example:1
+   * @bodyParam order_type string Example:pre-order
    */
   public function store(Request $request, $id = null)
   {
@@ -82,7 +91,10 @@ class FeaturedClassController extends Controller
    *
    * @urlParam  featured_class required The ID of featured_class. Example: 1
    * @bodyParam name string Example:name
-   * @bodyParam shop_product id Example:1
+   * @bodyParam icon string No-example
+   * @bodyParam sequence string Example:123
+   * @bodyParam is_outstanding boolean Example:1
+   * @bodyParam order_type string Example:pre-order
    */
   public function update(Request $request, $id)
   {

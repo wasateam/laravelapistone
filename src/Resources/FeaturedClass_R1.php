@@ -16,12 +16,13 @@ class FeaturedClass_R1 extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       return [
-        'id'         => $this->id,
-        'updated_at' => $this->updated_at,
-        'created_at' => $this->created_at,
-        'name'       => $this->name,
-        'icon'       => $this->icon,
-        'sequence'   => $this->sequence,
+        'id'             => $this->id,
+        'updated_at'     => $this->updated_at,
+        'created_at'     => $this->created_at,
+        'name'           => $this->name,
+        'icon'           => $this->icon,
+        'sequence'       => $this->sequence,
+        'is_outstanding' => $this->is_outstanding,
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [

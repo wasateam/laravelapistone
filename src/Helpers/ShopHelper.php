@@ -1363,8 +1363,6 @@ class ShopHelper
               $DelayDay,
               $Tsr,
             );
-            \Log::info('$post_data');
-            \Log::info($post_data);
             $invoice_res = EcpayHelper::createDelayInvoice($post_data);
           } else {
             $post_data = EcpayHelper::getInvoicePostData(
@@ -1513,7 +1511,6 @@ class ShopHelper
 
   public static function checkShopOrderPayExpire()
   {
-    \Log::info('checkShopOrderPayExpire');
     $expire_time = config('stone.shop.pay_expire.time_limit');
     if (!$expire_time) {
       throw new \Wasateam\Laravelapistone\Exceptions\StoneConfigNotSetException('stone.shop.pay_expire.time_limit');

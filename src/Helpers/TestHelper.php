@@ -34,6 +34,19 @@ class TestHelper
     $response->assertStatus($status);
   }
 
+  public static function testCreate($tester, $url, $body = [], $status = 201, $scopes = null, $guard = null)
+  {
+
+    self::setPsasportAct($scopes, $guard);
+
+    $response = $tester->call('POST', $url, $body);
+    if ($response->status() != $status) {
+      \Log::info("{$url}");
+      \Log::info($response->json());
+    }
+    $response->assertStatus($status);
+  }
+
   public static function setPsasportAct($scopes = null, $guard = null)
   {
     if (!$guard) {

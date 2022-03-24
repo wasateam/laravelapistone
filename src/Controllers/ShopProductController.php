@@ -296,7 +296,7 @@ class ShopProductController extends Controller
         ], 400);
       }
     }
-    if ($request->filled('storage_space') && $requst->filled('on_time')) {
+    if ($request->filled('storage_space') && $request->filled('on_time')) {
       ShopHelper::ShopProductStorageSpaceCheck($request->storage_space, $request->on_time, $request->off_time);
     }
     return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($request) {

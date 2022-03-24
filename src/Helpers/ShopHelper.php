@@ -1452,13 +1452,34 @@ class ShopHelper
   public static function ShopProductStorageSpaceCheck($storage_space, $on_time, $off_time = null, $shop_product_id = null)
   {
     $snap = ShopProduct::where('storage_space', $storage_space)
-      ->where(function ($query) {
-        $query->where(function ($query) {
+      ->where(function ($query) use ($on_time, $off_time) {
+        if ($off_time) {
+          $query->where(function ($query) use ($on_time, $off_time) {
+            $query->where('on_time', '>', $on_time);
+            $query->where('on_time', '<', $off_time);
+          });
+          $query->orWhere(function ($query) use ($off_time) {
+            $query->where('on_time', '<', $off_time);
+            $query->whereNull('off_time');
+          });
+          $query->orWhere(function ($query) use ($on_time,$off_time) {
+            $query->where('off_time', '>', $on_time);
+            $query->where('off_time', '<', $off_time);
+          });
+        } else {
+          $query->where(function ($query) use ($on_time) {
+            $query->where('off_time', '>', $on_time);
+          });
+        }
+
+        $query->where(function ($query) use ($on_time) {
           $query->where('off_time', '<', $on_time);
         });
-        $query->orWhere(function ($query) {
-          $query->where('on_time', '>', $off_time);
-        });
+        if ($off_time) {
+          $query->orWhere(function ($query) use ($off_time) {
+            $query->where('on_time', '>', $off_time);
+          });
+        }
       });
     if ($shop_product_id) {
       $snap = $snap->where('id', '!=', $shop_product_id);

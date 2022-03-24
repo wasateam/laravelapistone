@@ -102,6 +102,7 @@ class ShopOrder extends JsonResource
         'return_price'              => $this->return_price,
         'return_reason'             => $this->return_reason,
         'return_remark'             => $this->return_remark,
+        'source'                    => $this->source,
         'shop_campaign_shop_orders' => ShopCampaignShopOrder::collection($this->shop_campaign_shop_orders),
         'user'                      => new User_R2($this->user),
       ];

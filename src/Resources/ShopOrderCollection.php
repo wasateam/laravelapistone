@@ -101,6 +101,7 @@ class ShopOrderCollection extends JsonResource
         'return_price'              => $this->return_price,
         'return_reason'             => $this->return_reason,
         'return_remark'             => $this->return_remark,
+        'source'                    => $this->source,
         'user'                      => new User_R2($this->user),
       ];
       if (config('stone.shop.uuid')) {

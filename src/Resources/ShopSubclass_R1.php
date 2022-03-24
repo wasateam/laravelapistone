@@ -23,17 +23,19 @@ class ShopSubclass_R1 extends JsonResource
         'sq'         => $this->sq,
         'type'       => $this->type,
         'icon'       => $this->icon,
+        'shop_class' => new ShopClass_R0($this->shop_class),
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
       }
     } else if (config('stone.mode') == 'webapi') {
       $res = [
-        'id'   => $this->id,
-        'name' => $this->name,
-        'sq'   => $this->sq,
-        'type' => $this->type,
-        'icon' => $this->icon,
+        'id'         => $this->id,
+        'name'       => $this->name,
+        'sq'         => $this->sq,
+        'type'       => $this->type,
+        'icon'       => $this->icon,
+        'shop_class' => new ShopClass_R0($this->shop_class),
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;

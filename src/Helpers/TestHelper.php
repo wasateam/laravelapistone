@@ -15,8 +15,7 @@ class TestHelper
 
     $response = $tester->call('GET', $url, $params);
     if ($response->status() != $status) {
-      \Log::info("{$url}");
-      \Log::info($response->json());
+      self::testErrorHander($url, $response);
     }
     $response->assertStatus($status);
   }
@@ -28,10 +27,16 @@ class TestHelper
 
     $response = $tester->call('PATCH', $url, $body);
     if ($response->status() != $status) {
-      \Log::info("{$url}");
-      \Log::info($response->json());
+      self::testErrorHander($url, $response);
     }
     $response->assertStatus($status);
+  }
+
+  public static function testErrorHander($url, $response)
+  {
+    \Log::info("status: {$response->status()}");
+    \Log::info("url: {$url}");
+    \Log::info("json: {$response->json()}");
   }
 
   public static function testCreate($tester, $url, $body = [], $status = 201, $scopes = null, $guard = null)
@@ -41,8 +46,7 @@ class TestHelper
 
     $response = $tester->call('POST', $url, $body);
     if ($response->status() != $status) {
-      \Log::info("{$url}");
-      \Log::info($response->json());
+      self::testErrorHander($url, $response);
     }
     $response->assertStatus($status);
   }

@@ -167,6 +167,21 @@ class AcumaticaHelper
     $response = Http::withHeaders([
       'Authorization' => "Bearer {$token}",
     ])->put($post_url, $post_data);
+
+    if ($response->status() != 200) {
+      $error_message = 'create equipment error.';
+      if ($response->json()['EquipmentType']['error']) {
+        $error_message = $response->json()['EquipmentType']['error'];
+      }
+      if ($response->json()['CustomerCustomerID']['error']) {
+        $error_message = $response->json()['CustomerCustomerID']['error'];
+      }
+      if ($response->json()['General']['Manufacturer']['error']) {
+        $error_message = $response->json()['General']['Manufacturer']['error'];
+      }
+      throw new \Wasateam\Laravelapistone\Exceptions\AcumaticaException('create equipment error.');
+    }
+
     return $response->json();
   }
 
@@ -449,7 +464,7 @@ class AcumaticaHelper
         $last_token->acumatica_app_id = $app->id;
       }
       if ($response->status() != '200') {
-        throw new \Wasateam\Laravelapistone\Exceptions\AcumaticaException();
+        throw new \Wasateam\Laravelapistone\Exceptions\AcumaticaException('get token error.');
       }
       $last_token->access_token = $response->json()['access_token'];
       $last_token->expires_in   = $response->json()['expires_in'];

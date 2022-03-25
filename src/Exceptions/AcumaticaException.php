@@ -6,6 +6,13 @@ use Exception;
 
 class AcumaticaException extends Exception
 {
+
+  public function __construct(
+    $message = 'acumatica error.'
+  ) {
+    $this->message = $message;
+  }
+
   /**
    * Report the exception.
    *
@@ -25,7 +32,8 @@ class AcumaticaException extends Exception
   public function render($request)
   {
     return response()->json([
-      'message' => 'acumatica error.',
+      'type'    => 'acumatica',
+      'message' => $this->message,
     ], 400);
   }
 }

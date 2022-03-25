@@ -796,7 +796,7 @@ class ShopOrderController extends Controller
   public function cancel($id)
   {
     $shop_order = ShopOrder::find($id);
-    if ($shop_order) {
+    if (!$shop_order) {
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
     }
     $shop_order->status = 'cancel';

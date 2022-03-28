@@ -616,7 +616,9 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
       # Shop Order
+      Route::patch('shop_order/batch', [ShopOrderController::class, 'batch_update']);
       Route::post('shop_order/{id}/cancel', [ShopOrderController::class, 'cancel']);
+      Route::post('shop_order/{id}/return/cancel', [ShopOrderController::class, 'return_cancel']);
       Route::resource('shop_order', ShopOrderController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
@@ -624,8 +626,9 @@ class RoutesHelper
         Route::get('shop_order/export/pdf/signedurl', [ShopOrderController::class, 'export_pdf_signedurl']);
       }
       Route::get('shop_order/export/excel/signedurl', [ShopOrderController::class, 'export_excel_signedurl']);
-      Route::post('shop_order/{shop_order_id}/re_invoice', [ShopOrderController::class, 're_invoice']);
-      Route::post('shop_order/{shop_order_id}/re_create', [ShopOrderController::class, 're_create']);
+      // Route::post('shop_order/{shop_order_id}/invoice', [ShopOrderController::class, 'create_invice']);
+      Route::post('shop_order/{shop_order_id}/re_create_invice', [ShopOrderController::class, 're_create_invice']);
+      // Route::post('shop_order/{shop_order_id}/re_create', [ShopOrderController::class, 're_create']);
       # Shop Order Product
       Route::resource('shop_order_shop_product', ShopOrderShopProductController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',

@@ -81,9 +81,9 @@ class LinePayController extends Controller
     $shop_order = LinePayHelper::payment_confirm($request->transaction_id, $shop_order);
     ShopHelper::createBonusPointFromShopOrder($shop_order);
 
-    if ($shop_order->pay_status == 'paid' && $shop_order->status == 'established') {
-      ShopHelper::createInvoice($shop_order);
-    }
+    // if ($shop_order->pay_status == 'paid' && $shop_order->status == 'established') {
+    //   ShopHelper::createInvoice($shop_order);
+    // }
 
     return response()->json($shop_order, 200);
   }

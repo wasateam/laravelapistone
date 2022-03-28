@@ -586,6 +586,11 @@ class ModelHelper
     return $controller->model::findMany($ids);
   }
 
+  // public static function ws_BatchUpdateHandler($controller, $request, $ids)
+  // {
+
+  // }
+
   public static function ws_BatchStoreHandler($controller, $request, $id = null)
   {
     $result_data = [];

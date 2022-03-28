@@ -360,9 +360,9 @@ class EcpayHelper
       $amount                  = ShopHelper::getOrderProductAmountPrice($shop_cart_product);
       $shop_cart_product_price = 0;
       if (isset($shop_cart_product->shop_product_spec)) {
-        $shop_cart_product_price = $shop_cart_product->shop_product_spec['discount_price'] ? $shop_cart_product->shop_product_spec['discount_price'] : $shop_cart_product->shop_product_spec['price'];
+        $shop_cart_product_price = config('stone.shop.discount_price') && $shop_cart_product->shop_product_spec['discount_price'] ? $shop_cart_product->shop_product_spec['discount_price'] : $shop_cart_product->shop_product_spec['price'];
       } else {
-        $shop_cart_product_price = $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
+        $shop_cart_product_price = config('stone.shop.discount_price') && $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
       }
       $items[] = [
         // "ItemSeq"     => 1,

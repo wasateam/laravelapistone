@@ -1297,10 +1297,29 @@ class ShopHelper
     $bonus_point_record->save();
   }
 
-  public static function createInvoice($shop_order)
+  public static function createInvoice($shop_order, $ori_shop_order = null)
   {
+    \Log::info('createInvoice');
     if ($shop_order->order_price <= 0) {
       return;
+    }
+    if ($ori_shop_order) {
+      $check = 0;
+      if (!count($shop_order->shop_return_records) && $ori_shop_order->ship_status == 'collected' && $shop_order->ship_status == 'shipped') {
+        \Log::info(1);
+        $check = 1;
+      }
+      if (count($shop_order->shop_return_records) && $ori_shop_order->status == 'return-part-apply' && $shop_order->status == 'return-part-complete') {
+        \Log::info(2);
+        $check = 1;
+      }
+      if ($ori_shop_order->status == 'cancel' && $shop_order->status == 'cancel-complete') {
+        \Log::info(3);
+        $check = 1;
+      }
+      if (!$check) {
+        return;
+      }
     }
     if (config('stone.invoice')) {
       if (config('stone.invoice.service') == 'ecpay') {
@@ -1363,7 +1382,9 @@ class ShopHelper
               $DelayDay,
               $Tsr,
             );
-            $invoice_res = EcpayHelper::createDelayInvoice($post_data);
+            $invoice_res                = EcpayHelper::createDelayInvoice($post_data);
+            $shop_order->invoice_status = 'waiting';
+            $shop_order->save();
           } else {
             $post_data = EcpayHelper::getInvoicePostData(
               $CustomerID,

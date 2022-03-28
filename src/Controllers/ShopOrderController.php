@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Exports\ShopOrderExport;
-use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Helpers\StrHelper;
@@ -47,6 +46,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * ~ 部分退訂完成 return-part-complete
  * ~ 全部退訂完成 return-all-complete
  * ~ 取消 cancel
+ * ~ 取消完成 cancel-complete
  * ~ 訂單完成 complete
  * status_remark 狀態備註
  * receive_way 收貨方式
@@ -80,6 +80,8 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * invoice_number 發票號碼
  * reinvoice_at 發票重新開立時間
  * invoice_status 發票狀態
+ * ~ null: 未開立
+ * ~ waiting: 待開立
  * ~ done: 完成
  * ~ fail: 失敗
  * ~ no-need: 無需開發票
@@ -238,6 +240,7 @@ class ShopOrderController extends Controller
   public $filter_time_fields = [
     'ship_date',
     'return_at',
+    'created_at',
   ];
   public $time_fields = [
     'created_at',
@@ -246,6 +249,7 @@ class ShopOrderController extends Controller
   public $order_fields = [
     'updated_at',
     'created_at',
+    'receive_address',
   ];
   public $child_models = [
     'shop_return_records' => '\Wasateam\Laravelapistone\Controllers\ShopReturnRecordController',
@@ -551,7 +555,11 @@ class ShopOrderController extends Controller
    */
   public function update(Request $request, $id)
   {
-    return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) {
+    \Log::info('update');
+    $ori_model = $this->model::find($id);
+    return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
+      ShopHelper::createInvoice($model, $ori_model);
+      // if(count($model->shop_return_records)==0 &&$ori_model->ship_status=='collected'&&$model)
       // ShopHelper::changeShopOrderPrice($model->id);
       // ShopHelper::updateShopOrderPrice($model);
     });
@@ -603,13 +611,6 @@ class ShopOrderController extends Controller
       ->get();
     $datas = [];
     foreach ($shop_orders as $shop_order) {
-      //order data
-      // $shop_order = ShopOrder::find($shop_order_id);
-      // if (!$shop_order) {
-      //   return response()->json([
-      //     'message' => 'no shop_order;',
-      //   ], 400);
-      // }
       $delivery_time       = Carbon::parse($shop_order->delivery_date)->format('Y-m-d') . '/' . $shop_order->ship_start_time . '-' . $shop_order->ship_end_time;
       $orderer             = $shop_order->orderer . '/' . $shop_order->orderer_tel;
       $orderer_encode      = StrHelper::encodeString($shop_order->orderer, 'name') . '/' . StrHelper::encodeString($shop_order->orderer_tel, 'tel');
@@ -683,80 +684,6 @@ class ShopOrderController extends Controller
   }
 
   /**
-   * ReInvoice
-   *
-   */
-  public function re_invoice(Request $request, $id)
-  {
-    $shop_order = ShopOrder::where('id', $id)->first();
-    if (!$shop_order) {
-      return response()->json([
-        'message' => 'no data.',
-      ], 400);
-    }
-    if (!$shop_order->shop_order_shop_products) {
-      return response()->json([
-        'message' => 'shop_order_shop_products required.',
-      ], 400);
-    }
-    # invoice
-    $invoice_status = null;
-    $invoice_number = null;
-    $user           = $shop_order->user;
-    if (config('stone.invoice')) {
-      if (config('stone.invoice.service') == 'ecpay') {
-        try {
-          //統一載具變成會員個人email
-          $invoice_type   = 'personal';
-          $customer_email = $shop_order->orderer_email; //fix
-          $customer_tel   = $shop_order->orderer_tel; //fix
-          $customer_addr  = $shop_order->receive_address;
-          $order_amount   = $shop_order->order_price;
-          $items          = EcpayHelper::getInvoiceItemsFromShopOrder($shop_order);
-          $customer_id    = $user->id;
-          $post_data      = [
-            'Items'         => $items,
-            'SalesAmount'   => $order_amount,
-            'TaxType'       => 1,
-            'CustomerEmail' => $customer_email,
-            'CustomerAddr'  => $customer_addr,
-            'CustomerPhone' => $customer_tel,
-            'CustomerID'    => $customer_id,
-          ];
-          if ($invoice_type == 'personal') {
-            $invoice_carrier_type       = 'email';
-            $invoice_carrier_number     = $shop_order->orderer_email;
-            $post_data['Print']         = 0;
-            $post_data['CustomerName']  = $shop_order->orderer; //fix
-            $post_data['CarrierType']   = 1;
-            $post_data['CarrierNum']    = '';
-            $post_data['CustomerEmail'] = $invoice_carrier_number;
-          }
-          $post_data      = EcpayHelper::getInvoicePostData($post_data);
-          $invoice_number = EcpayHelper::createInvoice($post_data);
-          $invoice_status = 'done';
-        } catch (\Throwable $th) {
-          $invoice_status = 'fail';
-        }
-      }
-    }
-
-    if ($invoice_status) {
-      $shop_order->invoice_status = $invoice_status;
-      if ($invoice_status == 'done') {
-        $shop_order->invoice_number = $invoice_number;
-        //取代原本訂單的發票載具資料
-        $shop_order->invoice_carrier_type   = 'email';
-        $shop_order->invoice_type           = 'personal';
-        $shop_order->invoice_carrier_number = $shop_order->orderer_email;
-        ShopHelper::createBonusPointFromShopOrder($shop_order->id);
-      }
-      $shop_order->reinvoice_at = Carbon::now();
-      $shop_order->save();
-    }
-  }
-
-  /**
    * ReCreate
    *
    * @bodyParam no string 訂單編號 No-example
@@ -793,16 +720,106 @@ class ShopOrderController extends Controller
    * Cancel 取消訂單
    *
    */
-  public function cancel($id)
+  public function cancel(Request $request, $id)
   {
     $shop_order = ShopOrder::find($id);
     if (!$shop_order) {
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
     }
-    $shop_order->status = 'cancel';
+    if ($request->filled('return_reason')) {
+      $shop_order->return_reason = $request->return_reason;
+    }
+    if ($request->filled('return_remark')) {
+      $shop_order->return_remark = $request->return_remark;
+    }
+    if ($request->filled('return_price')) {
+      $shop_order->return_price = $request->return_price;
+    }
+    $shop_order->status    = 'cancel';
+    $shop_order->return_at = Carbon::now();
     $shop_order->save();
     return response()->json([
       'message' => "shop_order canceled.",
+      'data'    => $shop_order,
     ], 200);
+  }
+
+  /**
+   * Return Cancel 取消退訂
+   *
+   */
+  public function return_cancel(Request $request, $id)
+  {
+    $shop_order = ShopOrder::find($id);
+    if (!$shop_order) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
+    }
+    foreach ($shop_order->shop_return_records as $shop_return_record) {
+      $shop_return_record->delete();
+    }
+    $shop_order->return_reason = null;
+    $shop_order->return_remark = null;
+    $shop_order->return_price  = null;
+    $shop_order->status        = null;
+    $shop_order->return_at     = null;
+    $shop_order->save();
+    return response()->json([
+      'message' => "shop_order return canceled.",
+      'data'    => $shop_order,
+    ], 200);
+  }
+
+  /**
+   * Batch Update 批次更新
+   *
+   */
+  public function batch_update(Request $request)
+  {
+    \Log::info('batch_update');
+    $ids = $request->ids;
+    foreach ($ids as $id) {
+      $ori_model = $this->model::find($id);
+      ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
+        \Log::info('ws_UpdateHandler');
+        ShopHelper::createInvoice($model, $ori_model);
+      });
+    }
+    return $this->resource_for_collection::collection($this->model::find($ids));
+  }
+
+  /**
+   * Create Invoice 建立發票
+   *
+   */
+  public function create_invice($id)
+  {
+    $shop_order = $this->model::find($id);
+    if (!$shop_order) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
+    }
+    if ($shop_order->pay_status == 'paid' && $shop_order->status == 'established') {
+      ShopHelper::createInvoice($shop_order);
+    }
+  }
+
+  /**
+   * ReCreate Invoice 重新建立發票
+   *
+   */
+  public function re_create_invice($id)
+  {
+    $shop_order = $this->model::find($id);
+    if (!$shop_order) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
+    }
+    if (
+      $shop_order->status == 'return-part-complete' ||
+      $shop_order->status == 'cancel-complete' ||
+      $shop_order->ship_status == 'shipped'
+    ) {
+      ShopHelper::createInvoice($shop_order);
+      $shop_order = $this->model::find($id);
+      return $shop_order;
+    }
   }
 }

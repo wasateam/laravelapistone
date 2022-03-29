@@ -179,6 +179,9 @@ class AcumaticaHelper
       if ($response->json()['General']['Manufacturer']['error']) {
         $error_message = $response->json()['General']['Manufacturer']['error'];
       }
+      if ($response->json()['SerialNbr']['error']) {
+        $error_message = $response->json()['SerialNbr']['error'];
+      }
       throw new \Wasateam\Laravelapistone\Exceptions\AcumaticaException('create equipment error.');
     }
 

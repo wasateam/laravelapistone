@@ -13,6 +13,11 @@
       font-weight: 400;
       font-style: normal;
     }
+
+    td{
+      word-break:break-all; word-wrap:break-word;
+    }
+
   </style>
 </head>
 
@@ -75,23 +80,23 @@
             <h1>訂購商品</h1>
           </div>
         </div>
-        <table width="100%">
+        <table width="100%" style="table-layout: fixed;">
           <tr class="table-item">
-            <td class="title">序號</td>
-            <td class="title">品名</td>
-            <td class="title">規格</td>
-            <td class="title">重量kg+_10%</td>
-            <td class="title">儲位</td>
-            <td class="title">數量</td>
+            <td class="title" style="width:5%;">序號</td>
+            <td class="title" style="width:45%;">品名</td>
+            <td class="title" style="width:15%;">規格</td>
+            <td class="title" style="width:10%;">重量kg+_10%</td>
+            <td class="title" style="width:15%;">儲位</td>
+            <td class="title" style="width:10%;">數量</td>
           </tr>
           @foreach ($shop_order['shop_order_shop_products'] as $shop_order_shop_product_key => $shop_order_shop_product)
             <tr class="table-item">
-            <td class="content ">{{$shop_order_shop_product_key + 1}}</td>
-              <td class="content">{{$shop_order_shop_product['name']}}</td>
-              <td class="content">{{$shop_order_shop_product['spec']}}</td>
-              <td class="content ">{{$shop_order_shop_product['weight_capacity']}}</td>
-              <td class="content">{{$shop_order_shop_product['storage_space']}}</td>
-              <td class="content">{{$shop_order_shop_product['count']}}</td>
+              <td class="content" style="width:5%;">{{$shop_order_shop_product_key + 1}}</td>
+              <td class="content" style="width:45%;">{{$shop_order_shop_product['name']}}</td>
+              <td class="content" style="width:15%;">{{$shop_order_shop_product['spec']}}</td>
+              <td class="content" style="width:10%;">{{$shop_order_shop_product['weight_capacity']}}</td>
+              <td class="content" style="width:15%;">{{$shop_order_shop_product['storage_space']}}</td>
+              <td class="content" style="width:10%;">{{$shop_order_shop_product['count']}}</td>
             </tr>
           @endforeach
         </table>
@@ -152,21 +157,21 @@
             <h1>訂購商品</h1>
           </div>
         </div>
-        <table width="100%">
+        <table width="100%" style="table-layout: fixed;">
           <tr class="table-item">
-            <td class="title">序號</td>
-            <td class="title">品名</td>
-            <td class="title">規格</td>
-            <td class="title">重量kg+_10%</td>
-            <td class="title">數量</td>
+            <td class="title" style="width:5%;">序號</td>
+            <td class="title" style="width:45%;">品名</td>
+            <td class="title" style="width:20%;">規格</td>
+            <td class="title" style="width:15%;">重量kg+_10%</td>
+            <td class="title" style="width:15%;">數量</td>
           </tr>
           @foreach ($shop_order['shop_order_shop_products'] as $shop_order_shop_product_key => $shop_order_shop_product)
             <tr class="table-item">
-            <td class="content ">{{$shop_order_shop_product_key + 1}}</td>
-              <td class="content">{{$shop_order_shop_product['name']}}</td>
-              <td class="content">{{$shop_order_shop_product['spec']}}</td>
-              <td class="content ">{{$shop_order_shop_product['weight_capacity']}}</td>
-              <td class="content">{{$shop_order_shop_product['count']}}</td>
+              <td class="content" style="width:5%;">{{$shop_order_shop_product_key + 1}}</td>
+              <td class="content" style="width:45%;">{{$shop_order_shop_product['name']}}</td>
+              <td class="content" style="width:20%;">{{$shop_order_shop_product['spec']}}</td>
+              <td class="content" style="width:15%;">{{$shop_order_shop_product['weight_capacity']}}</td>
+              <td class="content" style="width:15%;">{{$shop_order_shop_product['count']}}</td>
             </tr>
             @endforeach
           </table>

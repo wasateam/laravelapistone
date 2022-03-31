@@ -547,6 +547,11 @@ class ShopHelper
         'count'           => $order_product->count,
       ];
     }
+
+    usort($datas, function ($a, $b) {
+      return strcmp($a['storage_space'], $b['storage_space']);
+    });
+
     return $datas;
   }
 

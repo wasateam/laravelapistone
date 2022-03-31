@@ -49,7 +49,7 @@ class ShopProduct extends JsonResource
         'cold_chain_type'            => $this->cold_chain_type,
         'shop_product_cover_frame'   => new ShopProductCoverFrame_R1($this->shop_product_cover_frame),
         'suggests'                   => ShopProduct_R1::collection($this->suggests),
-        'shop_classes'               => ShopClass_R1::collection($this->shop_classes),
+        'shop_classes'               => ShopClass_R2::collection($this->shop_classes),
         'shop_subclasses'            => ShopSubclass_R1::collection($this->shop_subclasses),
         'shop_product_specs'         => ShopProductSpec::collection($this->shop_product_specs),
         'shop_product_spec_settings' => ShopProductSpecSetting_R1::collection($this->shop_product_spec_settings),

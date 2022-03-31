@@ -11,7 +11,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Imports\ShopProductImport;
-use Wasateam\Laravelapistone\Imports\ModelImport;
 use Wasateam\Laravelapistone\Models\ShopProduct;
 
 /**
@@ -369,6 +368,9 @@ class ShopProductController extends Controller
         ], 400);
       }
     }
+    if ($request->filled('storage_space') && $request->filled('on_time')) {
+      ShopHelper::ShopProductStorageSpaceCheck($request->storage_space, $request->on_time, $request->off_time, $id);
+    }
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($request) {
       //shop_product_spec_settings
       if ($request->has('shop_product_spec_settings') && $request->has('shop_product_specs')) {
@@ -458,8 +460,8 @@ class ShopProductController extends Controller
       $request,
       $headings,
       function ($model) use ($request) {
-        $weight = $model->weight_capacity . ' ' . $model->weight_capacity_unit;
-        $date_arr = explode(',', $request->created_at);
+        $weight      = $model->weight_capacity . ' ' . $model->weight_capacity_unit;
+        $date_arr    = explode(',', $request->created_at);
         $sales_count = ShopHelper::getShopProductSalesCount($model->id, $date_arr[0], $date_arr[1]);
         $map         = [
           $model->uuid,

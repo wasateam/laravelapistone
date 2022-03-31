@@ -1473,6 +1473,11 @@ class ShopHelper
 
   public static function ShopProductStorageSpaceCheck($storage_space, $on_time, $off_time = null, $shop_product_id = null)
   {
+    \Log::info('ShopProductStorageSpaceCheck');
+    \Log::info($storage_space);
+    \Log::info($on_time);
+    \Log::info($off_time);
+    \Log::info($shop_product_id);
     $snap = ShopProduct::where('storage_space', $storage_space)
       ->where(function ($query) use ($on_time, $off_time) {
         if ($off_time) {
@@ -1483,6 +1488,10 @@ class ShopHelper
           $query->orWhere(function ($query) use ($off_time) {
             $query->where('on_time', '<', $off_time);
             $query->whereNull('off_time');
+          });
+          $query->orWhere(function ($query) use ($on_time,$off_time) {
+            $query->where('on_time', '<', $on_time);
+            $query->where('off_time', '>', $off_time);
           });
           $query->orWhere(function ($query) use ($on_time, $off_time) {
             $query->where('off_time', '>', $on_time);

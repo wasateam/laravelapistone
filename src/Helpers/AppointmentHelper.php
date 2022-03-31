@@ -3,10 +3,9 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
-use Wasateam\Laravelapistone\Models\Appointment;
-use Wasateam\Laravelapistone\Models\ServiceStore;
-use Wasateam\Laravelapistone\Notifications\AppointmentRemind;
 use Wasateam\Laravelapistone\Helpers\TimeHelper;
+use Wasateam\Laravelapistone\Models\Appointment;
+use Wasateam\Laravelapistone\Notifications\AppointmentRemind;
 
 class AppointmentHelper
 {
@@ -29,5 +28,25 @@ class AppointmentHelper
         }
       }
     }
+  }
+
+  public static function getFormatedAppointmentsForTable($appointments)
+  {
+    $_formated_appointments = [];
+    foreach ($appointments as $appointment) {
+      $date                     = $appointment->date;
+      $start_time               = TimeHelper::setTimeFromCountryCode($appointment->start_time, $appointment->country_code);
+      $end_time                 = TimeHelper::setTimeFromCountryCode($appointment->end_time, $appointment->country_code);
+      $user_name                = $appointment->user ? $appointment->user->name : null;
+      $service_store_name       = $appointment->service_store ? $appointment->service_store->name : null;
+      $_formated_appointments[] = [
+        'date'               => $date,
+        'start_time'         => $start_time,
+        'end_time'           => $end_time,
+        'user_name'          => $user_name,
+        'service_store_name' => $service_store_name,
+      ];
+    }
+    return $_formated_appointments;
   }
 }

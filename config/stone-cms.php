@@ -8,14 +8,14 @@ return [
   'migration'          => true,
   'storage'            => [
     'service' => 'gcs', # gcs, s3, local
-    'gcs'     => [
+    'gcs' => [
       'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', null),
     ],
     'acl'     => true,
   ],
   'mail'               => [
     'service'    => 'gmail', # gmail, surenotify,smtp
-    'api_key'    => env('MAIL_API_KEY'),
+    'api_key' => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
     'test_mail'  => env('MAIL_TEST_MAIL', 'wasalearn@gmail.com'),
   ],
@@ -87,7 +87,18 @@ return [
   'notification'       => [
     'notifiable_type_user' => 'Wasateam\Laravelapistone\Models\Admin',
   ],
-  'service_store'      => false,
+  'service_store'      => [
+    'appointment' => [
+      'notify' => [
+        'today_appointments'    => [
+          'default' => '16:00:00',
+        ],
+        'tomorrow_appointments' => [
+          'default' => '07:00:00',
+        ],
+      ],
+    ],
+  ],
   'appointment'        => [
     'export' => true,
   ],
@@ -106,7 +117,7 @@ return [
       'items' => [ //活動類型分別設定
         'bonus_point_feedback' => [
           'feedback_after_invoice_days' => 3, //開立發票後多久發紅利
-          'date_no_repeat'              => true, //日期是否重複
+          'date_no_repeat' => true, //日期是否重複
         ],
       ],
     ],

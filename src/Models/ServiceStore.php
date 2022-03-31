@@ -54,13 +54,15 @@ class ServiceStore extends Model
   }
 
   protected $casts = [
-    'cover_image'            => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
-    'business_hours'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,
-    'appointment_availables' => \Wasateam\Laravelapistone\Casts\JsonCast::class,
-    'payload'                => \Wasateam\Laravelapistone\Casts\JsonCast::class,
-    'parking_link'           => \Wasateam\Laravelapistone\Casts\UrlCast::class,
-    'parking_infos'          => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
-    'parking_image'          => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
-    'notify_emails'          => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
+    'cover_image'                       => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
+    'business_hours'                    => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'appointment_availables'            => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'payload'                           => \Wasateam\Laravelapistone\Casts\JsonCast::class,
+    'parking_link'                      => \Wasateam\Laravelapistone\Casts\UrlCast::class,
+    'parking_infos'                     => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
+    'parking_image'                     => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
+    'notify_emails'                     => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
+    'today_appointments_notify_time'    => \Wasateam\Laravelapistone\Casts\TimeCast::class,
+    'tomorrow_appointments_notify_time' => \Wasateam\Laravelapistone\Casts\TimeCast::class,
   ];
 }

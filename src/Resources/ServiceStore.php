@@ -53,6 +53,14 @@ class ServiceStore extends JsonResource
         $res['appointment_availables'] = $this->appointment_availables;
         $res['appointments']           = Appointment_R1::collection($this->appointments);
       }
+      if (config('stone.service_store.appointment.notify')) {
+        if (config('stone.service_store.appointment.notify.today_appointments')) {
+          $res['today_appointments_notify_time'] = $this->today_appointments_notify_time;
+        }
+        if (config('stone.service_store.appointment.notify.tomorrow_appointments')) {
+          $res['tomorrow_appointments_notify_time'] = $this->tomorrow_appointments_notify_time;
+        }
+      }
       if (config('stone.area')) {
         $res['area'] = new Area_R1($this->area);
       }

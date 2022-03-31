@@ -5,8 +5,6 @@ namespace Wasateam\Laravelapistone;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Wasateam\Laravelapistone\Commands\CommandStoneTest;
-use Wasateam\Laravelapistone\Commands\CommandStoneWork;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
 
 class StoneServiceProvider extends ServiceProvider
@@ -406,7 +404,7 @@ class StoneServiceProvider extends ServiceProvider
     if ($this->app->runningInConsole()) {
       $this->commands([
         \Wasateam\Laravelapistone\Commands\CommandStoneTest::class,
-        \Wasateam\Laravelapistone\Commands\CommandStoneWork::class,
+        // \Wasateam\Laravelapistone\Commands\CommandStoneWork::class,
         \Wasateam\Laravelapistone\Commands\CommandStoneSchedule::class,
         \Wasateam\Laravelapistone\Commands\CommandGenerateUserInviteNo::class,
         \Wasateam\Laravelapistone\Commands\CommandAppointmentTimeFixToTime::class,
@@ -420,5 +418,7 @@ class StoneServiceProvider extends ServiceProvider
         $schedule->command('queue:work --stop-when-empty')->everyMinute();
       }
     });
+
+    $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'wasateam');
   }
 }

@@ -461,7 +461,6 @@ class AcumaticaHelper
     try {
       $response = Http::withBody("grant_type=password&client_id=" . $client_id . "&client_secret=" . $client_secret . "&username=" . $username . "&password=" . $password . "&scope=api", 'application/x-www-form-urlencoded')
         ->post($post_url);
-      \Log::info($response->body());
       $last_token = new AcumaticaAccessToken;
       if ($app) {
         $last_token->acumatica_app_id = $app->id;

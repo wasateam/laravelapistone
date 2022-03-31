@@ -14,6 +14,19 @@ class TimeHelper
     return ($country_code && $country_code_timezone[$country_code]) ? $country_code_timezone[$country_code] : 'UTC';
   }
 
+  public static function setTimeFromCountryCode($time, $country_code)
+  {
+    $timezone = self::getTimeZone($country_code);
+    return self::setTimeFromTimezone($time, $timezone);
+  }
+
+  public static function setTimeFromTimezone($time, $timezone)
+  {
+    $_time = \Carbon\Carbon::parse($time);
+    $_time->setTimezone($timezone);
+    return $_time->format('H:i:s');
+  }
+
   public static function setTimeFromHrMinStr($datetime, $hr_min_str)
   {
     $hr_and_min = self::getHrAndMinFromHrMinStr($hr_min_str);

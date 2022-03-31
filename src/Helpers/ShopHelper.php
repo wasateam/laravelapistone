@@ -1299,22 +1299,18 @@ class ShopHelper
 
   public static function createInvoice($shop_order, $ori_shop_order = null)
   {
-    \Log::info('createInvoice');
     if ($shop_order->order_price <= 0) {
       return;
     }
     if ($ori_shop_order) {
       $check = 0;
       if (!count($shop_order->shop_return_records) && $ori_shop_order->ship_status == 'collected' && $shop_order->ship_status == 'shipped') {
-        \Log::info(1);
         $check = 1;
       }
       if (count($shop_order->shop_return_records) && $ori_shop_order->status == 'return-part-apply' && $shop_order->status == 'return-part-complete') {
-        \Log::info(2);
         $check = 1;
       }
       if ($ori_shop_order->status == 'cancel' && $shop_order->status == 'cancel-complete') {
-        \Log::info(3);
         $check = 1;
       }
       if (!$check) {

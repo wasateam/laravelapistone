@@ -555,7 +555,6 @@ class ShopOrderController extends Controller
    */
   public function update(Request $request, $id)
   {
-    \Log::info('update');
     $ori_model = $this->model::find($id);
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
       ShopHelper::createInvoice($model, $ori_model);
@@ -775,12 +774,10 @@ class ShopOrderController extends Controller
    */
   public function batch_update(Request $request)
   {
-    \Log::info('batch_update');
     $ids = $request->ids;
     foreach ($ids as $id) {
       $ori_model = $this->model::find($id);
       ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
-        \Log::info('ws_UpdateHandler');
         ShopHelper::createInvoice($model, $ori_model);
       });
     }

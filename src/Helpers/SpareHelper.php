@@ -33,4 +33,12 @@ class SpareHelper
       'my' => 'Asia/Kolkata',
     ];
   }
+
+  public static function countryCodeLang()
+  {
+    return [
+      'tw' => 'zh_tw',
+      'en' => 'en',
+    ];
+  }
 }

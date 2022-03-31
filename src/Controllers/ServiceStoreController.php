@@ -31,6 +31,10 @@ use Wasateam\Laravelapistone\Models\ServiceStore;
  * service_at_night 是否夜間服務
  * country_code 國家代碼
  * notify_emails 通知mail陣列
+ * today_appointments_notify_time 今日預約通知時間
+ * tomorrow_appointments_notify_time 明日預約通知時間
+ * today_appointments_notify_at 今日預約近一次發出通知時間
+ * tomorrow_appointments_notify_at 明日預約近一次發出通知時間
  *
  * APIs for service_store
  */
@@ -110,6 +114,16 @@ class ServiceStoreController extends Controller
     if (config('stone.appointment')) {
       $this->input_fields[] = 'appointment_availables';
     }
+    if (config('stone.service_store.appointment')) {
+      if (config('stone.service_store.appointment.notify')) {
+        if (config('stone.service_store.appointment.notify.today_appointments')) {
+          $this->input_fields[] = 'today_appointments_notify_time';
+        }
+        if (config('stone.service_store.appointment.notify.tomorrow_appointments')) {
+          $this->input_fields[] = 'tomorrow_appointments_notify_time';
+        }
+      }
+    }
 
     if (config('stone.area')) {
       $this->belongs_to[]        = 'area';
@@ -171,6 +185,8 @@ class ServiceStoreController extends Controller
    * @bodyParam service_at_night boolean No-example
    * @bodyParam country_code string No-example
    * @bodyParam notify_emails string No-example
+   * @bodyParam today_appointments_notify_time time Example:09:00:00
+   * @bodyParam tomorrow_appointments_notify_time time Example:09:00:00
    */
   public function store(Request $request, $id = null)
   {
@@ -219,6 +235,8 @@ class ServiceStoreController extends Controller
    * @bodyParam service_at_night boolean No-example
    * @bodyParam country_code string No-example
    * @bodyParam notify_emails string No-example
+   * @bodyParam today_appointments_notify_time time Example:09:00:00
+   * @bodyParam tomorrow_appointments_notify_time time Example:09:00:00
    */
   public function update(Request $request, $id)
   {

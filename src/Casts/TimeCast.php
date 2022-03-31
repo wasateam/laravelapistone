@@ -16,7 +16,11 @@ class TimeCast implements CastsAttributes
    */
   public function get($model, $key, $value, $attributes)
   {
-    return \Carbon\Carbon::parse("{$value}");
+    if ($value) {
+      return \Carbon\Carbon::parse("{$value}");
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -30,6 +34,10 @@ class TimeCast implements CastsAttributes
    */
   public function set($model, $key, $value, $attributes)
   {
-    return $value;
+    if ($value) {
+      return \Carbon\Carbon::parse("{$value}");
+    } else {
+      return null;
+    }
   }
 }

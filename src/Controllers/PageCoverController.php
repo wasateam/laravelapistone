@@ -77,14 +77,14 @@ class PageCoverController extends Controller
    */
   public function store(Request $request, $id = null)
   {
-    if ($request->start_date || $request->end_date) {
-      $has_repeat = ShopHelper::samePageCoverDuration($request->start_date, $request->end_date, null, $request->page_settings);
-      if ($has_repeat) {
-        return response()->json([
-          'message' => 'this date already exist.',
-        ], 400);
-      }
-    }
+    // if ($request->start_date || $request->end_date) {
+    //   // $has_repeat = ShopHelper::samePageCoverDuration($request->start_date, $request->end_date, null, $request->page_settings);
+    //   // if ($has_repeat) {
+    //   //   return response()->json([
+    //   //     'message' => 'this date already exist.',
+    //   //   ], 400);
+    //   // }
+    // }
     return ModelHelper::ws_StoreHandler($this, $request, $id);
   }
 
@@ -112,14 +112,14 @@ class PageCoverController extends Controller
    */
   public function update(Request $request, $id)
   {
-    if ($request->start_date || $request->end_date) {
-      $has_repeat = ShopHelper::samePageCoverDuration($request->start_date, $request->end_date, $id, $request->page_settings);
-      if ($has_repeat) {
-        return response()->json([
-          'message' => 'this date already exist.',
-        ], 400);
-      }
-    }
+    // if ($request->start_date || $request->end_date) {
+    //   $has_repeat = ShopHelper::samePageCoverDuration($request->start_date, $request->end_date, $id, $request->page_settings);
+    //   if ($has_repeat) {
+    //     return response()->json([
+    //       'message' => 'this date already exist.',
+    //     ], 400);
+    //   }
+    // }
     return ModelHelper::ws_UpdateHandler($this, $request, $id);
   }
 

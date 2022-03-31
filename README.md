@@ -13,3 +13,5 @@
 - shop_freight deduct switch
 - shop order store freight generate from backend
 - campaign, invite_no deduct multiple times issue
+- socilite login in stone
+- third party plugins in stone: ses, gmail

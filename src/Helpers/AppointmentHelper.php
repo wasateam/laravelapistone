@@ -4,7 +4,9 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
 use Wasateam\Laravelapistone\Models\Appointment;
+use Wasateam\Laravelapistone\Models\ServiceStore;
 use Wasateam\Laravelapistone\Notifications\AppointmentRemind;
+use Wasateam\Laravelapistone\Helpers\TimeHelper;
 
 class AppointmentHelper
 {

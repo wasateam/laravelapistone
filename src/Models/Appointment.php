@@ -21,7 +21,7 @@ class Appointment extends Model
   }
 
   protected $casts = [
-    'start_at' => 'datetime',
-    'end_at'   => 'datetime',
+    'start_time' => \Wasateam\Laravelapistone\Casts\TimeCast::class,
+    'end_time'   => \Wasateam\Laravelapistone\Casts\TimeCast::class,
   ];
 }

@@ -26,4 +26,11 @@ class SpareHelper
     ];
   }
 
+  public static function countryCodeTimeZone()
+  {
+    return [
+      'tw' => 'Asia/Taipei',
+      'my' => 'Asia/Kolkata',
+    ];
+  }
 }

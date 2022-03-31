@@ -405,10 +405,11 @@ class StoneServiceProvider extends ServiceProvider
 
     if ($this->app->runningInConsole()) {
       $this->commands([
-        CommandStoneTest::class,
-        CommandStoneWork::class,
-        \Wasateam\Laravelapistone\Commands\CommandGenerateUserInviteNo::class,
+        \Wasateam\Laravelapistone\Commands\CommandStoneTest::class,
+        \Wasateam\Laravelapistone\Commands\CommandStoneWork::class,
         \Wasateam\Laravelapistone\Commands\CommandStoneSchedule::class,
+        \Wasateam\Laravelapistone\Commands\CommandGenerateUserInviteNo::class,
+        \Wasateam\Laravelapistone\Commands\CommandAppointmentTimeFixToTime::class,
       ]);
     }
     $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {

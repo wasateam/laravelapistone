@@ -126,6 +126,7 @@ class ShopProductController extends Controller
     'uuid',
     'name',
     'storage_space',
+    'purchaser',
   ];
   public $belongs_to = [
     'shop_product_cover_frame',

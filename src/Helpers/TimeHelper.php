@@ -11,25 +11,7 @@ class TimeHelper
   public static function getTimeZone($country_code = null)
   {
     $country_code_timezone = SpareHelper::countryCodeTimeZone();
-
     return ($country_code && $country_code_timezone[$country_code]) ? $country_code_timezone[$country_code] : 'UTC';
-
-    // if($country_code_timezone[$country_code]){
-
-    // }else{
-
-    // }
-
-    // if (!$country_code) {
-    //   return config('stone.timezone');
-    // }
-    // if ($country_code == 'tw') {
-    //   return 'Asia/Taipei';
-    // } else if ($country_code == 'my') {
-    //   return 'Asia/Kolkata';
-    // } else {
-    //   return 'UTC';
-    // }
   }
 
   public static function setTimeFromHrMinStr($datetime, $hr_min_str)

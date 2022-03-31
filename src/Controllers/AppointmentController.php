@@ -117,28 +117,8 @@ class AppointmentController extends Controller
         ]
       );
       return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($request) {
-        \Log::info($request->service_store);
-        \Log::info($request->start_time);
-        \Log::info($request->end_time);
-        $user           = Auth::user();
-        // $model->user_id = $user->id;
-
         $model->start_time = ServiceStoreHelper::getServiceStoreTime($request->start_time, $request->service_store);
         $model->end_time   = ServiceStoreHelper::getServiceStoreTime($request->end_time, $request->service_store);
-        $model->save();
-        // $datetime       = Carbon::parse($model->date);
-        // if (config('stone.country_code')) {
-        //   $timezone = TimeHelper::getTimeZone($model->country_code);
-        //   $datetime = $datetime->timezone($timezone);
-        // }
-        // $start_at = TimeHelper::setTimeFromHrMinStr($datetime, $model->start_time);
-        // $end_at   = TimeHelper::setTimeFromHrMinStr($datetime, $model->end_time);
-        // if (config('stone.country_code')) {
-        //   $start_at->timezone(config('app.timezone'));
-        //   $end_at->timezone(config('app.timezone'));
-        // }
-        // $model->start_at = $start_at;
-        // $model->end_at   = $end_at;
         $model->save();
       });
     }

@@ -9,11 +9,20 @@ use Wasateam\Laravelapistone\Helpers\GcsHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group WsBlog
+ * @group WsBlog 部落格
  *
  * @authenticated
  *
- * APIs for ws_blog
+ * title 標題
+ * description 描述
+ * publish_at 發布時間
+ * publish_status 發布狀態
+ * read_count 瀏覽數
+ * content 文章內容
+ * tags 標籤
+ * type 部落格類型類型 (用於做不同文章模組)
+ * 
+ * 
  */
 class WsBlogController extends Controller
 {
@@ -26,12 +35,15 @@ class WsBlogController extends Controller
     'description',
     'publish_at',
     'publish_status',
-    'read_count',
     'content',
     'tags',
   ];
   public $search_fields = [
     'title',
+    'tags',
+  ];
+  public $filter_fields = [
+    'type',
   ];
   public $belongs_to = [
     'cover_image',
@@ -48,9 +60,17 @@ class WsBlogController extends Controller
   ];
   public $user_record_field = 'updated_admin_id';
 
+  public function __construct()
+  {
+    if (config('stone.mode') == 'cms') {
+      $this->order_fields[] = 'type';
+    }
+  }
+
   /**
    * Index
    * @queryParam search string No-example
+   * @queryParam type string No-example
    *
    */
   public function index(Request $request, $id = null)

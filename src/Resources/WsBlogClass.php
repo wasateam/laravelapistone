@@ -3,7 +3,6 @@
 namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Wasateam\Laravelapistone\Helpers\PocketHelper;
 
 class WsBlogClass extends JsonResource
 {
@@ -17,13 +16,15 @@ class WsBlogClass extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       return [
-        'id'       => $this->id,
-        'name'     => $this->name,
+        'id'   => $this->id,
+        'name' => $this->name,
+        'type' => $this->type,
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
-        'id'       => $this->id,
-        'name'     => $this->name,
+        'id'   => $this->id,
+        'name' => $this->name,
+        'type' => $this->type,
       ];
     }
   }

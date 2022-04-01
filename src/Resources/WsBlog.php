@@ -25,6 +25,7 @@ class WsBlog extends JsonResource
         'read_count'      => $this->read_count,
         'content'         => $this->content,
         'tags'            => $this->tags,
+        'type'            => $this->type,
         'ws_blog_classes' => WsBlogClass::collection($this->ws_blog_classes),
         'cover_image'     => new PocketImage_R1($this->cover_image),
       ];
@@ -37,6 +38,7 @@ class WsBlog extends JsonResource
         'read_count'      => $this->read_count,
         'content'         => $this->content,
         'tags'            => $this->tags,
+        'type'            => $this->type,
         'ws_blog_classes' => WsBlogClass::collection($this->ws_blog_classes),
         'cover_image'     => PocketHelper::get_pocket_url($this->cover_image),
       ];

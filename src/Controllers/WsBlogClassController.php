@@ -7,11 +7,14 @@ use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**
- * @group WsBlogClass
+ * @group WsBlogClass 部落格分類
  *
  * @authenticated
  *
- * APIs for ws_blog
+ * name 名稱
+ * type 部落格類型類型 (用於做不同文章模組)
+ * 
+ * 
  */
 class WsBlogClassController extends Controller
 {
@@ -19,16 +22,19 @@ class WsBlogClassController extends Controller
   public $name         = 'ws_blog_class';
   public $resource     = 'Wasateam\Laravelapistone\Resources\WsBlogClass';
   public $input_fields = [
-    'id',
     'name',
   ];
   public $search_fields = [
     'name',
   ];
+  public $filter_fields = [
+    'type',
+  ];
 
   /**
    * Index
    * @queryParam search string No-example
+   * @queryParam type string No-example
    *
    */
   public function index(Request $request, $id = null)

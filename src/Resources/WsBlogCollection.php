@@ -23,6 +23,7 @@ class WsBlogCollection extends JsonResource
       'read_count'      => $this->read_count,
       'rough_content'   => $this->rough_content,
       'tags'            => $this->tags,
+      'type'            => $this->type,
       'cover_image'     => PocketHelper::get_pocket_url($this->cover_image),
       'ws_blog_classes' => WsBlogClass::collection($this->ws_blog_classes),
     ];

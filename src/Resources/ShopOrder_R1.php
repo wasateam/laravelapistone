@@ -15,8 +15,9 @@ class ShopOrder_R1 extends JsonResource
   public function toArray($request)
   {
     return [
-      'id'   => $this->id,
-      'user' => new User_R1($this->user),
+      'id'            => $this->id,
+      'user'          => new User_R1($this->user),
+      'return_reason' => $this->return_reason,
     ];
   }
 }

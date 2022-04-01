@@ -20,7 +20,7 @@ class ShopReturnRecord extends JsonResource
       "updated_at"              => $this->updated_at,
       "user"                    => new User_R1($this->user),
       "shop_order"              => new ShopOrder_R0($this->shop_order),
-      "shop_order_shop_product" => new ShopOrderShopProduct($this->shop_order_shop_product),
+      "shop_order_shop_product" => new ShopOrderShopProduct_R1($this->shop_order_shop_product),
       "shop_product"            => new ShopProduct_R0($this->shop_product),
       "count"                   => $this->count,
       "remark"                  => $this->remark,

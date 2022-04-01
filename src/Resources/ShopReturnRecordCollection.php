@@ -18,7 +18,7 @@ class ShopReturnRecordCollection extends JsonResource
       "id"                      => $this->id,
       "created_at"              => $this->created_at,
       "shop_order"              => new ShopOrder_R0($this->shop_order),
-      "shop_order_shop_product" => new ShopOrderShopProduct($this->shop_order_shop_product),
+      "shop_order_shop_product" => new ShopOrderShopProduct_R1($this->shop_order_shop_product),
       "count"                   => $this->count,
       "remark"                  => $this->remark,
       "return_reason"           => $this->return_reason,

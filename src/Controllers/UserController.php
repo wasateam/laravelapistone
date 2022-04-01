@@ -336,15 +336,17 @@ class UserController extends Controller
    */
   public function export_excel(Request $request)
   {
-    $headings = [
-      "會員編號",
-      "名稱",
-      "Email",
-      "電話",
-      "介紹",
-      "建立時間",
-      "最後更新時間",
-    ];
+    $headings   = [];
+    $headings[] = "會員UUID";
+    if (config('stone.user.customer_id')) {
+      $headings[] = "會員編號";
+    }
+    $headings[] = "名稱";
+    $headings[] = "Email";
+    $headings[] = "電話";
+    $headings[] = "介紹";
+    $headings[] = "建立時間";
+    $headings[] = "最後更新時間";
     if (config('stone.user.is_bad')) {
       $headings[] = "黑名單";
     }
@@ -362,15 +364,18 @@ class UserController extends Controller
         $created_at = Carbon::parse($model->created_at)->format('Y-m-d');
         $updated_at = Carbon::parse($model->updated_at)->format('Y-m-d');
 
-        $map = [
-          $model->uuid,
-          $model->name,
-          $model->email,
-          $model->tel,
-          $model->description,
-          $created_at,
-          $updated_at,
-        ];
+        $map   = [];
+        $map[] = $model->uuid;
+        if (config('stone.user.customer_id')) {
+          $map[] = $model->customer_id;
+        }
+        $map[] = $model->name;
+        $map[] = $model->email;
+        $map[] = $model->tel;
+        $map[] = $model->description;
+        $map[] = $created_at;
+        $map[] = $updated_at;
+
         if (config('stone.user.is_bad')) {
           $map[] = $model->is_bad;
         }

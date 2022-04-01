@@ -181,8 +181,8 @@ class ShopProductController extends Controller
       $this->belongs_to_many[] = 'area_sections';
     }
     if (config('stone.shop.discount_price')) {
-      $input_fields[] = 'discount_price';
-      $order_fields[] = 'discount_price';
+      $this->input_fields[] = 'discount_price';
+      $this->order_fields[] = 'discount_price';
     }
   }
   /**

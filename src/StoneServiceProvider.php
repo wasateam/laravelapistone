@@ -408,6 +408,7 @@ class StoneServiceProvider extends ServiceProvider
         \Wasateam\Laravelapistone\Commands\CommandStoneSchedule::class,
         \Wasateam\Laravelapistone\Commands\CommandGenerateUserInviteNo::class,
         \Wasateam\Laravelapistone\Commands\CommandAppointmentTimeFixToTime::class,
+        \Wasateam\Laravelapistone\Commands\CommandStoneSchemaExport::class,
       ]);
     }
     $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {

@@ -33,7 +33,6 @@ return [
     'verify'          => [
       'email' => true,
     ],
-    'forget_password' => true,
     // 'signup_complete_action' => '\App\Helpers\TestHelper',
   ],
   # Modules

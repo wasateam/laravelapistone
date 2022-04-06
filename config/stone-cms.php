@@ -2,20 +2,22 @@
 
 return [
   'mode'               => 'cms',
-  'schedule'           => true,
+  'schedule'           => [
+    'log' => env('STONE_SCHEDULE_LOG', false),
+  ],
   'queue'              => true,
   'timezone'           => 'Asia/Taipei',
   'migration'          => true,
   'storage'            => [
     'service' => 'gcs', # gcs, s3, local
-    'gcs' => [
+    'gcs'     => [
       'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', null),
     ],
     'acl'     => true,
   ],
   'mail'               => [
     'service'    => 'gmail', # gmail, surenotify,smtp
-    'api_key' => env('MAIL_API_KEY'),
+    'api_key'    => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
     'test_mail'  => env('MAIL_TEST_MAIL', 'wasalearn@gmail.com'),
   ],
@@ -117,7 +119,7 @@ return [
       'items' => [ //活動類型分別設定
         'bonus_point_feedback' => [
           'feedback_after_invoice_days' => 3, //開立發票後多久發紅利
-          'date_no_repeat' => true, //日期是否重複
+          'date_no_repeat'              => true, //日期是否重複
         ],
       ],
     ],

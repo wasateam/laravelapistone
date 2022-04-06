@@ -37,6 +37,9 @@ class CommandStoneSchedule extends Command
    */
   public function handle()
   {
+    if (config('stone.schedule.log')) {
+      \Log::info('Stone Schedule');
+    }
     \Wasateam\Laravelapistone\Helpers\ScheduleHelper::stoneWork();
     return Command::SUCCESS;
   }

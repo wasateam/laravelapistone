@@ -121,7 +121,7 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
       foreach ($order_products as $index => $order_product) {
         $shop_product = $order_product->shop_product;
         //product price
-        $product_price = $order_product->discount_price ? $order_product->discount_price : $order_product->price;
+        $product_price = $order_product->discount_price && config('stone.shop.discount_price') ? $order_product->discount_price : $order_product->price;
         //return_count
         $return_count = ShopHelper::getProductReturnCount($order_product);
         if ($index == 0) {

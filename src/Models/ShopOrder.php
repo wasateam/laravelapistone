@@ -70,5 +70,7 @@ class ShopOrder extends Model
     'orderer_birthday'  => 'datetime',
     'receiver_birthday' => 'datetime',
     'ship_date'         => 'datetime',
+    'ship_start_time' => \Wasateam\Laravelapistone\Casts\TimeCast::class,
+    'ship_end_time'   => \Wasateam\Laravelapistone\Casts\TimeCast::class,
   ];
 }

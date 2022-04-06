@@ -48,6 +48,7 @@ class LinePayHelper
       ->post($post_url, $request_body);
     $res_json = $response->json();
 
+
     if ($res_json['returnCode'] != '0000') {
       throw new \Wasateam\Laravelapistone\Exceptions\LinePayException(
         'payment_request',
@@ -139,7 +140,7 @@ class LinePayHelper
   {
     $products = [];
     foreach ($shop_order->shop_order_shop_products as $shop_order_shop_product) {
-      $price      = $shop_order_shop_product->discount_price ? $shop_order_shop_product->discount_price : $shop_order_shop_product->price;
+      $price      = $shop_order_shop_product->discount_price && config('stone.shop.discount_price') ? $shop_order_shop_product->discount_price : $shop_order_shop_product->price;
       $products[] = [
         'name'     => $shop_order_shop_product->name,
         'quantity' => $shop_order_shop_product->count,

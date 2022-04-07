@@ -213,6 +213,7 @@ class ShopOrderController extends Controller
   public $search_fields = [
     'no',
     'receiver_tel',
+    'orderer',
   ];
   public $filter_fields = [
     'type',

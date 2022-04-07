@@ -83,18 +83,20 @@
         <table width="100%" style="table-layout: fixed;">
           <tr class="table-item">
             <td class="title" style="width:5%;">序號</td>
-            <td class="title" style="width:45%;">品名</td>
+            <td class="title" style="width:20%;">商品編號</td>
+            <td class="title" style="width:25%;">品名</td>
             <td class="title" style="width:15%;">規格</td>
-            <td class="title" style="width:10%;">重量kg+_10%</td>
+            <td class="title" style="width:10%;">重量/容量</td>
             <td class="title" style="width:15%;">儲位</td>
             <td class="title" style="width:10%;">數量</td>
           </tr>
           @foreach ($shop_order['shop_order_shop_products'] as $shop_order_shop_product_key => $shop_order_shop_product)
             <tr class="table-item">
               <td class="content" style="width:5%;">{{$shop_order_shop_product_key + 1}}</td>
-              <td class="content" style="width:45%;">{{$shop_order_shop_product['name']}}</td>
+              <td class="content" style="width:20%;">{{$shop_order_shop_product['no']}}</td>
+              <td class="content" style="width:25%;">{{$shop_order_shop_product['name']}}</td>
               <td class="content" style="width:15%;">{{$shop_order_shop_product['spec']}}</td>
-              <td class="content" style="width:10%;">{{$shop_order_shop_product['weight_capacity']}}</td>
+              <td class="content" style="width:10%;">{{$shop_order_shop_product['weight_capacity']}} {{$shop_order_shop_product['weight_capacity_unit']}} ± 10%</td>
               <td class="content" style="width:15%;">{{$shop_order_shop_product['storage_space']}}</td>
               <td class="content" style="width:10%;">{{$shop_order_shop_product['count']}}</td>
             </tr>
@@ -160,17 +162,19 @@
         <table width="100%" style="table-layout: fixed;">
           <tr class="table-item">
             <td class="title" style="width:5%;">序號</td>
-            <td class="title" style="width:45%;">品名</td>
+            <td class="title" style="width:20%;">商品編號</td>
+            <td class="title" style="width:25%;">品名</td>
             <td class="title" style="width:20%;">規格</td>
-            <td class="title" style="width:15%;">重量kg+_10%</td>
+            <td class="title" style="width:15%;">重量/容量</td>
             <td class="title" style="width:15%;">數量</td>
           </tr>
           @foreach ($shop_order['shop_order_shop_products'] as $shop_order_shop_product_key => $shop_order_shop_product)
             <tr class="table-item">
               <td class="content" style="width:5%;">{{$shop_order_shop_product_key + 1}}</td>
-              <td class="content" style="width:45%;">{{$shop_order_shop_product['name']}}</td>
+              <td class="content" style="width:20%;">{{$shop_order_shop_product['no']}}</td>
+              <td class="content" style="width:25%;">{{$shop_order_shop_product['name']}}</td>
               <td class="content" style="width:20%;">{{$shop_order_shop_product['spec']}}</td>
-              <td class="content" style="width:15%;">{{$shop_order_shop_product['weight_capacity']}}</td>
+              <td class="content" style="width:10%;">{{$shop_order_shop_product['weight_capacity']}} {{$shop_order_shop_product['weight_capacity_unit']}} ± 10%</td>
               <td class="content" style="width:15%;">{{$shop_order_shop_product['count']}}</td>
             </tr>
             @endforeach

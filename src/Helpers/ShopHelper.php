@@ -539,12 +539,14 @@ class ShopHelper
     $datas = [];
     foreach ($order_products as $order_product) {
       $datas[] = [
-        'id'              => $order_product->id,
-        'name'            => $order_product->name,
-        'spec'            => $order_product->spec,
-        'weight_capacity' => $order_product->weight_capacity,
-        'storage_space'   => $order_product->shop_product->storage_space,
-        'count'           => $order_product->count,
+        'id'                   => $order_product->id,
+        'no'                   => $order_product->shop_product->no,
+        'name'                 => $order_product->name,
+        'spec'                 => $order_product->spec,
+        'weight_capacity'      => $order_product->weight_capacity,
+        'storage_space'        => $order_product->shop_product->storage_space,
+        'count'                => $order_product->count,
+        'weight_capacity_unit' => $order_product->shop_product->weight_capacity_unit,
       ];
     }
 
@@ -1489,7 +1491,7 @@ class ShopHelper
             $query->where('on_time', '<', $off_time);
             $query->whereNull('off_time');
           });
-          $query->orWhere(function ($query) use ($on_time,$off_time) {
+          $query->orWhere(function ($query) use ($on_time, $off_time) {
             $query->where('on_time', '<', $on_time);
             $query->where('off_time', '>', $off_time);
           });

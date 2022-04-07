@@ -32,7 +32,18 @@ class ShopProduct extends Model
     if (config('stone.mode') == 'cms') {
       return $this->belongsTo(ShopProductCoverFrame::class, 'shop_product_cover_frame_id');
     } else if (config('stone.mode') == 'webapi') {
-      return $this->belongsTo(ShopProductCoverFrame::class, 'shop_product_cover_frame_id')->where('is_active', 1)->whereDate('end_date', '>=', $today_date)->whereDate('start_date', '<=', $today_date);
+      return $this->belongsTo(ShopProductCoverFrame::class, 'shop_product_cover_frame_id')
+        ->where('is_active', 1)
+        ->where(function ($query) use ($today_date) {
+          $query->where(function ($query) use ($today_date) {
+            $query->whereDate('end_date', '>=', $today_date);
+            $query->whereDate('start_date', '<=', $today_date);
+          });
+          $query->orWhere(function ($query) {
+            $query->whereNull('end_date');
+            $query->whereNull('start_date');
+          });
+        });
     }
   }
 

@@ -47,6 +47,8 @@ class ShopProduct extends JsonResource
         'ranking_score'              => $this->ranking_score,
         'purchaser'                  => $this->purchaser,
         'cold_chain_type'            => $this->cold_chain_type,
+        'store_house_class'          => $this->store_house_class,
+        'store_house_subclass'       => $this->store_house_subclass,
         'shop_product_cover_frame'   => new ShopProductCoverFrame_R1($this->shop_product_cover_frame),
         'suggests'                   => ShopProduct_R1::collection($this->suggests),
         'shop_classes'               => ShopClass_R2::collection($this->shop_classes),

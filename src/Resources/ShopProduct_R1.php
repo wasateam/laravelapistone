@@ -45,6 +45,8 @@ class ShopProduct_R1 extends JsonResource
         'freight'              => $this->freight,
         'purchaser'            => $this->purchaser,
         'cold_chain_type'      => $this->cold_chain_type,
+        'store_house_class'    => $this->store_house_class,
+        'store_house_subclass' => $this->store_house_subclass,
       ];
       if (config('stone.featured_class')) {
         $res['featured_classes'] = FeaturedClass_R1::collection($this->featured_classes);

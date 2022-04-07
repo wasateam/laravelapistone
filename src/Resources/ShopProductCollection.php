@@ -45,6 +45,8 @@ class ShopProductCollection extends JsonResource
         'freight'                             => $this->freight,
         'purchaser'                           => $this->purchaser,
         'cold_chain_type'                     => $this->cold_chain_type,
+        'store_house_class'                   => $this->store_house_class,
+        'store_house_subclass'                => $this->store_house_subclass,
         'today_shop_order_shop_product_count' => $this->today_shop_order_shop_products->count(),
         'shop_classes'                        => ShopClass_R1::collection($this->shop_classes),
         'shop_subclasses'                     => ShopSubclass_R1::collection($this->shop_subclasses),

@@ -73,6 +73,8 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * ~ 冷凍 freezing
  * ~ 常溫 normal
  * ~ 低溫 cold
+ * store_house_class 內部主分類
+ * store_house_subclass 內部子分類
  *
  *
  * Store/Update
@@ -119,6 +121,8 @@ class ShopProductController extends Controller
     'freight',
     'purchaser',
     'cold_chain_type',
+    'store_house_class',
+    'store_house_subclass',
   ];
   public $search_fields = [
     'no',
@@ -140,6 +144,8 @@ class ShopProductController extends Controller
     'store_temperature',
     'purchaser',
     'cold_chain_type',
+    'store_house_class',
+    'store_house_subclass',
   ];
   public $belongs_to_many = [
     'suggests',
@@ -165,7 +171,8 @@ class ShopProductController extends Controller
   public $validation_rules = [
     'no' => "required|unique:shop_products",
   ];
-  public $uuid = false;
+  public $uuid     = false;
+  public $paginate = 15;
 
   public function __construct()
   {
@@ -183,6 +190,13 @@ class ShopProductController extends Controller
     if (config('stone.shop.discount_price')) {
       $this->input_fields[] = 'discount_price';
       $this->order_fields[] = 'discount_price';
+    }
+    if (config('stone.shop')) {
+      if (config('stone.shop.product')) {
+        if (config('stone.shop.product.per_page')) {
+          $this->paginate = config('stone.shop.product.per_page');
+        }
+      }
     }
   }
   /**
@@ -285,6 +299,8 @@ class ShopProductController extends Controller
    * @bodyParam shop_product_specs object 商品規格 Example: [{"no":"SexyMonkey","cost":"100","price":"1000","discount_price":"900","start_at":"2021-10-10","end_at":"2021-10-20","freight":"100","max_buyable_count":"100","storage_space":"AA","stock_count":"1000","stock_alert_count":"100"}]
    * @bodyParam purchaser 採購人 Example: 我是一顆蛋
    * @bodyParam cold_chain_type 溫層 Example: freezing
+   * @bodyParam store_house_class 內部主分類 Example: aa
+   * @bodyParam store_house_subclass 內部子分類 Example: bb
    */
   public function store(Request $request, $id = null)
   {
@@ -357,6 +373,8 @@ class ShopProductController extends Controller
    * @bodyParam shop_product_specs object 商品規格 Example: [{"no":"SexyMonkey","cost":"100","price":"1000","discount_price":"900","start_at":"2021-10-10","end_at":"2021-10-20","freight":"100","max_buyable_count":"100","storage_space":"AA","stock_count":"1000","stock_alert_count":"100"}]
    * @bodyParam purchaser 採購人 Example: 我是一顆蛋
    * @bodyParam cold_chain_type 溫層 Example: freezing
+   * @bodyParam store_house_class 內部主分類 Example: aa
+   * @bodyParam store_house_subclass 內部子分類 Example: bb
    */
   public function update(Request $request, $id)
   {

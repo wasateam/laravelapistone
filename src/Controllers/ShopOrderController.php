@@ -256,6 +256,8 @@ class ShopOrderController extends Controller
   ];
   public $uuid = false;
 
+  public $paginate = 15;
+
   public function __construct()
   {
     if (config('stone.shop.uuid')) {
@@ -277,6 +279,13 @@ class ShopOrderController extends Controller
       $this->filter_fields[] = 'reinvoice_at';
       $this->filter_fields[] = 'status';
       $this->filter_fields[] = 'need_handle';
+    }
+    if (config('stone.shop')) {
+      if (config('stone.shop.order')) {
+        if (config('stone.shop.order.per_page')) {
+          $this->paginate = config('stone.shop.order.per_page');
+        }
+      }
     }
   }
 

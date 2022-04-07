@@ -143,6 +143,12 @@ return [
       ],
     ],
     'freight_default' => 100,
+    'order'           => [
+      'per_page' => 100,
+    ],
+    'product'         => [
+      'per_page' => 100,
+    ],
     'order_type'      => [
       'next-day'  => [
         'title'                  => '超市',

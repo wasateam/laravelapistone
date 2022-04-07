@@ -915,19 +915,40 @@ class ModelHelper
       foreach ($setting->filter_time_fields as $filter_time_field) {
         if ($request->filled($filter_time_field)) {
           $item_arr = explode(',', $request->{$filter_time_field});
-          if (count($item_arr) == 1) {
-            $filter_date = Carbon::parse($item_arr[0])->format('Y-m-d');
-            $snap        = $snap->whereDate($filter_time_field, '=', $filter_date);
-          } else {
-            $filter_start_time = Carbon::parse($item_arr[0]);
-            $filter_end_time   = Carbon::parse($item_arr[1]);
-            if (strlen($item_arr[1]) == 10 &&
-              (Str::contains($item_arr[1], '/' || Str::contains($item_arr[1], '-'))
-              )) {
-              $filter_end_time->setTime(23, 59, 59);
+          if (count($item_arr) > 0) {
+            if (count($item_arr) == 1) {
+              if (strlen($item_arr[0]) == 10 &&
+                (Str::contains($item_arr[0], '/' || Str::contains($item_arr[0], '-'))
+                )) {
+                $filter_date = Carbon::parse($item_arr[0])->format('Y-m-d');
+                $snap        = $snap->whereDate($filter_time_field, $filter_date);
+              } else {
+                $filter_date_time = Carbon::parse($item_arr[0]);
+                $snap             = $snap->where($filter_time_field, '=', $filter_date_time);
+              }
+            } else {
+              $filter_end_time = Carbon::parse($item_arr[1]);
+              if (
+                strlen($item_arr[0]) == 10 &&
+                (Str::contains($item_arr[0], '/') || Str::contains($item_arr[0], '-'))
+              ) {
+                $filter_start_time = Carbon::parse($item_arr[0])->format('Y-m-d');
+                $snap              = $snap->whereDate($filter_time_field, '>=', $filter_start_time);
+              } else {
+                $filter_start_time = Carbon::parse($item_arr[0]);
+                $snap              = $snap->where($filter_time_field, '>=', $filter_start_time);
+              }
+              if (
+                strlen($item_arr[1]) == 10 &&
+                (Str::contains($item_arr[1], '/') || Str::contains($item_arr[1], '-'))
+              ) {
+                $filter_end_time = Carbon::parse($item_arr[1])->format('Y-m-d');
+                $snap            = $snap->whereDate($filter_time_field, '<=', $filter_end_time);
+              } else {
+                $filter_end_time = Carbon::parse($item_arr[0]);
+                $snap            = $snap->where($filter_time_field, '<=', $filter_end_time);
+              }
             }
-            $snap = $snap->where($filter_time_field, '>=', $filter_start_time);
-            $snap = $snap->where($filter_time_field, '<=', $filter_end_time);
           }
         }
       }

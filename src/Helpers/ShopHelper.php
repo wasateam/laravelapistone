@@ -1592,4 +1592,13 @@ class ShopHelper
       return '不需電聯，直接交由管理室代收';
     }
   }
+
+  public static function shopOrderShipStatusModifyCheck($shop_order, $request)
+  {
+    if ($request->filled('ship_status') && $request->ship_status == 'shipped') {
+      if ($shop_order->ship_status != 'collected') {
+        throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('need collected status for shipped.');
+      }
+    }
+  }
 }

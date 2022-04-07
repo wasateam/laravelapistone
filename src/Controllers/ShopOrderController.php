@@ -188,7 +188,7 @@ class ShopOrderController extends Controller
     // 'ship_end_time',
     'ship_remark',
     // 'ship_date',
-    'ship_status',
+    // 'ship_status',
     'customer_service_remark',
     // 'pay_type',
     // 'pay_status',
@@ -280,6 +280,7 @@ class ShopOrderController extends Controller
       $this->filter_fields[] = 'reinvoice_at';
       $this->filter_fields[] = 'status';
       $this->filter_fields[] = 'need_handle';
+      $this->filter_fields[] = 'ship_status';
     }
     if (config('stone.shop')) {
       if (config('stone.shop.order')) {
@@ -566,6 +567,7 @@ class ShopOrderController extends Controller
   public function update(Request $request, $id)
   {
     $ori_model = $this->model::find($id);
+    ShopHelper::shopOrderShipStatusModifyCheck($ori_model, $request);
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
       ShopHelper::createInvoice($model, $ori_model);
       // if(count($model->shop_return_records)==0 &&$ori_model->ship_status=='collected'&&$model)
@@ -787,6 +789,7 @@ class ShopOrderController extends Controller
     $ids = $request->ids;
     foreach ($ids as $id) {
       $ori_model = $this->model::find($id);
+      ShopHelper::shopOrderShipStatusModifyCheck($ori_model, $request);
       ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
         ShopHelper::createInvoice($model, $ori_model);
       });

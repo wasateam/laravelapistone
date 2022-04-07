@@ -336,53 +336,132 @@ class UserController extends Controller
    */
   public function export_excel(Request $request)
   {
-    $headings   = [];
-    $headings[] = "會員UUID";
-    if (config('stone.user.customer_id')) {
+    $headings = [];
+    if (config('stone.user.export.uuid')) {
+      $headings[] = "會員UUID";
+    }
+    if (
+      config('stone.user.export.customer_id') &&
+      config('stone.user.customer_id')
+    ) {
       $headings[] = "會員編號";
     }
-    $headings[] = "名稱";
-    $headings[] = "Email";
-    $headings[] = "電話";
-    $headings[] = "介紹";
-    $headings[] = "建立時間";
-    $headings[] = "最後更新時間";
-    if (config('stone.user.is_bad')) {
+    if (config('stone.user.export.name')) {
+      $headings[] = "名稱";
+    }
+    if (config('stone.user.export.email')) {
+      $headings[] = "Email";
+    }
+    if (config('stone.user.export.tel')) {
+      $headings[] = "電話";
+    }
+    if (config('stone.user.export.description')) {
+      $headings[] = "介紹";
+    }
+    if (config('stone.user.export.created_at')) {
+      $headings[] = "加入時間";
+    }
+    if (config('stone.user.export.created_at_year')) {
+      $headings[] = "(加入)年";
+    }
+    if (config('stone.user.export.created_at_month')) {
+      $headings[] = "(加入)月";
+    }
+    if (config('stone.user.export.created_at_day')) {
+      $headings[] = "(加入)日";
+    }
+    if (config('stone.user.export.updated_at')) {
+      $headings[] = "最後更新時間";
+    }
+    if (
+      config('stone.user.export.is_bad') &&
+      config('stone.user.is_bad')
+    ) {
       $headings[] = "黑名單";
     }
-    if (config('stone.user.bonus_points')) {
+    if (
+      config('stone.user.export.bonus_points') &&
+      config('stone.user.bonus_points')
+    ) {
       $headings[] = "紅利點數";
     }
-    if (config('stone.user.subscribe')) {
+    if (
+      config('stone.user.export.subscribe') &&
+      config('stone.user.subscribe')
+    ) {
       $headings[] = "訂閱狀態";
+    }
+    if (config('stone.user.export.shop_sum')) {
+      $headings = UserHelper::setUserExportHeadingsShopSum($headings);
+    }
+    if (config('stone.user.export.shop_count')) {
+      $headings = UserHelper::setUserExportHeadingsShopCount($headings);
+    }
+    if (config('stone.user.export.invite_count')) {
+      $headings[] = "邀請數量";
     }
     return ModelHelper::ws_ExportExcelHandler(
       $this,
       $request,
       $headings,
       function ($model) {
-        $created_at = Carbon::parse($model->created_at)->format('Y-m-d');
+        $created_at = Carbon::parse($model->created_at);
         $updated_at = Carbon::parse($model->updated_at)->format('Y-m-d');
 
-        $map   = [];
-        $map[] = $model->uuid;
-        if (config('stone.user.customer_id')) {
+        $map = [];
+        if (config('stone.user.export.uuid')) {
+          $map[] = $model->uuid;
+        }
+        if (
+          config('stone.user.export.customer_id') &&
+          config('stone.user.customer_id')
+        ) {
           $map[] = $model->customer_id;
         }
-        $map[] = $model->name;
-        $map[] = $model->email;
-        $map[] = $model->tel;
-        $map[] = $model->description;
-        $map[] = $created_at;
-        $map[] = $updated_at;
+        if (config('stone.user.export.name')) {
+          $map[] = $model->name;
+        }
+        if (config('stone.user.export.email')) {
+          $map[] = $model->email;
+        }
+        if (config('stone.user.export.tel')) {
+          $map[] = $model->tel;
+        }
+        if (config('stone.user.export.description')) {
+          $map[] = $model->description;
+        }
+        if (config('stone.user.export.created_at')) {
+          $map[] = $created_at->format('Y-m-d');
+        }
+        if (config('stone.user.export.created_at_year')) {
+          $map[] = $created_at->format('Y');
+        }
+        if (config('stone.user.export.created_at_month')) {
+          $map[] = $created_at->format('m');
+        }
+        if (config('stone.user.export.created_at_day')) {
+          $map[] = $created_at->format('d');
+        }
+        if (config('stone.user.export.updated_at')) {
+          $map[] = $updated_at;
+        }
 
-        if (config('stone.user.is_bad')) {
+        if (
+          config('stone.user.export.is_bad') &&
+          config('stone.user.is_bad')
+        ) {
           $map[] = $model->is_bad;
         }
-        if (config('stone.user.bonus_points')) {
+        if (
+          config('stone.user.export.bonus_points') &&
+          config('stone.user.bonus_points')
+        ) {
           $map[] = $model->bonus_points;
         }
-        if (config('stone.user.subscribe')) {
+        if (
+          config('stone.user.export.subscribe') &&
+          config('stone.user.subscribe')
+        ) {
           $today_datetime = Carbon::now();
           $subscribe      = '未訂閱';
           if (!$model->subscribe_start_at && !$model->subscribe_end_at) {
@@ -401,6 +480,16 @@ class UserController extends Controller
             }
           }
           $map[] = $subscribe;
+        }
+
+        if (config('stone.user.export.shop_sum')) {
+          $map = UserHelper::setUserExportMapShopSum($map, $model);
+        }
+        if (config('stone.user.export.shop_count')) {
+          $map = UserHelper::setUserExportMapShopCount($map, $model);
+        }
+        if (config('stone.user.export.invite_count')) {
+          $map[] = UserHelper::getUserInvitedCount($model);
         }
 
         return $map;

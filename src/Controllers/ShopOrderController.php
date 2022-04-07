@@ -630,7 +630,7 @@ class ShopOrderController extends Controller
         'receiver_tel'        => $receiver_tel,
         'receiver_tel_encode' => $receiver_tel_encode,
         'receive_address'     => $shop_order->receive_address,
-        'receive_way'         => $shop_order->receive_way,
+        'receive_way'         => ShopHelper::getReceiveWayText($shop_order->receive_way),
         'receive_remark'      => $shop_order->receive_remark,
       ];
 

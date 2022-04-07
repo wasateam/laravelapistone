@@ -47,7 +47,26 @@ return [
   'pocket'             => true,
   'tulpa'              => true,
   'user'               => [
-    'export'              => true,
+    'export'              => [
+      'uuid'             => true,
+      'customer_id'      => true,
+      'name'             => true,
+      'email'            => true,
+      'tel'              => true,
+      'description'      => true,
+      'created_at'       => true,
+      'created_at_year'  => true,
+      'created_at_month' => true,
+      'created_at_day'   => true,
+      'updated_at'       => true,
+      'description'      => true,
+      'is_bad'           => true,
+      'bonus_points'     => true,
+      'subscribe'        => true,
+      'shop_sum'         => true,
+      'shop_count'       => true,
+      'invite_count'     => true,
+    ],
     'is_bad'              => true,
     'bonus_points'        => true,
     'reset_password_mail' => true,
@@ -125,11 +144,13 @@ return [
     ],
     'freight_default' => 100,
     'order_type'      => [
-      'next_day'  => [
+      'next-day'  => [
+        'title'                  => '超市',
         'freight_default'        => 100,
         'has_shop_free_shipping' => true,
       ],
-      'pre_order' => [
+      'pre-order' => [
+        'title'            => '預購',
         'freight_separate' => true,
       ],
     ],

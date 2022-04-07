@@ -137,8 +137,9 @@ class ShopHelper
     $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
     if ($order_type) {
       $order_types     = config('stone.shop.order_type') ? config('stone.shop.order_type') : [];
-      $curr_order_type = str_replace('-', '_', $order_type);
-      $has_type        = array_key_exists($curr_order_type, $order_types);
+      $curr_order_type = $order_type;
+      // $curr_order_type = str_replace('-', '_', $order_type);
+      $has_type = array_key_exists($curr_order_type, $order_types);
       if ($has_type) {
         $today_date = Carbon::now()->format('Y-m-d');
         // $order_price              = $shop_order->products_price;
@@ -225,8 +226,9 @@ class ShopHelper
     $freight = config('stone.shop.freight_default') ? config('stone.shop.freight_default') : 100;
     if ($order_type) {
       $order_types     = config('stone.shop.order_type') ? config('stone.shop.order_type') : [];
-      $curr_order_type = str_replace('-', '_', $order_type);
-      $has_type        = array_key_exists($curr_order_type, $order_types);
+      $curr_order_type = $order_type;
+      // $curr_order_type = str_replace('-', '_', $order_type);
+      $has_type = array_key_exists($curr_order_type, $order_types);
       if ($has_type) {
         $type = $order_types[$curr_order_type];
         // type has freight_default
@@ -1578,5 +1580,16 @@ class ShopHelper
     $shop_order->ship_end_time   = $shop_ship_time_setting->end_time;
     $shop_order->ship_date       = Carbon::parse($shop_order->created_at)->addDays(1);
     $shop_order->save();
+  }
+
+  public static function getReceiveWayText($receive_way)
+  {
+    if ($receive_way == 'phone-contact') {
+      return '電話聯絡收件人';
+    } else if ($receive_way == 'phone-contact-building-manager') {
+      return '電聯收件人後，交由管理室代收';
+    } else if ($receive_way == 'building-manager') {
+      return '不需電聯，直接交由管理室代收';
+    }
   }
 }

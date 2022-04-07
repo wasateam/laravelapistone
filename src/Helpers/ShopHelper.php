@@ -1534,8 +1534,8 @@ class ShopHelper
   public static function getShopProductSalesCount($shop_product_id, $start_date, $end_date)
   {
     $shop_order_shop_products = ShopOrderShopProduct::where('shop_product_id', $shop_product_id)
-      ->where('created_at', '>=', $start_date)
-      ->where('created_at', '<=', $end_date)
+      ->whereDate('created_at', '>=', $start_date)
+      ->whereDate('created_at', '<=', $end_date)
       ->whereHas('shop_order', function ($query) {
         $query->whereIn('status',
           [

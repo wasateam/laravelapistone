@@ -95,4 +95,19 @@ class UserHelper
     }
     return ShopOrder::where('invite_no', $user->invite_no)->count();
   }
+
+  public static function setUserExportMapAddressMailing($map, $user)
+  {
+    if (!$user->addresses_mailing || !count($user->addresses_mailing)) {
+      $map[] = "";
+      $map[] = "";
+      $map[] = "";
+    } else {
+      $address_mailing = $user->addresses_mailing[0];
+      $map[]           = $address_mailing->area ? $address_mailing->area->name : '';
+      $map[]           = $address_mailing->area_section ? $address_mailing->area_section->name : '';
+      $map[]           = $address_mailing->address;
+    }
+    return $map;
+  }
 }

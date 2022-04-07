@@ -93,6 +93,11 @@ class User extends Authenticatable
     return $this->hasMany(UserAddress::class, 'user_id');
   }
 
+  public function addresses_mailing()
+  {
+    return $this->hasMany(UserAddress::class, 'user_id')->where('type', 'mailing');
+  }
+
   public function shop_products()
   {
     return $this->belongsToMany(ShopProduct::class, 'user_shop_product', 'user_id', 'shop_product_id');

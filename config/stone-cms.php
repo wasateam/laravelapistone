@@ -51,8 +51,12 @@ return [
       'uuid'             => true,
       'customer_id'      => true,
       'name'             => true,
+      'country'          => true,
+      'address_mailing'  => true,
+      'gender'           => true,
       'email'            => true,
       'tel'              => true,
+      'birthday'         => true,
       'description'      => true,
       'created_at'       => true,
       'created_at_year'  => true,
@@ -104,7 +108,9 @@ return [
   'contact_request'    => [
     'auto_reply' => true,
   ],
-  'locale'             => false,
+  'locale'             => [
+    'default' => 'zh_tw',
+  ],
   'notification'       => [
     'notifiable_type_user' => 'Wasateam\Laravelapistone\Models\Admin',
   ],

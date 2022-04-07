@@ -1506,7 +1506,7 @@ class ShopHelper
             $query->where('off_time', '>', $on_time);
           });
           $query->orWhere(function ($query) use ($on_time) {
-            $query->whereNotNull('off_time');
+            $query->whereNull('off_time');
           });
         }
       });

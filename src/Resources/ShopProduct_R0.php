@@ -16,6 +16,7 @@ class ShopProduct_R0 extends JsonResource
   {
     return [
       'id' => $this->id,
+      'no' => $this->no,
     ];
   }
 }

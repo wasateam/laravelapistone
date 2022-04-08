@@ -280,7 +280,7 @@ class ShopOrderController extends Controller
       $this->filter_fields[] = 'reinvoice_at';
       $this->filter_fields[] = 'status';
       $this->filter_fields[] = 'need_handle';
-      $this->filter_fields[] = 'ship_status';
+      $this->input_fields[] = 'ship_status';
     }
     if (config('stone.shop')) {
       if (config('stone.shop.order')) {

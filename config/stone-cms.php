@@ -203,4 +203,5 @@ return [
   'bonus_point'        => [
     'shop_freight_deduct' => true,
   ],
+  'lottery'            => true,
 ];

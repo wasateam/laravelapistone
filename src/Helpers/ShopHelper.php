@@ -1596,7 +1596,7 @@ class ShopHelper
   public static function shopOrderShipStatusModifyCheck($shop_order, $request)
   {
     if ($request->filled('ship_status') && $request->ship_status == 'shipped') {
-      if ($shop_order->ship_status != 'collected') {
+      if ($shop_order->ship_status != 'collected' && $shop_order->ship_status != 'shipped') {
         throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('need collected status for shipped.');
       }
     }

@@ -19,11 +19,12 @@ class CreateLotteryParticipantsTable extends Migration
       $table->softDeletes();
       $table->string('id_number')->nullable();
       $table->string('name')->nullable();
-      $table->string('genger')->nullable();
+      $table->string('gender')->nullable();
       $table->date('birthday')->nullable();
       $table->string('email')->nullable();
       $table->uuid('uuid')->nullable();
       $table->string('qualifications')->nullable();
+      $table->boolean('is_valid')->nullable();
     });
   }
 

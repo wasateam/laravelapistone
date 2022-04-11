@@ -23,6 +23,7 @@
   "require": {
     "doctrine/dbal": "^3.1",
     "laravel/passport": "^10.1",
+    "google/cloud-pubsub": "^1.35",
     "kreait/laravel-firebase": "2.4"
   },
   "require-dev": {

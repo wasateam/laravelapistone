@@ -26,6 +26,9 @@ use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\GeneralUserInviteController;
 use Wasateam\Laravelapistone\Controllers\LinePayController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
+use Wasateam\Laravelapistone\Controllers\LotteryParticipantController;
+use Wasateam\Laravelapistone\Controllers\LotteryPrizeController;
+use Wasateam\Laravelapistone\Controllers\LotteryWinningRecordController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerController;
 use Wasateam\Laravelapistone\Controllers\NewsBannerGroupController;
 use Wasateam\Laravelapistone\Controllers\NewsController;
@@ -97,9 +100,6 @@ use Wasateam\Laravelapistone\Controllers\XcProjectController;
 use Wasateam\Laravelapistone\Controllers\XcTaskController;
 use Wasateam\Laravelapistone\Controllers\XcTaskTemplateController;
 use Wasateam\Laravelapistone\Controllers\XcWorkTypeController;
-use Wasateam\Laravelapistone\Controllers\LotteryParticipantController;
-use Wasateam\Laravelapistone\Controllers\LotteryPrizeController;
-use Wasateam\Laravelapistone\Controllers\LotteryWinningRecordController;
 
 class RoutesHelper
 {
@@ -1233,6 +1233,21 @@ class RoutesHelper
         'show',
       ])->shallow();
       // Route::get('bonus_point_record/auth/index', [BonusPointRecordController::class, 'auth_index']);
+    }
+
+    # Lottery
+    if (config('stone.lottery')) {
+      Route::resource('lottery_participant', LotteryParticipantController::class)->only([
+        'store',
+      ])->shallow();
+
+      // Route::resource('lottery_prize', LotteryPrizeController::class)->only([
+      //   'index', 'show', 'store', 'update', 'destroy',
+      // ])->shallow();
+
+      // Route::resource('lottery_winning_record', LotteryWinningRecordController::class)->only([
+      //   'index', 'show', 'store', 'update', 'destroy',
+      // ])->shallow();
     }
   }
 

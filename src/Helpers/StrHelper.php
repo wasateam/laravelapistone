@@ -48,4 +48,14 @@ class StrHelper
     }
     return $_str;
   }
+
+  public static function strEncodeAES($string, $hash_key, $hasg_iv)
+  {
+    return openssl_encrypt($string, 'aes-128-cbc', $hash_key, 0, $hasg_iv);
+  }
+
+  public static function strDecodeAES($string, $hash_key, $hasg_iv)
+  {
+    return openssl_decrypt($string, 'aes-128-cbc', $hash_key, 0, $hasg_iv);
+  }
 }

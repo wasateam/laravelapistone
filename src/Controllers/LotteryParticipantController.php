@@ -3,8 +3,11 @@
 namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
+use Google\Cloud\PubSub\MessageBuilder;
+use Google\Cloud\PubSub\PubSubClient;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Services\LotteryParticipantService;
 
 /**
  * @group LotteryParticipant
@@ -16,6 +19,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * gender 性別
  * birthday 生日
  * email
+ * mobile 聯絡手機
  * uuid
  * qualifications 抽獎資格
  */
@@ -30,8 +34,7 @@ class LotteryParticipantController extends Controller
     'gender',
     'birthday',
     'email',
-    'uuid',
-    'qualifications',
+    'mobile',
   ];
   public $order_fields = [
     'updated_at',
@@ -41,6 +44,9 @@ class LotteryParticipantController extends Controller
 
   public function __construct()
   {
+    if (config('stone.mode') == 'cms') {
+      $this->input_fields[] = 'qualifications';
+    }
   }
 
   /**
@@ -61,12 +67,16 @@ class LotteryParticipantController extends Controller
    * @bodyParam gender string No-example
    * @bodyParam birthday string No-example
    * @bodyParam email string No-example
-   * @bodyParam uuid string No-example
+   * @bodyParam mobile string No-example
    * @bodyParam qualifications string No-example
    */
   public function store(Request $request, $id = null)
   {
-    return ModelHelper::ws_StoreHandler($this, $request, $id);
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_StoreHandler($this, $request, $id);
+    } else {
+      LotteryParticipantService::store($request, $this, $id);
+    }
   }
 
   /**
@@ -88,7 +98,7 @@ class LotteryParticipantController extends Controller
    * @bodyParam gender string No-example
    * @bodyParam birthday string No-example
    * @bodyParam email string No-example
-   * @bodyParam uuid string No-example
+   * @bodyParam mobile string No-example
    * @bodyParam qualifications string No-example
    */
   public function update(Request $request, $id)

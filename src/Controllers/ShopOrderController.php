@@ -214,6 +214,9 @@ class ShopOrderController extends Controller
     'no',
     'receiver_tel',
     'orderer',
+    'orderer_tel',
+    'receiver',
+    'receiver_tel',
   ];
   public $filter_fields = [
     'type',
@@ -223,6 +226,7 @@ class ShopOrderController extends Controller
     'invoice_status',
     'ship_remark',
     'status',
+    'source',
   ];
   public $belongs_to = [
     // 'user',

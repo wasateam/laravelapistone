@@ -203,5 +203,15 @@ return [
   'bonus_point'        => [
     'shop_freight_deduct' => true,
   ],
-  'lottery'            => true,
+  'lottery'            => [
+    'recaptcha'   => [
+      'secret' => '6Lf2LWQfAAAAANb1hN-HihBNGo5G7N7CD8uBcRMc',
+    ],
+    'participant' => [
+      'create_buffer' => [
+        'service' => 'pubsub',
+        'encode'  => true,
+      ],
+    ],
+  ],
 ];

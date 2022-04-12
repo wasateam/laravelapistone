@@ -19,18 +19,18 @@ return [
   'web_url'             => env('WEB_URL'),
   // Auth
   'auth'                => [
-    'signup'          => true,
-    'passwordpatch'   => true,
-    'forgetpassword'  => true,
-    'model_name'      => 'user',
-    'model'           => '\Wasateam\Laravelapistone\Models\User',
-    'resource'        => '\Wasateam\Laravelapistone\Resources\User',
-    'auth_scope'      => 'user',
-    'default_scopes'  => [
+    'signup'         => true,
+    'passwordpatch'  => true,
+    'forgetpassword' => true,
+    'model_name'     => 'user',
+    'model'          => '\Wasateam\Laravelapistone\Models\User',
+    'resource'       => '\Wasateam\Laravelapistone\Resources\User',
+    'auth_scope'     => 'user',
+    'default_scopes' => [
       'user',
     ],
-    'active_check'    => true,
-    'verify'          => [
+    'active_check'   => true,
+    'verify'         => [
       'email' => true,
     ],
     // 'signup_complete_action' => '\App\Helpers\TestHelper',
@@ -152,6 +152,7 @@ return [
   ],
   'file_upload'         => 'laravel_signed',
   'privacy_terms'       => true,
+  'ez_about_us'         => true,
   'third_party_payment' => [
     'ecpay_inpay' => [
       'pay_way'                 => [

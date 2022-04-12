@@ -24,6 +24,7 @@ class LotteryParticipant extends JsonResource
         'gender'         => $this->gender,
         'birthday'       => $this->birthday,
         'email'          => $this->email,
+        'mobile'         => $this->mobile,
         'uuid'           => $this->uuid,
         'qualifications' => $this->qualifications,
       ];
@@ -37,6 +38,7 @@ class LotteryParticipant extends JsonResource
         'gender'         => $this->gender,
         'birthday'       => $this->birthday,
         'email'          => $this->email,
+        'mobile'         => $this->mobile,
         'uuid'           => $this->uuid,
         'qualifications' => $this->qualifications,
       ];

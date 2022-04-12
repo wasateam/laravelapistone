@@ -25,6 +25,7 @@ class LotteryParticipant_R1 extends JsonResource
         'birthday'       => $this->birthday,
         'email'          => $this->email,
         'uuid'           => $this->uuid,
+        'mobile'         => $this->mobile,
         'qualifications' => $this->qualifications,
       ];
     } else if (config('stone.mode') == 'webapi') {
@@ -38,6 +39,7 @@ class LotteryParticipant_R1 extends JsonResource
         'birthday'       => $this->birthday,
         'email'          => $this->email,
         'uuid'           => $this->uuid,
+        'mobile'         => $this->mobile,
         'qualifications' => $this->qualifications,
       ];
     }

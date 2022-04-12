@@ -10,18 +10,19 @@ class ScheduleHelper
 
   public static function stoneWork()
   {
-    if ('stone.shop') {
-      if ('stone.shop.pay_expire') {
+    if (config('stone.shop')) {
+      if (config('stone.shop.pay_expire')) {
+        \Log::info('ok');
         \Wasateam\Laravelapistone\Jobs\CheckShopOrderPayExpireJob::dispatch();
       }
     }
-    if ('stone.service_store') {
-      if ('stone.service_store.appointment') {
-        if ('stone.service_store.appointment.notify') {
-          if ('stone.service_store.appointment.notify.today_appointments') {
+    if (config('stone.service_store')) {
+      if (config('stone.service_store.appointment')) {
+        if (config('stone.service_store.appointment.notify')) {
+          if (config('stone.service_store.appointment.notify.today_appointments')) {
             \Wasateam\Laravelapistone\Jobs\CheckServiceStoreAppointmentsNotifyTodayJob::dispatch();
           }
-          if ('stone.service_store.appointment.notify.tomorrow_appointments') {
+          if (config('stone.service_store.appointment.notify.tomorrow_appointments')) {
             \Wasateam\Laravelapistone\Jobs\CheckServiceStoreAppointmentsNotifyTomorrowJob::dispatch();
           }
         }

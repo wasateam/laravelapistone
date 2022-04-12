@@ -15,8 +15,14 @@ class ShopProduct_R_Order_ShopSubclass extends JsonResource
   public function toArray($request)
   {
     $res = [
-      'id'   => $this->id,
-      'name' => $this->name,
+      'id'          => $this->id,
+      'name'        => $this->name,
+      'no'          => $this->no,
+      'spec'        => $this->spec,
+      'cost'        => $this->cost,
+      'price'       => $this->price,
+      'stock_count' => $this->stock_count,
+      'cover_image' => $this->cover_image,
     ];
     return $res;
   }

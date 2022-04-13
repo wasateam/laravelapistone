@@ -214,6 +214,9 @@ class ShopOrderController extends Controller
     'no',
     'receiver_tel',
     'orderer',
+    'orderer_tel',
+    'receiver',
+    'receiver_tel',
   ];
   public $filter_fields = [
     'type',
@@ -223,6 +226,7 @@ class ShopOrderController extends Controller
     'invoice_status',
     'ship_remark',
     'status',
+    'source',
   ];
   public $belongs_to = [
     // 'user',
@@ -280,7 +284,7 @@ class ShopOrderController extends Controller
       $this->filter_fields[] = 'reinvoice_at';
       $this->filter_fields[] = 'status';
       $this->filter_fields[] = 'need_handle';
-      $this->input_fields[] = 'ship_status';
+      $this->input_fields[]  = 'ship_status';
     }
     if (config('stone.shop')) {
       if (config('stone.shop.order')) {
@@ -749,6 +753,7 @@ class ShopOrderController extends Controller
     $shop_order->status    = 'cancel';
     $shop_order->return_at = Carbon::now();
     $shop_order->save();
+    ShopHelper::shopOrderReturnAllProducts($shop_order);
     return response()->json([
       'message' => "shop_order canceled.",
       'data'    => $shop_order,
@@ -771,8 +776,12 @@ class ShopOrderController extends Controller
     $shop_order->return_reason = null;
     $shop_order->return_remark = null;
     $shop_order->return_price  = null;
-    $shop_order->status        = null;
     $shop_order->return_at     = null;
+    if (!$shop_order->invoice_status) {
+      $shop_order->status = 'established';
+    } else {
+      $shop_order->status = 'complete';
+    }
     $shop_order->save();
     return response()->json([
       'message' => "shop_order return canceled.",

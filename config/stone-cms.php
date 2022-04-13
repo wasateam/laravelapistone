@@ -175,6 +175,7 @@ return [
   #
   'app'                => false,
   'privacy_terms'      => true,
+  'ez_about_us'        => true,
   'country_code'       => true,
   'finance'            => [
     'payment_request' => true,

@@ -152,6 +152,7 @@ return [
   ],
   'file_upload'         => 'laravel_signed',
   'privacy_terms'       => true,
+  'ez_about_us'         => true,
   'third_party_payment' => [
     'ecpay_inpay' => [
       'pay_way'                 => [

@@ -1601,4 +1601,18 @@ class ShopHelper
       }
     }
   }
+
+  public static function shopOrderReturnAllProducts($shop_order)
+  {
+    foreach ($shop_order->shop_order_shop_products as $shop_order_shop_product) {
+      $shop_return_record                             = new ShopReturnRecord;
+      $shop_return_record->count                      = $shop_order_shop_product->count;
+      $shop_return_record->user_id                    = $shop_order->user_id;
+      $shop_return_record->shop_order_id              = $shop_order->id;
+      $shop_return_record->shop_order_shop_product_id = $shop_order_shop_product->id;
+      $shop_return_record->type                       = 'return-all';
+      $shop_return_record->shop_product_id            = $shop_order_shop_product->shop_product->id;
+      $shop_return_record->save();
+    }
+  }
 }

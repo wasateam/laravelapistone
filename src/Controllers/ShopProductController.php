@@ -169,6 +169,9 @@ class ShopProductController extends Controller
     'storage_space',
   ];
   public $validation_rules = [
+    'no' => "unique:shop_products",
+  ];
+  public $store_validation_rules = [
     'no' => "required|unique:shop_products",
   ];
   public $uuid     = false;

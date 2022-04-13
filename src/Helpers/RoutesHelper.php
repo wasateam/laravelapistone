@@ -78,6 +78,7 @@ use Wasateam\Laravelapistone\Controllers\SystemClassController;
 use Wasateam\Laravelapistone\Controllers\SystemSubclassController;
 use Wasateam\Laravelapistone\Controllers\TagController;
 use Wasateam\Laravelapistone\Controllers\TermsController;
+use Wasateam\Laravelapistone\Controllers\EzAboutUsController;
 use Wasateam\Laravelapistone\Controllers\TulpaCrossItemController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageController;
 use Wasateam\Laravelapistone\Controllers\TulpaPageTemplateController;
@@ -725,6 +726,8 @@ class RoutesHelper
       Route::patch('privacy', [PrivacyController::class, 'update']);
       Route::get('terms', [TermsController::class, 'show']);
       Route::patch('terms', [TermsController::class, 'update']);
+      Route::get('ez_about_us', [EzAboutUsController::class, 'show']);
+      Route::patch('ez_about_us', [EzAboutUsController::class, 'update']);
     }
 
     # Web Log
@@ -1178,6 +1181,7 @@ class RoutesHelper
     if (config('stone.privacy_terms')) {
       Route::get('privacy', [PrivacyController::class, 'show']);
       Route::get('terms', [TermsController::class, 'show']);
+      Route::get('ez_about_us', [EzAboutUsController::class, 'show']);
     }
 
     # Ecpay

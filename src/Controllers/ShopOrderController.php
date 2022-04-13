@@ -775,8 +775,12 @@ class ShopOrderController extends Controller
     $shop_order->return_reason = null;
     $shop_order->return_remark = null;
     $shop_order->return_price  = null;
-    $shop_order->status        = null;
     $shop_order->return_at     = null;
+    if(!$shop_order->invoice_status){
+      $shop_order->status        = 'established';
+    }else{
+      $shop_order->status        = 'complete';
+    }
     $shop_order->save();
     return response()->json([
       'message' => "shop_order return canceled.",

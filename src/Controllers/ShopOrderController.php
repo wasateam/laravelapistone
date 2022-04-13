@@ -284,7 +284,7 @@ class ShopOrderController extends Controller
       $this->filter_fields[] = 'reinvoice_at';
       $this->filter_fields[] = 'status';
       $this->filter_fields[] = 'need_handle';
-      $this->input_fields[] = 'ship_status';
+      $this->input_fields[]  = 'ship_status';
     }
     if (config('stone.shop')) {
       if (config('stone.shop.order')) {
@@ -753,6 +753,7 @@ class ShopOrderController extends Controller
     $shop_order->status    = 'cancel';
     $shop_order->return_at = Carbon::now();
     $shop_order->save();
+    ShopHelper::shopOrderReturnAllProducts($shop_order);
     return response()->json([
       'message' => "shop_order canceled.",
       'data'    => $shop_order,
@@ -776,10 +777,10 @@ class ShopOrderController extends Controller
     $shop_order->return_remark = null;
     $shop_order->return_price  = null;
     $shop_order->return_at     = null;
-    if(!$shop_order->invoice_status){
-      $shop_order->status        = 'established';
-    }else{
-      $shop_order->status        = 'complete';
+    if (!$shop_order->invoice_status) {
+      $shop_order->status = 'established';
+    } else {
+      $shop_order->status = 'complete';
     }
     $shop_order->save();
     return response()->json([

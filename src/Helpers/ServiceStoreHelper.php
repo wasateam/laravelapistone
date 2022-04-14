@@ -132,4 +132,13 @@ class ServiceStoreHelper
       $formated_appointments
     ));
   }
+
+  public static function appointableCheck($request){
+    @Q@
+    $service_store = ServiceStore::find($request->service_store);
+    if(!$service_store){
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('service_store');
+    }
+    \Log::info($request->all());
+  }
 }

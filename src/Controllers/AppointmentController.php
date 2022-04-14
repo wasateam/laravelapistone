@@ -116,6 +116,8 @@ class AppointmentController extends Controller
           'end_time',
         ]
       );
+      ServiceStoreHelper::appointableCheck($request);
+      return  ;
       return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($request) {
         $model->start_time = ServiceStoreHelper::getServiceStoreTime($request->start_time, $request->service_store);
         $model->end_time   = ServiceStoreHelper::getServiceStoreTime($request->end_time, $request->service_store);

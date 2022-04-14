@@ -45,6 +45,18 @@ class ServiceStoreHelper
     return $appointments;
   }
 
+  public static function getServiceStoreAppointmentsDailyAppointed($date, $service_store_id)
+  {
+    $service_store = ServiceStore::find($service_store_id);
+    if (!$service_store) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('$service_store');
+    }
+    $appointments = Appointment::where('service_store_id', $service_store_id)
+      ->whereDate('date', $date)
+      ->get();
+    return $appointments;
+  }
+
   public static function CheckServiceStoreAppointmentsNotifyToday()
   {
     $now = \Carbon\Carbon::now();
@@ -69,23 +81,6 @@ class ServiceStoreHelper
         }
       }
     }
-
-    // $service_stores = ServiceStore::where('today_appointments_notify_time', '<', $now)
-    //   ->where(function ($query) use ($now) {
-    //     $query->whereDate('today_appointments_notify_at', '<', $now);
-    //     $query->orWhereNull('today_appointments_notify_at');
-    //   })
-    //   ->get();
-    // foreach ($service_stores as $service_store) {
-    //   if ($service_store->notify_emails) {
-    //     foreach ($service_store->notify_emails as $notify_email) {
-    //       \Wasateam\Laravelapistone\Jobs\MailServiceStoreAppointsTodayJob::dispatch($notify_email['email'], $service_store->id, $now);
-    //     }
-    //     $service_store->today_appointments_notify_at = $now;
-            // $service_store->save();
-    //   }
-    // }
-
   }
 
   public static function CheckServiceStoreAppointmentsNotifyTomorrow()
@@ -128,7 +123,7 @@ class ServiceStoreHelper
 
   public static function MailServiceStoreAppointsTomorrow($mail, $service_store_id, $date)
   {
-    $appointments          = self::getServiceStoreAppointmentsDailyCreated($date, $service_store_id);
+    $appointments          = self::getServiceStoreAppointmentsDailyAppointed($date, $service_store_id);
     $formated_appointments = AppointmentHelper::getFormatedAppointmentsForTable($appointments);
     $service_store         = ServiceStore::find($service_store_id);
 

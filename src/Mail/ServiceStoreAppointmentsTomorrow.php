@@ -34,7 +34,7 @@ class ServiceStoreAppointmentsTomorrow extends Mailable
     $title   = __('wasateam::messages.明日預約清單', [], $lang);
     $subject = "{$service_store->name}-{$title}";
     $link    = env('CMS_URL') . '/appointment';
-    return $this->subject($subject)->view('wasateam::wasa.mail.service_store_appointments_today')->with([
+    return $this->subject($subject)->view('wasateam::wasa.mail.service_store_appointments_tomorrow')->with([
       'service_store'         => $this->service_store,
       'formated_appointments' => $this->formated_appointments,
       'link'                  => $link,

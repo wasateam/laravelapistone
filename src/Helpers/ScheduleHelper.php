@@ -12,7 +12,6 @@ class ScheduleHelper
   {
     if (config('stone.shop')) {
       if (config('stone.shop.pay_expire')) {
-        \Log::info('ok');
         \Wasateam\Laravelapistone\Jobs\CheckShopOrderPayExpireJob::dispatch();
       }
     }

@@ -12,7 +12,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
 /**
  * @group LinePay LINE Pay 相關動作
  *
- * @authenticated
+ * shop_order 訂單
  */
 class LinePayController extends Controller
 {
@@ -20,6 +20,7 @@ class LinePayController extends Controller
   /**
    * Init 付款初始化
    * mode 模式 string Example:test
+   * shop_order 訂單 ID id Example:1
    * 
    */
   public function payment_init(Request $request)

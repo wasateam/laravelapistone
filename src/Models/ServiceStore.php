@@ -48,6 +48,15 @@ class ServiceStore extends Model
     return $this->hasMany(Appointment::class, 'service_store_id')->where('date', '>', $target_day->format('Y-m-d'));
   }
 
+  public function appointments_valid()
+  {
+    $target_day = Carbon::now();
+    $target_day->addDays(-2);
+    return $this->hasMany(Appointment::class, 'service_store_id')
+      ->where('date', '>', $target_day->format('Y-m-d'))
+      ->whereIn('status', ['reserved', 'complete']);
+  }
+
   public function area()
   {
     return $this->belongsTo(Area::class, 'area_id');

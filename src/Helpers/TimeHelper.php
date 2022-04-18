@@ -8,7 +8,7 @@ use Wasateam\Laravelapistone\Helpers\SpareHelper;
 class TimeHelper
 {
   // convert country to timezone
-  public static function getTimeZone($country_code = null)
+  public static function getTimeZoneFromCountryCode($country_code = null)
   {
     $country_code_timezone = SpareHelper::countryCodeTimeZone();
     return ($country_code && $country_code_timezone[$country_code]) ? $country_code_timezone[$country_code] : 'UTC';
@@ -16,15 +16,23 @@ class TimeHelper
 
   public static function setTimeFromCountryCode($time, $country_code)
   {
-    $timezone = self::getTimeZone($country_code);
-    return self::setTimeFromTimezone($time, $timezone);
+    $timezone = self::getTimeZoneFromCountryCode($country_code);
+    return self::getTimeFromTimezone($time, $timezone);
   }
 
-  public static function setTimeFromTimezone($time, $timezone)
+  public static function getTimeFromTimezone($time, $timezone, $format = 'H:i:s')
   {
     $_time = \Carbon\Carbon::parse($time);
     $_time->setTimezone($timezone);
-    return $_time->format('H:i:s');
+    return $_time->format($format);
+  }
+
+  public static function getTimeFromCountryCode($datetime, $country_code = 'tw', $format = 'H:i:s')
+  {
+    $_time    = \Carbon\Carbon::parse($datetime);
+    $timezone = self::getTimeZoneFromCountryCode($country_code);
+    $_time->setTimezone($timezone);
+    return $_time->format($format);
   }
 
   public static function setTimeFromHrMinStr($datetime, $hr_min_str)
@@ -62,5 +70,21 @@ class TimeHelper
     $time = \Carbon\Carbon::parse($time, $timezone);
     $time->setTimezone('UTC');
     return $time;
+  }
+
+  public static function getWeekDayNameFromDatetime($datetime)
+  {
+    $_datetime = \Carbon\Carbon::parse($datetime);
+    $weekday   = $_datetime->dayOfWeek;
+    $week_map  = [
+      0 => 'sun',
+      1 => 'mon',
+      2 => 'tue',
+      3 => 'wed',
+      4 => 'thu',
+      5 => 'fri',
+      6 => 'sat',
+    ];
+    return $week_map[$weekday];
   }
 }

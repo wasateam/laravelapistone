@@ -31,6 +31,7 @@ use Wasateam\Laravelapistone\Models\ServiceStore;
  * service_at_night 是否夜間服務
  * country_code 國家代碼
  * notify_emails 通知mail陣列
+ * appointment_availables 可預約時間設定
  * today_appointments_notify_time 今日預約通知時間
  * tomorrow_appointments_notify_time 明日預約通知時間
  * today_appointments_notify_at 今日預約近一次發出通知時間

@@ -185,7 +185,7 @@ class AuthController extends Controller
   }
 
   /**
-   * Get User
+   * Get User 取得當前使用者資訊
    *
    * @authenticated
    *

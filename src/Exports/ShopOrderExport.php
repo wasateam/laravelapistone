@@ -100,7 +100,7 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
       //ship_time
       $ship_time = $shop_order->ship_start_time . '-' . $shop_order->ship_end_time;
       //time_zone
-      $timezone = TimeHelper::getTimeZone($this->country_code);
+      $timezone = TimeHelper::getTimeZoneFromCountryCode($this->country_code);
       //order_count
       $order_count = ShopHelper::getOrderCost($order_products);
       //order_original_count

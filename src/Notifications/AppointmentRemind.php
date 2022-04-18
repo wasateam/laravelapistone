@@ -45,7 +45,7 @@ class AppointmentRemind extends Notification
   {
     $appointment = $this->appointment;
     if (config('stone.country_code')) {
-      $timezone = TimeHelper::getTimeZone($appointment->country_code);
+      $timezone = TimeHelper::getTimeZoneFromCountryCode($appointment->country_code);
       $time     = Carbon::parse($appointment->start_at)->timezone($timezone);
     } else {
       $time = Carbon::parse($appointment->start_at);

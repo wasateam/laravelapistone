@@ -3,8 +3,10 @@
 namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
+use Wasateam\Laravelapistone\Helpers\ServiceStoreHelper;
 use Wasateam\Laravelapistone\Helpers\TimeHelper;
 use Wasateam\Laravelapistone\Models\Appointment;
+use Wasateam\Laravelapistone\Models\ServiceStore;
 use Wasateam\Laravelapistone\Notifications\AppointmentRemind;
 
 class AppointmentHelper
@@ -49,4 +51,14 @@ class AppointmentHelper
     }
     return $_formated_appointments;
   }
+
+  public static function appointableAvailableCheckFromRequest($request)
+  {
+    $service_store = ServiceStore::find($request->service_store);
+    if (!$service_store) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('service_store');
+    }
+    ServiceStoreHelper::AppointmentAvaliableCheck($service_store, $request->start_time, $request->end_time, $request->date);
+  }
+
 }

@@ -7,6 +7,7 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
+use Wasateam\Laravelapistone\Helpers\AppointmentHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\RequestHelper;
 use Wasateam\Laravelapistone\Helpers\ServiceStoreHelper;
@@ -26,6 +27,10 @@ use Wasateam\Laravelapistone\Models\Appointment;
  * user 使用者
  * service_store 服務據點
  * country_code 國家代碼
+ * status 狀態
+ * ~ reserved 已預約
+ * ~ complete 完成
+ * ~ cancel 取消
  */
 class AppointmentController extends Controller
 {
@@ -59,6 +64,9 @@ class AppointmentController extends Controller
     'created_at',
     'date',
   ];
+  public $filter_fields = [
+    'status',
+  ];
   public $filter_time_fields = [
     'updated_at',
     'created_at',
@@ -70,6 +78,9 @@ class AppointmentController extends Controller
     if (config('stone.country_code')) {
       $this->input_fields[]  = 'country_code';
       $this->filter_fields[] = 'country_code';
+    }
+    if (config('stone.mode') == 'cms') {
+      $this->input_fields[] = 'status';
     }
   }
 
@@ -116,11 +127,11 @@ class AppointmentController extends Controller
           'end_time',
         ]
       );
-      ServiceStoreHelper::appointableCheck($request);
-      return  ;
+      AppointmentHelper::appointableAvailableCheckFromRequest($request);
       return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($request) {
         $model->start_time = ServiceStoreHelper::getServiceStoreTime($request->start_time, $request->service_store);
         $model->end_time   = ServiceStoreHelper::getServiceStoreTime($request->end_time, $request->service_store);
+        $model->status     = 'reserved';
         $model->save();
       });
     }

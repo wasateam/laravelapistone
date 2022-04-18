@@ -17,7 +17,7 @@ class ServiceStoreHelper
     if (!$service_store) {
       throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('$service_store');
     }
-    $timezone = $service_store->country_code ? TimeHelper::getTimeZone($service_store->country_code) : 'UTC';
+    $timezone = $service_store->country_code ? TimeHelper::getTimeZoneFromCountryCode($service_store->country_code) : 'UTC';
     return TimeHelper::getUTCTimeFromTimezone($time, $timezone);
   }
 
@@ -133,12 +133,41 @@ class ServiceStoreHelper
     ));
   }
 
-  public static function appointableCheck($request){
-    @Q@
-    $service_store = ServiceStore::find($request->service_store);
-    if(!$service_store){
-      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('service_store');
+  public static function getReservedAppointments($service_store, $start_time_str, $end_time_str)
+  {
+    $reserved = [];
+    foreach ($service_store->appointments_valid as $appointment) {
+      $_start_time_str = TimeHelper::getTimeFromCountryCode($appointment->start_time, $service_store->country_code, 'Hi');
+      $_end_time_str   = TimeHelper::getTimeFromCountryCode($appointment->end_time, $service_store->country_code, 'Hi');
+      if ($start_time_str == $_start_time_str && $end_time_str == $_end_time_str) {
+        $reserved[] = $appointment;
+      }
     }
-    \Log::info($request->all());
+    return $reserved;
+  }
+
+  public static function getAppointmentAvailable($service_store, $start_time_str, $end_time_str, $weekday_name)
+  {
+    $_available = null;
+    foreach ($service_store->appointment_availables[$weekday_name] as $available) {
+      if (
+        $available['start_time'] == $start_time_str &&
+        $available['end_time'] == $end_time_str
+      ) {
+        $_available = $available;
+      }
+    }
+    return $_available;
+  }
+
+  public static function AppointmentAvaliableCheck($service_store, $start_time_str, $end_time_str, $date)
+  {
+    $reserves              = self::getReservedAppointments($service_store, $start_time_str, $end_time_str);
+    $weekday_name          = TimeHelper::getWeekDayNameFromDatetime($date);
+    $appointment_available = self::getAppointmentAvailable($service_store, $start_time_str, $end_time_str, $weekday_name);
+    \Log::info($appointment_available);
+    if ($appointment_available['count'] <= count($reserves)) {
+      throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('no quota for appointment.');
+    }
   }
 }

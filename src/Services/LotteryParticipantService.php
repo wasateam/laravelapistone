@@ -53,7 +53,6 @@ class LotteryParticipantService
     $messages     = $subscription->pull();
 
     foreach ($messages as $message) {
-      \Log::info($message->data());
 
       $data = json_decode(StrHelper::strDecodeAES($message->data(), env('STONE_LOTTERY_HASH_KEY'), env('STONE_LOTTERY_HASH_IV')));
 

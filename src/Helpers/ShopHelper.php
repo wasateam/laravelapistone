@@ -334,7 +334,7 @@ class ShopHelper
 
     $products_price      = self::getOrderProductsAmount($shop_order->shop_order_shop_products);
     $campaign_deduct     = self::getCampaignDeduct($shop_order->user, Carbon::now(), $products_price, $discount_code);
-    $invite_no_deduct    = self::getInviteNoDeduct($products_price, $invite_no, $shop_order->user);
+    $invite_no_deduct    = self::getInviteNoDeduct($products_price, $invite_no, $shop_order->user, [$shop_order->id]);
     $bonus_points_deduct = self::getBonusPointsDeduct($bonus_points, $products_price, $campaign_deduct, $invite_no_deduct);
     $freight             = self::getFreight($shop_order->order_type, $products_price, $campaign_deduct, $invite_no_deduct);
     $order_price         = self::getOrderPrice($products_price, $freight, $bonus_points_deduct, $campaign_deduct, $invite_no_deduct);
@@ -397,13 +397,14 @@ class ShopHelper
   public static function getInviteNoDeduct(
     $products_price,
     $invite_no,
-    $user
+    $user,
+    $neglect_shop_order_ids = null
   ) {
     if (!$invite_no) {
       return 0;
     }
 
-    $check = UserInviteHelper::check($invite_no, $user);
+    $check = UserInviteHelper::check($invite_no, $user, $neglect_shop_order_ids);
     if (!$check) {
       return 0;
     }
@@ -1477,11 +1478,6 @@ class ShopHelper
 
   public static function ShopProductStorageSpaceCheck($storage_space, $on_time, $off_time = null, $shop_product_id = null)
   {
-    \Log::info('ShopProductStorageSpaceCheck');
-    \Log::info($storage_space);
-    \Log::info($on_time);
-    \Log::info($off_time);
-    \Log::info($shop_product_id);
     $snap = ShopProduct::where('storage_space', $storage_space)
       ->where(function ($query) use ($on_time, $off_time) {
         if ($off_time) {

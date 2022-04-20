@@ -14,7 +14,6 @@ class RecaptchaService
     ])
       ->withBody("secret=" . $secret . "&response=" . $token, 'application/x-www-form-urlencoded')
       ->post('https://www.google.com/recaptcha/api/siteverify');
-    \Log::info($response);
     if (!$response['success']) {
       throw new \Wasateam\Laravelapistone\Exceptions\RecaptchaException();
     }

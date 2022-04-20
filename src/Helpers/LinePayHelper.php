@@ -26,6 +26,10 @@ class LinePayHelper
     $confirm_url = null,
     $cancel_url = null
   ) {
+    \Log::info('$amount');
+    \Log::info($amount);
+    \Log::info('$packages');
+    \Log::info($packages);
     if (!$confirm_url) {
       $confirm_url = env('WEB_URL') . '/line_pay/payment/confirm';
     }
@@ -47,7 +51,6 @@ class LinePayHelper
     $response = Http::withHeaders($header)
       ->post($post_url, $request_body);
     $res_json = $response->json();
-
 
     if ($res_json['returnCode'] != '0000') {
       throw new \Wasateam\Laravelapistone\Exceptions\LinePayException(
@@ -158,6 +161,12 @@ class LinePayHelper
       'name'     => '紅利折抵',
       'quantity' => 1,
       'price'    => $shop_order->bonus_points_deduct * -1,
+      'imageUrl' => '',
+    ];
+    $products[] = [
+      'name'     => '邀請碼折抵',
+      'quantity' => 1,
+      'price'    => $shop_order->invite_no_deduct * -1,
       'imageUrl' => '',
     ];
     $products[] = [

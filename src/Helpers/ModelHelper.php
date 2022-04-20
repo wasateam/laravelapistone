@@ -66,8 +66,16 @@ class ModelHelper
     return self::indexGetResourceCollection($collection, $setting);
   }
 
-  public static function ws_StoreHandler($controller, $request, $id = null, $complete_action = null, $before_save_action = null, $create_with_new_version = false, $version_controller = null, $return_resource = true, $custom_scope_handler = null)
-  {
+  public static function ws_StoreHandler(
+    $controller,
+    $request,
+    $id = null,
+    $complete_action = null,
+    $before_save_action = null,
+    $create_with_new_version = false,
+    $version_controller = null,
+    $return_resource = true,
+    $custom_scope_handler = null) {
     // Setting
     $setting = self::getSetting($controller);
 

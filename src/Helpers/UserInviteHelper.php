@@ -7,7 +7,7 @@ use Wasateam\Laravelapistone\Models\User;
 
 class UserInviteHelper
 {
-  public static function check($invite_no, $user)
+  public static function check($invite_no, $user, $neglect_shop_order_ids = null)
   {
     if (!$invite_no) {
       return false;
@@ -20,7 +20,7 @@ class UserInviteHelper
     if ($target_user->id == $user->id) {
       return false;
     }
-    $exist_shop_order = ShopOrder::where('user_id', $user->id)
+    $snap = ShopOrder::where('user_id', $user->id)
       ->where('pay_status', '!=', 'not-paid')
       ->whereNull('deleted_at')
       ->where('invite_no', $invite_no)
@@ -33,8 +33,11 @@ class UserInviteHelper
           'return-part-complete',
           'return-all-complete',
           'complete',
-        ])
-      ->first();
+        ]);
+    if ($neglect_shop_order_ids) {
+      $snap->whereNotIn('id', $neglect_shop_order_ids);
+    }
+    $exist_shop_order = $snap->first();
     if ($exist_shop_order) {
       return false;
     }

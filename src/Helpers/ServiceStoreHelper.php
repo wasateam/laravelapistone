@@ -165,7 +165,6 @@ class ServiceStoreHelper
     $reserves              = self::getReservedAppointments($service_store, $start_time_str, $end_time_str);
     $weekday_name          = TimeHelper::getWeekDayNameFromDatetime($date);
     $appointment_available = self::getAppointmentAvailable($service_store, $start_time_str, $end_time_str, $weekday_name);
-    \Log::info($appointment_available);
     if ($appointment_available['count'] <= count($reserves)) {
       throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('no quota for appointment.');
     }

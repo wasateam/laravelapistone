@@ -18,7 +18,6 @@ class ModelImport implements ToCollection
    */
   public function collection(Collection $rows)
   {
-    // \Log::info($this->map);
     ($this->map)($rows);
   }
 }

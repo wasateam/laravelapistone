@@ -34,9 +34,6 @@ class TestHelper
 
   public static function testErrorHander($url, $response)
   {
-    \Log::info("status: {$response->status()}");
-    \Log::info("url: {$url}");
-    \Log::info("json: {$response->json()}");
   }
 
   public static function testCreate($tester, $url, $body = [], $status = 201, $scopes = null, $guard = null)

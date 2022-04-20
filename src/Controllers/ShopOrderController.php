@@ -574,9 +574,6 @@ class ShopOrderController extends Controller
     ShopHelper::shopOrderShipStatusModifyCheck($ori_model, $request);
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
       ShopHelper::createInvoice($model, $ori_model);
-      // if(count($model->shop_return_records)==0 &&$ori_model->ship_status=='collected'&&$model)
-      // ShopHelper::changeShopOrderPrice($model->id);
-      // ShopHelper::updateShopOrderPrice($model);
     });
   }
 

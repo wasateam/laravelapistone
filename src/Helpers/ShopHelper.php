@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\EcpayHelper;
+use Wasateam\Laravelapistone\Helpers\EcpayInvoiceHelper;
 use Wasateam\Laravelapistone\Helpers\UserInviteHelper;
 use Wasateam\Laravelapistone\Models\Area;
 use Wasateam\Laravelapistone\Models\AreaSection;
@@ -1332,7 +1333,7 @@ class ShopHelper
         try {
           $invoice_type       = $shop_order->invoice_type;
           $SalesAmount        = $shop_order->order_price;
-          $Items              = EcpayHelper::getInvoiceItemsFromShopOrder($shop_order);
+          $Items              = EcpayInvoiceHelper::getInvoiceItemsFromShopOrder($shop_order);
           $CustomerID         = $shop_order->user_id;
           $CustomerIdentifier = '';
           $CustomerName       = '';
@@ -1371,7 +1372,7 @@ class ShopHelper
           }
           if (config('stone.invoice.delay')) {
             $DelayDay  = config('stone.invoice.delay');
-            $post_data = EcpayHelper::getDelayInvoicePostData(
+            $post_data = EcpayInvoiceHelper::getDelayInvoicePostData(
               $CustomerID,
               $CustomerIdentifier,
               $CustomerName,
@@ -1388,11 +1389,11 @@ class ShopHelper
               $DelayDay,
               $Tsr,
             );
-            $invoice_res                = EcpayHelper::createDelayInvoice($post_data);
+            $invoice_res                = EcpayInvoiceHelper::createDelayInvoice($post_data);
             $shop_order->invoice_status = 'waiting';
             $shop_order->save();
           } else {
-            $post_data = EcpayHelper::getInvoicePostData(
+            $post_data = EcpayInvoiceHelper::getInvoicePostData(
               $CustomerID,
               $CustomerIdentifier,
               $CustomerName,
@@ -1407,7 +1408,7 @@ class ShopHelper
               $SalesAmount,
               $Items
             );
-            $invoice_res                = EcpayHelper::createInvoice($post_data);
+            $invoice_res                = EcpayInvoiceHelper::createInvoice($post_data);
             $shop_order->invoice_status = 'done';
             $shop_order->invoice_number = $invoice_res->InvoiceNo;
             $shop_order->save();

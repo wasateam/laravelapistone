@@ -4,6 +4,11 @@ namespace Wasateam\Laravelapistone\Commands;
 
 use Illuminate\Console\Command;
 
+
+/**
+ * Generate Admin with boss scope
+ *
+ */
 class CommandStoneGenerateBoss extends Command
 {
   /**

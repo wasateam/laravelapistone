@@ -109,5 +109,6 @@ class EcpayController extends Controller
    */
   public function callback_invoice_notify(Request $request)
   {
+    \Log::info($request->all());
   }
 }

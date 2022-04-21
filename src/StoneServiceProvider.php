@@ -263,6 +263,12 @@ class StoneServiceProvider extends ServiceProvider
       // $this->app['router']->pushMiddlewareToGroup('wasa_scopes', Wasateam\Laravelapistone\Middleware\WasaScopes::class);
 
       app('router')->aliasMiddleware('wasascopes', \Wasateam\Laravelapistone\Middleware\WasaScopes::class);
+
+      if ($this->app->runningInConsole()) {
+        $this->commands([
+          \Wasateam\Laravelapistone\Commands\CommandStoneGenerateBoss::class,
+        ]);
+      }
     }
 
     if (config('stone.mode') == 'webapi') {

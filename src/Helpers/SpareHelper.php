@@ -12,9 +12,8 @@ class SpareHelper
 
       'xc_work_type-read',
       'xc_work_type-edit',
-
-      // 'xc_task_template-read',
-      // 'xc_task_template-edit',
+      'xc_task_template-read',
+      'xc_task_template-edit',
 
       // 'xc_task-read',
       // 'xc_task-edit',

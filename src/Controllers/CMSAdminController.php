@@ -42,8 +42,8 @@ class CMSAdminController extends Controller
     'name'     => 'required|string|min:1|max:40',
   ];
   public $validation_rules = [
-    'email' => "required|string|email|unique:admins",
-    'name'  => 'required|string|min:1|max:40',
+    'email' => "string|email|unique:admins",
+    'name'  => 'string|min:1|max:40',
   ];
   public $input_fields = [
     'name',

@@ -2,9 +2,9 @@
 
 namespace Wasateam\Laravelapistone\Middleware;
 
+use Auth;
 use Closure;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
-use Auth;
 
 class WasaScopes
 {
@@ -18,15 +18,15 @@ class WasaScopes
    */
   public function handle($request, Closure $next, $scopes)
   {
-    // if ($request->lang) {
-    //   App::setLocale($request->lang);
-    // }
     $user = Auth::user();
     if (!$user) {
       throw new \Wasateam\Laravelapistone\Exceptions\AuthException;
     }
     $user_scopes = AuthHelper::getUserScopes($user);
-    if (in_array('wall-passer', $user_scopes)) {
+    if (
+      in_array('wall-passer', $user_scopes) ||
+      in_array('boss', $user_scopes)
+    ) {
       return $next($request);
     }
 

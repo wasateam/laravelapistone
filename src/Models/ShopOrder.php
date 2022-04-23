@@ -151,6 +151,22 @@ class ShopOrder extends Model
     return $this->order_cost_products + $this->freight - $this->freight_deduct - $return_cost;
   }
 
+  public function getPayTypeTextAttribute()
+  {
+    $text_arr = [
+      'Credit'   => '信用卡',
+      'CVS'      => 'CVS',
+      'ATM'      => 'ATM',
+      'BARCODE'  => '超商條碼',
+      'line_pay' => 'LINE Pay',
+    ];
+    if ($this->pay_type && $text_arr[$this->pay_type]) {
+      return $text_arr[$this->pay_type];
+    } else {
+      return;
+    }
+  }
+
   protected $casts = [
     'discounts'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'orderer_birthday'  => 'datetime',

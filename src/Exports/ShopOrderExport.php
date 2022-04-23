@@ -117,9 +117,13 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize, WithCo
       "優惠券活動",
       "折扣碼折扣",
       "折扣碼活動",
+      "邀請碼",
+      "邀請碼折扣",
       "全館折扣",
       "全館折扣名稱",
       "實收金額（原發票金額",
+      "備註",
+      "支付方式",
       "退刷數量",
       "退刷售價小計",
       "退刷成本小計",
@@ -211,9 +215,13 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize, WithCo
             null,
             $shop_campaign_discount_code_deduct,
             $shop_campaign_discount_code_name,
-            $shop_order->order_price,
+            $shop_order->invite_no,
+            $shop_order->invite_no_deduct,
             null,
             null, //實收金額（原發票金額
+            $shop_order->order_price,
+            $shop_order->status_remark,
+            $shop_order->pay_type_text,
             $return_count, //退刷數量
             $return_count * $order_product->price, //退刷售價小計
             $return_count * $order_product->cost, //退刷成本小計
@@ -258,6 +266,10 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize, WithCo
             null, //訂單原始成本
             null, //訂單運費
             null, //免運折抵
+            null,
+            null,
+            null,
+            null,
             null,
             null,
             null,

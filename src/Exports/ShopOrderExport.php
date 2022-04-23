@@ -4,12 +4,13 @@ namespace Wasateam\Laravelapistone\Exports;
 
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Helpers\TimeHelper;
 use Wasateam\Laravelapistone\Models\ShopOrder;
 
-class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
+class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize, WithColumnWidths
 {
 
   protected $shop_orders;
@@ -21,6 +22,60 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
     $this->shop_orders  = $shop_orders;
     $this->get_all      = $get_all;
     $this->country_code = $country_code;
+  }
+  public function columnWidths(): array
+  {
+    return [
+      'A'  => 5,
+      'B'  => 20,
+      'C'  => 15,
+      'D'  => 15,
+      'E'  => 25,
+      'F'  => 10,
+      'G'  => 20,
+      'H'  => 10,
+      'I'  => 15,
+      'J'  => 10,
+      'K'  => 10,
+      'L'  => 30,
+      'M'  => 15,
+      'N'  => 15,
+      'O'  => 20,
+      'P'  => 10,
+      'Q'  => 10,
+      'R'  => 10,
+      'S'  => 25,
+      'T'  => 10,
+      'U'  => 15,
+      'V'  => 10,
+      'W'  => 10,
+      'X'  => 10,
+      'Y'  => 10,
+      'Z'  => 10,
+      'AA' => 10,
+      'AB' => 10,
+      'AC' => 10,
+      'AD' => 10,
+      'AE' => 10,
+      'AF' => 10,
+      'AG' => 10,
+      'AH' => 10,
+      'AI' => 10,
+      'AJ' => 10,
+      'AK' => 10,
+      'AL' => 10,
+      'AM' => 10,
+      'AN' => 10,
+      'AO' => 15,
+      'AP' => 15,
+      'AQ' => 15,
+      'AR' => 15,
+      'AS' => 15,
+      'AT' => 10,
+      'AU' => 10,
+      'AV' => 10,
+      'AW' => 10,
+    ];
   }
 
   public function headings(): array
@@ -57,7 +112,7 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
       "訂單成本",
       "運費",
       "免運折抵",
-      "紅利折扣",
+      "紅利折抵",
       "優惠券折扣",
       "優惠券活動",
       "折扣碼折扣",
@@ -93,30 +148,24 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
     $array = [];
     foreach ($shop_orders as $shop_order) {
       $order_products = $shop_order->shop_order_shop_products;
-      //area
-      $area = $shop_order->area ? $shop_order->area->name : null;
-      //area_section
-      $area_section = $shop_order->area_section ? $shop_order->area_section->name : null;
-      //ship_time
-      $ship_time = $shop_order->ship_start_time . '-' . $shop_order->ship_end_time;
-      //time_zone
-      $timezone = TimeHelper::getTimeZoneFromCountryCode($this->country_code);
-      //order_count
-      $order_count = ShopHelper::getOrderCost($order_products);
-      //order_original_count
-      $order_original_count = ShopHelper::getOrderCost($order_products);
-      $user                 = $shop_order->user;
-      $first_purchase_check = 0;
-
-      $current_year_paid_shop_orders = ShopOrder::where('user_id', $shop_order->user->id)
-        ->whereYear('created_at', \Carbon\Carbon::parse($shop_order->created_at)->format('Y'))
-        ->orderBy('pay_at', 'asc')
-        ->get();
-      if (count($current_year_paid_shop_orders) == 0) {
-        $first_purchase_check = 1;
-      } else if ($current_year_paid_shop_orders[0]->id == $shop_order->id) {
-        $first_purchase_check = 1;
+      $area           = $shop_order->area ? $shop_order->area->name : null;
+      $area_section   = $shop_order->area_section ? $shop_order->area_section->name : null;
+      $timezone       = 'UTC';
+      if ($this->country_code) {
+        $timezone = TimeHelper::getTimeZoneFromCountryCode($this->country_code);
+      } else if (config('stone.timezone')) {
+        $timezone = config('stone.timezone');
       }
+      $ship_time                          = ShopHelper::getShopOrderShipTimeRange($shop_order, $timezone);
+      $order_original_cost                = ShopHelper::getOrderCost($order_products);
+      $created_at                         = ShopHelper::getShopOrderCreatedAt($shop_order, $timezone);
+      $ship_date                          = ShopHelper::getShopOrderShipDate($shop_order, $timezone);
+      $first_purchase_check               = ShopHelper::checkFirstShopOrderOfYearOfUser($shop_order);
+      $order_type                         = ShopHelper::getShopOrderOrderTypeTitle($shop_order);
+      $ship_status                        = ShopHelper::getShopOrderShipStatusTitle($shop_order);
+      $status                             = ShopHelper::getShopOrderStatusTitle($shop_order);
+      $shop_campaign_discount_code_deduct = $shop_order->shop_campaign_discount_code_deduct;
+      $shop_campaign_discount_code_name   = $shop_order->shop_campaign_discount_code ? $shop_order->shop_campaign_discount_code->name : null;
 
       foreach ($order_products as $index => $order_product) {
         $shop_product = $order_product->shop_product;
@@ -138,12 +187,12 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
             $area,
             $area_section,
             $shop_order->receive_address,
-            $shop_order->created_at->timezone($timezone),
-            $shop_order->ship_date,
+            $created_at,
+            $ship_date,
             $ship_time,
-            $shop_order->order_type,
-            $shop_order->ship_status,
-            $shop_order->status,
+            $order_type,
+            $ship_status,
+            $status,
             $shop_order->no,
             $shop_product->no,
             $order_product->name,
@@ -153,28 +202,28 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize
             $order_product->original_count, //原始數量
             $product_price * $order_product->original_count, //售價小計
             $order_product->cost * $order_product->original_count, //原始成本小計
-            100, //訂單原始金額
-            $order_original_count, //訂單原始成本
-            100, //訂單運費
-            !$shop_order->freight ? 100 : 0, //免運折抵
+            $shop_order->order_price,
+            $shop_order->order_cost_products, //訂單原始成本
+            $shop_order->freight, //訂單運費
+            $shop_order->freight_deduct, //免運折抵
+            $shop_order->bonus_points_deduct,
             null,
             null,
-            null,
-            null,
-            null,
-            null,
+            $shop_campaign_discount_code_deduct,
+            $shop_campaign_discount_code_name,
+            $shop_order->order_price,
             null,
             null, //實收金額（原發票金額
             $return_count, //退刷數量
             $return_count * $order_product->price, //退刷售價小計
             $return_count * $order_product->cost, //退刷成本小計
-            null, //訂單退刷金額
-            null, //訂單退刷成本
-            null, //退訂原因
-            $shop_order->order_price, //退刷後訂單實收金額
-            $shop_order->order_price, //重開發票金額
-            $shop_order->order_price, //最終訂單實收金額
-            $order_count, //最終訂單成本
+            $shop_order->return_price, //訂單退刷金額
+            $shop_order->return_cost, //訂單退刷成本
+            $shop_order->return_reason, //退訂原因
+            $shop_order->order_price_after_return, //退刷後訂單實收金額
+            $shop_order->order_price_after_return, //重開發票金額
+            $shop_order->order_price_after_return, //最終訂單實收金額
+            $shop_order->order_cost, //最終訂單成本
           ];
         } else {
           $array[] = [

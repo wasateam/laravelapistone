@@ -5,8 +5,8 @@ namespace Wasateam\Laravelapistone\Helpers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Wasateam\Laravelapistone\Helpers\EcpayHelper;
 use Wasateam\Laravelapistone\Helpers\EcpayInvoiceHelper;
+use Wasateam\Laravelapistone\Helpers\TimeHelper;
 use Wasateam\Laravelapistone\Helpers\UserInviteHelper;
 use Wasateam\Laravelapistone\Models\Area;
 use Wasateam\Laravelapistone\Models\AreaSection;
@@ -108,14 +108,20 @@ class ShopHelper
     }
   }
 
-  public static function getFreight(
+  public static function getFreight($shop_order = null)
+  {
+    $freight = config('stone.shop.freight_default');
+    return $freight;
+  }
+
+  public static function getFreightAfterDeduct(
     $order_type,
     $products_price,
-    $compaign_deduct,
+    $campaign_deduct,
     $invite_no_deduct
   ) {
-    $freight     = config('stone.shop.freight_default');
-    $order_price = $products_price - $compaign_deduct - $invite_no_deduct;
+    $freight     = self::getFreight();
+    $order_price = $products_price - $campaign_deduct - $invite_no_deduct;
     if (config("stone.shop.order_type.{$order_type}")) {
       if (config("stone.shop.order_type.{$order_type}.freight_default")) {
         $freight = config("stone.shop.order_type.{$order_type}.freight_default");
@@ -205,19 +211,19 @@ class ShopHelper
     // create discount_code shop_camapign
 
     // @Q@ deifferent day change will cause error
-    if ($request && $request->has('discount_code') && $request->discount_code) {
-      $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($request->discount_code);
-      if ($today_dicount_decode_campaign) {
-        self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
-        if ($shop_product_price_total >= $today_dicount_decode_campaign->full_amount) {
-          if ($today_dicount_decode_campaign->discount_percent) {
-            $shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
-          } else if ($today_dicount_decode_campaign->discount_amount) {
-            $shop_product_price_total = $shop_product_price_total - $today_dicount_decode_campaign->discount_amount;
-          }
-        }
-      }
-    }
+    // if ($request && $request->has('discount_code') && $request->discount_code) {
+    //   $today_dicount_decode_campaign = self::getTodayDiscountCodeCampaign($request->discount_code);
+    //   if ($today_dicount_decode_campaign) {
+    //     self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
+    //     if ($shop_product_price_total >= $today_dicount_decode_campaign->full_amount) {
+    //       if ($today_dicount_decode_campaign->discount_percent) {
+    //         $shop_product_price_total = $shop_product_price_total * $today_dicount_decode_campaign->discount_percent;
+    //       } else if ($today_dicount_decode_campaign->discount_amount) {
+    //         $shop_product_price_total = $shop_product_price_total - $today_dicount_decode_campaign->discount_amount;
+    //       }
+    //     }
+    //   }
+    // }
     //紅利點數
     //create bonus_points record
     $bonus_points = $shop_order->bonus_points_deduct ? $shop_order->bonus_points_deduct : 0;
@@ -330,14 +336,17 @@ class ShopHelper
     return "{$time}{$str}";
   }
 
-  public static function updateShopOrderPrice($shop_order, $discount_code, $bonus_points, $invite_no)
-  {
-
+  public static function updateShopOrderPrice(
+    $shop_order,
+    $discount_code,
+    $bonus_points,
+    $invite_no
+  ) {
     $products_price      = self::getOrderProductsAmount($shop_order->shop_order_shop_products);
-    $campaign_deduct     = self::getCampaignDeduct($shop_order->user, Carbon::now(), $products_price, $discount_code);
+    $campaign_deduct     = self::getDateCampaignDeduct($shop_order->user, $shop_order->created_at, $products_price, $discount_code);
     $invite_no_deduct    = self::getInviteNoDeduct($products_price, $invite_no, $shop_order->user, [$shop_order->id]);
     $bonus_points_deduct = self::getBonusPointsDeduct($bonus_points, $products_price, $campaign_deduct, $invite_no_deduct);
-    $freight             = self::getFreight($shop_order->order_type, $products_price, $campaign_deduct, $invite_no_deduct);
+    $freight             = self::getFreightAfterDeduct($shop_order->order_type, $products_price, $campaign_deduct, $invite_no_deduct);
     $order_price         = self::getOrderPrice($products_price, $freight, $bonus_points_deduct, $campaign_deduct, $invite_no_deduct);
 
     $shop_order->products_price      = $products_price;
@@ -347,52 +356,61 @@ class ShopHelper
     $shop_order->freight             = $freight;
     $shop_order->order_price         = $order_price;
     $shop_order->save();
+
+    // self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign, $campaign_deduct);
   }
 
   public static function setCampaignDeduct($shop_order, $discount_code)
   {
-    $compaign_deduct = 0;
+    $campaign_deduct = 0;
     if ($discount_code) {
       $today_dicount_decode_campaign = self::getAvailableShopCampaign('discount_code', $shop_order->user_id, $shop_order->created_at, $discount_code);
-      if ($today_dicount_decode_campaign) {
-        $products_price = $shop_order->products_price;
-        if ($products_price >= $today_dicount_decode_campaign->full_amount) {
-          self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign);
-          if ($today_dicount_decode_campaign->discount_percent) {
-            $compaign_deduct += $products_price - round($products_price * $today_dicount_decode_campaign->discount_percent / 10);
-          } else if ($today_dicount_decode_campaign->discount_amount) {
-            $compaign_deduct += $today_dicount_decode_campaign->discount_amount;
-          }
+      $campaign_deduct               = self::getShopCampaignDeductFromShopCampaign($shop_order->products_price, $today_dicount_decode_campaign);
+      self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign, $campaign_deduct);
+    }
+    return $campaign_deduct;
+  }
+
+  public static function getShopCampaignDeductFromShopCampaign($products_price, $today_dicount_decode_campaign = null)
+  {
+    $campaign_deduct = 0;
+    if ($today_dicount_decode_campaign) {
+      if ($products_price >= $today_dicount_decode_campaign->full_amount) {
+        if ($today_dicount_decode_campaign->discount_way == 'discount_amount') {
+          $campaign_deduct += $products_price >= $today_dicount_decode_campaign->discount_amount ? $today_dicount_decode_campaign->discount_amount : $products_price;
+        } else if ($today_dicount_decode_campaign->discount_way == 'discount_percent') {
+          $campaign_deduct += $products_price - round($products_price * $today_dicount_decode_campaign->discount_percent / 10);
         }
       }
     }
-    return $compaign_deduct;
+    return $campaign_deduct;
   }
 
-  public static function getCampaignDeduct(
+  public static function getDateCampaignDeduct(
     $user,
     $datetime,
     $products_price,
     $discount_code
   ) {
-    $compaign_deduct = 0;
+    $campaign_deduct = 0;
     if ($discount_code) {
       $today_dicount_decode_campaign = self::getAvailableShopCampaign('discount_code', $user->id, $datetime, $discount_code);
-      if ($today_dicount_decode_campaign) {
-        if ($products_price >= $today_dicount_decode_campaign->full_amount) {
-          if ($today_dicount_decode_campaign->discount_percent) {
-            $compaign_deduct += $products_price - round($products_price * $today_dicount_decode_campaign->discount_percent / 10);
-          } else if ($today_dicount_decode_campaign->discount_amount) {
-            if ($today_dicount_decode_campaign->discount_amount > $products_price) {
-              $compaign_deduct = $products_price;
-            } else {
-              $compaign_deduct += $today_dicount_decode_campaign->discount_amount;
-            }
-          }
-        }
-      }
+      $campaign_deduct               = self::getShopCampaignDeductFromShopCampaign($products_price, $today_dicount_decode_campaign);
+      // if ($today_dicount_decode_campaign) {
+      //   if ($products_price >= $today_dicount_decode_campaign->full_amount) {
+      //     if ($today_dicount_decode_campaign->discount_percent) {
+      //       $campaign_deduct += $products_price - round($products_price * $today_dicount_decode_campaign->discount_percent / 10);
+      //     } else if ($today_dicount_decode_campaign->discount_amount) {
+      //       if ($today_dicount_decode_campaign->discount_amount > $products_price) {
+      //         $campaign_deduct = $products_price;
+      //       } else {
+      //         $campaign_deduct += $today_dicount_decode_campaign->discount_amount;
+      //       }
+      //     }
+      //   }
+      // }
     }
-    return $compaign_deduct;
+    return $campaign_deduct;
   }
 
   public static function getInviteNoDeduct(
@@ -525,16 +543,6 @@ class ShopHelper
       $product_names .= $shop_cart_product['name'];
     }
     return $product_names;
-  }
-
-  # 從購物車商品取得訂單類別、用第一個商品做抓取
-  public static function getOrderType($shop_cart_products)
-  {
-    if (!count($shop_cart_products)) {
-      return null;
-    }
-    $model = ShopCartProduct::find($shop_cart_products[0]['id']);
-    return $model->shop_product->order_type;
   }
 
   //pdf 整理訂單裡的商品格式
@@ -899,9 +907,11 @@ class ShopHelper
     return $today_discount_code_campaign;
   }
 
-  public static function createShopCampaignShopOrder($shop_order, $shop_campaign)
+  public static function createShopCampaignShopOrder($shop_order, $shop_campaign = null, $campaign_deduct)
   {
-    //建立訂單促銷活動紀錄
+    if (!$shop_campaign) {
+      return;
+    }
     $shop_campaign_shop_order                   = new ShopCampaignShopOrder;
     $shop_campaign_shop_order->shop_campaign_id = $shop_campaign->id;
     $shop_campaign_shop_order->shop_order_id    = $shop_order->id;
@@ -913,7 +923,7 @@ class ShopHelper
     $shop_campaign_shop_order->discount_percent = $shop_campaign->discount_percent;
     $shop_campaign_shop_order->discount_amount  = $shop_campaign->discount_amount;
     $shop_campaign_shop_order->feedback_rate    = $shop_campaign->feedback_rate;
-
+    $shop_campaign_shop_order->campaign_deduct  = $campaign_deduct;
     $shop_campaign_shop_order->save();
   }
 
@@ -1449,10 +1459,10 @@ class ShopHelper
   public static function getBonusPointsDeduct(
     $bonus_points,
     $products_price,
-    $compaign_deduct,
+    $campaign_deduct,
     $invite_no_deduct
   ) {
-    $order_price = $products_price - $compaign_deduct - $invite_no_deduct;
+    $order_price = $products_price - $campaign_deduct - $invite_no_deduct;
     if ($bonus_points > $order_price) {
       $bonus_points_deduct = $order_price;
     } else {
@@ -1610,6 +1620,108 @@ class ShopHelper
       $shop_return_record->type                       = 'return-all';
       $shop_return_record->shop_product_id            = $shop_order_shop_product->shop_product->id;
       $shop_return_record->save();
+    }
+  }
+
+  public static function getShopOrderShipTimeRange($shop_order, $timezone)
+  {
+    return TimeHelper::getTimeFromTimezone($shop_order->ship_start_time, $timezone) . '-' . TimeHelper::getTimeFromTimezone($shop_order->ship_end_time, $timezone);
+  }
+
+  public static function getShopOrderCreatedAt($shop_order, $timezone)
+  {
+    if (!$shop_order->created_at) {
+      return null;
+    }
+    $created_at = $shop_order->created_at->timezone($timezone);
+    if (config('stone.shop.order.export')) {
+      if (config('stone.shop.order.export.created_at')) {
+        if (config('stone.shop.order.export.created_at.format')) {
+          $created_at = $created_at->format(config('stone.shop.order.export.created_at.format'));
+        }
+      }
+    }
+    return $created_at;
+  }
+
+  public static function getShopOrderShipDate($shop_order, $timezone)
+  {
+    if (!$shop_order->ship_date) {
+      return null;
+    }
+    $ship_date = $shop_order->ship_date->timezone($timezone);
+    if (config('stone.shop.order.export')) {
+      if (config('stone.shop.order.export.ship_date')) {
+        if (config('stone.shop.order.export.ship_date.format')) {
+          $ship_date = $ship_date->format(config('stone.shop.order.export.ship_date.format'));
+        }
+      }
+    }
+    return $ship_date;
+  }
+
+  public static function checkFirstShopOrderOfYearOfUser($shop_order)
+  {
+    $first_purchase_check          = 0;
+    $current_year_paid_shop_orders = ShopOrder::where('user_id', $shop_order->user->id)
+      ->whereYear('created_at', \Carbon\Carbon::parse($shop_order->created_at)->format('Y'))
+      ->orderBy('pay_at', 'asc')
+      ->get();
+    if (count($current_year_paid_shop_orders) == 0) {
+      $first_purchase_check = 1;
+    } else if ($current_year_paid_shop_orders[0]->id == $shop_order->id) {
+      $first_purchase_check = 1;
+    }
+    return $first_purchase_check;
+  }
+
+  public static function getShopOrderOrderTypeTitle($shop_order)
+  {
+    $title      = '';
+    $order_type = $shop_order->order_type;
+    if (config('stone.shop.order_type')) {
+      if (config('stone.shop.order_type')[$order_type]) {
+        $title = config('stone.shop.order_type')[$order_type]['title'];
+      }
+    }
+    return $title;
+  }
+
+  public static function getShopOrderShipStatusTitle($shop_order)
+  {
+    $ship_status = $shop_order->ship_status;
+    $title_arr   = [
+      'unfulfilled' => '待出貨',
+      'collected'   => '準備出貨',
+      'shipped'     => '已出貨',
+      'pending'     => '問題待解決',
+    ];
+    return $ship_status && $title_arr[$ship_status] ? $title_arr[$ship_status] : '';
+  }
+
+  public static function getShopOrderStatusTitle($shop_order)
+  {
+    $status    = $shop_order->status;
+    $title_arr = [
+      'established'          => '成立',
+      'not-established'      => '未成立',
+      'return-part-apply'    => '申請部分退訂',
+      'return-all-apply'     => '申請全部退訂',
+      'return-part-complete' => '部分退訂完成',
+      'return-all-complete'  => '全部退訂完成',
+      'cancel'               => '取消',
+      'cancel-complete'      => '取消完成',
+      'complete'             => '訂單完成',
+    ];
+    return $status && $title_arr[$status] ? $title_arr[$status] : '';
+  }
+
+  public static function getFreightDeduct($shop_order)
+  {
+    if ($shop_order->freight) {
+      return self::getFreight();
+    } else {
+      return 0;
     }
   }
 }

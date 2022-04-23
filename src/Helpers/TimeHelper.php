@@ -7,7 +7,6 @@ use Wasateam\Laravelapistone\Helpers\SpareHelper;
 
 class TimeHelper
 {
-  // convert country to timezone
   public static function getTimeZoneFromCountryCode($country_code = null)
   {
     $country_code_timezone = SpareHelper::countryCodeTimeZone();

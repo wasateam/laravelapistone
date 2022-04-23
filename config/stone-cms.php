@@ -151,6 +151,14 @@ return [
     'freight_default' => 100,
     'order'           => [
       'per_page' => 100,
+      'export'   => [
+        'created_at' => [
+          'format' => 'Y/m/d',
+        ],
+        'ship_date'  => [
+          'format' => 'Y/m/d',
+        ],
+      ],
     ],
     'product'         => [
       'per_page' => 100,
@@ -170,7 +178,7 @@ return [
       'time_limit' => 600,
     ],
   ],
-  'invoice'             => [
+  'invoice'            => [
     'service'    => 'ecpay',
     'mode'       => env('INVOICE_MODE', 'dev'),
     'delay'      => 3,

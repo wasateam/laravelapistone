@@ -13,6 +13,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  *
  * user 會員
  * shop_campaign 促銷活動
+ * campaign_deduct 活動折抵
  * shop_order 訂單
  *
  * @authenticated

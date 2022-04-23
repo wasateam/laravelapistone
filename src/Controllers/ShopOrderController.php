@@ -63,7 +63,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * ~ unfulfilled：待出貨
  * ~ collected：準備出貨
  * ~ shipped：已出貨
- * ~ Pending：問題待解決
+ * ~ pending：問題待解決
  * customer_service_remark 客戶服務備註
  * pay_type 付款類型
  * ~ Credit: 信用卡
@@ -449,8 +449,8 @@ class ShopOrderController extends Controller
           // @Q@
           ShopHelper::deductBonusPointFromShopOrder($model);
           ShopHelper::createShopOrderShopProductsFromCartProducts($filtered_cart_products, $model);
-          ShopHelper::setCampaignDeduct($model, $discount_code);
           ShopHelper::updateShopOrderPrice($model, $discount_code, $bonus_points, $invite_no);
+          ShopHelper::setCampaignDeduct($model, $discount_code);
           ShopHelper::ShopOrderNoPriceCheck($model);
           ShopHelper::ShopOrderShipTimeSet($model);
 
@@ -493,10 +493,10 @@ class ShopOrderController extends Controller
     $bonus_points  = $request->has('bonus_points') ? $request->bonus_points : null;
 
     $products_price      = ShopHelper::getOrderProductsAmount($filtered_cart_products);
-    $campaign_deduct     = ShopHelper::getCampaignDeduct($user, Carbon::now(), $products_price, $discount_code);
+    $campaign_deduct     = ShopHelper::getDateCampaignDeduct($user, Carbon::now(), $products_price, $discount_code);
     $invite_no_deduct    = ShopHelper::getInviteNoDeduct($products_price, $invite_no, $user);
     $bonus_points_deduct = ShopHelper::getBonusPointsDeduct($bonus_points, $products_price, $campaign_deduct, $invite_no_deduct);
-    $freight             = ShopHelper::getFreight($order_type, $products_price, $campaign_deduct, $invite_no_deduct);
+    $freight             = ShopHelper::getFreightAfterDeduct($order_type, $products_price, $campaign_deduct, $invite_no_deduct);
     $order_price         = ShopHelper::getOrderPrice($products_price, $freight, $bonus_points_deduct, $campaign_deduct, $invite_no_deduct);
 
     return response()->json([

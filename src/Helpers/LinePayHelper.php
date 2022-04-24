@@ -26,10 +26,6 @@ class LinePayHelper
     $confirm_url = null,
     $cancel_url = null
   ) {
-    \Log::info('$amount');
-    \Log::info($amount);
-    \Log::info('$packages');
-    \Log::info($packages);
     if (!$confirm_url) {
       $confirm_url = env('WEB_URL') . '/line_pay/payment/confirm';
     }

@@ -17,6 +17,8 @@ use Wasateam\Laravelapistone\Models\UserAddress;
  * area_section 地址的子地區
  * user 所屬人員
  * type 列別，可以為null
+ * ~ mailing 通訊地址
+ * ~ delivery 配送地址
  *
  * @authenticated
  */

@@ -902,6 +902,7 @@ class RoutesHelper
         'show',
         'store',
         'update',
+        'cancel',
       ])->shallow();
     }
 

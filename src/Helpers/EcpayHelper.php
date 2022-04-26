@@ -139,11 +139,15 @@ class EcpayHelper
       ],
       "Data"       => $data_encrypt,
     ]);
+    \Log::info('createPayment');
+    \Log::info($res->status());
+    \Log::info($res->json());
     if (!$res->status() == '200') {
       throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('createPayment', '-', 'status not 200');
     }
     $res_json = $res->json();
     $res_data = self::getDecryptData($res_json['Data']);
+    \Log::info(json_encode($res_data));
     if ($res_data->RtnCode != '1') {
       throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('createPayment', $res_data->RtnCode, $res_data->RtnMsg);
     }

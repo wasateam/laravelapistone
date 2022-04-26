@@ -21,7 +21,7 @@ class LinePayController extends Controller
    * Init 付款初始化
    * mode 模式 string Example:test
    * shop_order 訂單 ID id Example:1
-   * 
+   *
    */
   public function payment_init(Request $request)
   {
@@ -39,7 +39,7 @@ class LinePayController extends Controller
 
     $shop_order = ShopHelper::setShopOrderNo($shop_order);
 
-    $amount = $shop_order->order_price;
+    $amount   = $shop_order->order_price;
     $packages = LinePayHelper::getLinePayPackageProductsFromShopOrder($shop_order);
 
     if ($request->has('mode') && $request->mode == 'test') {
@@ -61,7 +61,12 @@ class LinePayController extends Controller
         $packages,
       );
     }
-    return response()->json($res['info']['paymentUrl'], 200);
+    return response()->json([
+      'web'           => $res['info']['paymentUrl']['web'],
+      'app'           => $res['info']['paymentUrl']['app'],
+      'transactionId' => $res['info']['transactionId'],
+      'orderId'       => $shop_order->no,
+    ], 200);
   }
 
   /**

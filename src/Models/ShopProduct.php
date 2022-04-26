@@ -108,6 +108,31 @@ class ShopProduct extends Model
     return $this->belongsToMany(ShopCampaign::class, 'shop_product_shop_campaign', 'shop_product_id', 'shop_campaign_id');
   }
 
+  public function scopeOnshelf($query)
+  {
+    return $query
+      ->where('is_active', 1)
+      ->where(function ($query) {
+        $query->where(function ($query) {
+          $query->where('on_time', '<=', \Carbon\Carbon::now());
+        });
+        $query->orWhereNull('on_time');
+      })
+      ->where(function ($query) {
+        $query->where(function ($query) {
+          $query->where('off_time', '>=', \Carbon\Carbon::now());
+        });
+        $query->orWhereNull('off_time');
+      });
+  }
+
+  public function scopeCollected($query, $user_id)
+  {
+    return $query->whereHas('users', function ($query) use ($user_id) {
+      $query->where('users.id', $user_id);
+    });
+  }
+
   protected $casts = [
     'description' => \Wasateam\Laravelapistone\Casts\HtmlCast::class,
     'cover_image' => \Wasateam\Laravelapistone\Casts\UrlCast::class,

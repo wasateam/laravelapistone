@@ -4,7 +4,6 @@ namespace Wasateam\Laravelapistone\Controllers;
 
 use App\Http\Controllers\Controller;
 use Auth;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
@@ -239,14 +238,7 @@ class ShopProductController extends Controller
       });
     } else if (config('stone.mode') == 'webapi') {
       return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) use ($request) {
-        $snap = $snap->where('is_active', 1)
-          ->where(function ($query) {
-            $query->where(function ($query) {
-              $now = Carbon::now();
-              $query->where('off_time', '>', $now);
-            });
-            $query->orWhereNull('off_time');
-          });
+        $snap = $snap->onshelf();
         if ($request->filled('has_stock')) {
           $snap = $snap->where(function ($query) {
             $query->where('stock_count', '>', 0)
@@ -556,11 +548,7 @@ class ShopProductController extends Controller
   {
     $user = Auth::user();
     return ModelHelper::ws_IndexHandler($this, $request, null, $request->get_all, function ($snap) use ($user) {
-      $snap
-        ->whereHas('users', function ($query) use ($user) {
-          $query->where('users.id', $user->id);
-        });
-      return $snap;
+      return $snap->collected($user->id)->onshelf();
     });
   }
 

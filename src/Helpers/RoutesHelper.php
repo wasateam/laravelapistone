@@ -897,13 +897,14 @@ class RoutesHelper
 
     # Appointment
     if (config('stone.appointment')) {
+      Route::get('appointment/recent', [AppointmentController::class, 'recent']);
       Route::resource('appointment', AppointmentController::class)->only([
         'index',
         'show',
         'store',
         'update',
-        'cancel',
       ])->shallow();
+      Route::post('appointment/{id}/cancel', [AppointmentController::class, 'cancel']);
     }
 
     # Third Party Payment

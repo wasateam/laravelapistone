@@ -208,33 +208,12 @@ class AppointmentController extends Controller
   }
 
   /**
-   * Cancel
-   *
-   * @urlParam  appointment required The ID of appointment. Example: 2
-   */
-  public function cancel($id)
-  {
-    $model = $this->model::find($id);
-    if (!$model) {
-      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('appointment');
-    }
-    $user = Auth::user();
-    if ($model->user_id != $user->id) {
-      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('NotOwnerException');
-    }
-    $model->status = 'cancel';
-    $model->save();
-    return new $this->resource($model);
-  }
-
-  /**
    * Export Excel Signedurl
    *
    */
   public function export_excel_signedurl(Request $request)
   {
     return ModelHelper::ws_ExportExcelSignedurlHandler($this, $request);
-
   }
 
   /**
@@ -269,5 +248,40 @@ class AppointmentController extends Controller
         ];
       }
     );
+  }
+
+  /**
+   * Cancel
+   *
+   * @urlParam  appointment required The ID of appointment. Example: 2
+   */
+  public function cancel($id)
+  {
+    $model = $this->model::find($id);
+    if (!$model) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('appointment');
+    }
+    $user = Auth::user();
+    if ($model->user_id != $user->id) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('NotOwnerException');
+    }
+    $model->status = 'cancel';
+    $model->save();
+    return new $this->resource($model);
+  }
+
+  /**
+   * Recent
+   *
+   */
+  public function recent()
+  {
+    $user  = Auth::user();
+    $model = $this->model::recent($user->id);
+    if ($model) {
+      return new $this->resource($model);
+    } else {
+      return;
+    }
   }
 }

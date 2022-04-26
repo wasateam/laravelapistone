@@ -132,12 +132,13 @@ class ModelHelper
     $model = self::setUUID($model, $setting);
 
     // Save
-    $model->save();
     try {
+      $model->save();
     } catch (\Throwable $th) {
-      return response()->json([
-        'message' => 'data store fail.',
-      ], 400);
+      throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException($setting->name, $request);
+      // return response()->json([
+      //   'message' => 'data store fail.',
+      // ], 400);
     }
 
     $model = self::setHasMany($model, $setting, $request);

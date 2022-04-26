@@ -15,6 +15,9 @@ class SpareHelper
       'xc_task_template-read',
       'xc_task_template-edit',
 
+      'download_info-read',
+      'download_info-edit',
+
       // 'xc_task-read',
       // 'xc_task-edit',
       // 'xc_task-read-my',

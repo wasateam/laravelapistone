@@ -246,6 +246,11 @@ class StoneServiceProvider extends ServiceProvider
         if (config('stone.lottery')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/lottery');
         }
+
+        # DownloadInfo
+        if (config('stone.download_info')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/download_info');
+        }
       }
 
       $this->publishes([

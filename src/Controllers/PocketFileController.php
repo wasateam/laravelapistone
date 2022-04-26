@@ -126,7 +126,7 @@ class PocketFileController extends Controller
    */
   public function public_url($id)
   {
-    $admin = Auth::user();
+    $user = Auth::user();
     $model = $this->model::find($id);
     $mode  = config('stone.mode');
     $acl   = config('stone.storage.acl');

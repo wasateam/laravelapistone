@@ -234,4 +234,14 @@ return [
       ],
     ],
   ],
+  'download_info'      => [
+    'clone_types' => [
+      'financial-statement' => [
+        'title' => '財務報表',
+      ],
+      'monthly-revenue'     => [
+        'title' => '月營收資訊',
+      ],
+    ],
+  ],
 ];

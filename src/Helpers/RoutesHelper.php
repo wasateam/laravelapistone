@@ -21,6 +21,7 @@ use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestAutoReplyController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
+use Wasateam\Laravelapistone\Controllers\DownloadInfoController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\EzAboutUsController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
@@ -263,6 +264,29 @@ class RoutesHelper
         'xc_project',
         ['read', 'edit']
       );
+    }
+
+    # DownloadInfo
+    if (config('stone.download_info')) {
+      Route::group([
+        "middleware" => [
+          "auth:admin",
+          "wasascopes:download_info-read",
+        ],
+      ], function () {
+        Route::get("download_info", [DownloadInfoController::class, 'index']);
+        Route::get("download_info/{id}", [DownloadInfoController::class, 'show']);
+      });
+      Route::group([
+        "middleware" => [
+          "auth:admin",
+          "wasascopes:download_info-edit",
+        ],
+      ], function () {
+        Route::post("download_info", [DownloadInfoController::class, 'store']);
+        Route::patch("download_info/{id}", [DownloadInfoController::class, 'update']);
+        Route::delete("download_info", [DownloadInfoController::class, 'destroy']);
+      });
     }
   }
 
@@ -1289,6 +1313,12 @@ class RoutesHelper
       // Route::resource('lottery_winning_record', LotteryWinningRecordController::class)->only([
       //   'index', 'show', 'store', 'update', 'destroy',
       // ])->shallow();
+    }
+
+    # DownloadInfo
+    if (config('stone.download_info')) {
+      Route::get("download_info", [DownloadInfoController::class, 'index']);
+      Route::get("download_info/{id}", [DownloadInfoController::class, 'show']);
     }
   }
 

@@ -64,7 +64,7 @@ class LinePayController extends Controller
     return response()->json([
       'web'           => $res['info']['paymentUrl']['web'],
       'app'           => $res['info']['paymentUrl']['app'],
-      'transactionId' => $res['info']['transactionId'],
+      'transactionId' => strval($res['info']['transactionId']),
       'orderId'       => $shop_order->no,
     ], 200);
   }

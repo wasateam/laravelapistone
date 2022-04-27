@@ -47,10 +47,10 @@ class GoogleController extends Controller
           $id,
           $title,
           $description,
-          $availability,
-          $condition,
           $price,
+          $condition,
           $link,
+          $availability,
           $image_link,
         ];
       }

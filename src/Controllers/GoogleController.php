@@ -31,7 +31,7 @@ class GoogleController extends Controller
       'image_link',
     ];
 
-    return Excel::download(new \Wasateam\Laravelapistone\Exports\ModelExport(
+    return Excel::raw(new \Wasateam\Laravelapistone\Exports\ModelExport(
       $collection,
       $headings,
       function ($model) {
@@ -54,6 +54,6 @@ class GoogleController extends Controller
           $image_link,
         ];
       }
-    ), 'shop_products.txt', \Maatwebsite\Excel\Excel::TSV);
+    ), \Maatwebsite\Excel\Excel::TSV);
   }
 }

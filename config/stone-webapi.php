@@ -222,4 +222,11 @@ return [
       'url_upload' => true,
     ],
   ],
+  'google'              => [
+    'merchant' => [
+      'products' => [
+        'url_upload' => true,
+      ],
+    ],
+  ],
 ];

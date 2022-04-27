@@ -25,6 +25,7 @@ use Wasateam\Laravelapistone\Controllers\DownloadInfoController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\EzAboutUsController;
 use Wasateam\Laravelapistone\Controllers\FacebookController;
+use Wasateam\Laravelapistone\Controllers\GoogleController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\GeneralUserInviteController;
 use Wasateam\Laravelapistone\Controllers\LinePayController;
@@ -1327,6 +1328,17 @@ class RoutesHelper
       if (config('stone.facebook.catalogs')) {
         if (config('stone.facebook.catalogs.url_upload')) {
           Route::get('facebook/catalogs/url_upload/shop_product', [FacebookController::class, 'catalogs_url_upload_shop_product']);
+        }
+      }
+    }
+
+    # Google
+    if (config('stone.google')) {
+      if (config('stone.google.merchant')) {
+        if (config('stone.google.merchant.products')) {
+          if (config('stone.google.merchant.products.url_upload')) {
+            Route::get('google/merchant/products/url_upload/shop_product', [GoogleController::class, 'merchant_products_url_upload_shop_product']);
+          }
         }
       }
     }

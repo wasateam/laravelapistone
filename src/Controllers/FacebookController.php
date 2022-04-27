@@ -50,14 +50,9 @@ class FacebookController extends Controller
       $collection,
       $headings,
       function ($model) {
-        $id          = $model->id;
-        $title       = $model->name;
-        $description = $model->subtitle ? $model->subtitle : $model->name;
-        \Log::info($model->subtitle);
-        \Log::info($description);
-        if ($description) {
-          \Log::info('ok');
-        }
+        $id                           = $model->id;
+        $title                        = $model->name;
+        $description                  = $model->subtitle ? $model->subtitle : $model->name;
         $availability                 = $model->stock_count > 0 ? 'in stock' : 'out of stock';
         $condition                    = 'new';
         $price                        = $model->price ? $model->price : '0';
@@ -105,16 +100,5 @@ class FacebookController extends Controller
         ];
       }
     ), 'shop_products.csv', \Maatwebsite\Excel\Excel::CSV);
-
-    // return (new \Wasateam\Laravelapistone\Exports\ModelExport(
-    //   $collection,
-    //   $headings,
-    //   function ($model) {
-    //     return [
-    //       $model->id,
-    //     ];
-    //   }
-    // ))->download('shop_products.csv', \Maatwebsite\Excel\Excel::CSV);
-
   }
 }

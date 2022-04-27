@@ -244,4 +244,7 @@ return [
       ],
     ],
   ],
+  'google'             => [
+    'credentials_path' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+  ],
 ];

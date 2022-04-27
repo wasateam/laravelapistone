@@ -216,4 +216,10 @@ return [
       ],
     ],
   ],
+  'facebook'            => [
+    'catalogs' => [
+      'brand'      => 'Show',
+      'url_upload' => true,
+    ],
+  ],
 ];

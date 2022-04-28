@@ -56,7 +56,7 @@ class EcpayHelper
     }
   }
 
-  public static function getInpayInitData($shop_order_no, $trade_date, $order_price, $order_product_names, $user_id, $orderer_email, $orderer_tel, $orderer)
+  public static function getInpayInitData($shop_order, $trade_date, $order_price, $order_product_names, $user_id, $orderer_email, $orderer_tel, $orderer)
   {
     $pay_ways = [];
 
@@ -80,13 +80,20 @@ class EcpayHelper
 
     $pay_ways_str = implode(',', $pay_ways);
 
+    $order_result_url = "";
+    if (config('stone.third_party_payment.ecpay_inpay.threed')) {
+      if (config('stone.third_party_payment.ecpay_inpay.threed.return_url')) {
+        $order_result_url = config('stone.third_party_payment.ecpay_inpay.threed.return_url') . '/' . $shop_order->id;
+      }
+    }
+
     $initData = [
       "MerchantID"        => config('stone.third_party_payment.ecpay_inpay.merchant_id'),
       "RememberCard"      => 1,
       "PaymentUIType"     => 2,
       "ChoosePaymentList" => $pay_ways_str,
       "OrderInfo"         => [
-        "MerchantTradeNo"   => $shop_order_no,
+        "MerchantTradeNo"   => $shop_order->no,
         "MerchantTradeDate" => $trade_date,
         "TotalAmount"       => $order_price,
         "ReturnURL"         => config('stone.third_party_payment.ecpay_inpay.insite_order_return_url'),
@@ -94,7 +101,7 @@ class EcpayHelper
         "ItemName"          => $order_product_names,
       ],
       "CardInfo"          => [
-        "OrderResultURL"    => config('stone.third_party_payment.ecpay_inpay.cardinfo.order_return_url'),
+        "OrderResultURL"    => $order_result_url,
         "CreditInstallment" => "3",
       ],
       "ATMInfo"           => [

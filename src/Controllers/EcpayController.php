@@ -56,8 +56,10 @@ class EcpayController extends Controller
     $user    = Auth::user();
     $user_id = config('stone.auth.uuid') && $user->uuid ? $user->uuid : $user->id;
 
-    $pay_data = EcpayHelper::getInpayInitData($shop_order->no, $trade_date, $order_price, $order_product_names, $user_id, $shop_order->orderer_email, $shop_order->orderer_tel, $shop_order->orderer);
+    $pay_data = EcpayHelper::getInpayInitData($shop_order, $trade_date, $order_price, $order_product_names, $user_id, $shop_order->orderer_email, $shop_order->orderer_tel, $shop_order->orderer);
     $token    = EcpayHelper::getMerchantToken($pay_data);
+    \Log::info('get_inpay_merchant_init');
+    \Log::info($pay_data);
     return response()->json([
       'token'           => $token,
       'MerchantTradeNo' => $pay_data['OrderInfo']['MerchantTradeNo'],
@@ -84,8 +86,14 @@ class EcpayController extends Controller
       ], 400);
     }
     $payment_res = EcpayHelper::createPayment($request->PayToken, $request->MerchantTradeNo);
-    $shop_order  = EcpayHelper::updateShopOrderFromEcpayPaymentRes($payment_res);
-    ShopHelper::createBonusPointFromShopOrder($shop_order);
+    if (config('stone.third_party_payment.ecpay_inpay.threed')) {
+      return response()->json([
+        'ThreeDInfo' => $payment_res->ThreeDInfo,
+      ]);
+    } else {
+      $shop_order = EcpayHelper::updateShopOrderFromEcpayPaymentRes($payment_res);
+      ShopHelper::createBonusPointFromShopOrder($shop_order);
+    }
   }
 
   /**

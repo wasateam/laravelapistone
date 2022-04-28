@@ -155,6 +155,9 @@ return [
   'ez_about_us'         => true,
   'third_party_payment' => [
     'ecpay_inpay' => [
+      'threed'                  => [
+        'return_url' => env('WEB_URL') . env('ECPAY_CARDINFO_3DORDER_RETURN_URL', "/ecpay/payment/threed"),
+      ],
       'pay_way'                 => [
         'credit_card'             => true,
         'credit_card_installment' => true,
@@ -164,7 +167,6 @@ return [
       ],
       'insite_order_return_url' => env('APP_URL') . env('ECPAY_INSITE_ORDER_RETURN_URL', "/api/callback/ecpay/inpay/order"),
       'cardinfo'                => [
-        'order_return_url'  => env('APP_URL') . env('ECPAY_CARDINFO_3DORDER_RETURN_URL', "/api/callback/ecpay/cardinfo/3dorder"),
         'period_return_url' => env('APP_URL') . env('ECPAY_CARDINFO_PERIOD_RETURN_URL', "/api/callback/ecpay/cardinfo/period"),
       ],
       'merchant_id'             => env('ECPAY_MERCHANT_ID', "2000132"),

@@ -312,7 +312,7 @@ class RoutesHelper
       Route::group([
         'prefix' => 'auth',
       ], function () use ($model_name, $auth_scope) {
-        Route::post('/signin', [AuthController::class, 'signin'])->middleware('throttle:10,3');
+        Route::post('/signin', [AuthController::class, 'signin'])->middleware('throttle:60,3');
         if (config('stone.auth.signup')) {
           Route::post('/signup', [AuthController::class, 'signup']);
         }

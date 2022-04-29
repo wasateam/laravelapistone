@@ -218,6 +218,11 @@ class ShopOrderController extends Controller
     'receiver',
     'receiver_tel',
   ];
+  public $search_relationship_fields = [
+    'shop_order_shop_products' => [
+      'name',
+    ],
+  ];
   public $filter_fields = [
     'type',
     'order_type',

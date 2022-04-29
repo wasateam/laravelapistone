@@ -443,6 +443,8 @@ class ShopProductController extends Controller
    */
   public function export_excel(Request $request)
   {
+    \Log::info('$request->all()');
+    \Log::info($request->all());
     $date_arr    = array_map('intval', explode(',', $request->created_at));
     $sales_title = '當日銷售數量';
     if (count($date_arr) > 1) {

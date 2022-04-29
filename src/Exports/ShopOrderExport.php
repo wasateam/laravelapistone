@@ -6,22 +6,20 @@ use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Helpers\TimeHelper;
-use Wasateam\Laravelapistone\Models\ShopOrder;
 
 class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize, WithColumnWidths
 {
 
-  protected $shop_orders;
-  protected $get_all;
-  protected $country_code;
+  protected $controller;
+  protected $request;
 
-  public function __construct($shop_orders, $get_all, $country_code)
+  public function __construct($controller, $request)
   {
-    $this->shop_orders  = $shop_orders;
-    $this->get_all      = $get_all;
-    $this->country_code = $country_code;
+    $this->controller = $controller;
+    $this->request    = $request;
   }
   public function columnWidths(): array
   {
@@ -140,26 +138,19 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize, WithCo
 
   function array(): array
   {
-    $shop_orders = [];
-    if ($this->shop_orders) {
-      $shop_order_ids = array_map('intval', explode(',', $this->shop_orders));
-      $shop_orders    = ShopOrder::whereIn('id', $shop_order_ids)->get();
-    } else if ($this->get_all) {
-      $shop_orders = ShopOrder::all();
-    } else {
-      $shop_orders = ShopOrder::all();
-    }
+    $shop_orders = ModelHelper::ws_IndexSnap($this->controller, $this->request)->get();
+
     $array = [];
     foreach ($shop_orders as $shop_order) {
       $order_products = $shop_order->shop_order_shop_products;
       $area           = $shop_order->area ? $shop_order->area->name : null;
       $area_section   = $shop_order->area_section ? $shop_order->area_section->name : null;
       $timezone       = 'UTC';
-      if ($this->country_code) {
-        $timezone = TimeHelper::getTimeZoneFromCountryCode($this->country_code);
-      } else if (config('stone.timezone')) {
-        $timezone = config('stone.timezone');
-      }
+      // if ($this->country_code) {
+      //   $timezone = TimeHelper::getTimeZoneFromCountryCode($this->country_code);
+      // } else if (config('stone.timezone')) {
+      //   $timezone = config('stone.timezone');
+      // }
       $ship_time                          = ShopHelper::getShopOrderShipTimeRange($shop_order, $timezone);
       $order_original_cost                = ShopHelper::getOrderCost($order_products);
       $created_at                         = ShopHelper::getShopOrderCreatedAt($shop_order, $timezone);

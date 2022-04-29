@@ -404,6 +404,9 @@ class ModelHelper
   public static function ws_ExportExcelSignedurlHandler($controller, $request)
   {
 
+    \Log::info('ws_ExportExcelSignedurlHandler');
+\Log::info($request->all());
+
     // Setting
     $setting = self::getSetting($controller);
 

@@ -416,7 +416,7 @@ class ShopOrderController extends Controller
       if (!$request->has('shop_cart_products') || !is_array($request->shop_cart_products)) {
         throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('shop_cart_products');
       }
-
+      
       $user = Auth::user();
 
       ShopHelper::shopShipTimeLimitCheck($request);
@@ -673,14 +673,16 @@ class ShopOrderController extends Controller
    */
   public function export_excel_signedurl(Request $request)
   {
-    $shop_orders  = $request->has('shop_orders') ? $request->shop_orders : null;
-    $get_all      = $request->has('get_all') ? $request->get_all : 0;
-    $country_code = $request->has('country_code') ? $request->country_code : null;
-    return URL::temporarySignedRoute(
-      'shop_order_export_excel',
-      now()->addMinutes(30),
-      ['shop_orders' => $shop_orders, 'get_all' => $get_all, 'country_code' => $country_code]
-    );
+
+    return ModelHelper::ws_ExportExcelSignedurlHandler($this, $request);
+    // $shop_orders  = $request->has('shop_orders') ? $request->shop_orders : null;
+    // $get_all      = $request->has('get_all') ? $request->get_all : 0;
+    // $country_code = $request->has('country_code') ? $request->country_code : null;
+    // return URL::temporarySignedRoute(
+    //   'shop_order_export_excel',
+    //   now()->addMinutes(30),
+    //   ['shop_orders' => $shop_orders, 'get_all' => $get_all, 'country_code' => $country_code]
+    // );
   }
 
   /**
@@ -689,10 +691,10 @@ class ShopOrderController extends Controller
    */
   public function export_excel(Request $request)
   {
-    $shop_orders  = $request->has('shop_orders') ? $request->shop_orders : null;
-    $get_all      = $request->has('get_all') ? $request->get_all : 0;
-    $country_code = $request->has('country_code') ? $request->country_code : null;
-    return Excel::download(new ShopOrderExport($shop_orders, $get_all, $country_code), 'shop_orders.xlsx');
+    // $shop_orders  = $request->has('shop_orders') ? $request->shop_orders : null;
+    // $get_all      = $request->has('get_all') ? $request->get_all : 0;
+    // $country_code = $request->has('country_code') ? $request->country_code : null;
+    return Excel::download(new ShopOrderExport($this, $request), 'shop_orders.xlsx');
   }
 
   /**

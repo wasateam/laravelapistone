@@ -213,6 +213,8 @@ class EcpayInvoiceHelper
   public static function createInvoice($data)
   {
     $mode         = config('stone.invoice.mode');
+    \Log::info('$data');
+    \Log::info($data);
     $data_encrypt = self::getEncryptData($data, 'invoice');
     if ($mode == 'dev') {
       $post_url = 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/Issue';
@@ -233,6 +235,8 @@ class EcpayInvoiceHelper
     }
 
     $res_json = $res->json();
+    \Log::info('$res_json');
+    \Log::info($res_json);
     if ($res_json['TransCode'] != '1') {
       throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', null, null, $res_json['TransCode'], $res_json['TransMsg']);
     }

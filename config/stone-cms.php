@@ -185,8 +185,8 @@ return [
     'notify_url' => env('APP_URL') . env('ECPAY_INVOICE_NOTIFY_URL', "/api/callback/invoice/notify"),
     'ecpay'      => [
       'merchant_id' => env('INVOICE_ECPAY_MERCHANT_ID', "2000132"),
-      'hash_key'    => env('INVOICE_ECPAY_HASH_KEY', "5294y06JbISpM5x9"),
-      'hash_iv'     => env('INVOICE_ECPAY_HASH_IV', "v77hoKGq4kWxNNIS"),
+      'hash_key'    => env('INVOICE_ECPAY_HASH_KEY', "ejCk326UnaZWKisg"),
+      'hash_iv'     => env('INVOICE_ECPAY_HASH_IV', "q9jcZX8Ib9LM8wYk"),
     ],
   ],
   // multiple layers

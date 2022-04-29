@@ -63,6 +63,7 @@ class EcpayController extends Controller
     return response()->json([
       'token'           => $token,
       'MerchantTradeNo' => $pay_data['OrderInfo']['MerchantTradeNo'],
+      'origin'          => $pay_data,
     ], 200);
   }
 
@@ -89,6 +90,7 @@ class EcpayController extends Controller
     if (config('stone.third_party_payment.ecpay_inpay.threed')) {
       return response()->json([
         'ThreeDInfo' => $payment_res->ThreeDInfo,
+        'origin'     => $payment_res,
       ]);
     } else {
       $shop_order = EcpayHelper::updateShopOrderFromEcpayPaymentRes($payment_res);

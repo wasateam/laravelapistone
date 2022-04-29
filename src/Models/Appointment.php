@@ -24,10 +24,17 @@ class Appointment extends Model
   {
     $now = \Carbon\Carbon::now();
     return static::where('user_id', $user_id)
-      ->orderBy('date', 'desc')
-      ->orderBy('start_time', 'desc')
-      ->whereDate('date', '>=', $now)
-      ->where('start_time', '>=', $now)
+      ->orderBy('date', 'asc')
+      ->orderBy('start_time', 'asc')
+      ->where(function ($query) use ($now) {
+        $query->where(function ($query) use ($now) {
+          $query->whereDate('date', '=', $now);
+          $query->where('start_time', '>=', $now);
+        });
+        $query->orWhere(function ($query) use ($now) {
+          $query->whereDate('date', '>', $now);
+        });
+      })
       ->where(function ($query) {
         $query->whereNotIn('status', ['cancel', 'complete']);
         $query->orWhereNull('status');

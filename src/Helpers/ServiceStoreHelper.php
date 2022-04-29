@@ -149,6 +149,12 @@ class ServiceStoreHelper
   public static function getAppointmentAvailable($service_store, $start_time_str, $end_time_str, $weekday_name)
   {
     $_available = null;
+    if (
+      !$service_store->appointment_availables ||
+      !array_key_exists($weekday_name, $service_store->appointment_availables)
+    ) {
+      return $_available;
+    }
     foreach ($service_store->appointment_availables[$weekday_name] as $available) {
       if (
         $available['start_time'] == $start_time_str &&
@@ -165,6 +171,9 @@ class ServiceStoreHelper
     $reserves              = self::getReservedAppointments($service_store, $start_time_str, $end_time_str);
     $weekday_name          = TimeHelper::getWeekDayNameFromDatetime($date);
     $appointment_available = self::getAppointmentAvailable($service_store, $start_time_str, $end_time_str, $weekday_name);
+    if (!$appointment_available) {
+      throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('no quota for appointment.');
+    }
     if ($appointment_available['count'] <= count($reserves)) {
       throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('no quota for appointment.');
     }

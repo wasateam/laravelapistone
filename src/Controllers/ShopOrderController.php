@@ -359,7 +359,6 @@ class ShopOrderController extends Controller
    * Store
    *
    * @bodyParam user int 人員 Example:1
-   * @bodyParam no string 訂單編號 Example:AC12342
    * @bodyParam orderer string 訂購者 Example:orderer_name
    * @bodyParam orderer_tel string 訂購者電話 Example:0900-000-000
    * @bodyParam orderer_birthday string 訂購者生日 Example:1000-10-10
@@ -380,12 +379,6 @@ class ShopOrderController extends Controller
    * @bodyParam ship_way text 配送方式 Example:ship_way
    * @bodyParam shop_ship_area_setting int 配送地區 Example:1
    * @bodyParam shop_ship_time_setting int 配送時間 Example:1
-   * @bodyParam ship_start_time text 出貨開始時間 Example:10:10
-   * @bodyParam ship_end_time text 出貨結束時間 Example:10:20
-   * @bodyParam ship_remark text 出貨備註 Example:ship_remark
-   * @bodyParam ship_date text 出貨日期 Example:2021-10-11
-   * @bodyParam delivery_date text 配送日期 Example:2021-10-11
-   * @bodyParam ship_status text 出貨狀態 Example:ship_status
    * @bodyParam customer_service_remark text 客服備註 Example:customer_service_remark
    * @bodyParam discounts text  優惠活動 Example:discounts
    * @bodyParam freight text 運費  Example:freight
@@ -405,6 +398,8 @@ class ShopOrderController extends Controller
    * @bodyParam discount_code string 折扣碼 Example:SEXYAPPLE
    * @bodyParam invite_no string 邀請碼 Example:SEXYORANGE
    * @bodyParam source string 來源 Example:web-pc,web-mobile,app
+   * @queryParam area int 地區 No-Example 1
+   * @queryParam area_section int 子地區 No-Example 1
    */
 
   public function store(Request $request, $id = null)
@@ -416,7 +411,7 @@ class ShopOrderController extends Controller
       if (!$request->has('shop_cart_products') || !is_array($request->shop_cart_products)) {
         throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('shop_cart_products');
       }
-      
+
       $user = Auth::user();
 
       ShopHelper::shopShipTimeLimitCheck($request);

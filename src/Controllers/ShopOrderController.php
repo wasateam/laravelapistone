@@ -412,6 +412,14 @@ class ShopOrderController extends Controller
         throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('shop_cart_products');
       }
 
+      if (!$request->has('area')) {
+        throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('area');
+      }
+
+      if (!$request->has('area_section')) {
+        throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('area_section');
+      }
+
       $user = Auth::user();
 
       ShopHelper::shopShipTimeLimitCheck($request);

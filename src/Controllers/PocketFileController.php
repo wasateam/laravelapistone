@@ -62,9 +62,14 @@ class PocketFileController extends Controller
    */
   public function store(Request $request, $id = null)
   {
-    return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
-      $admin                   = Auth::user();
-      $model->created_admin_id = $admin->id;
+    $mode = config('stone.mode');
+    return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) use ($mode) {
+      $user = Auth::user();
+      if ($mode == 'cms') {
+        $model->created_admin_id = $user->id;
+      } else {
+        $model->created_user_id = $user->id;
+      }
       $model->save();
     }, null, true, $this->version_controller);
   }
@@ -112,10 +117,12 @@ class PocketFileController extends Controller
    */
   public function get_upload_url(Request $request)
   {
-    $name = $request->name;
+    $name            = $request->name;
     $storage_service = config('stone.storage.service');
     if ($storage_service == 'gcs') {
-      return GcsHelper::getUploadSignedUrlByNameAndPath($name, 'pocket_file');
+      return GcsHelper::getUploadSignedUrlByNameAndPath($name, 'pocket_file', '*');
+    } else if ($storage_service == 's3') {
+      return S3Helper::getUploadSignedUrlByNameAndPath($name, 'pocket_file', '*', true);
     }
   }
 
@@ -126,10 +133,15 @@ class PocketFileController extends Controller
    */
   public function public_url($id)
   {
-    $user = Auth::user();
+    $user  = Auth::user();
     $model = $this->model::find($id);
     $mode  = config('stone.mode');
     $acl   = config('stone.storage.acl');
+    if (!$acl) {
+      return response()->json([
+        'message' => ':)',
+      ], 200);
+    }
     if ($mode == 'cms' && $model->created_admin_id != $user->id) {
       return response()->json([
         'message' => ':(',

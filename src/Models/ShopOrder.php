@@ -119,7 +119,7 @@ class ShopOrder extends Model
   {
     if (
       $this->status == 'return-part-complete' ||
-      $this->status == 'return-all-complete'
+      $this->status == 'cancel-complete'
     ) {
       return ($this->order_price - $this->return_price);
     } else {

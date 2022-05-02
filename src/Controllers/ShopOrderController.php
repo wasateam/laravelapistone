@@ -42,10 +42,8 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * ~ 成立 established
  * ~ 未成立 not-established
  * ~ 申請部分退訂 return-part-apply
- * ~ 申請全部退訂 return-all-apply
  * ~ 部分退訂完成 return-part-complete
- * ~ 全部退訂完成 return-all-complete
- * ~ 取消 cancel
+ * ~ 申請全部退訂 cancel
  * ~ 取消完成 cancel-complete
  * ~ 訂單完成 complete
  * status_remark 狀態備註

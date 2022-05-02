@@ -29,9 +29,7 @@ class UserInviteHelper
           'established',
           'not-established',
           'return-part-apply',
-          'return-all-apply',
           'return-part-complete',
-          'return-all-complete',
           'complete',
         ]);
     if ($neglect_shop_order_ids) {

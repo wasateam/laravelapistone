@@ -1,31 +1,31 @@
 <?php
 
 return [
-  'mode'               => 'cms',
-  'schedule'           => [
+  'mode'                => 'cms',
+  'schedule'            => [
     'log' => env('STONE_SCHEDULE_LOG', false),
   ],
-  'queue'              => true,
-  'timezone'           => 'Asia/Taipei',
-  'migration'          => true,
-  'storage'            => [
+  'queue'               => true,
+  'timezone'            => 'Asia/Taipei',
+  'migration'           => true,
+  'storage'             => [
     'service' => 'gcs', # gcs, s3, local
     'gcs'     => [
       'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', null),
     ],
     'acl'     => true,
   ],
-  'mail'               => [
+  'mail'                => [
     'service'    => 'gmail', # gmail, surenotify,smtp
     'api_key'    => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
     'test_mail'  => env('MAIL_TEST_MAIL', 'wasalearn@gmail.com'),
   ],
-  'app_url'            => env('APP_URL'),
-  'web_url'            => env('WEB_URL'),
-  'web_api_url'        => env('WEB_API_URL'),
+  'app_url'             => env('APP_URL'),
+  'web_url'             => env('WEB_URL'),
+  'web_api_url'         => env('WEB_API_URL'),
   # Auth
-  'auth'               => [
+  'auth'                => [
     'passwordpatch'  => true,
     'model_name'     => 'admin',
     'model'          => '\Wasateam\Laravelapistone\Models\Admin',
@@ -38,15 +38,15 @@ return [
     'active_check'   => true,
   ],
   # Modules
-  'admin_blur'         => true,
-  'admin_role'         => true,
-  'admin_group'        => true,
-  'admin_system_class' => true,
-  'log'                => true,
-  'post_encode'        => false,
-  'pocket'             => true,
-  'tulpa'              => true,
-  'user'               => [
+  'admin_blur'          => true,
+  'admin_role'          => true,
+  'admin_group'         => true,
+  'admin_system_class'  => true,
+  'log'                 => true,
+  'post_encode'         => false,
+  'pocket'              => true,
+  'tulpa'               => true,
+  'user'                => [
     'export'              => [
       'uuid'             => true,
       'customer_id'      => true,
@@ -93,28 +93,29 @@ return [
       'general' => true,
       'each'    => true,
     ],
+    'per_page'            => 100,
   ],
-  'user_device_token'  => true,
-  'socialite'          => [
+  'user_device_token'   => true,
+  'socialite'           => [
     'facebook' => true,
     'google'   => true,
     'line'     => true,
   ],
-  'web_log'            => true,
-  'ws_blog'            => true,
-  'tag'                => true,
-  'area'               => true,
-  'system_class'       => true,
-  'contact_request'    => [
+  'web_log'             => true,
+  'ws_blog'             => true,
+  'tag'                 => true,
+  'area'                => true,
+  'system_class'        => true,
+  'contact_request'     => [
     'auto_reply' => true,
   ],
-  'locale'             => [
+  'locale'              => [
     'default' => 'zh_tw',
   ],
-  'notification'       => [
+  'notification'        => [
     'notifiable_type_user' => 'Wasateam\Laravelapistone\Models\Admin',
   ],
-  'service_store'      => [
+  'service_store'       => [
     'appointment' => [
       'notify' => [
         'today_appointments'    => [
@@ -126,13 +127,13 @@ return [
       ],
     ],
   ],
-  'appointment'        => [
+  'appointment'         => [
     'export' => true,
   ],
-  'service_plan'       => false,
-  'pin_card'           => false,
-  'calendar_highlight' => false,
-  'shop'               => [
+  'service_plan'        => false,
+  'pin_card'            => false,
+  'calendar_highlight'  => false,
+  'shop'                => [
     'uuid'            => true,
     'pre_order'       => true,
     'current'         => true,
@@ -178,7 +179,7 @@ return [
       'time_limit' => 600,
     ],
   ],
-  'invoice'            => [
+  'invoice'             => [
     'service'    => 'ecpay',
     'mode'       => env('INVOICE_MODE', 'dev'),
     'delay'      => 3,
@@ -190,16 +191,16 @@ return [
     ],
   ],
   // multiple layers
-  'featured_class'     => true,
+  'featured_class'      => true,
   #
-  'app'                => false,
-  'privacy_terms'      => true,
-  'ez_about_us'        => true,
-  'country_code'       => true,
-  'finance'            => [
+  'app'                 => false,
+  'privacy_terms'       => true,
+  'ez_about_us'         => true,
+  'country_code'        => true,
+  'finance'             => [
     'payment_request' => true,
   ],
-  'acumatica'          => [
+  'acumatica'           => [
     'app_mode'      => true,
     'token_url'     => env('ACUMATICA_TOKEN_URL'),
     'api_url'       => env('ACUMATICA_API_URL'),
@@ -209,21 +210,21 @@ return [
     'password'      => env('ACUMATICA_PASSWORD'),
   ],
   //banner
-  'news_banner'        => true,
-  'news'               => true,
+  'news_banner'         => true,
+  'news'                => true,
   //頁面設定
-  'page_setting'       => true,
+  'page_setting'        => true,
   //頁面彈跳視窗
-  'page_cover'         => true,
-  'xc_work_type'       => true,
-  'xc_task'            => true,
-  'xc_milestone'       => true,
-  'xc_project'         => true,
+  'page_cover'          => true,
+  'xc_work_type'        => true,
+  'xc_task'             => true,
+  'xc_milestone'        => true,
+  'xc_project'          => true,
   //點數系統
-  'bonus_point'        => [
+  'bonus_point'         => [
     'shop_freight_deduct' => true,
   ],
-  'lottery'            => [
+  'lottery'             => [
     'recaptcha'   => [
       'secret' => '6Lf2LWQfAAAAANb1hN-HihBNGo5G7N7CD8uBcRMc',
     ],
@@ -234,7 +235,7 @@ return [
       ],
     ],
   ],
-  'download_info'      => [
+  'download_info'       => [
     'clone_types' => [
       'financial-statement' => [
         'title' => '財務報表',
@@ -244,7 +245,7 @@ return [
       ],
     ],
   ],
-  'google'             => [
+  'google'              => [
     'credentials_path' => env('GOOGLE_APPLICATION_CREDENTIALS'),
   ],
   'third_party_payment' => [

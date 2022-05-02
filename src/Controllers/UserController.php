@@ -142,6 +142,11 @@ class UserController extends Controller
     if (config('stone.acumatica')) {
       $this->input_fields[] = 'acumatica_id';
     }
+    if (config('stone.user')) {
+      if (config('stone.user.per_page')) {
+        $this->paginate = config('stone.user.per_page');
+      }
+    }
   }
 
   /**

@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Wasateam\Laravelapistone\Models\LinepayTransactionIdDeepLink;
 
 /**
  * 用來串接 LINE Pay 服務的動作
@@ -23,14 +24,23 @@ class LinePayHelper
     $currency = 'TWD',
     $orderId = null,
     $packages = null,
+    $source = null,
     $confirm_url = null,
     $cancel_url = null
   ) {
     if (!$confirm_url) {
-      $confirm_url = env('WEB_URL') . '/line_pay/payment/confirm';
+      if ($source && $source == 'app') {
+        $confirm_url = env('WEB_URL') . '/line_pay/payment/app/confirm';
+      } else {
+        $confirm_url = env('WEB_URL') . '/line_pay/payment/confirm';
+      }
     }
     if (!$cancel_url) {
-      $cancel_url = env('WEB_URL') . '/line_pay/payment/cancel';
+      if ($source && $source == 'app') {
+        $cancel_url = env('WEB_URL') . '/line_pay/payment/app/cancel';
+      } else {
+        $cancel_url = env('WEB_URL') . '/line_pay/payment/cancel';
+      }
     }
     $post_url     = self::getBaseUrl() . '/v3/payments/request';
     $request_body = [
@@ -189,5 +199,29 @@ class LinePayHelper
     } else {
       return self::$url_prod;
     }
+  }
+
+  public static function createTransactionIdDeepLink($transaction_id, $deep_link)
+  {
+    $model = LinepayTransactionIdDeepLink::where('transaction_id', $transaction_id)
+      ->first();
+    if (!$model) {
+      $model                 = new LinepayTransactionIdDeepLink;
+      $model->transaction_id = $transaction_id;
+    }
+    $model->deep_link = $deep_link;
+    $model->save();
+    return $model;
+  }
+
+  public static function getDeepLinkFromTransactionId($transaction_id)
+  {
+    $model = LinepayTransactionIdDeepLink::where('transaction_id', $transaction_id)
+      ->first();
+    if (!$model) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('LinepayTransactionIdDeepLink');
+    }
+    $deep_link = $model->deep_link;
+    return $deep_link;
   }
 }

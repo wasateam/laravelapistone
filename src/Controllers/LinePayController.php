@@ -21,6 +21,8 @@ class LinePayController extends Controller
    * Init 付款初始化
    * mode 模式 string Example:test
    * shop_order 訂單 ID id Example:1
+   * source 來源 string Example: web,app
+   * deep_link Deep Link for App Example: wasa://hahaha/aaaa
    *
    */
   public function payment_init(Request $request)
@@ -50,6 +52,7 @@ class LinePayController extends Controller
         'TWD',
         $shop_order->no,
         $packages,
+        $request->source,
         $confirm_url,
         $cancel_url
       );
@@ -59,8 +62,14 @@ class LinePayController extends Controller
         'TWD',
         $shop_order->no,
         $packages,
+        $request->source,
       );
     }
+
+    if ($request->has('deep_link')) {
+      LinePayHelper::createTransactionIdDeepLink($res['info']['transactionId'], $request->deep_link);
+    }
+
     return response()->json([
       'web'           => $res['info']['paymentUrl']['web'],
       'app'           => $res['info']['paymentUrl']['app'],
@@ -88,6 +97,29 @@ class LinePayController extends Controller
     ShopHelper::createBonusPointFromShopOrder($shop_order);
 
     return response()->json($shop_order, 200);
+  }
+
+  /**
+   * 確認付款 for APP
+   */
+  public function payment_app_confirm(Request $request)
+  {
+    if (!$request->has('transaction_id')) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('transaction_id');
+    }
+    if (!$request->has('order_id')) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('order_id');
+    }
+    $shop_order = ShopOrder::where('no', $request->order_id)->first();
+    if (!$shop_order) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
+    }
+    $shop_order = LinePayHelper::payment_confirm($request->transaction_id, $shop_order);
+    ShopHelper::createBonusPointFromShopOrder($shop_order);
+
+    $deep_link = LinePayHelper::getDeepLinkFromTransactionId($request->transaction_id);
+
+    return response()->json($deep_link, 200);
   }
 
   /**

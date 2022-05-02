@@ -247,4 +247,26 @@ return [
   'google'             => [
     'credentials_path' => env('GOOGLE_APPLICATION_CREDENTIALS'),
   ],
+  'third_party_payment' => [
+    'ecpay_inpay' => [
+      'threed'                  => [
+        'return_url' => env('WEB_URL') . env('ECPAY_CARDINFO_3DORDER_RETURN_URL', "/ecpay/payment/threed"),
+      ],
+      'pay_way'                 => [
+        'credit_card'             => true,
+        'credit_card_installment' => true,
+        'atm'                     => true,
+        'supermarket_code'        => true,
+        'supermarket_barcode'     => true,
+      ],
+      'insite_order_return_url' => env('APP_URL') . env('ECPAY_INSITE_ORDER_RETURN_URL', "/api/callback/ecpay/inpay/order"),
+      'cardinfo'                => [
+        'period_return_url' => env('APP_URL') . env('ECPAY_CARDINFO_PERIOD_RETURN_URL', "/api/callback/ecpay/cardinfo/period"),
+      ],
+      'merchant_id'             => env('ECPAY_MERCHANT_ID', "2000132"),
+      'hash_key'                => env('ECPAY_HASH_KEY', "5294y06JbISpM5x9"),
+      'hash_iv'                 => env('ECPAY_HASH_IV', "v77hoKGq4kWxNNIS"),
+    ],
+    'line_pay'    => true,
+  ],
 ];

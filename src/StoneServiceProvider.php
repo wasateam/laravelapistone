@@ -251,6 +251,14 @@ class StoneServiceProvider extends ServiceProvider
         if (config('stone.download_info')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/download_info');
         }
+
+        # Linepay
+        if (
+          config('stone.third_party_payment') &&
+          config('stone.third_party_payment.line_pay')
+        ) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/line_pay');
+        }
       }
 
       $this->publishes([

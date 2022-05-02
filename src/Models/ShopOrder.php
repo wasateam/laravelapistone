@@ -139,7 +139,7 @@ class ShopOrder extends Model
   public function getFreightDeductAttribute()
   {
     if ($this->freight) {
-      return ShopHelper::getFreight();
+      return ShopHelper::getFreight() - $this->freight;
     } else {
       return 0;
     }

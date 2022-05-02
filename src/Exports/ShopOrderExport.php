@@ -146,11 +146,11 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize, WithCo
       $area           = $shop_order->area ? $shop_order->area->name : null;
       $area_section   = $shop_order->area_section ? $shop_order->area_section->name : null;
       $timezone       = 'UTC';
-      // if ($this->country_code) {
-      //   $timezone = TimeHelper::getTimeZoneFromCountryCode($this->country_code);
-      // } else if (config('stone.timezone')) {
-      //   $timezone = config('stone.timezone');
-      // }
+      if ($this->request && $this->request->country_code) {
+        $timezone = TimeHelper::getTimeZoneFromCountryCode($this->request->country_code);
+      } else if (config('stone.timezone')) {
+        $timezone = config('stone.timezone');
+      }
       $ship_time                          = ShopHelper::getShopOrderShipTimeRange($shop_order, $timezone);
       $order_original_cost                = ShopHelper::getOrderCost($order_products);
       $created_at                         = ShopHelper::getShopOrderCreatedAt($shop_order, $timezone);
@@ -209,9 +209,9 @@ class ShopOrderExport implements FromArray, WithHeadings, ShouldAutoSize, WithCo
             $shop_order->invite_no,
             $shop_order->invite_no_deduct,
             null,
-            null, //實收金額（原發票金額
+            null, 
             $shop_order->order_price,
-            $shop_order->status_remark,
+            $shop_order->customer_service_remark,
             $shop_order->pay_type_text,
             $return_count, //退刷數量
             $return_count * $order_product->price, //退刷售價小計

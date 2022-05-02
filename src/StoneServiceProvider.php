@@ -259,6 +259,11 @@ class StoneServiceProvider extends ServiceProvider
         ) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/line_pay');
         }
+
+        # Invoice
+        if (config('stone.invoice')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/invoice');
+        }
       }
 
       $this->publishes([

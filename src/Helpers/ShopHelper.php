@@ -12,6 +12,7 @@ use Wasateam\Laravelapistone\Models\Area;
 use Wasateam\Laravelapistone\Models\AreaSection;
 use Wasateam\Laravelapistone\Models\BonusPointRecord;
 use Wasateam\Laravelapistone\Models\GeneralContent;
+use Wasateam\Laravelapistone\Models\InvoiceJob;
 use Wasateam\Laravelapistone\Models\ShopCampaign;
 use Wasateam\Laravelapistone\Models\ShopCampaignShopOrder;
 use Wasateam\Laravelapistone\Models\ShopCart;
@@ -1318,7 +1319,7 @@ class ShopHelper
     $bonus_point_record->save();
   }
 
-  public static function createInvoice($shop_order, $ori_shop_order = null)
+  public static function readyToCreateInvoice($shop_order, $ori_shop_order = null)
   {
     if ($shop_order->order_price <= 0) {
       return;
@@ -1338,6 +1339,27 @@ class ShopHelper
         return;
       }
     }
+    if (config('stone.invoice')) {
+      if (config('stone.invoice.delay')) {
+        self::createInvoiceJob($shop_order, config('stone.invoice.delay'));
+      } else {
+        $shop_order = self::createInvoice($shop_order);
+      }
+    }
+    return $shop_order;
+  }
+
+  public static function createInvoiceJob($shop_order, $delay_days)
+  {
+    $model                = new InvoiceJob;
+    $model->status        = 'waiting';
+    $model->invoice_date  = \Carbon\Carbon::now()->addDays($delay_days);
+    $model->shop_order_id = $shop_order->id;
+    $model->save();
+  }
+
+  public static function createInvoice($shop_order)
+  {
     if (config('stone.invoice')) {
       if (config('stone.invoice.service') == 'ecpay') {
         try {
@@ -1380,51 +1402,49 @@ class ShopHelper
             $CustomerName           = $invoice_title;
             $CustomerIdentifier     = $invoice_uniform_number;
           }
-          if (config('stone.invoice.delay')) {
-            $DelayDay  = config('stone.invoice.delay');
-            $post_data = EcpayInvoiceHelper::getDelayInvoicePostData(
-              $CustomerID,
-              $CustomerIdentifier,
-              $CustomerName,
-              $CustomerAddr,
-              $CustomerPhone,
-              $CustomerEmail,
-              $Print,
-              $Donation,
-              $CarrierType,
-              $CarrierNum,
-              $TaxType,
-              $SalesAmount,
-              $Items,
-              $DelayDay,
-              $Tsr,
-            );
-            $invoice_res                = EcpayInvoiceHelper::createDelayInvoice($post_data);
-            $shop_order->invoice_status = 'waiting';
-            $shop_order->save();
-          } else {
-            $post_data = EcpayInvoiceHelper::getInvoicePostData(
-              $CustomerID,
-              $CustomerIdentifier,
-              $CustomerName,
-              $CustomerAddr,
-              $CustomerPhone,
-              $CustomerEmail,
-              $Print,
-              $Donation,
-              $CarrierType,
-              $CarrierNum,
-              $TaxType,
-              $SalesAmount,
-              $Items
-            );
-            $invoice_res                = EcpayInvoiceHelper::createInvoice($post_data);
-            $shop_order->invoice_status = 'done';
-            $shop_order->invoice_number = $invoice_res->InvoiceNo;
-            $shop_order->save();
-          }
-          return response()->json($shop_order, 200);
-          //code...
+          // if (config('stone.invoice.delay')) {
+          //   $DelayDay  = config('stone.invoice.delay');
+          //   $post_data = EcpayInvoiceHelper::getDelayInvoicePostData(
+          //     $CustomerID,
+          //     $CustomerIdentifier,
+          //     $CustomerName,
+          //     $CustomerAddr,
+          //     $CustomerPhone,
+          //     $CustomerEmail,
+          //     $Print,
+          //     $Donation,
+          //     $CarrierType,
+          //     $CarrierNum,
+          //     $TaxType,
+          //     $SalesAmount,
+          //     $Items,
+          //     $DelayDay,
+          //     $Tsr,
+          //   );
+          //   $invoice_res                = EcpayInvoiceHelper::createDelayInvoice($post_data);
+          //   $shop_order->invoice_status = 'waiting';
+          //   $shop_order->save();
+          // } else {
+          $post_data = EcpayInvoiceHelper::getInvoicePostData(
+            $CustomerID,
+            $CustomerIdentifier,
+            $CustomerName,
+            $CustomerAddr,
+            $CustomerPhone,
+            $CustomerEmail,
+            $Print,
+            $Donation,
+            $CarrierType,
+            $CarrierNum,
+            $TaxType,
+            $SalesAmount,
+            $Items
+          );
+          $invoice_res                = EcpayInvoiceHelper::createInvoice($post_data);
+          $shop_order->invoice_status = 'done';
+          $shop_order->invoice_number = $invoice_res->InvoiceNo;
+          $shop_order->save();
+          return $shop_order;
         } catch (\Throwable $th) {
           $shop_order->invoice_status = 'fail';
           $shop_order->save();

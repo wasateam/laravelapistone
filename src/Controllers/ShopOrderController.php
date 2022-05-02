@@ -579,7 +579,7 @@ class ShopOrderController extends Controller
     $ori_model = $this->model::find($id);
     ShopHelper::shopOrderShipStatusModifyCheck($ori_model, $request);
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
-      ShopHelper::createInvoice($model, $ori_model);
+      ShopHelper::readyToCreateInvoice($model, $ori_model);
     });
   }
 
@@ -805,7 +805,7 @@ class ShopOrderController extends Controller
       $ori_model = $this->model::find($id);
       ShopHelper::shopOrderShipStatusModifyCheck($ori_model, $request);
       ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
-        ShopHelper::createInvoice($model, $ori_model);
+        ShopHelper::readyToCreateInvoice($model, $ori_model);
       });
     }
     return $this->resource_for_collection::collection($this->model::find($ids));
@@ -822,7 +822,7 @@ class ShopOrderController extends Controller
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
     }
     if ($shop_order->pay_status == 'paid' && $shop_order->status == 'established') {
-      ShopHelper::createInvoice($shop_order);
+      ShopHelper::readyToCreateInvoice($shop_order);
     }
   }
 
@@ -841,7 +841,7 @@ class ShopOrderController extends Controller
       $shop_order->status == 'cancel-complete' ||
       $shop_order->ship_status == 'shipped'
     ) {
-      ShopHelper::createInvoice($shop_order);
+      ShopHelper::readyToCreateInvoice($shop_order);
       $shop_order = $this->model::find($id);
       return $shop_order;
     }

@@ -25,9 +25,10 @@ use Wasateam\Laravelapistone\Controllers\DownloadInfoController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\EzAboutUsController;
 use Wasateam\Laravelapistone\Controllers\FacebookController;
-use Wasateam\Laravelapistone\Controllers\GoogleController;
 use Wasateam\Laravelapistone\Controllers\FeaturedClassController;
 use Wasateam\Laravelapistone\Controllers\GeneralUserInviteController;
+use Wasateam\Laravelapistone\Controllers\GoogleController;
+use Wasateam\Laravelapistone\Controllers\InvoiceJobController;
 use Wasateam\Laravelapistone\Controllers\LinePayController;
 use Wasateam\Laravelapistone\Controllers\LocaleController;
 use Wasateam\Laravelapistone\Controllers\LotteryParticipantController;
@@ -863,6 +864,13 @@ class RoutesHelper
       ])->shallow();
 
       Route::resource('lottery_winning_record', LotteryWinningRecordController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
+
+    # Invoice
+    if (config('stone.invoice')) {
+      Route::resource('invoice_job', InvoiceJobController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }

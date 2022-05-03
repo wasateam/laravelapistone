@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\EcpayInvoiceHelper;
+use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\TimeHelper;
 use Wasateam\Laravelapistone\Helpers\UserInviteHelper;
 use Wasateam\Laravelapistone\Models\Area;
@@ -1560,12 +1561,12 @@ class ShopHelper
     return $spec_name;
   }
 
-  public static function getShopProductSalesCount($shop_product_id, $start_date, $end_date)
+  public static function getShopProductSalesCount($shop_product_id, $shop_order_request)
   {
     $shop_order_shop_products = ShopOrderShopProduct::where('shop_product_id', $shop_product_id)
-      ->whereDate('created_at', '>=', $start_date)
-      ->whereDate('created_at', '<=', $end_date)
-      ->whereHas('shop_order', function ($query) {
+      ->whereHas('shop_order', function ($query) use ($shop_order_request) {
+        $setting = ModelHelper::getSetting(new \Wasateam\Laravelapistone\Controllers\ShopOrderController);
+        $query = ModelHelper::indexGetSnap($setting, $shop_order_request, null, false, $query);
         $query->whereIn('status',
           [
             'established',

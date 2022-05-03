@@ -751,7 +751,7 @@ class ModelHelper
     }
   }
 
-  public static function indexGetSnap($setting, $request, $parent_id, $limit = true)
+  public static function indexGetSnap($setting, $request, $parent_id, $limit = true, $snap = null)
   {
     // Variable
     $order_by   = ($request != null) && $request->filled('order_by') ? $request->order_by : $setting->order_by;
@@ -763,7 +763,9 @@ class ModelHelper
     $excludes   = ($request != null) && $request->filled('excludes') ? $request->excludes : null;
 
     // Snap
-    $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many);
+    if (!$snap) {
+      $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many);
+    }
 
     // Order
     if (in_array($order_by, $setting->order_fields)) {

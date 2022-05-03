@@ -443,8 +443,6 @@ class ShopProductController extends Controller
    */
   public function export_excel(Request $request)
   {
-    \Log::info('$request->all()');
-    \Log::info($request->all());
     $date_arr    = array_map('intval', explode(',', $request->created_at));
     $sales_title = '當日銷售數量';
     if (count($date_arr) > 1) {
@@ -472,8 +470,8 @@ class ShopProductController extends Controller
       function ($model) use ($request) {
         $weight      = $model->weight_capacity . ' ' . $model->weight_capacity_unit;
         $date_arr    = explode(',', $request->created_at);
-        $sales_count = ShopHelper::getShopProductSalesCount($model->id, $date_arr[0], $date_arr[1]);
-        $map         = [
+        $sales_count = ShopHelper::getShopProductSalesCount($model->id, new Request((array) json_decode($request->shop_order_request)));
+        $map = [
           $model->uuid,
           $model->purchaser,
           $model->no,

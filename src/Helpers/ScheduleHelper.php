@@ -27,5 +27,10 @@ class ScheduleHelper
         }
       }
     }
+    if (config('stone.invoice')) {
+      if (config('stone.invoice.delay')) {
+        \Wasateam\Laravelapistone\Jobs\CheckDelayInvoiceJob::dispatch();
+      }
+    }
   }
 }

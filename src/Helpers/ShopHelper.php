@@ -1342,6 +1342,8 @@ class ShopHelper
     if (config('stone.invoice')) {
       if (config('stone.invoice.delay')) {
         self::createInvoiceJob($shop_order, config('stone.invoice.delay'));
+        $shop_order->invoice_status = 'waiting';
+        $shop_order->save();
       } else {
         $shop_order = self::createInvoice($shop_order);
       }

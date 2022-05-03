@@ -1352,11 +1352,11 @@ class ShopHelper
     return $shop_order;
   }
 
-  public static function createInvoiceJob($shop_order, $delay_days)
+  public static function createInvoiceJob($shop_order, $delay_minutes)
   {
     $model                = new InvoiceJob;
     $model->status        = 'waiting';
-    $model->invoice_date  = \Carbon\Carbon::now()->addDays($delay_days);
+    $model->invoice_date  = \Carbon\Carbon::now()->addMinutes($delay_minutes);
     $model->shop_order_id = $shop_order->id;
     $model->save();
   }

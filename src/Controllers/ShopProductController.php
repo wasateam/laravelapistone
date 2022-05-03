@@ -452,6 +452,8 @@ class ShopProductController extends Controller
     $headings = [
       "系統流水號",
       "採購姓名",
+      "內部主分類",
+      "內部子分類",
       "商品編號",
       "商品名稱",
       "規格",
@@ -472,8 +474,10 @@ class ShopProductController extends Controller
         $date_arr    = explode(',', $request->created_at);
         $sales_count = ShopHelper::getShopProductSalesCount($model->id, new Request((array) json_decode($request->shop_order_request)));
         $map = [
-          $model->uuid,
+          $model->id,
           $model->purchaser,
+          $model->store_house_class,
+          $model->store_house_subclass,
           $model->no,
           $model->name,
           $model->spec,

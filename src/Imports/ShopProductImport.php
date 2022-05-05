@@ -19,8 +19,8 @@ class ShopProductImport implements ToCollection
       if ($data[0] == '系統流水號') {
         continue;
       }
-      if ($data[2]) {
-        $shop_product = ShopProduct::where('no', $data[4])->first();
+      if ($data[0]) {
+        $shop_product = ShopProduct::find($data[0]);
         if ($shop_product) {
           $import_record                  = new ShopProductImportRecord;
           $import_record->shop_product_id = $shop_product->id;
@@ -29,6 +29,7 @@ class ShopProductImport implements ToCollection
           $import_record->stock_count     = $data[10];
           $import_record->storage_space   = $data[11];
           $import_record->save();
+          $shop_product->no          = $data[4];
           $shop_product->name          = $data[5];
           $shop_product->cost          = $data[8];
           $shop_product->price         = $data[9];

@@ -438,13 +438,16 @@ class ModelHelper
     return Excel::download(new \Wasateam\Laravelapistone\Exports\ModelExport($collection, $headings, $map), $setting->name . '.xlsx');
   }
 
-  public static function ws_OrderGetHandler($controller)
+  public static function ws_OrderGetHandler($controller,$request)
   {
 
     // Setting
     $setting = self::getSetting($controller);
 
-    $collection = $setting->model::orderBy('sq')->get();
+    // Snap
+    $snap = self::indexGetSnap($setting, $request, null, false);
+
+    $collection = $snap->orderBy('sq')->get();
 
     return $setting->resource_for_order::collection($collection);
   }

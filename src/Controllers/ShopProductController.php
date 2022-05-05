@@ -174,7 +174,7 @@ class ShopProductController extends Controller
     'no' => "required|unique:shop_products",
   ];
   public $uuid     = false;
-  public $paginate = 15;
+  public $paginate = 100;
 
   public function __construct()
   {

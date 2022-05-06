@@ -51,6 +51,7 @@ class ShopOrderShopProduct_R1 extends JsonResource
         'price'                                      => $this->price,
         'spec'                                       => $this->spec,
         'weight_capacity'                            => $this->weight_capacity,
+        'weight_capacity_unit'                       => $this->weight_capacity_unit,
         'cover_image'                                => $this->cover_image,
         'count'                                      => $this->count,
         'original_count'                             => $this->original_count,

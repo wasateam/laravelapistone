@@ -198,7 +198,7 @@
     padding: 0px 24px;
 }
 .wrap {
-    border: 1px solid #eaedf1;
+    border: 1px solid #222;
 }
 .header {
     height: 32px;
@@ -224,7 +224,7 @@
     font-size: 12px;
 }
 td {
-    border: 1px solid #eaedf1;
+    border: 1px solid #222;
 }
 h1 {
     font-size: 14px;

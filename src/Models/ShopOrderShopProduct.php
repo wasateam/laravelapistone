@@ -45,7 +45,16 @@ class ShopOrderShopProduct extends Model
     return $this->hasMany(ShopOrderShopProductSpecSettingItem::class, 'shop_order_shop_product_id');
   }
 
-  public function getWeightCapacityAttribute()
+  public function getWeightCapacityUAttribute()
+  {
+    if ($this->shop_product) {
+      return $this->shop_product->weight_capacity;
+    } else {
+      return;
+    }
+  }
+
+  public function getWeightCapacityUnitAttribute()
   {
     if ($this->shop_product) {
       return $this->shop_product->weight_capacity_unit;

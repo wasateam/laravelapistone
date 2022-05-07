@@ -12,7 +12,11 @@ class ShopClass extends Model
 
   public function shop_subclasses()
   {
-    return $this->hasMany(ShopSubclass::class)->orderBy('sq');
+    if (config('stone.mode') == 'cms') {
+      return $this->hasMany(ShopSubclass::class)->orderBy('sq');
+    } else if (config('stone.mode') == 'webapi') {
+      return $this->hasMany(ShopSubclass::class)->where('is_active', 1)->orderBy('sq');
+    }
   }
 
   protected $casts = [

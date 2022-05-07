@@ -23,6 +23,7 @@ class ShopSubclass extends JsonResource
         'sq'         => $this->sq,
         'type'       => $this->type,
         'icon'       => $this->icon,
+        'is_active'  => $this->is_active,
         'shop_class' => new ShopClass_R1($this->shop_class),
       ];
       if (config('stone.shop.uuid')) {

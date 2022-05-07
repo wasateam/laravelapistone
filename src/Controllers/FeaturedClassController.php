@@ -17,6 +17,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * sequence
  * is_outstanding 是否為精選中的精選
  * order_type 訂單類型
+ * is_active 是否顯示於前台
  */
 class FeaturedClassController extends Controller
 {
@@ -29,10 +30,12 @@ class FeaturedClassController extends Controller
     'sequence',
     'is_outstanding',
     'order_type',
+    'is_active',
   ];
   public $filter_fields = [
     'order_type',
     'is_outstanding',
+    'is_active',
   ];
   public $order_fields = [
     'sequence',
@@ -60,7 +63,14 @@ class FeaturedClassController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id);
+    } else if (config('stone.mode') == 'webapi') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
+        $snap = $snap->where('is_active', 1);
+        return $snap;
+      });
+    }
   }
 
   /**

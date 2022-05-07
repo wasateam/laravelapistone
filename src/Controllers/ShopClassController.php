@@ -19,6 +19,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * order_type 訂單類型
  * ~ next-day 隔日配
  * ~ pro-order 預購
+ * is_active 是否顯示於前台
  */
 class ShopClassController extends Controller
 {
@@ -32,12 +33,14 @@ class ShopClassController extends Controller
     'type',
     'icon',
     'order_type',
+    'is_active',
   ];
   public $search_fields = [
     'name',
   ];
   public $filter_fields = [
     'order_type',
+    'is_active',
   ];
   public $belongs_to = [
   ];
@@ -72,7 +75,10 @@ class ShopClassController extends Controller
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_IndexHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      return ModelHelper::ws_IndexHandler($this, $request, $id, true);
+      return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
+        $snap = $snap->where('is_active', 1);
+        return $snap;
+      });
     }
   }
 

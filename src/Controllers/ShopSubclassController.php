@@ -16,6 +16,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  * sq 排序
  * type 分類
  * icon 圖片
+ * is_active 是否顯示於前台
  *
  * @authenticated
  */
@@ -29,12 +30,17 @@ class ShopSubclassController extends Controller
     'sq',
     'type',
     'icon',
+    'is_active',
   ];
   public $belongs_to = [
     'shop_class',
   ];
   public $filter_belongs_to = [
     'shop_class',
+  ];
+  public $filter_fields = [
+    'order_type',
+    'is_active',
   ];
   public $order_fields = [
     'sq',
@@ -57,7 +63,14 @@ class ShopSubclassController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id);
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id);
+    } else if (config('stone.mode') == 'webapi') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
+        $snap = $snap->where('is_active', 1);
+        return $snap;
+      });
+    }
   }
 
   /**

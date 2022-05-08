@@ -1393,9 +1393,13 @@ class ShopHelper
               $CarrierType = '2';
               $CarrierNum  = $invoice_carrier_number;
             } else if ($invoice_carrier_type == 'email') {
+              $customer_email = $invoice_carrier_number;
+              if(!$invoice_carrier_number && $shop_order->user){
+                $customer_email = $shop_order->user->email;
+              }
               $CarrierType   = '1';
               $CarrierNum    = '';
-              $CustomerEmail = $invoice_carrier_number;
+              $CustomerEmail = $customer_email;
             }
           } else if ($invoice_type == 'triple') {
             $invoice_title          = $shop_order->invoice_title;

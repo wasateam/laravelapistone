@@ -14,7 +14,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  *
  * name 名稱
  * icon
- * sequence
+ * sq
  * is_outstanding 是否為精選中的精選
  * order_type 訂單類型
  * is_active 是否顯示於前台
@@ -27,7 +27,7 @@ class FeaturedClassController extends Controller
   public $input_fields = [
     'name',
     'icon',
-    'sequence',
+    'sq',
     'is_outstanding',
     'order_type',
     'is_active',
@@ -38,9 +38,9 @@ class FeaturedClassController extends Controller
     'is_active',
   ];
   public $order_fields = [
-    'sequence',
+    'sq',
   ];
-  public $order_by  = "sequence";
+  public $order_by  = "sq";
   public $order_way = "asc";
   public $uuid      = false;
 
@@ -78,7 +78,7 @@ class FeaturedClassController extends Controller
    *
    * @bodyParam name string Example:name
    * @bodyParam icon string No-example
-   * @bodyParam sequence string Example:123
+   * @bodyParam sq string Example:123
    * @bodyParam is_outstanding boolean Example:1
    * @bodyParam order_type string Example:pre-order
    */
@@ -103,7 +103,7 @@ class FeaturedClassController extends Controller
    * @urlParam  featured_class required The ID of featured_class. Example: 1
    * @bodyParam name string Example:name
    * @bodyParam icon string No-example
-   * @bodyParam sequence string Example:123
+   * @bodyParam sq string Example:123
    * @bodyParam is_outstanding boolean Example:1
    * @bodyParam order_type string Example:pre-order
    */
@@ -120,5 +120,23 @@ class FeaturedClassController extends Controller
   public function destroy($id)
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
+  }
+
+  /**
+   * Order Get
+   *
+   */
+  public function order_get(Request $request)
+  {
+    return ModelHelper::ws_OrderGetHandler($this, $request);
+  }
+
+  /**
+   * Order Patch
+   *
+   */
+  public function order_patch(Request $request)
+  {
+    return ModelHelper::ws_OrderPatchHandler($this, $request);
   }
 }

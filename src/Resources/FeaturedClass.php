@@ -21,7 +21,7 @@ class FeaturedClass extends JsonResource
         'created_at'     => $this->created_at,
         'name'           => $this->name,
         'icon'           => $this->icon,
-        'sequence'       => $this->sequence,
+        'sq'             => $this->sq,
         'is_outstanding' => $this->is_outstanding,
         'is_active'      => $this->is_active,
         'order_type'     => $this->order_type,

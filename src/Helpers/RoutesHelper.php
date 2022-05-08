@@ -777,6 +777,8 @@ class RoutesHelper
 
     # FeaturedClass
     if (config('stone.featured_class')) {
+      Route::get('/featured_class/order', [FeaturedClassController::class, 'order_get']);
+      Route::patch('/featured_class/order', [FeaturedClassController::class, 'order_patch']);
       Route::resource('featured_class', FeaturedClassController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();

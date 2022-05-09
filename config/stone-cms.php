@@ -142,7 +142,7 @@ return [
     'notice'          => true,
     //促銷活動
     'shop_campaign'   => [
-      'items' => [ //活動類型分別設定
+      'types' => [ //活動類型分別設定
         'bonus_point_feedback' => [
           'feedback_after_invoice_days' => 3, //開立發票後多久發紅利
           'date_no_repeat'              => true, //日期是否重複

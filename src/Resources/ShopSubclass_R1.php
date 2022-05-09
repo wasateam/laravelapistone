@@ -30,12 +30,14 @@ class ShopSubclass_R1 extends JsonResource
       }
     } else if (config('stone.mode') == 'webapi') {
       $res = [
-        'id'         => $this->id,
-        'name'       => $this->name,
-        'sq'         => $this->sq,
-        'type'       => $this->type,
-        'icon'       => $this->icon,
-        'shop_class' => new ShopClass_R0($this->shop_class),
+        'id'                      => $this->id,
+        'name'                    => $this->name,
+        'sq'                      => $this->sq,
+        'type'                    => $this->type,
+        'icon'                    => $this->icon,
+        'shop_class'              => new ShopClass_R0($this->shop_class),
+        'shop_class'              => new ShopClass_R0($this->shop_class),
+        'shop_products_is_active' => ShopProduct_R0::collection($this->shop_products_is_active),
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;

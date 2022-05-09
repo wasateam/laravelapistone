@@ -37,7 +37,7 @@ return [
   ],
   # Modules
   'log'                 => true,
-  'post_encode'         => false,
+  'post_encode'         => true,
   'tulpa'               => true,
   'socialite'           => [
     'disable_auto_verify' => true,

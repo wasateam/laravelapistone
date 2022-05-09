@@ -80,6 +80,7 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * invoice_status 發票狀態
  * ~ null: 未開立
  * ~ waiting: 待開立
+ * ~ fail-waiting: 待開立
  * ~ done: 完成
  * ~ fail: 失敗
  * ~ no-need: 無需開發票

@@ -782,6 +782,8 @@ class RoutesHelper
       Route::resource('featured_class', FeaturedClassController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      Route::get('featured_class/{id}/shop_product/order', [FeaturedClassController::class, 'shop_product_order_get']);
+      Route::patch('featured_class/{id}/shop_product/order', [FeaturedClassController::class, 'shop_product_order_patch']);
     }
 
     # Privacy Terms

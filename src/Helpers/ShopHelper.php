@@ -1341,7 +1341,9 @@ class ShopHelper
       }
     }
     if (config('stone.invoice')) {
-      if (config('stone.invoice.delay')) {
+      if ($shop_order->invoice_status == 'fail') {
+        $shop_order = self::createInvoice($shop_order);
+      } else if (config('stone.invoice.delay')) {
         self::createInvoiceJob($shop_order, config('stone.invoice.delay'));
         $shop_order->invoice_status = 'waiting';
         $shop_order->save();
@@ -1386,20 +1388,27 @@ class ShopHelper
             $invoice_carrier_number = $shop_order->invoice_carrier_number;
             $Print                  = '0';
             $CustomerName           = $shop_order->orderer;
-            if ($invoice_carrier_type == 'mobile') {
-              $CarrierType = '3';
-              $CarrierNum  = $invoice_carrier_number;
-            } else if ($invoice_carrier_type == 'certificate') {
-              $CarrierType = '2';
-              $CarrierNum  = $invoice_carrier_number;
-            } else if ($invoice_carrier_type == 'email') {
-              $customer_email = $invoice_carrier_number;
-              if(!$invoice_carrier_number && $shop_order->user){
-                $customer_email = $shop_order->user->email;
+            if ($shop_order->invoice_status == 'fail') {
+              $customer_email = $shop_order->user->email;
+              $CarrierType    = '1';
+              $CarrierNum     = '';
+              $CustomerEmail  = $customer_email;
+            } else {
+              if ($invoice_carrier_type == 'mobile') {
+                $CarrierType = '3';
+                $CarrierNum  = $invoice_carrier_number;
+              } else if ($invoice_carrier_type == 'certificate') {
+                $CarrierType = '2';
+                $CarrierNum  = $invoice_carrier_number;
+              } else if ($invoice_carrier_type == 'email') {
+                $customer_email = $invoice_carrier_number;
+                if (!$invoice_carrier_number && $shop_order->user) {
+                  $customer_email = $shop_order->user->email;
+                }
+                $CarrierType   = '1';
+                $CarrierNum    = '';
+                $CustomerEmail = $customer_email;
               }
-              $CarrierType   = '1';
-              $CarrierNum    = '';
-              $CustomerEmail = $customer_email;
             }
           } else if ($invoice_type == 'triple') {
             $invoice_title          = $shop_order->invoice_title;
@@ -1570,7 +1579,7 @@ class ShopHelper
     $shop_order_shop_products = ShopOrderShopProduct::where('shop_product_id', $shop_product_id)
       ->whereHas('shop_order', function ($query) use ($shop_order_request) {
         $setting = ModelHelper::getSetting(new \Wasateam\Laravelapistone\Controllers\ShopOrderController);
-        $query = ModelHelper::indexGetSnap($setting, $shop_order_request, null, false, $query);
+        $query   = ModelHelper::indexGetSnap($setting, $shop_order_request, null, false, $query);
         $query->whereIn('status',
           [
             'established',

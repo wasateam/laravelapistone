@@ -43,7 +43,7 @@ return [
   'admin_group'         => true,
   'admin_system_class'  => true,
   'log'                 => true,
-  'post_encode'         => false,
+  'post_encode'         => true,
   'pocket'              => true,
   'tulpa'               => true,
   'user'                => [

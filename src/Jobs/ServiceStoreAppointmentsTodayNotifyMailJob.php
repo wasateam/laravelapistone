@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class MailServiceStoreAppointsTomorrowJob implements ShouldQueue
+class ServiceStoreAppointmentsTodayNotifyMailJob implements ShouldQueue
 {
   use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -35,7 +35,7 @@ class MailServiceStoreAppointsTomorrowJob implements ShouldQueue
    */
   public function handle()
   {
-    \Wasateam\Laravelapistone\Helpers\ServiceStoreHelper::MailServiceStoreAppointsTomorrow($this->mail, $this->service_store_id, $this->date
+    \Wasateam\Laravelapistone\Helpers\ServiceStoreHelper::MailServiceStoreAppointsToday($this->mail, $this->service_store_id, $this->date
     );
   }
 }

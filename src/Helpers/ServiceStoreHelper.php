@@ -73,7 +73,7 @@ class ServiceStoreHelper
         foreach ($service_stores as $service_store) {
           if ($service_store->notify_emails) {
             foreach ($service_store->notify_emails as $notify_email) {
-              \Wasateam\Laravelapistone\Jobs\MailServiceStoreAppointsTodayJob::dispatch($notify_email['email'], $service_store->id, $now);
+              \Wasateam\Laravelapistone\Jobs\ServiceStoreAppointmentsTodayNotifyMailJob::dispatch($notify_email['email'], $service_store->id, $now);
             }
             $service_store->today_appointments_notify_at = $now;
             $service_store->save();
@@ -99,7 +99,7 @@ class ServiceStoreHelper
         foreach ($service_stores as $service_store) {
           if ($service_store->notify_emails) {
             foreach ($service_store->notify_emails as $notify_email) {
-              \Wasateam\Laravelapistone\Jobs\MailServiceStoreAppointsTomorrowJob::dispatch($notify_email['email'], $service_store->id, $tomorrow);
+              \Wasateam\Laravelapistone\Jobs\ServiceStoreAppointmentsTomorrowNotifyMailJob::dispatch($notify_email['email'], $service_store->id, $tomorrow);
             }
             $service_store->tomorrow_appointments_notify_at = $now;
             $service_store->save();
@@ -132,6 +132,8 @@ class ServiceStoreHelper
       $formated_appointments
     ));
   }
+
+  // public static function Mail
 
   public static function getReservedAppointments($service_store, $start_time_str, $end_time_str)
   {

@@ -63,7 +63,13 @@ return [
     'auto_reply' => true,
   ],
   'locale'              => false,
-  'service_store'       => false,
+  'service_store'       => [
+    'appointment' => [
+      'notify' => [
+        'cancel' => true,
+      ],
+    ],
+  ],
   'notification'        => true,
   'appointment'         => [
     'notify' => [

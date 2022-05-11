@@ -148,6 +148,8 @@ use Wasateam\Laravelapistone\Models\ShopOrder;
  * ~ web-pc
  * ~ web-mobile
  * ~ app
+ * ~ app-android
+ * ~ app-ios
  *
  * api-
  * ReCreate 用於一筆訂單付款失敗，而要重新建立一筆新的訂單，會帶入前一筆訂單資料，但no,uuid需重新建立

@@ -53,26 +53,26 @@
             <td class="content w-40per">{{$shop_order['orderer']}}</td>
           </tr>
           <tr class="table-item">
-            <td class="title w-10per">收件姓名</td>
-            <td class="content w-40per">{{$shop_order['receiver']}}</td>
-            <td class="title w-10per">訂購時間</td>
-            <td class="content w-40per">{{$shop_order['order_date']}}</td>
+            <td class="title w-10per gray-bg">收件姓名</td>
+            <td class="content w-40per gray-bg">{{$shop_order['receiver']}}</td>
+            <td class="title w-10per gray-bg">訂購時間</td>
+            <td class="content w-40per gray-bg">{{$shop_order['order_date']}}</td>
           </tr>
           <tr class="table-item">
-            <td class="title w-10per">電話</td>
-            <td class="content w-40per">{{$shop_order['receiver_tel']}}</td>
-            <td class="title w-10per">收件方式</td>
-            <td class="content w-40per">{{$shop_order['receive_way']}}</td>
+            <td class="title w-10per gray-bg">電話</td>
+            <td class="content w-40per gray-bg">{{$shop_order['receiver_tel']}}</td>
+            <td class="title w-10per gray-bg">收件方式</td>
+            <td class="content w-40per gray-bg">{{$shop_order['receive_way']}}</td>
           </tr>
         </table>
         <table width="100%">
           <tr class="table-item">
-            <td class="title w-10per">收件地址</td>
-            <td class="content w-90per">{{$shop_order['receive_address']}}</td>
+            <td class="title w-10per gray-bg">收件地址</td>
+            <td class="content w-90per gray-bg">{{$shop_order['receive_address']}}</td>
           </tr>
           <tr class="table-item">
-            <td class="title w-10per">收件備註</td>
-            <td class="content w-90per">{{$shop_order['receive_remark']}}</td>
+            <td class="title w-10per gray-bg">收件備註</td>
+            <td class="content w-90per gray-bg">{{$shop_order['receive_remark']}}</td>
           </tr>
         </table>
         <div>
@@ -132,26 +132,26 @@
             <td class="content w-40per">{{$shop_order['orderer_encode']}}</td>
           </tr>
           <tr class="table-item">
-            <td class="title w-10per">收件姓名</td>
-            <td class="content w-40per">{{$shop_order['receiver_encode']}}</td>
-            <td class="title w-10per">訂購時間</td>
-            <td class="content w-40per">{{$shop_order['order_date']}}</td>
+            <td class="title w-10per gray-bg">收件姓名</td>
+            <td class="content w-40per gray-bg">{{$shop_order['receiver_encode']}}</td>
+            <td class="title w-10per gray-bg">訂購時間</td>
+            <td class="content w-40per gray-bg">{{$shop_order['order_date']}}</td>
           </tr>
           <tr class="table-item">
-            <td class="title w-10per">電話</td>
-            <td class="content w-40per">{{$shop_order['receiver_tel_encode']}}</td>
-            <td class="title w-10per">收件方式</td>
-            <td class="content w-40per">{{$shop_order['receive_way']}}</td>
+            <td class="title w-10per gray-bg">電話</td>
+            <td class="content w-40per gray-bg">{{$shop_order['receiver_tel_encode']}}</td>
+            <td class="title w-10per gray-bg">收件方式</td>
+            <td class="content w-40per gray-bg">{{$shop_order['receive_way']}}</td>
           </tr>
         </table>
         <table width="100%">
           <tr class="table-item">
-            <td class="title w-10per">收件地址</td>
-            <td class="content w-90per">{{$shop_order['receive_address']}}</td>
+            <td class="title w-10per gray-bg">收件地址</td>
+            <td class="content w-90per gray-bg">{{$shop_order['receive_address']}}</td>
           </tr>
           <tr class="table-item">
-            <td class="title w-10per">收件備註</td>
-            <td class="content w-90per">{{$shop_order['receive_remark']}}</td>
+            <td class="title w-10per gray-bg">收件備註</td>
+            <td class="content w-90per gray-bg">{{$shop_order['receive_remark']}}</td>
           </tr>
         </table>
         <div>
@@ -225,6 +225,9 @@
 }
 td {
     border: 1px solid #222;
+}
+td.gray-bg {
+  background-color: #ccc;
 }
 h1 {
     font-size: 14px;

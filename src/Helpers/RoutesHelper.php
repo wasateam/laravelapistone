@@ -74,6 +74,7 @@ use Wasateam\Laravelapistone\Controllers\ShopReturnRecordController;
 use Wasateam\Laravelapistone\Controllers\ShopShipAreaSettingController;
 use Wasateam\Laravelapistone\Controllers\ShopShipTimeSettingController;
 use Wasateam\Laravelapistone\Controllers\ShopSubclassController;
+use Wasateam\Laravelapistone\Controllers\ShowcaseController;
 use Wasateam\Laravelapistone\Controllers\SnappyController;
 use Wasateam\Laravelapistone\Controllers\SocialiteController;
 use Wasateam\Laravelapistone\Controllers\SocialiteFacebookAccountController;
@@ -878,6 +879,15 @@ class RoutesHelper
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
     }
+
+    # Showcase
+    if (config('stone.showcase')) {
+      Route::get('/showcase/order', [ShowcaseController::class, 'order_get']);
+      Route::patch('/showcase/order', [ShowcaseController::class, 'order_patch']);
+      Route::resource('showcase', ShowcaseController::class)->only([
+        'index', 'show', 'store', 'update', 'destroy',
+      ])->shallow();
+    }
   }
 
   # CMS 公開
@@ -1161,7 +1171,7 @@ class RoutesHelper
       if (config('stone.shop.current')) {
         Route::resource('shop_product', ShopProductController::class)->only([
           'index', 'show',
-        ])->shallow()->middleware('throttle:200,1');
+        ])->shallow()->middleware('throttle:2000,1');
       }
       // if (config('stone.shop.pre_order')) {
       //   Route::resource('shop_product_pre_order', ShopProductPreOrderController::class)->only([
@@ -1176,7 +1186,7 @@ class RoutesHelper
       }
       Route::resource('shop_class', ShopClassController::class)->only([
         'index', 'show',
-      ])->shallow()->middleware('throttle:200,1');
+      ])->shallow()->middleware('throttle:2000,1');
       Route::resource('shop_subclass', ShopSubclassController::class)->only([
         'index', 'show',
       ])->shallow();
@@ -1237,7 +1247,7 @@ class RoutesHelper
     if (config('stone.featured_class')) {
       Route::resource('featured_class', FeaturedClassController::class)->only([
         'index', 'show',
-      ])->shallow()->middleware('throttle:200,1');
+      ])->shallow()->middleware('throttle:2000,1');
     }
 
     if (config('stone.file_upload') == 'laravel_signed') {
@@ -1291,8 +1301,8 @@ class RoutesHelper
 
     # Page Setting
     if (config('stone.page_setting')) {
-      Route::get('page_setting', [PageSettingController::class, 'index'])->middleware('throttle:200,1');
-      Route::get('page_setting/page', [PageSettingController::class, 'show'])->middleware('throttle:200,1');
+      Route::get('page_setting', [PageSettingController::class, 'index'])->middleware('throttle:2000,1');
+      Route::get('page_setting/page', [PageSettingController::class, 'show'])->middleware('throttle:2000,1');
     }
 
     # Page Setting
@@ -1357,6 +1367,13 @@ class RoutesHelper
     if (config('stone.third_party_payment.line_pay')) {
       Route::post('line_pay/payment/confirm', [LinePayController::class, 'payment_confirm']);
       Route::post('line_pay/payment/app/confirm', [LinePayController::class, 'payment_app_confirm']);
+    }
+
+    # Showcase
+    if (config('stone.showcase')) {
+      Route::resource('showcase', ShowcaseController::class)->only([
+        'index', 'show',
+      ])->shallow();
     }
   }
 

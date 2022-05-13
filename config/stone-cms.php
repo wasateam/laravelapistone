@@ -270,4 +270,5 @@ return [
     ],
     'line_pay'    => true,
   ],
+  'showcase'            => true,
 ];

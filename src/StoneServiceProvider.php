@@ -264,6 +264,11 @@ class StoneServiceProvider extends ServiceProvider
         if (config('stone.invoice')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/invoice');
         }
+
+        # Showcase
+        if (config('stone.showcase')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/showcase');
+        }
       }
 
       $this->publishes([

@@ -1169,9 +1169,12 @@ class RoutesHelper
     # Shop
     if (config('stone.shop')) {
       if (config('stone.shop.current')) {
+        // Route::resource('shop_product', ShopProductController::class)->only([
+        //   'index', 'show',
+        // ])->shallow()->middleware('throttle:2000,1');
         Route::resource('shop_product', ShopProductController::class)->only([
           'index', 'show',
-        ])->shallow()->middleware('throttle:2000,1');
+        ])->shallow();
       }
       // if (config('stone.shop.pre_order')) {
       //   Route::resource('shop_product_pre_order', ShopProductPreOrderController::class)->only([
@@ -1186,7 +1189,10 @@ class RoutesHelper
       }
       Route::resource('shop_class', ShopClassController::class)->only([
         'index', 'show',
-      ])->shallow()->middleware('throttle:2000,1');
+      ])->shallow();
+      // Route::resource('shop_class', ShopClassController::class)->only([
+      //   'index', 'show',
+      // ])->shallow()->middleware('throttle:2000,1');
       Route::resource('shop_subclass', ShopSubclassController::class)->only([
         'index', 'show',
       ])->shallow();
@@ -1247,7 +1253,10 @@ class RoutesHelper
     if (config('stone.featured_class')) {
       Route::resource('featured_class', FeaturedClassController::class)->only([
         'index', 'show',
-      ])->shallow()->middleware('throttle:2000,1');
+      ])->shallow();
+      // Route::resource('featured_class', FeaturedClassController::class)->only([
+      //   'index', 'show',
+      // ])->shallow()->middleware('throttle:2000,1');
     }
 
     if (config('stone.file_upload') == 'laravel_signed') {
@@ -1301,8 +1310,10 @@ class RoutesHelper
 
     # Page Setting
     if (config('stone.page_setting')) {
-      Route::get('page_setting', [PageSettingController::class, 'index'])->middleware('throttle:2000,1');
-      Route::get('page_setting/page', [PageSettingController::class, 'show'])->middleware('throttle:2000,1');
+      Route::get('page_setting', [PageSettingController::class, 'index']);
+      Route::get('page_setting/page', [PageSettingController::class, 'show']);
+      // Route::get('page_setting', [PageSettingController::class, 'index'])->middleware('throttle:2000,1');
+      // Route::get('page_setting/page', [PageSettingController::class, 'show'])->middleware('throttle:2000,1');
     }
 
     # Page Setting

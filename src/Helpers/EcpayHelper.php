@@ -49,7 +49,7 @@ class EcpayHelper
     if ($res->status() == '200') {
       $res_json = $res->json();
       $res_data = self::getDecryptData($res_json['Data']);
-      if ($res_data->RtnCode != '1') {
+    if ($res_data->RtnCode != '1') {
         throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('getMerchantToken', $res_data->RtnCode, $res_data->RtnMsg);
       }
       return $res_data->Token;
@@ -118,7 +118,7 @@ class EcpayHelper
         "MerchantMemberID" => $user_id,
         "Email"            => $orderer_email,
         "Phone"            => $orderer_tel,
-        "Name"             => $orderer,
+        "Name"             => preg_replace('/\d+/u', '', $orderer),
       ],
     ];
     return $initData;

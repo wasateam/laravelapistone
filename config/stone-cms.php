@@ -21,6 +21,7 @@ return [
     'api_domain' => env('MAIL_API_DOMAIN'),
     'test_mail'  => env('MAIL_TEST_MAIL', 'wasalearn@gmail.com'),
   ],
+  'cms_url'             => env('CMS_URL'),
   'app_url'             => env('APP_URL'),
   'web_url'             => env('WEB_URL'),
   'web_api_url'         => env('WEB_API_URL'),

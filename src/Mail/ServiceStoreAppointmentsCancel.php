@@ -39,7 +39,7 @@ class ServiceStoreAppointmentsCancel extends Mailable
     $lang                 = LangHelper::getLangFromCountryCode($service_store->country_code);
     $title                = __('wasateam::messages.預約已取消', [], $lang);
     $subject              = "{$service_store->name}-{$title}";
-    $link                 = env('CMS_URL') . '/appointment/' . $this->appointment_id;
+    $link                 = config('stone.cms_url') . '/appointment/' . $this->appointment_id;
 
     return $this->subject($subject)->view('wasateam::wasa.mail.service_store_appointment_cancel')->with([
       'service_store'        => $service_store,

@@ -20,12 +20,18 @@ class UrlHelper
   public static function getFormatedUrl($url, $tohttps = false, $tolocalhost = false, $toweb = false)
   {
     if ($tohttps) {
-      if (str_contains(config('stone.web_url'), 'https://') && str_contains(config('stone.app_url'), 'https://') && str_contains($url, 'http://')) {
+      if (
+        (str_contains(config('stone.web_url'), 'https://') && str_contains(config('stone.app_url'), 'https://') && str_contains($url, 'http://')) ||
+        (str_contains(config('stone.cms_url'), 'https://') && str_contains(config('stone.app_url'), 'https://') && str_contains($url, 'http://'))
+      ) {
         $url = Str::replace('http', 'https', $url);
       }
     }
     if ($tolocalhost) {
-      if (str_contains(config('stone.web_url'), 'http://localhost') && str_contains(config('stone.app_url'), 'http://localhost')) {
+      if (
+        (str_contains(config('stone.web_url'), 'http://localhost') && str_contains(config('stone.app_url'), 'http://localhost')) ||
+        (str_contains(config('stone.cms_url'), 'http://localhost') && str_contains(config('stone.app_url'), 'http://localhost'))
+      ) {
         $url = Str::replace('127.0.0.1', 'localhost', $url);
       }
     }

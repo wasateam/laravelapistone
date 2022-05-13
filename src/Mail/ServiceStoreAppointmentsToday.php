@@ -33,7 +33,7 @@ class ServiceStoreAppointmentsToday extends Mailable
     $lang          = LangHelper::getLangFromCountryCode($service_store->country_code);
     $title   = __('wasateam::messages.本日收到新預約', [], $lang);
     $subject = "{$service_store->name}-{$title}";
-    $link    = env('CMS_URL') . '/appointment';
+    $link    = config('stone.cms_url') . '/appointment';
     return $this->subject($subject)->view('wasateam::wasa.mail.service_store_appointments_today')->with([
       'service_store'         => $this->service_store,
       'formated_appointments' => $this->formated_appointments,

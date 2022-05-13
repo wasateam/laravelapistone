@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ShopSubclass_R1 extends JsonResource
+class ShopSubclass_R2 extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -32,7 +32,10 @@ class ShopSubclass_R1 extends JsonResource
       $res = [
         'id'                      => $this->id,
         'name'                    => $this->name,
+        'sq'                      => $this->sq,
+        'type'                    => $this->type,
         'icon'                    => $this->icon,
+        'shop_class'              => new ShopClass_R0($this->shop_class),
         'shop_products_is_active' => ShopProduct_R0::collection($this->shop_products_is_active),
       ];
       if (config('stone.shop.uuid')) {

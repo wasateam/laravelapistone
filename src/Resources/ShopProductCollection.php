@@ -69,20 +69,20 @@ class ShopProductCollection extends JsonResource
         'store_temperature'          => $this->store_temperature,
         'freight'                    => $this->freight,
         'cold_chain_type'            => $this->cold_chain_type,
-        'shop_classes'               => ShopClass_R1::collection($this->shop_classes),
-        'shop_subclasses'            => ShopSubclass_R1::collection($this->shop_subclasses),
+        // 'shop_classes'               => ShopClass_R1::collection($this->shop_classes),
+        // 'shop_subclasses'            => ShopSubclass_R1::collection($this->shop_subclasses),
         'shop_product_cover_frame'   => new ShopProductCoverFrame_R1($this->shop_product_cover_frame),
-        'shop_subclasses'            => ShopSubclass_R_ShopProduct::collection($this->shop_subclasses),
+        // 'shop_subclasses'            => ShopSubclass_R_ShopProduct::collection($this->shop_subclasses),
         'shop_product_specs'         => ShopProductSpec_R1::collection($this->shop_product_specs),
         'shop_product_spec_settings' => ShopProductSpecSetting_R1::collection($this->shop_product_spec_settings),
-        'shop_campaigns'             => ShopCampaign_R1::collection($this->shop_campaigns),
+        // 'shop_campaigns'             => ShopCampaign_R1::collection($this->shop_campaigns),
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;
       }
-      if (config('stone.featured_class')) {
-        $res['featured_classes'] = FeaturedClass_R0::collection($this->featured_classes);
-      }
+      // if (config('stone.featured_class')) {
+      //   $res['featured_classes'] = FeaturedClass_R0::collection($this->featured_classes);
+      // }
       if (config('stone.shop.discount_price')) {
         $res['discount_price'] = $this->discount_price;
       }

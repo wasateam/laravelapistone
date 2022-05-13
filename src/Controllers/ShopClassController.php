@@ -23,11 +23,12 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  */
 class ShopClassController extends Controller
 {
-  public $model              = 'Wasateam\Laravelapistone\Models\ShopClass';
-  public $name               = 'shop_class';
-  public $resource           = 'Wasateam\Laravelapistone\Resources\ShopClass';
-  public $resource_for_order = 'Wasateam\Laravelapistone\Resources\ShopClass_R_Order';
-  public $input_fields       = [
+  public $model                   = 'Wasateam\Laravelapistone\Models\ShopClass';
+  public $name                    = 'shop_class';
+  public $resource                = 'Wasateam\Laravelapistone\Resources\ShopClass';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\ShopClassCollection';
+  public $resource_for_order      = 'Wasateam\Laravelapistone\Resources\ShopClass_R_Order';
+  public $input_fields            = [
     'name',
     'sq',
     'type',

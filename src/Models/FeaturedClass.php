@@ -17,7 +17,7 @@ class FeaturedClass extends Model
 
   public function shop_products_is_active()
   {
-    return $this->belongsToMany(ShopProduct::class, 'featured_class_shop_product', 'featured_class_id', 'shop_product_id')->where('is_active', 1)->withPivot('sq')->orderBy('sq');
+    return $this->belongsToMany(ShopProduct::class, 'featured_class_shop_product', 'featured_class_id', 'shop_product_id')->onshelf()->withPivot('sq')->orderBy('sq');
   }
 
   protected $casts = [

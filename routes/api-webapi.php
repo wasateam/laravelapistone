@@ -23,4 +23,12 @@ Route::group([
 });
 
 # Public
-\Wasateam\Laravelapistone\Helpers\RoutesHelper::webapi_public_routes();
+
+Route::group([
+  "middleware" => [
+    "scopes:user",
+    "throttle:-1,1",
+  ],
+], function () {
+  \Wasateam\Laravelapistone\Helpers\RoutesHelper::webapi_public_routes();
+});

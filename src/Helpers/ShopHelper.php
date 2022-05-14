@@ -1207,10 +1207,22 @@ class ShopHelper
       if ($order_type && $cart_product->shop_product->order_type != $order_type) {
         throw new \Wasateam\Laravelapistone\Exceptions\FieldNotMatchException('order_type', $order_type);
       }
+      self::updateShopCartProductPrice($cart_product);
       self::checkProductStockEnough($cart_product);
       $_filtered_cart_products[] = $cart_product;
     }
     return $_filtered_cart_products;
+  }
+
+  public static function updateShopCartProductPrice($shop_cart_product)
+  {
+    if ($shop_cart_product->price != $shop_cart_product->shop_product->price) {
+      $shop_cart_product->price = $shop_cart_product->shop_product->price;
+    }
+    if ($shop_cart_product->dicount_price != $shop_cart_product->shop_product->dicount_price) {
+      $shop_cart_product->dicount_price = $shop_cart_product->shop_product->dicount_price;
+    }
+    $shop_cart_product->save();
   }
 
   public static function checkDiscountCode($discount_code = null)
@@ -1461,7 +1473,7 @@ class ShopHelper
           $shop_order->invoice_number = $invoice_res->InvoiceNo;
           $shop_order->save();
           return $shop_order;
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
           $shop_order->invoice_status = 'fail';
           $shop_order->save();
           throw $th;

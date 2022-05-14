@@ -131,12 +131,15 @@ class ShopCartProductController extends Controller
 
       if ($shop_product_spec) {
         if ($to_count > $shop_product_spec->stock_count) {
-          throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_product_spec', 'shop_product_spec', $shop_product_spec->id);
+          $to_count = $shop_product_spec->stock_count;
         }
       } else {
         if ($to_count > $shop_product->stock_count) {
-          throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_product', 'shop_product', $shop_product->id);
+          $to_count = $shop_product->stock_count;
         }
+      }
+      if (!$to_count) {
+        throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('no_count');
       }
       if (!$shop_cart_product) {
         $shop_cart_product = new ShopCartProduct();

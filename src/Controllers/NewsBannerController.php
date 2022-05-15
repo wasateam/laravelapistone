@@ -162,9 +162,9 @@ class NewsBannerController extends Controller
    * Order Get
    *
    */
-  public function order_get()
+  public function order_get(Request $request)
   {
-    return ModelHelper::ws_OrderGetHandler($this);
+    return ModelHelper::ws_OrderGetHandler($this, $request);
   }
 
   /**

@@ -26,6 +26,7 @@ class Showcase extends JsonResource
         'route_name'  => $this->route_name,
         'tags'        => $this->tags,
         'is_active'   => $this->is_active,
+        'content'     => $this->content,
       ];
     } else if (config('stone.mode') == 'webapi') {
       return [
@@ -39,6 +40,7 @@ class Showcase extends JsonResource
         'route_name'  => $this->route_name,
         'tags'        => $this->tags,
         'is_active'   => $this->is_active,
+        'content'     => $this->content,
       ];
     }
   }

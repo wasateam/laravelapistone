@@ -39,7 +39,7 @@ class CommandGenerateUserInviteNo extends Command
    */
   public function handle()
   {
-    $users = User::all();
+    $users = User::whereNull('invite_no')->get();
     foreach ($users as $user) {
       $user = UserHelper::generateInviteNo($user, 'Wasateam\Laravelapistone\Models\User');
     }

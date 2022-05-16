@@ -94,7 +94,6 @@ class EcpayController extends Controller
       ]);
     } else {
       $shop_order = EcpayHelper::updateShopOrderFromEcpayPaymentRes($payment_res);
-      ShopHelper::createBonusPointFromShopOrder($shop_order);
     }
   }
 
@@ -112,7 +111,6 @@ class EcpayController extends Controller
       return '1|OK';
     }
     $shop_order = EcpayHelper::updateShopOrderFromEcpayOrderCallbackRes($request);
-    ShopHelper::createBonusPointFromShopOrder($shop_order);
     return '1|OK';
   }
 

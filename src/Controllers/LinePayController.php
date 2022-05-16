@@ -94,7 +94,6 @@ class LinePayController extends Controller
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
     }
     $shop_order = LinePayHelper::payment_confirm($request->transaction_id, $shop_order);
-    ShopHelper::createBonusPointFromShopOrder($shop_order);
 
     return response()->json($shop_order, 200);
   }
@@ -115,7 +114,6 @@ class LinePayController extends Controller
       throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_order');
     }
     $shop_order = LinePayHelper::payment_confirm($request->transaction_id, $shop_order);
-    ShopHelper::createBonusPointFromShopOrder($shop_order);
 
     $deep_link = LinePayHelper::getDeepLinkFromTransactionId($request->transaction_id);
 

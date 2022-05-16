@@ -1479,6 +1479,9 @@ class ShopHelper
           throw $th;
         }
       }
+      if($shop_order->invoice_status=='done'){
+        self::createBonusPointFromShopOrder($shop_order);
+      }
     }
   }
 

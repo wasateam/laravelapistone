@@ -626,8 +626,8 @@ class ShopOrderController extends Controller
     $shop_order_ids = array_map('intval', explode(',', $_shop_order_ids_str));
     $shop_orders    = ShopOrder::whereIn('id', $shop_order_ids)
       ->whereNull('deleted_at')
-      ->orderBy('area_id', 'asc')
-      ->orderBy('area_section_id', 'asc')
+    // ->orderBy('area_id', 'asc')
+    // ->orderBy('area_section_id', 'asc')
       ->orderBy('receive_address', 'asc')
       ->get();
     $datas = [];

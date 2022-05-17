@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\GcsHelper;
+use Wasateam\Laravelapistone\Helpers\S3Helper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 
 /**

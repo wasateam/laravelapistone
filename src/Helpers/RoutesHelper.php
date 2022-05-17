@@ -125,7 +125,7 @@ class RoutesHelper
       ], function () use ($model_name, $controller) {
         Route::post($model_name, [$controller, 'store']);
         Route::patch("{$model_name}/{id}", [$controller, 'update']);
-        Route::delete($model_name, [$controller, 'destroy']);
+        Route::delete("{$model_name}/{id}", [$controller, 'destroy']);
       });
     }
   }
@@ -159,7 +159,7 @@ class RoutesHelper
       ], function () {
         Route::post("xc_work_type", [XcWorkTypeController::class, 'store']);
         Route::patch("xc_work_type/{id}", [XcWorkTypeController::class, 'update']);
-        Route::delete("xc_work_type", [XcWorkTypeController::class, 'destroy']);
+        Route::delete("xc_work_type/{id}", [XcWorkTypeController::class, 'destroy']);
       });
     }
 
@@ -183,7 +183,7 @@ class RoutesHelper
       ], function () {
         Route::post("xc_task_template", [XcTaskTemplateController::class, 'store']);
         Route::patch("xc_task_template/{id}", [XcTaskTemplateController::class, 'update']);
-        Route::delete("xc_task_template", [XcTaskTemplateController::class, 'destroy']);
+        Route::delete("xc_task_template/{id}", [XcTaskTemplateController::class, 'destroy']);
       });
 
       Route::group([
@@ -272,25 +272,11 @@ class RoutesHelper
 
     # DownloadInfo
     if (config('stone.download_info')) {
-      Route::group([
-        "middleware" => [
-          "auth:admin",
-          "wasascopes:download_info-read",
-        ],
-      ], function () {
-        Route::get("download_info", [DownloadInfoController::class, 'index']);
-        Route::get("download_info/{id}", [DownloadInfoController::class, 'show']);
-      });
-      Route::group([
-        "middleware" => [
-          "auth:admin",
-          "wasascopes:download_info-edit",
-        ],
-      ], function () {
-        Route::post("download_info", [DownloadInfoController::class, 'store']);
-        Route::patch("download_info/{id}", [DownloadInfoController::class, 'update']);
-        Route::delete("download_info", [DownloadInfoController::class, 'destroy']);
-      });
+      self::get_resource_scope_routes(
+        DownloadInfoController::class,
+        'download_info',
+        ['read', 'edit']
+      );
     }
   }
 

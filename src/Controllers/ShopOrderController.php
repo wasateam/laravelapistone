@@ -649,7 +649,7 @@ class ShopOrderController extends Controller
         'activity'            => '',
         'receiver'            => $receiver,
         'receiver_encode'     => $receiver_encode,
-        'order_date'          => Carbon::parse($shop_order->created_at)->format('Y-m-d'),
+        'order_date'          => Carbon::parse($shop_order->created_at)->timezone($timezone)->format('Y-m-d H:i:s'),
         'receiver_tel'        => $receiver_tel,
         'receiver_tel_encode' => $receiver_tel_encode,
         'receive_address'     => $shop_order->receive_address,

@@ -193,6 +193,11 @@ class ShopProductController extends Controller
       $this->input_fields[] = 'discount_price';
       $this->order_fields[] = 'discount_price';
     }
+    if (config('stone.mode') == 'cms') {
+      $this->paginate = 100;
+    } else if (config('stone.mode') == 'webapi') {
+      $this->paginate = 16;
+    }
     if (config('stone.shop')) {
       if (config('stone.shop.product')) {
         if (config('stone.shop.product.per_page')) {
@@ -473,7 +478,7 @@ class ShopProductController extends Controller
         $weight      = $model->weight_capacity . ' ' . $model->weight_capacity_unit;
         $date_arr    = explode(',', $request->created_at);
         $sales_count = ShopHelper::getShopProductSalesCount($model->id, new Request((array) json_decode($request->shop_order_request)));
-        $map = [
+        $map         = [
           $model->id,
           $model->purchaser,
           $model->store_house_class,

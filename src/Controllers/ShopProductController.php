@@ -222,6 +222,7 @@ class ShopProductController extends Controller
    * @queryParam purchaser 採購人 No-example
    * @queryParam cold_chain_type 溫層 No-example
    * @queryParam has_stock boolean 有庫存 Example:1
+   * @queryParam get_all boolean 取得全部 Example:1
    *
    */
   public function index(Request $request, $id = null)
@@ -242,7 +243,8 @@ class ShopProductController extends Controller
         }
       });
     } else if (config('stone.mode') == 'webapi') {
-      return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) use ($request) {
+      $getall = $request->has('get_all') ? $request->has('get_all') : false;
+      return ModelHelper::ws_IndexHandler($this, $request, $id, $getall, function ($snap) use ($request) {
         $snap = $snap->onshelf();
         if ($request->filled('has_stock')) {
           $snap = $snap->where(function ($query) {

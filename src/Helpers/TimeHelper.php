@@ -71,6 +71,20 @@ class TimeHelper
     return $time;
   }
 
+  public static function getUTCTimeFromTimezoneStartOfDay($time, $timezone)
+  {
+    $time = \Carbon\Carbon::parse($time, $timezone)->startOfDay();
+    $time->setTimezone('UTC');
+    return $time;
+  }
+
+  public static function getUTCTimeFromTimezoneEndOfDay($time, $timezone)
+  {
+    $time = \Carbon\Carbon::parse($time, $timezone)->endOfDay();
+    $time->setTimezone('UTC');
+    return $time;
+  }
+
   public static function getWeekDayNameFromDatetime($datetime)
   {
     $_datetime = \Carbon\Carbon::parse($datetime);

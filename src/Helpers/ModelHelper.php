@@ -14,6 +14,7 @@ use Storage;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
+use Wasateam\Laravelapistone\Helpers\TimeHelper;
 use Wasateam\Laravelapistone\Helpers\UrlHelper;
 use Wasateam\Laravelapistone\Models\Locale;
 
@@ -438,7 +439,7 @@ class ModelHelper
     return Excel::download(new \Wasateam\Laravelapistone\Exports\ModelExport($collection, $headings, $map), $setting->name . '.xlsx');
   }
 
-  public static function ws_OrderGetHandler($controller,$request)
+  public static function ws_OrderGetHandler($controller, $request)
   {
 
     // Setting
@@ -925,7 +926,9 @@ class ModelHelper
         }
       }
     }
+
     if (($request != null) && count($setting->filter_time_fields)) {
+      $timezone = config('stone.timezone') ? config('stone.timezone') : 'UTC';
       foreach ($setting->filter_time_fields as $filter_time_field) {
         if ($request->filled($filter_time_field)) {
           $item_arr = explode(',', $request->{$filter_time_field});
@@ -934,32 +937,33 @@ class ModelHelper
               if (strlen($item_arr[0]) == 10 &&
                 (Str::contains($item_arr[0], '/' || Str::contains($item_arr[0], '-'))
                 )) {
-                $filter_date = Carbon::parse($item_arr[0])->format('Y-m-d');
+                $filter_date = TimeHelper::getUTCTimeFromTimezone($item_arr[0], $timezone);
+                $filter_date = $filter_date->format('Y-m-d');
                 $snap        = $snap->whereDate($filter_time_field, $filter_date);
               } else {
-                $filter_date_time = Carbon::parse($item_arr[0]);
+                $filter_date_time = TimeHelper::getUTCTimeFromTimezone($item_arr[0], $timezone);
                 $snap             = $snap->where($filter_time_field, '=', $filter_date_time);
               }
             } else {
-              $filter_end_time = Carbon::parse($item_arr[1]);
+              $filter_end_time = TimeHelper::getUTCTimeFromTimezoneEndOfDay($item_arr[1], $timezone);
               if (
                 strlen($item_arr[0]) == 10 &&
                 (Str::contains($item_arr[0], '/') || Str::contains($item_arr[0], '-'))
               ) {
-                $filter_start_time = Carbon::parse($item_arr[0])->format('Y-m-d');
-                $snap              = $snap->whereDate($filter_time_field, '>=', $filter_start_time);
+                $filter_start_time = TimeHelper::getUTCTimeFromTimezoneStartOfDay($item_arr[0], $timezone);
+                $snap              = $snap->where($filter_time_field, '>=', $filter_start_time);
               } else {
-                $filter_start_time = Carbon::parse($item_arr[0]);
+                $filter_start_time = TimeHelper::getUTCTimeFromTimezone($item_arr[0], $timezone);
                 $snap              = $snap->where($filter_time_field, '>=', $filter_start_time);
               }
               if (
                 strlen($item_arr[1]) == 10 &&
                 (Str::contains($item_arr[1], '/') || Str::contains($item_arr[1], '-'))
               ) {
-                $filter_end_time = Carbon::parse($item_arr[1])->format('Y-m-d');
-                $snap            = $snap->whereDate($filter_time_field, '<=', $filter_end_time);
+                $filter_end_time = TimeHelper::getUTCTimeFromTimezoneEndOfDay($item_arr[1], $timezone);
+                $snap            = $snap->where($filter_time_field, '<=', $filter_end_time);
               } else {
-                $filter_end_time = Carbon::parse($item_arr[0]);
+                $filter_end_time = TimeHelper::getUTCTimeFromTimezone($item_arr[1], $timezone);
                 $snap            = $snap->where($filter_time_field, '<=', $filter_end_time);
               }
             }

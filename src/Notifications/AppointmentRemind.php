@@ -52,7 +52,7 @@ class AppointmentRemind extends Notification
     }
     return (new MailMessage)
       ->view('wasateam::wasa.mail.appointment.remind', [
-        'time'                  => $time->format('Y-m-d H:m:s'),
+        'time'                  => $time->format('Y-m-d H:i:s'),
         'service_store_name'    => $appointment->service_store->name,
         'service_store_address' => $appointment->service_store->address,
       ]);

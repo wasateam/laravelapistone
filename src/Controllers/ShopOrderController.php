@@ -630,9 +630,10 @@ class ShopOrderController extends Controller
     // ->orderBy('area_section_id', 'asc')
       ->orderBy('receive_address', 'asc')
       ->get();
-    $datas = [];
+    $datas    = [];
+    $timezone = config('stone.timezone') ? $timezone = config('stone.timezone') : 'UTC';
     foreach ($shop_orders as $shop_order) {
-      $delivery_time       = Carbon::parse($shop_order->delivery_date)->format('Y-m-d') . '/' . $shop_order->ship_start_time . '-' . $shop_order->ship_end_time;
+      $delivery_time       = Carbon::parse($shop_order->delivery_date)->format('Y-m-d') . '/' . ShopHelper::getShopOrderShipTimeRange($shop_order, $timezone);
       $orderer             = $shop_order->orderer . '/' . $shop_order->orderer_tel;
       $orderer_encode      = StrHelper::encodeString($shop_order->orderer, 'name') . '/' . StrHelper::encodeString($shop_order->orderer_tel, 'tel');
       $receiver            = $shop_order->receiver;

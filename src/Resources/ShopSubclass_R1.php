@@ -33,7 +33,6 @@ class ShopSubclass_R1 extends JsonResource
         'id'                      => $this->id,
         'name'                    => $this->name,
         'icon'                    => $this->icon,
-        'shop_products_is_active' => ShopProduct_R0::collection($this->shop_products_is_active),
       ];
       if (config('stone.shop.uuid')) {
         $res['uuid'] = $this->uuid;

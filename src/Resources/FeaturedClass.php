@@ -32,6 +32,7 @@ class FeaturedClass extends JsonResource
         'name'                    => $this->name,
         'icon'                    => $this->icon,
         'order_type'              => $this->order_type,
+        'is_outstanding'          => $this->is_outstanding,
         'shop_products_is_active' => ShopProduct_R3::collection($this->shop_products_is_active),
       ];
     }

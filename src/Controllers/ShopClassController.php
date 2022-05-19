@@ -145,4 +145,17 @@ class ShopClassController extends Controller
   {
     return ModelHelper::ws_OrderPatchHandler($this, $request);
   }
+
+  /**
+   * Get From Name
+   *
+   */
+  public function get_from_name($name)
+  {
+    $model = $this->model::where('name', $name)->first();
+    if (!$model) {
+      throw new \Wasateam\Laravelapistone\Exceptions\FindNoDataException('shop_class');
+    }
+    return new \Wasateam\Laravelapistone\Resources\ShopClass($model);
+  }
 }

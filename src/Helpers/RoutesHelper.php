@@ -1155,6 +1155,7 @@ class RoutesHelper
       Route::resource('shop_class', ShopClassController::class)->only([
         'index', 'show',
       ])->shallow();
+      Route::get('shop_class/get_from_name/{name}', [ShopClassController::class, 'get_from_name']);
       // Route::resource('shop_class', ShopClassController::class)->only([
       //   'index', 'show',
       // ])->shallow()->middleware('throttle:2000,1');

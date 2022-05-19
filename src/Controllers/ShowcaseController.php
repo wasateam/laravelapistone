@@ -105,7 +105,7 @@ class ShowcaseController extends Controller
   /**
    * Show
    *
-   * @urlParam  show_case required The ID of show_case. Example: 1
+   * @queryParam route_name string No-example
    */
   public function show(Request $request, $id = null)
   {

@@ -105,14 +105,14 @@ class ShowcaseController extends Controller
   /**
    * Show
    *
-   * @queryParam route_name string No-example
+   * @urlParam  route_name required The route_name of show_case. Example: wasateam
    */
   public function show(Request $request, $id = null)
   {
     if (config('stone.mode') == 'cms') {
       return ModelHelper::ws_ShowHandler($this, $request, $id);
     } else if (config('stone.mode') == 'webapi') {
-      $model = $this->model::where('route_name', $request->route_name)
+      $model = $this->model::where('route_name', $id)
         ->where('is_active', 1)
         ->first();
       if (!$model) {

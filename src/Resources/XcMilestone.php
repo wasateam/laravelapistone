@@ -16,18 +16,17 @@ class XcMilestone extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       return [
-        'id'             => $this->id,
-        'updated_at'     => $this->updated_at,
-        'created_at'     => $this->created_at,
-        'name'           => $this->name,
-        'date'           => $this->date,
-        'reviewed_at'    => $this->reviewed_at,
-        'status'         => $this->status,
-        'creator_remark' => $this->creator_remark,
-        'taker_remark'   => $this->taker_remark,
-        'xc_project'     => new XcProject_R1($this->xc_project),
-        'creator'        => new Admin_R1($this->creator),
-        'taker'          => new Admin_R1($this->taker),
+        'id'         => $this->id,
+        'updated_at' => $this->updated_at,
+        'created_at' => $this->created_at,
+        'name'       => $this->name,
+        'content'    => $this->content,
+        'start_date' => $this->start_date,
+        'days'       => $this->days,
+        'done_at'    => $this->done_at,
+        'remark'     => $this->remark,
+        'xc_project' => new XcProject_R1($this->xc_project),
+        'creator'    => new Admin_R1($this->creator),
       ];
     }
   }

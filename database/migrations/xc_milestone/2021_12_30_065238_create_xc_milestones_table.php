@@ -18,14 +18,13 @@ class CreateXcMilestonesTable extends Migration
       $table->timestamps();
       $table->softDeletes();
       $table->string('name')->nullable();
-      $table->date('date')->nullable();
-      $table->timestamp('reviewed_at')->nullable();
-      $table->string('status')->nullable();
+      $table->text('content')->nullable();
+      $table->date('start_date')->nullable();
+      $table->integer('days')->nullable();
+      $table->timestamp('done_at')->nullable();
       $table->string('creator_id')->nullable();
-      $table->string('taker_id')->nullable();
       $table->string('xc_project_id')->nullable();
-      $table->text('creator_remark')->nullable();
-      $table->text('taker_remark')->nullable();
+      $table->text('remark')->nullable();
     });
   }
 

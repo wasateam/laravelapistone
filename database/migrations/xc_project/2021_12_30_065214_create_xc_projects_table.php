@@ -21,8 +21,9 @@ class CreateXcProjectsTable extends Migration
       $table->string('name')->nullable();
       $table->text('slack_webhook_url')->nullable();
       $table->string('status')->nullable();
-      $table->text('slack_team')->nullable();
-      $table->text('slack_channel')->nullable();
+      $table->text('slack_team_id')->nullable();
+      $table->text('slack_channel_id')->nullable();
+      $table->text('invision')->nullable();
       $table->text('zeplin')->nullable();
       $table->text('gitlab')->nullable();
       $table->text('github')->nullable();

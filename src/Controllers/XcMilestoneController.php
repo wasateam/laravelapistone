@@ -13,18 +13,13 @@ use Wasateam\Laravelapistone\Models\XcMilestone;
  * @authenticated
  *
  * name 名稱
- * date 日期
- * reviewed_at 覆核時間
- * status 狀態
- * ~ open 待執行
- * ~ done 已完成
- * ~ closed 已覆核
- * creator_remark 建立人備註
- * taker_remark 執行人備註
+ * content 內容
+ * start_date 日期
+ * days 執行天數
+ * done_at 完成時間
+ * remark 備註
  * xc_project 專案 (管理後台)
  * creator 建立人
- * taker 執行人
- * is_personal 個人 task
  *
  */
 class XcMilestoneController extends Controller
@@ -34,17 +29,13 @@ class XcMilestoneController extends Controller
   public $resource     = 'Wasateam\Laravelapistone\Resources\XcMilestone';
   public $input_fields = [
     'name',
-    'date',
-    'reviewed_at',
-    'status',
-    'creator_remark',
-    'taker_remark',
-    'is_personal',
+    'content',
+    'start_date',
+    'days',
+    'remark',
   ];
   public $belongs_to = [
     'xc_project',
-    'creator',
-    'taker',
   ];
   public $order_fields = [
     'updated_at',
@@ -69,14 +60,11 @@ class XcMilestoneController extends Controller
    * Store
    *
    * name 名稱
-   * datte 日期
-   * reviewed_at 覆核時間
-   * status 狀態
-   * creator_remark 建立人備註
-   * taker_remark 執行人備註
-   * xc_project 專案
-   * creator 建立人
-   * taker 執行人
+   * content 內容
+   * start_date 日期
+   * days 執行天數
+   * remark 備註
+   * xc_project 專案 (管理後台)
    *
    */
   public function store(Request $request, $id = null)
@@ -99,14 +87,11 @@ class XcMilestoneController extends Controller
    *
    * @urlParam  task required The ID of task. Example: 1
    * name 名稱
-   * datte 日期
-   * reviewed_at 覆核時間
-   * status 狀態
-   * creator_remark 建立人備註
-   * taker_remark 執行人備註
-   * xc_project 專案
-   * creator 建立人
-   * taker 執行人
+   * content 內容
+   * start_date 日期
+   * days 執行天數
+   * remark 備註
+   * xc_project 專案 (管理後台)
    */
   public function update(Request $request, $id)
   {

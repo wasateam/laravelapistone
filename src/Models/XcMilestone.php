@@ -20,13 +20,8 @@ class XcMilestone extends Model
     return $this->belongsTo(Admin::class, 'creator_id');
   }
 
-  public function taker()
-  {
-    return $this->belongsTo(Admin::class, 'taker_id');
-  }
-
   protected $casts = [
-    'date'        => 'date',
-    'reviewed_at' => 'datetime',
+    'start_date' => 'date',
+    'done_at'    => 'datetime',
   ];
 }

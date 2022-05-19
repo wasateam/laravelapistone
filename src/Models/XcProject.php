@@ -10,13 +10,8 @@ class XcProject extends Model
   use HasFactory;
   use \Illuminate\Database\Eloquent\SoftDeletes;
 
-  public function members()
+  public function xc_project_members()
   {
-    return $this->belongsToMany(Admin::class, 'xc_project_member', 'xc_project_id', 'member_id');
-  }
-
-  public function managers()
-  {
-    return $this->belongsToMany(Admin::class, 'xc_project_manager', 'xc_project_id', 'manager_id');
+    return $this->hasMany(XcProjectMember::class);
   }
 }

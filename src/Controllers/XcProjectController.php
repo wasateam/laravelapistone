@@ -13,15 +13,16 @@ use Wasateam\Laravelapistone\Models\XcProject;
  * @authenticated
  *
  * url 連結
- * name 明稱
+ * name 名稱
  * slack_webhook_url Slack Webhook Url
  * status 狀態
- * ~ ing 進行中
  * ~ prepare 準備中
+ * ~ ing 進行中
  * ~ suspend 暫停
  * ~ complete 結案
- * slack_team Slack Team ID
- * slack_channel Slack Channel Id
+ * slack_team_id Slack Team ID
+ * slack_channel_id Slack Channel Id
+ * invision Invision 帳號
  * zeplin Zeplin 帳號
  * gitlab Gitlab 帳號
  * github Github 帳號
@@ -30,8 +31,7 @@ use Wasateam\Laravelapistone\Models\XcProject;
  * links 相關連結
  * infos 相關資訊
  * payload Payload
- * members 成員
- * managers Pm們
+ * xc_project_members 專案成員
  *
  */
 class XcProjectController extends Controller
@@ -44,8 +44,8 @@ class XcProjectController extends Controller
     'name',
     'slack_webhook_url',
     'status',
-    'slack_team',
-    'slack_channel',
+    'slack_team_id',
+    'slack_channel_id',
     'zeplin',
     'gitlab',
     'github',
@@ -56,12 +56,8 @@ class XcProjectController extends Controller
     'payload',
   ];
   public $belongs_to_many = [
-    'members',
-    'managers',
   ];
   public $filter_belongs_to_many = [
-    'members',
-    'managers',
   ];
   public $order_fields = [
     'updated_at',
@@ -86,11 +82,12 @@ class XcProjectController extends Controller
    * Store
    *
    * url 連結
-   * name 明稱
+   * name 名稱
    * slack_webhook_url Slack Webhook Url
    * status 狀態
-   * slack_team Slack Team ID
-   * slack_channel Slack Channel Id
+   * slack_team_id Slack Team ID
+   * slack_channel_id Slack Channel Id
+   * invision Invision 帳號
    * zeplin Zeplin 帳號
    * gitlab Gitlab 帳號
    * github Github 帳號
@@ -98,9 +95,6 @@ class XcProjectController extends Controller
    * remark 備註
    * links 相關連結
    * infos 相關資訊
-   * payload Payload
-   * members 成員
-   * managers Pm們
    *
    */
   public function store(Request $request, $id = null)
@@ -123,11 +117,12 @@ class XcProjectController extends Controller
    *
    * @urlParam  xc_project required The ID of xc_project. Example: 1
    * url 連結
-   * name 明稱
+   * name 名稱
    * slack_webhook_url Slack Webhook Url
    * status 狀態
-   * slack_team Slack Team ID
-   * slack_channel Slack Channel Id
+   * slack_team_id Slack Team ID
+   * slack_channel_id Slack Channel Id
+   * invision Invision 帳號
    * zeplin Zeplin 帳號
    * gitlab Gitlab 帳號
    * github Github 帳號
@@ -135,9 +130,6 @@ class XcProjectController extends Controller
    * remark 備註
    * links 相關連結
    * infos 相關資訊
-   * payload Payload
-   * members 成員
-   * managers Pm們
    */
   public function update(Request $request, $id)
   {

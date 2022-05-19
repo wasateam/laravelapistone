@@ -166,25 +166,14 @@ class RoutesHelper
     # XcTask
     if (config('stone.xc_task')) {
 
-      Route::group([
-        "middleware" => [
-          "auth:admin",
-          "wasascopes:xc_task_template-read",
-        ],
-      ], function () {
-        Route::get("xc_task_template", [XcTaskTemplateController::class, 'index']);
-        Route::get("xc_task_template/{id}", [XcTaskTemplateController::class, 'show']);
-      });
-      Route::group([
-        "middleware" => [
-          "auth:admin",
-          "wasascopes:xc_task_template-edit",
-        ],
-      ], function () {
-        Route::post("xc_task_template", [XcTaskTemplateController::class, 'store']);
-        Route::patch("xc_task_template/{id}", [XcTaskTemplateController::class, 'update']);
-        Route::delete("xc_task_template/{id}", [XcTaskTemplateController::class, 'destroy']);
-      });
+      # XcMilestone
+      if (config('stone.xc_milestone')) {
+        self::get_resource_scope_routes(
+          XcTaskTemplateController::class,
+          'xc_task_template',
+          ['read', 'edit']
+        );
+      }
 
       Route::group([
         "middleware" => [
@@ -206,16 +195,6 @@ class RoutesHelper
         Route::get("xc_task", [XcTaskController::class, 'index']);
         Route::get("xc_task/{id}", [XcTaskController::class, 'show']);
       });
-
-      // Route::group([
-      //   "middleware" => [
-      //     "auth:admin",
-      //     "wasascopes:xc_task-read,xc_task-read-my,xc_task-read-my-xc_project,xc_task-read-my-xc_work_type",
-      //   ],
-      // ], function () {
-      //   Route::get("xc_task", [XcTaskController::class, 'index']);
-      //   Route::get("xc_task/{id}", [XcTaskController::class, 'show']);
-      // });
 
       // Route::group([
       //   "middleware" => ["wasascopes:xc_task-edit,xc_task-edit-my,xc_task-edit-my-xc_project,xc_task-edit-my-xc_work_type"],

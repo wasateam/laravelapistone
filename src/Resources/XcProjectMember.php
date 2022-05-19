@@ -4,7 +4,7 @@ namespace Wasateam\Laravelapistone\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class XcProject_R1 extends JsonResource
+class XcProjectMember extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -16,8 +16,12 @@ class XcProject_R1 extends JsonResource
   {
     if (config('stone.mode') == 'cms') {
       return [
-        'id'   => $this->id,
-        'name' => $this->name,
+        'id'         => $this->id,
+        'updated_at' => $this->updated_at,
+        'created_at' => $this->created_at,
+        'scopes'     => $this->scopes,
+        'admin'      => new Admin_R1($this->admin),
+        'xc_project' => new XcProject_R1($this->admin),
       ];
     }
   }

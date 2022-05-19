@@ -16,6 +16,7 @@ return [
     'test_mail'  => env('MAIL_TEST_MAIL', 'wasalearn@gmail.com'),
   ],
   'app_url'             => env('APP_URL'),
+  'cms_url'             => env('CMS_URL'),
   'web_url'             => env('WEB_URL'),
   // Auth
   'auth'                => [

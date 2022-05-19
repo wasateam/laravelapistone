@@ -10,7 +10,9 @@ use Maatwebsite\Excel\Facades\Excel;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Imports\ShopProductImport;
+use Wasateam\Laravelapistone\Models\FeaturedClass;
 use Wasateam\Laravelapistone\Models\ShopProduct;
+use Wasateam\Laravelapistone\Models\ShopSubclass;
 
 /**
  * @group ShopProduct 商品
@@ -245,6 +247,26 @@ class ShopProductController extends Controller
         }
       });
     } else if (config('stone.mode') == 'webapi') {
+      if (
+        $request->filled('shop_subclasses') &&
+        !str_contains($request->shop_subclasses, ',')
+      ) {
+        $shop_subclass = ShopSubclass::find($request->shop_subclasses);
+        if ($shop_subclass) {
+          $page = ($request != null) && $request->filled('page') ? $request->page : 1;
+          return $shop_subclass->shop_products_is_active()->paginate($this->paginate, ['*'], 'page', $page);
+        }
+      } else if (
+        $request->filled('featured_classes') &&
+        !str_contains($request->featured_classes, ',')
+      ) {
+        $featured_class = FeaturedClass::find($request->featured_classes);
+        if ($featured_class) {
+          $page = ($request != null) && $request->filled('page') ? $request->page : 1;
+          return $featured_class->shop_products_is_active()->paginate($this->paginate, ['*'], 'page', $page);
+        }
+      }
+
       $getall = $request->has('get_all') ? $request->has('get_all') : false;
       return ModelHelper::ws_IndexHandler($this, $request, $id, $getall, function ($snap) use ($request) {
         $snap = $snap->onshelf();
@@ -256,6 +278,7 @@ class ShopProductController extends Controller
         }
         return $snap;
       });
+
     }
   }
 

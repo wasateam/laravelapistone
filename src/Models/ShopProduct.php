@@ -126,6 +126,12 @@ class ShopProduct extends Model
       });
   }
 
+  public function scopeNostocklast($query)
+  {
+    return $query
+      ->orderByRaw('stock_count = 0');
+  }
+
   public function scopeCollected($query, $user_id)
   {
     return $query->whereHas('users', function ($query) use ($user_id) {

@@ -223,6 +223,8 @@ class ShopProductController extends Controller
    * @queryParam cold_chain_type 溫層 No-example
    * @queryParam has_stock boolean 有庫存 Example:1
    * @queryParam get_all boolean 取得全部 Example:1
+   * @queryParam order_way 排序方式 Example:desc
+   * @queryParam order_by 排序欄位 Example:stock_count
    *
    */
   public function index(Request $request, $id = null)

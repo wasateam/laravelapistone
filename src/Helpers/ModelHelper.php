@@ -44,9 +44,6 @@ class ModelHelper
     // XXX Filter User
     $snap = self::userFilterSnap($snap, $setting);
 
-    # IDs Filter
-    $snap = self::idsFilterSnap($snap, $request);
-
     return $snap;
   }
 
@@ -430,9 +427,6 @@ class ModelHelper
     // Snap
     $snap = self::indexGetSnap($setting, $request, null, false);
 
-    # IDs Filter
-    $snap = self::idsFilterSnap($snap, $request);
-
     if ($custom_snap_handler) {
       $snap = $custom_snap_handler($snap);
     }
@@ -774,6 +768,9 @@ class ModelHelper
     if (!$snap) {
       $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many);
     }
+
+    # IDs 
+    $snap = self::idsFilterSnap($snap, $request);
 
     // Order
     if (in_array($order_by, $setting->order_fields)) {
@@ -1453,7 +1450,7 @@ class ModelHelper
 
   public static function idsFilterSnap($snap, $request)
   {
-    if ($request->has('ids')) {
+    if ($request->filled('ids')) {
       $ids_arr = array_map('intval', explode(',', $request->ids));
       $snap    = $snap->whereIn('id', $ids_arr);
     }

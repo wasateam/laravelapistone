@@ -253,8 +253,12 @@ class ShopProductController extends Controller
       ) {
         $shop_subclass = ShopSubclass::find($request->shop_subclasses);
         if ($shop_subclass) {
-          $page = ($request != null) && $request->filled('page') ? $request->page : 1;
-          return $shop_subclass->shop_products_is_active()->paginate($this->paginate, ['*'], 'page', $page);
+          if ($request->filled('page')) {
+            $page = ($request != null) && $request->filled('page') ? $request->page : 1;
+            return \Wasateam\Laravelapistone\Resources\ShopProductCollection::collection($shop_subclass->shop_products_is_active()->paginate($this->paginate, ['*'], 'page', $page));
+          } else {
+            return \Wasateam\Laravelapistone\Resources\ShopProductCollection::collection($shop_subclass->shop_products_is_active);
+          }
         }
       } else if (
         $request->filled('featured_classes') &&
@@ -262,8 +266,12 @@ class ShopProductController extends Controller
       ) {
         $featured_class = FeaturedClass::find($request->featured_classes);
         if ($featured_class) {
-          $page = ($request != null) && $request->filled('page') ? $request->page : 1;
-          return $featured_class->shop_products_is_active()->paginate($this->paginate, ['*'], 'page', $page);
+          if ($request->filled('page')) {
+            $page = ($request != null) && $request->filled('page') ? $request->page : 1;
+            return \Wasateam\Laravelapistone\Resources\ShopProductCollection::collection($featured_class->shop_products_is_active()->paginate($this->paginate, ['*'], 'page', $page));
+          } else {
+            return \Wasateam\Laravelapistone\Resources\ShopProductCollection::collection($featured_class->shop_products_is_active);
+          }
         }
       }
 

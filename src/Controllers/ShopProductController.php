@@ -521,6 +521,27 @@ class ShopProductController extends Controller
           $sales_count,
         ];
         return $map;
+      },
+      function ($snap) use ($request) {
+        if ($request->filled('sale_only')) {
+          $snap = $snap->whereHas('shop_order_shop_products', function ($query) use ($request) {
+            $query->whereHas('shop_order', function ($query) use ($request) {
+              $setting = ModelHelper::getSetting(new \Wasateam\Laravelapistone\Controllers\ShopOrderController);
+              $query   = ModelHelper::indexGetSnap($setting, new Request((array) json_decode($request->shop_order_request)), null, false, $query);
+              $query->whereIn('status',
+                [
+                  'established',
+                  'not-established',
+                  'return-part-apply',
+                  'cancel',
+                  'return-part-complete',
+                  'cancel-complete',
+                  'complete',
+                ]);
+            });
+          });
+        }
+        return $snap;
       }
     );
   }

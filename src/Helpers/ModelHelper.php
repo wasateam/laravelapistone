@@ -422,7 +422,7 @@ class ModelHelper
     return Excel::import(new \Wasateam\Laravelapistone\Imports\ModelImport($request, $map), $request->file('file'));
   }
 
-  public static function ws_ExportExcelHandler($controller, $request, $headings, $map)
+  public static function ws_ExportExcelHandler($controller, $request, $headings, $map, $custom_snap_handler = null)
   {
     // Setting
     $setting = self::getSetting($controller);
@@ -432,6 +432,10 @@ class ModelHelper
 
     # IDs Filter
     $snap = self::idsFilterSnap($snap, $request);
+
+    if ($custom_snap_handler) {
+      $snap = $custom_snap_handler($snap);
+    }
 
     // Collection
     $collection = self::indexGetPaginate($setting, $snap, $request, true);

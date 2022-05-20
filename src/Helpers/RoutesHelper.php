@@ -654,6 +654,7 @@ class RoutesHelper
       Route::resource('shop_order', ShopOrderController::class)->only([
         'index', 'show', 'store', 'update', 'destroy',
       ])->shallow();
+      Route::get('shop_order/print/pick', [ShopOrderController::class, 'index_print_pick']);
       if (config('stone.shop.order_export')) {
         Route::get('shop_order/export/pdf/signedurl', [ShopOrderController::class, 'export_pdf_signedurl']);
       }

@@ -47,7 +47,7 @@ class ModelHelper
     return $snap;
   }
 
-  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null, $limit = true, $custom_scope_handler = null)
+  public static function ws_IndexHandler($controller, $request, $id = null, $getall = false, $custom_snap_handler = null, $limit = true, $custom_scope_handler = null, $resource = null)
   {
 
     $snap = self::ws_IndexSnap($controller, $request, $id, $custom_snap_handler, $limit, $custom_scope_handler);
@@ -61,7 +61,7 @@ class ModelHelper
       throw $th;
     }
 
-    return self::indexGetResourceCollection($collection, $setting);
+    return self::indexGetResourceCollection($collection, $setting, $resource);
   }
 
   public static function ws_StoreHandler(
@@ -706,6 +706,7 @@ class ModelHelper
     $setting->resource_for_order              = isset($controller->resource_for_order) ? $controller->resource_for_order : $controller->resource;
     $setting->order_layers_setting            = isset($controller->order_layers_setting) ? $controller->order_layers_setting : [];
     $setting->filter_time_fields              = isset($controller->filter_time_fields) ? $controller->filter_time_fields : [];
+    $setting->getallable                      = isset($controller->getallable) ? $controller->getallable : false;
     return $setting;
   }
 
@@ -769,7 +770,7 @@ class ModelHelper
       $snap = $setting->model::with($setting->belongs_to)->with($setting->has_many)->with($setting->belongs_to_many);
     }
 
-    # IDs 
+    # IDs
     $snap = self::idsFilterSnap($snap, $request);
 
     // Order
@@ -1043,6 +1044,11 @@ class ModelHelper
       return $snap->get();
     } else if ($setting->getallwhentimefield && ($request->filled('start_time') || $request->filled('end_time'))) {
       return $snap->get();
+    } else if ($setting->getallable &&
+      $request->filled('getall') &&
+      $request->getall == 1
+    ) {
+      return $snap->get();
     } else if ($request->filled('offset') || $request->filled('limit')) {
       $offset = $request->filled('offset') ? $request->offset : 1;
       $limit  = $request->filled('limit') ? $request->limit : 50;
@@ -1274,9 +1280,11 @@ class ModelHelper
     return $model;
   }
 
-  public static function indexGetResourceCollection($collection, $setting)
+  public static function indexGetResourceCollection($collection, $setting, $resource = null)
   {
-    if ($setting->resource_for_collection) {
+    if ($resource) {
+      return $resource::collection($collection);
+    } else if ($setting->resource_for_collection) {
       return $setting->resource_for_collection::collection($collection);
     } else {
       return $setting->resource::collection($collection);

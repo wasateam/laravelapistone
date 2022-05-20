@@ -269,6 +269,8 @@ class ShopOrderController extends Controller
 
   public $paginate = 15;
 
+  public $getallable = true;
+
   public function __construct()
   {
     if (config('stone.shop.uuid')) {
@@ -633,7 +635,7 @@ class ShopOrderController extends Controller
     $datas    = [];
     $timezone = config('stone.timezone') ? $timezone = config('stone.timezone') : 'UTC';
     foreach ($shop_orders as $shop_order) {
-      $delivery_time       = Carbon::parse($shop_order->delivery_date)->format('Y-m-d') . '/' . ShopHelper::getShopOrderShipTimeRange($shop_order, $timezone);
+      $delivery_time       = Carbon::parse($shop_order->ship_date)->format('Y-m-d') . '/' . ShopHelper::getShopOrderShipTimeRange($shop_order, $timezone);
       $orderer             = $shop_order->orderer . '/' . $shop_order->orderer_tel;
       $orderer_encode      = StrHelper::encodeString($shop_order->orderer, 'name') . '/' . StrHelper::encodeString($shop_order->orderer_tel, 'tel');
       $receiver            = $shop_order->receiver;
@@ -849,5 +851,19 @@ class ShopOrderController extends Controller
       $shop_order = $this->model::find($id);
       return $shop_order;
     }
+  }
+
+  /**
+   * Index Print Pick
+   *
+   */
+  public function index_print_pick(Request $request, $id = null)
+  {
+    return ModelHelper::ws_IndexHandler($this, $request, $id, true,
+      null,
+      false,
+      null,
+      'Wasateam\Laravelapistone\Resources\ShopOrderCollection_R_PrintPick'
+    );
   }
 }

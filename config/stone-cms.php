@@ -181,9 +181,9 @@ return [
     ],
     'shop_product'    => [
       'import' => [
-        'no',
-        'stock_count',
-        'storage_space',
+        'no'            => true,
+        'stock_count'   => true,
+        'storage_space' => true,
       ],
     ],
   ],

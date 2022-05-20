@@ -14,8 +14,8 @@ class ShopProductImport implements ToCollection
    */
   public function collection(Collection $rows)
   {
-    if (config('shop.shop_product')) {
-      if (config('shop.shop_product.import')) {
+    if (config('stone.shop.shop_product')) {
+      if (config('stone.shop.shop_product.import')) {
         $datas = $rows;
         foreach ($datas as $data) {
           if ($data[0] == '系統流水號') {
@@ -32,22 +32,22 @@ class ShopProductImport implements ToCollection
               $import_record->stock_count     = $data[10];
               $import_record->storage_space   = $data[11];
               $import_record->save();
-              if (config('shop.shop_product.import.no')) {
+              if (config('stone.shop.shop_product.import.no')) {
                 $shop_product->no = $data[4];
               }
-              if (config('shop.shop_product.import.name')) {
+              if (config('stone.shop.shop_product.import.name')) {
                 $shop_product->name = $data[5];
               }
-              if (config('shop.shop_product.import.cost')) {
+              if (config('stone.shop.shop_product.import.cost')) {
                 $shop_product->cost = $data[8];
               }
-              if (config('shop.shop_product.import.price')) {
+              if (config('stone.shop.shop_product.import.price')) {
                 $shop_product->price = $data[9];
               }
-              if (config('shop.shop_product.import.stock_count')) {
+              if (config('stone.shop.shop_product.import.stock_count')) {
                 $shop_product->stock_count = $data[10];
               }
-              if (config('shop.shop_product.import.storage_space')) {
+              if (config('stone.shop.shop_product.import.storage_space')) {
                 $shop_product->storage_space = $data[11];
               }
               $shop_product->save();

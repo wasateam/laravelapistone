@@ -179,6 +179,13 @@ return [
     'pay_expire'      => [
       'time_limit' => 600,
     ],
+    'shop_product'    => [
+      'import' => [
+        'no',
+        'stock_count',
+        'storage_space',
+      ],
+    ],
   ],
   'invoice'             => [
     'service'    => 'ecpay',

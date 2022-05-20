@@ -502,18 +502,19 @@ class ShopProductController extends Controller
       "售價",
       "庫存",
       "儲位",
-      $sales_title,
     ];
+    if ($request->filled('sale_only')) {
+      $headings[] = $sales_title;
+    }
 
     return ModelHelper::ws_ExportExcelHandler(
       $this,
       $request,
       $headings,
       function ($model) use ($request) {
-        $weight      = $model->weight_capacity . ' ' . $model->weight_capacity_unit;
-        $date_arr    = explode(',', $request->created_at);
-        $sales_count = ShopHelper::getShopProductSalesCount($model->id, new Request((array) json_decode($request->shop_order_request)));
-        $map         = [
+        $weight   = $model->weight_capacity . ' ' . $model->weight_capacity_unit;
+        $date_arr = explode(',', $request->created_at);
+        $map      = [
           $model->id,
           $model->purchaser,
           $model->store_house_class,
@@ -526,8 +527,11 @@ class ShopProductController extends Controller
           $model->price,
           $model->stock_count,
           $model->storage_space,
-          $sales_count,
         ];
+        if ($request->filled('sale_only')) {
+          $sales_count = ShopHelper::getShopProductSalesCount($model->id, new Request((array) json_decode($request->shop_order_request)));
+          $map[]       = $sales_count;
+        }
         return $map;
       },
       function ($snap) use ($request) {

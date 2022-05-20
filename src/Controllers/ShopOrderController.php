@@ -860,7 +860,10 @@ class ShopOrderController extends Controller
   public function index_print_pick(Request $request, $id = null)
   {
     return ModelHelper::ws_IndexHandler($this, $request, $id, true,
-      null,
+      function ($snap) {
+        $snap->orderBy('receive_address', 'asc');
+        return $snap;
+      },
       false,
       null,
       'Wasateam\Laravelapistone\Resources\ShopOrderCollection_R_PrintPick'

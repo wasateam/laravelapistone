@@ -106,30 +106,31 @@ class ShopCampaignController extends Controller
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id, $request->get_all, function ($snap) use ($request) {
-      //篩選日期區間
-      $date = ($request != null) && $request->filled('date') ? Carbon::parse($request->date) : null;
-      if (isset($date)) {
-        $snap = $snap->where(function ($query) use ($date) {
-          $query->where('end_date', '>=', $date)->where('start_date', '<=', $date);
-        });
-      }
-      //篩選狀態
-      $status = ($request != null) && $request->filled('status') ? $request->status : null;
-      if (isset($status)) {
-        $today = Carbon::now()->format('Y-m-d');
-        if ($status == 'in-progress') {
-          $snap = $snap->where(function ($query) use ($today) {
-            $query->whereDate('end_date', '>=', $today)->whereDate('start_date', '<=', $today);
-          })->orWhereNull('start_date');
-        } else if ($status == 'not-started') {
-          $snap = $snap->whereDate('start_date', '>', $today);
-        } else if ($status == 'end') {
-          $snap = $snap->whereDate('end_date', '<', $today);
-        }
-      }
-      return $snap;
-    });
+    return ModelHelper::ws_IndexHandler($this, $request, $id, false);
+    // return ModelHelper::ws_IndexHandler($this, $request, $id, $request->get_all, function ($snap) use ($request) {
+    //   //篩選日期區間
+    //   $date = ($request != null) && $request->filled('date') ? Carbon::parse($request->date) : null;
+    //   if (isset($date)) {
+    //     $snap = $snap->where(function ($query) use ($date) {
+    //       $query->where('end_date', '>=', $date)->where('start_date', '<=', $date);
+    //     });
+    //   }
+    //   //篩選狀態
+    //   $status = ($request != null) && $request->filled('status') ? $request->status : null;
+    //   if (isset($status)) {
+    //     $today = Carbon::now()->format('Y-m-d');
+    //     if ($status == 'in-progress') {
+    //       $snap = $snap->where(function ($query) use ($today) {
+    //         $query->whereDate('end_date', '>=', $today)->whereDate('start_date', '<=', $today);
+    //       })->orWhereNull('start_date');
+    //     } else if ($status == 'not-started') {
+    //       $snap = $snap->whereDate('start_date', '>', $today);
+    //     } else if ($status == 'end') {
+    //       $snap = $snap->whereDate('end_date', '<', $today);
+    //     }
+    //   }
+    //   return $snap;
+    // });
   }
 
   /**

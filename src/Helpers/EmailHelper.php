@@ -51,6 +51,9 @@ class EmailHelper
       if (!$mails && config('stone.shop.stock_alert.contact_emails')) {
         $mails = config('stone.shop.stock_alert.contact_emails');
       }
+      if (!count($mails)) {
+        return;
+      }
       Mail::to($mails)->send(new \Wasateam\Laravelapistone\Mail\MailShopProductStockAlert($shop_product, $shop_product_spec));
     }
   }

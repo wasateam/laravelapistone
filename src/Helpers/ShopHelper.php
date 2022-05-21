@@ -1473,13 +1473,13 @@ class ShopHelper
           $shop_order->invoice_number = $invoice_res->InvoiceNo;
           $shop_order->save();
           return $shop_order;
-        } catch (\Throwable$th) {
+        } catch (\Throwable $th) {
           $shop_order->invoice_status = 'fail';
           $shop_order->save();
           throw $th;
         }
       }
-      if($shop_order->invoice_status=='done'){
+      if ($shop_order->invoice_status == 'done') {
         self::createBonusPointFromShopOrder($shop_order);
       }
     }
@@ -1713,14 +1713,18 @@ class ShopHelper
 
   public static function checkFirstShopOrderOfYearOfUser($shop_order)
   {
-    $first_purchase_check          = 0;
-    $current_year_paid_shop_orders = ShopOrder::where('user_id', $shop_order->user->id)
+    $first_purchase_check = 0;
+    if (!$shop_order->user) {
+      return 0;
+    }
+    $current_year_paid_shop_order = ShopOrder::where('user_id', $shop_order->user->id)
       ->whereYear('created_at', \Carbon\Carbon::parse($shop_order->created_at)->format('Y'))
       ->orderBy('pay_at', 'asc')
-      ->get();
-    if (count($current_year_paid_shop_orders) == 0) {
-      $first_purchase_check = 1;
-    } else if ($current_year_paid_shop_orders[0]->id == $shop_order->id) {
+      ->first();
+    if (
+      !$current_year_paid_shop_order ||
+      $current_year_paid_shop_order->id == $shop_order->id
+    ) {
       $first_purchase_check = 1;
     }
     return $first_purchase_check;
@@ -1772,5 +1776,194 @@ class ShopHelper
     } else {
       return 0;
     }
+  }
+
+  public static function getShopOrderArrayForExport($shop_orders, $request)
+  {
+    $array    = [];
+    $timezone = 'UTC';
+    if ($request && $request->country_code) {
+      $timezone = TimeHelper::getTimeZoneFromCountryCode($request->country_code);
+    } else if (config('stone.timezone')) {
+      $timezone = config('stone.timezone');
+    }
+    foreach ($shop_orders as $shop_order) {
+      $order_products = $shop_order->shop_order_shop_products;
+
+      foreach ($order_products as $index => $order_product) {
+        $shop_product = $order_product->shop_product;
+        $first_purchase_check               = '';
+        $shop_order_user_id                 = '';
+        $orderer                            = '';
+        $orderer_tel                        = '';
+        $orderer_email                      = '';
+        $invoice_uniform_number             = '';
+        $invoice_title                      = '';
+        $receiver                           = '';
+        $receiver_tel                       = '';
+        $area                               = '';
+        $area_section                       = '';
+        $receive_address                    = '';
+        $created_at                         = '';
+        $ship_date                          = '';
+        $ship_time                          = '';
+        $order_type                         = '';
+        $ship_status                        = '';
+        $status                             = '';
+        $shop_order_no                      = '';
+        $shop_product_no                    = '';
+        $shop_product_name                  = '';
+        $shop_product_spec                  = '';
+        $product_price                      = '';
+        $product_price_cost                 = '';
+        $original_count                     = '';
+        $subtotal_price                     = '';
+        $subtotal_cost                      = '';
+        $order_price                        = '';
+        $order_cost_products                = '';
+        $freight                            = '';
+        $freight_deduct                     = '';
+        $bonus_points_deduct                = '';
+        $coupon_deduct                      = '';
+        $coupon_name                        = '';
+        $shop_campaign_discount_code_deduct = '';
+        $shop_campaign_discount_code_name   = '';
+        $invite_no                          = '';
+        $invite_no_deduct                   = '';
+        $shop_campaign_order_type_deduct    = '';
+        $shop_campaign_order_type_name      = '';
+        $order_price                        = '';
+        $customer_service_remark            = '';
+        $pay_type_text                      = '';
+        $return_count                       = '';
+        $return_subtotal_price              = '';
+        $return_subtotal_cost               = '';
+        $return_price                       = '';
+        $return_cost                        = '';
+        $return_reason                      = '';
+        $order_price_after_return           = '';
+        $order_price_after_return           = '';
+        $order_price_after_return           = '';
+        $order_cost                         = '';
+        if ($index == 0) {
+          $first_purchase_check               = self::checkFirstShopOrderOfYearOfUser($shop_order) ? 'v' : '';
+          $shop_order_user_id                 = $shop_order->user ? $shop_order->user->id : '';
+          $orderer                            = $shop_order->orderer;
+          $orderer_tel                        = $shop_order->orderer_tel;
+          $orderer_email                      = $shop_order->orderer_email;
+          $invoice_uniform_number             = $shop_order->invoice_uniform_number;
+          $invoice_title                      = $shop_order->invoice_title;
+          $receiver                           = $shop_order->receiver;
+          $receiver_tel                       = $shop_order->receiver_tel;
+          $area                               = $shop_order->area ? $shop_order->area->name : null;
+          $area_section                       = $shop_order->area_section ? $shop_order->area_section->name : null;
+          $receive_address                    = $shop_order->receive_address;
+          $created_at                         = ShopHelper::getShopOrderCreatedAt($shop_order, $timezone);
+          $ship_date                          = ShopHelper::getShopOrderShipDate($shop_order, $timezone);
+          $ship_time                          = ShopHelper::getShopOrderShipTimeRange($shop_order, $timezone);
+          $order_type                         = ShopHelper::getShopOrderOrderTypeTitle($shop_order);
+          $ship_status                        = ShopHelper::getShopOrderShipStatusTitle($shop_order);
+          $status                             = ShopHelper::getShopOrderStatusTitle($shop_order);
+          $shop_order_no                      = $shop_order->no;
+          $shop_product_no                    = $shop_product ? $shop_product->no : '';
+          $shop_product_name                  = $order_product->name;
+          $shop_product_spec                  = $order_product->spec;
+          $product_price                      = $order_product->discount_price && config('stone.shop.discount_price') ? $order_product->discount_price : $order_product->price;
+          $product_price_cost                 = $order_product->cost;
+          $original_count                     = $order_product->original_count;
+          $subtotal_price                     = $product_price * $order_product->original_count;
+          $subtotal_cost                      = $order_product->cost * $order_product->original_count;
+          $order_price                        = $shop_order->order_price;
+          $order_cost_products                = $shop_order->order_cost_products;
+          $freight                            = $shop_order->freight;
+          $freight_deduct                     = $shop_order->freight_deduct;
+          $bonus_points_deduct                = $shop_order->bonus_points_deduct;
+          $shop_campaign_discount_code_deduct = $shop_order->shop_campaign_discount_code_deduct;
+          $shop_campaign_discount_code_name   = $shop_order->shop_campaign_discount_code ? $shop_order->shop_campaign_discount_code->name : null;
+          $invite_no                          = $shop_order->invite_no;
+          $invite_no_deduct                   = $shop_order->invite_no_deduct;
+          $order_price                        = $shop_order->order_price;
+          $customer_service_remark            = $shop_order->customer_service_remark;
+          $pay_type_text                      = $shop_order->pay_type_text;
+          $return_count                       = ShopHelper::getProductReturnCount($order_product);
+          $return_subtotal_price              = $return_count * $order_product->price;
+          $return_subtotal_cost               = $return_count * $order_product->cost;
+          $return_price                       = $shop_order->return_price;
+          $return_cost                        = $shop_order->return_cost;
+          $return_reason                      = $shop_order->return_reason;
+          $order_price_after_return           = $shop_order->order_price_after_return;
+          $order_price_after_return           = $shop_order->order_price_after_return;
+          $order_price_after_return           = $shop_order->order_price_after_return;
+          $order_cost                         = $shop_order->order_cost;
+        } else {
+          $shop_product_no       = $shop_product ? $shop_product->no : '';
+          $shop_product_name     = $order_product->name;
+          $shop_product_spec     = $order_product->spec;
+          $product_price         = $order_product->discount_price && config('stone.shop.discount_price') ? $order_product->discount_price : $order_product->price;
+          $product_price_cost    = $order_product->cost;
+          $original_count        = $order_product->original_count;
+          $subtotal_price        = $product_price * $order_product->original_count;
+          $return_count          = ShopHelper::getProductReturnCount($order_product);
+          $return_subtotal_price = $return_count * $order_product->price;
+          $return_subtotal_cost  = $return_count * $order_product->cost;
+        }
+        $array[] = [
+          $first_purchase_check,
+          $shop_order_user_id,
+          $orderer,
+          $orderer_tel,
+          $orderer_email,
+          $invoice_uniform_number,
+          $invoice_title,
+          $receiver,
+          $receiver_tel,
+          $area,
+          $area_section,
+          $receive_address,
+          $created_at,
+          $ship_date,
+          $ship_time,
+          $order_type,
+          $ship_status,
+          $status,
+          $shop_order_no,
+          $shop_product_no,
+          $shop_product_name,
+          $shop_product_spec,
+          $product_price,
+          $product_price_cost,
+          $original_count,
+          $subtotal_price,
+          $subtotal_cost,
+          $order_price,
+          $order_cost_products,
+          $freight,
+          $freight_deduct,
+          $bonus_points_deduct,
+          $coupon_deduct,
+          $coupon_name,
+          $shop_campaign_discount_code_deduct,
+          $shop_campaign_discount_code_name,
+          $invite_no,
+          $invite_no_deduct,
+          $shop_campaign_order_type_deduct,
+          $shop_campaign_order_type_name,
+          $order_price,
+          $customer_service_remark,
+          $pay_type_text,
+          $return_count,
+          $return_subtotal_price,
+          $return_subtotal_cost,
+          $return_price,
+          $return_cost,
+          $return_reason,
+          $order_price_after_return,
+          $order_price_after_return,
+          $order_price_after_return,
+          $order_cost,
+        ];
+      }
+    }
+    return $array;
   }
 }

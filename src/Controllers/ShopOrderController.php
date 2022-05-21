@@ -702,9 +702,6 @@ class ShopOrderController extends Controller
    */
   public function export_excel(Request $request)
   {
-    // $shop_orders  = $request->has('shop_orders') ? $request->shop_orders : null;
-    // $get_all      = $request->has('get_all') ? $request->get_all : 0;
-    // $country_code = $request->has('country_code') ? $request->country_code : null;
     return Excel::download(new ShopOrderExport($this, $request), 'shop_orders.xlsx');
   }
 

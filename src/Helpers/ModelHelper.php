@@ -52,6 +52,10 @@ class ModelHelper
 
     $snap = self::ws_IndexSnap($controller, $request, $id, $custom_snap_handler, $limit, $custom_scope_handler);
 
+
+    // \Log::info($snap->toSql());
+    // \Log::info($snap->getBindings());
+
     // Setting
     $setting = self::getSetting($controller);
 

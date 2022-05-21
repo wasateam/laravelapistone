@@ -419,6 +419,11 @@ class ModelHelper
     return Excel::import(new \Wasateam\Laravelapistone\Imports\ModelImport($request, $map), $request->file('file'));
   }
 
+  public static function ws_ExportArrayHandler($array, $headings, $export_name)
+  {
+    return Excel::download(new \Wasateam\Laravelapistone\Exports\ArrayExport($array, $headings), $export_name . '.xlsx');
+  }
+
   public static function ws_ExportExcelHandler($controller, $request, $headings, $map, $custom_snap_handler = null)
   {
     // Setting

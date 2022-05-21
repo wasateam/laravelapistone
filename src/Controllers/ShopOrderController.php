@@ -217,14 +217,9 @@ class ShopOrderController extends Controller
     'orderer',
     'orderer_tel',
     'receiver',
-    'receiver_tel',
   ];
-  public $search_relationship_fields = [
-    'shop_order_shop_products' => [
-      'name',
-    ],
-  ];
-  public $filter_fields = [
+  public $search_relationship_fields = [];
+  public $filter_fields              = [
     'type',
     'order_type',
     'ship_status',
@@ -293,6 +288,10 @@ class ShopOrderController extends Controller
       $this->filter_fields[] = 'status';
       $this->filter_fields[] = 'need_handle';
       $this->input_fields[]  = 'ship_status';
+    } else if (config('stone.mode') == 'webapi') {
+      $this->search_relationship_fields['shop_order_shop_products'] = [
+        'name',
+      ];
     }
     if (config('stone.shop')) {
       if (config('stone.shop.order')) {

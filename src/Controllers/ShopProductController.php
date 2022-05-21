@@ -11,6 +11,7 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 use Wasateam\Laravelapistone\Imports\ShopProductImport;
 use Wasateam\Laravelapistone\Models\FeaturedClass;
+use Wasateam\Laravelapistone\Models\ShopOrderShopProduct;
 use Wasateam\Laravelapistone\Models\ShopProduct;
 use Wasateam\Laravelapistone\Models\ShopSubclass;
 
@@ -483,79 +484,149 @@ class ShopProductController extends Controller
    */
   public function export_excel(Request $request)
   {
-    $date_arr    = array_map('intval', explode(',', $request->created_at));
-    $sales_title = '當日銷售數量';
-    if (count($date_arr) > 1) {
-      $sales_title = "銷售數量";
-    }
-
-    $headings = [
-      "系統流水號",
-      "採購姓名",
-      "內部主分類",
-      "內部子分類",
-      "商品編號",
-      "商品名稱",
-      "規格",
-      "重量/容量",
-      "成本",
-      "售價",
-      "庫存",
-      "儲位",
-    ];
     if ($request->filled('sale_only')) {
-      $headings[] = $sales_title;
+      $date_arr    = array_map('intval', explode(',', $request->created_at));
+      $sales_title = '當日銷售數量';
+      if (count($date_arr) > 1) {
+        $sales_title = "銷售數量";
+      }
+      $headings = [
+        "系統流水號",
+        "採購姓名",
+        "內部主分類",
+        "內部子分類",
+        "商品編號",
+        "商品名稱",
+        "規格",
+        "重量/容量",
+        "成本",
+        "售價",
+        "庫存",
+        "儲位",
+        $sales_title,
+      ];
+
+      $shop_order_request       = new Request((array) json_decode($request->shop_order_request));
+      $shop_order_shop_products = ShopOrderShopProduct::with('shop_product')
+        ->whereHas('shop_order', function ($query) use ($shop_order_request) {
+          $setting = ModelHelper::getSetting(new \Wasateam\Laravelapistone\Controllers\ShopOrderController);
+          $query   = ModelHelper::indexGetSnap($setting, $shop_order_request, null, false, $query);
+          $query->whereIn('status',
+            [
+              'established',
+              'not-established',
+              'return-part-apply',
+              'cancel',
+              'return-part-complete',
+              'cancel-complete',
+              'complete',
+            ]);
+        })
+        ->get();
+
+      $shop_products = [];
+      foreach ($shop_order_shop_products as $shop_order_shop_product) {
+        if (!$shop_order_shop_product->shop_product) {
+          continue;
+        }
+        $shop_product = $shop_order_shop_product->shop_product;
+        $sales_count  = $shop_order_shop_product->count;
+        foreach ($shop_order_shop_product->shop_return_records as $shop_return_record) {
+          $sales_count -= $shop_return_record->count;
+        }
+        if ($sales_count > 0) {
+          if (!array_key_exists($shop_product->id, $shop_products)) {
+            $shop_products[$shop_product->id] = [
+              $shop_product->id,
+              $shop_product->purchaser,
+              $shop_product->store_house_class,
+              $shop_product->store_house_subclass,
+              $shop_product->no,
+              $shop_product->name,
+              $shop_product->spec,
+              $shop_product->weight_capacity . ' ' . $shop_product->weight_capacity_unit,
+              $shop_product->cost,
+              $shop_product->price,
+              $shop_product->stock_count,
+              $shop_product->storage_space,
+              'sales_count' => 0,
+            ];
+          }
+          $shop_products[$shop_order_shop_product->shop_product->id]['sales_count'] += $sales_count;
+        }
+      }
+
+      // return $shop_products;
+      ksort($shop_products);
+
+      return ModelHelper::ws_ExportArrayHandler($shop_products, $headings, 'sales_count');
+
+    } else {
+
+      $date_arr = array_map('intval', explode(',', $request->created_at));
+
+      $headings = [
+        "系統流水號",
+        "採購姓名",
+        "內部主分類",
+        "內部子分類",
+        "商品編號",
+        "商品名稱",
+        "規格",
+        "重量/容量",
+        "成本",
+        "售價",
+        "庫存",
+        "儲位",
+      ];
+
+      return ModelHelper::ws_ExportExcelHandler(
+        $this,
+        $request,
+        $headings,
+        function ($model) use ($request) {
+          $weight   = $model->weight_capacity . ' ' . $model->weight_capacity_unit;
+          $date_arr = explode(',', $request->created_at);
+          $map      = [
+            $model->id,
+            $model->purchaser,
+            $model->store_house_class,
+            $model->store_house_subclass,
+            $model->no,
+            $model->name,
+            $model->spec,
+            $weight,
+            $model->cost,
+            $model->price,
+            $model->stock_count,
+            $model->storage_space,
+          ];
+          return $map;
+        },
+        function ($snap) use ($request) {
+          if ($request->filled('sale_only')) {
+            $snap = $snap->whereHas('shop_order_shop_products', function ($query) use ($request) {
+              $query->whereHas('shop_order', function ($query) use ($request) {
+                $setting = ModelHelper::getSetting(new \Wasateam\Laravelapistone\Controllers\ShopOrderController);
+                $query   = ModelHelper::indexGetSnap($setting, new Request((array) json_decode($request->shop_order_request)), null, false, $query);
+                $query->whereIn('status',
+                  [
+                    'established',
+                    'not-established',
+                    'return-part-apply',
+                    'cancel',
+                    'return-part-complete',
+                    'cancel-complete',
+                    'complete',
+                  ]);
+              });
+            });
+          }
+          return $snap;
+        }
+      );
     }
 
-    return ModelHelper::ws_ExportExcelHandler(
-      $this,
-      $request,
-      $headings,
-      function ($model) use ($request) {
-        $weight   = $model->weight_capacity . ' ' . $model->weight_capacity_unit;
-        $date_arr = explode(',', $request->created_at);
-        $map      = [
-          $model->id,
-          $model->purchaser,
-          $model->store_house_class,
-          $model->store_house_subclass,
-          $model->no,
-          $model->name,
-          $model->spec,
-          $weight,
-          $model->cost,
-          $model->price,
-          $model->stock_count,
-          $model->storage_space,
-        ];
-        if ($request->filled('sale_only')) {
-          $sales_count = ShopHelper::getShopProductSalesCount($model->id, new Request((array) json_decode($request->shop_order_request)));
-          $map[]       = $sales_count;
-        }
-        return $map;
-      },
-      function ($snap) use ($request) {
-        if ($request->filled('sale_only')) {
-          $snap = $snap->whereHas('shop_order_shop_products', function ($query) use ($request) {
-            $query->whereHas('shop_order', function ($query) use ($request) {
-              $setting = ModelHelper::getSetting(new \Wasateam\Laravelapistone\Controllers\ShopOrderController);
-              $query   = ModelHelper::indexGetSnap($setting, new Request((array) json_decode($request->shop_order_request)), null, false, $query);
-              $query->whereIn('status',
-                [
-                  'established',
-                  'not-established',
-                  'return-part-apply',
-                  'cancel',
-                  'return-part-complete',
-                  'cancel-complete',
-                  'complete',
-                ]);
-            });
-          });
-        }
-        return $snap;
-      }
-    );
   }
 
   /**

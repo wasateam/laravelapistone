@@ -14,6 +14,8 @@ class InvoiceHelper
       ->get();
     foreach ($models as $model) {
       \Wasateam\Laravelapistone\Jobs\CreateDelayInvoiceJob::dispatch($model);
+      $model->status = 'queue';
+      $model->save();
     }
   }
 }

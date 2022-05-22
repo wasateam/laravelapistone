@@ -1377,6 +1377,9 @@ class ShopHelper
 
   public static function createInvoice($shop_order)
   {
+    if ($shop_order->invoice_status == 'done') {
+      return;
+    }
     if (config('stone.invoice')) {
       if (config('stone.invoice.service') == 'ecpay') {
         try {

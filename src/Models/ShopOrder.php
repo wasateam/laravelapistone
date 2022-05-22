@@ -167,6 +167,11 @@ class ShopOrder extends Model
     }
   }
 
+  public function getBonusPointsAttribute()
+  {
+    return ShopHelper::getBonusPointFromShopOrder($this);
+  }
+
   protected $casts = [
     'discounts'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'orderer_birthday'  => 'datetime',

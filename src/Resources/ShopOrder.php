@@ -198,6 +198,7 @@ class ShopOrder extends JsonResource
         'return_price'              => $this->return_price,
         'return_reason'             => $this->return_reason,
         'return_remark'             => $this->return_remark,
+        'bonus_points'              => $this->bonus_points,
         'shop_campaign_shop_orders' => ShopCampaignShopOrder::collection($this->shop_campaign_shop_orders),
       ];
       if (config('stone.shop.uuid')) {

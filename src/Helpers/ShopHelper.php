@@ -746,21 +746,34 @@ class ShopHelper
     return $snap;
   }
 
-  public static function createBonusPointFromShopOrder($shop_order)
+  public static function getBonusPointFromShopOrder($shop_order)
   {
-
     $shop_campaign = self::getAvailableShopCampaign('bonus_point_feedback', $shop_order->user_id, $shop_order->created_at);
-
     if (!$shop_campaign) {
-      return;
+      return 0;
     }
-
     $calc_order_price = $shop_order->order_price - $shop_order->freight;
 
     if ($shop_campaign->feedback_rate) {
-      $bonus_point_feedback = intval($calc_order_price) * floatval($shop_campaign->feedback_rate) / 100;
+      return intval(intval($calc_order_price) * floatval($shop_campaign->feedback_rate) / 100);
+    } else {
+      return 0;
+    }
+  }
+
+  public static function createBonusPointFromShopOrder($shop_order)
+  {
+    $record = BonusPointRecord::where('shop_order_id', $shop_order->id)
+      ->where('source', 'new_shop_order')
+      ->where('type', 'get')
+      ->first();
+    if ($record) {
+      return;
+    }
+
+    if ($shop_order->bonus_points) {
       $user                 = $shop_order->user;
-      $user->bonus_points   = $user->bonus_points + $bonus_point_feedback;
+      $user->bonus_points   = $user->bonus_points + $shop_order->bonus_points;
       $user->save();
       self::createBonusPointRecordFromShopOrder($shop_order, $shop_campaign->id, $bonus_point_feedback, 'get');
     }

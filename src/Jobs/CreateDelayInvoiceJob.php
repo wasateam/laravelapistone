@@ -31,8 +31,13 @@ class CreateDelayInvoiceJob implements ShouldQueue
    */
   public function handle()
   {
-    \Wasateam\Laravelapistone\Helpers\ShopHelper::createInvoice($this->invoice_job->shop_order);
-    $this->invoice_job->status = 'invoiced';
-    $this->invoice_job->save();
+    try {
+      \Wasateam\Laravelapistone\Helpers\ShopHelper::createInvoice($this->invoice_job->shop_order);
+      $this->invoice_job->status = 'invoiced';
+      $this->invoice_job->save();
+    } catch (\Throwable $th) {
+      $this->invoice_job->status = 'fail';
+      $this->invoice_job->save();
+    }
   }
 }

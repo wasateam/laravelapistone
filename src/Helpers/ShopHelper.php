@@ -1958,6 +1958,7 @@ class ShopHelper
 
   public static function CancelCompleteRestoreStockCount($shop_order, $ori_shop_order)
   {
+    $check = 0;
     if ($ori_shop_order->status == 'cancel' && $shop_order->status == 'cancel-complete') {
       $check = 1;
     }

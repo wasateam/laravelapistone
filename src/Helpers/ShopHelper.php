@@ -1430,29 +1430,6 @@ class ShopHelper
             $CustomerName           = $invoice_title;
             $CustomerIdentifier     = $invoice_uniform_number;
           }
-          // if (config('stone.invoice.delay')) {
-          //   $DelayDay  = config('stone.invoice.delay');
-          //   $post_data = EcpayInvoiceHelper::getDelayInvoicePostData(
-          //     $CustomerID,
-          //     $CustomerIdentifier,
-          //     $CustomerName,
-          //     $CustomerAddr,
-          //     $CustomerPhone,
-          //     $CustomerEmail,
-          //     $Print,
-          //     $Donation,
-          //     $CarrierType,
-          //     $CarrierNum,
-          //     $TaxType,
-          //     $SalesAmount,
-          //     $Items,
-          //     $DelayDay,
-          //     $Tsr,
-          //   );
-          //   $invoice_res                = EcpayInvoiceHelper::createDelayInvoice($post_data);
-          //   $shop_order->invoice_status = 'waiting';
-          //   $shop_order->save();
-          // } else {
           $post_data = EcpayInvoiceHelper::getInvoicePostData(
             $CustomerID,
             $CustomerIdentifier,
@@ -1472,7 +1449,6 @@ class ShopHelper
           $shop_order->invoice_status = 'done';
           $shop_order->invoice_number = $invoice_res->InvoiceNo;
           $shop_order->save();
-          return $shop_order;
         } catch (\Throwable $th) {
           $shop_order->invoice_status = 'fail';
           $shop_order->save();

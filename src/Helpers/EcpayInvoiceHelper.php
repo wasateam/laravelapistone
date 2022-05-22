@@ -85,6 +85,15 @@ class EcpayInvoiceHelper
       "ItemAmount"  => $shop_order->bonus_points_deduct * -1,
       "ItemRemark"  => "",
     ];
+    $items[] = [
+      "ItemName"    => '邀請碼折抵',
+      "ItemCount"   => 1,
+      "ItemWord"    => "個",
+      "ItemPrice"   => $shop_order->invite_no_deduct * -1,
+      "ItemTaxType" => "1",
+      "ItemAmount"  => $shop_order->invite_no_deduct * -1,
+      "ItemRemark"  => "",
+    ];
     return $items;
   }
 
@@ -237,6 +246,8 @@ class EcpayInvoiceHelper
       throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', null, null, $res_json['TransCode'], $res_json['TransMsg']);
     }
     $res_data = self::getDecryptData($res_json['Data'], 'invoice');
+    \Log::info('$res_data');
+    \Log::info($res_data);
     if ($res_data->RtnCode != '1') {
       throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', $res_data->RtnCode, $res_data->RtnMsg);
     }

@@ -583,6 +583,7 @@ class ShopOrderController extends Controller
     $ori_model = $this->model::find($id);
     ShopHelper::shopOrderShipStatusModifyCheck($ori_model, $request);
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
+      ShopHelper::CancelCompleteRestoreStockCount($model, $ori_model);
       ShopHelper::readyToCreateInvoice($model, $ori_model);
     });
   }
@@ -807,6 +808,7 @@ class ShopOrderController extends Controller
       $ori_model = $this->model::find($id);
       ShopHelper::shopOrderShipStatusModifyCheck($ori_model, $request);
       ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
+        ShopHelper::CancelCompleteRestoreStockCount($model, $ori_model);
         ShopHelper::readyToCreateInvoice($model, $ori_model);
       });
     }

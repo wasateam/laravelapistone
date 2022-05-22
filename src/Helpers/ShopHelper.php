@@ -1942,4 +1942,18 @@ class ShopHelper
     }
     return $array;
   }
+  
+  public static function CancelCompleteRestoreStockCount($shop_order,$ori_shop_order){
+    if ($ori_shop_order->status == 'cancel' && $shop_order->status == 'cancel-complete') {
+      $check = 1;
+    }
+    if(!$check){
+      return;
+    }
+    foreach ($shop_order->shop_return_records as $shop_return_record) {
+      $shop_product = $shop_return_record->shop_product;
+      $shop_product->stock_count+=$shop_return_record->count;
+      $shop_product->save();
+    }
+  }
 }

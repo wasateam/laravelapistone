@@ -1602,6 +1602,16 @@ class ShopHelper
     $check_time  = Carbon::now()->addSeconds($expire_time * -1);
     $shop_orders = ShopOrder::where('pay_status', 'waiting')
       ->where('created_at', '<', $check_time)
+      ->get();
+    foreach ($shop_orders as $shop_order) {
+      foreach ($shop_order->shop_order_shop_products as $shop_order_shop_product) {
+        $shop_product = $shop_order_shop_product->shop_product;
+        $shop_product->stock_count += $shop_order_shop_product->count;
+        $shop_product->save();
+      }
+    }
+    $shop_orders = ShopOrder::where('pay_status', 'waiting')
+      ->where('created_at', '<', $check_time)
       ->update([
         'pay_status' => 'not-paid',
       ]);
@@ -1767,7 +1777,7 @@ class ShopHelper
       $order_products = $shop_order->shop_order_shop_products;
 
       foreach ($order_products as $index => $order_product) {
-        $shop_product = $order_product->shop_product;
+        $shop_product                       = $order_product->shop_product;
         $first_purchase_check               = '';
         $shop_order_user_id                 = '';
         $orderer                            = '';
@@ -1942,17 +1952,18 @@ class ShopHelper
     }
     return $array;
   }
-  
-  public static function CancelCompleteRestoreStockCount($shop_order,$ori_shop_order){
+
+  public static function CancelCompleteRestoreStockCount($shop_order, $ori_shop_order)
+  {
     if ($ori_shop_order->status == 'cancel' && $shop_order->status == 'cancel-complete') {
       $check = 1;
     }
-    if(!$check){
+    if (!$check) {
       return;
     }
     foreach ($shop_order->shop_return_records as $shop_return_record) {
       $shop_product = $shop_return_record->shop_product;
-      $shop_product->stock_count+=$shop_return_record->count;
+      $shop_product->stock_count += $shop_return_record->count;
       $shop_product->save();
     }
   }

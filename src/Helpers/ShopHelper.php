@@ -1393,12 +1393,13 @@ class ShopHelper
 
   public static function createInvoice($shop_order)
   {
+    \Log::info('createInvoice');
     if ($shop_order->invoice_status == 'done') {
       return;
     }
     if (config('stone.invoice')) {
       if (config('stone.invoice.service') == 'ecpay') {
-        try {
+        // try {
           $invoice_type       = $shop_order->invoice_type;
           $SalesAmount        = $shop_order->order_price - $shop_order->return_price;
           $Items              = EcpayInvoiceHelper::getInvoiceItemsFromShopOrder($shop_order);
@@ -1470,11 +1471,11 @@ class ShopHelper
           $shop_order->invoice_number = $invoice_res->InvoiceNo;
           $shop_order->save();
           \Log::info('ok');
-        } catch (\Throwable $th) {
-          $shop_order->invoice_status = 'fail';
-          $shop_order->save();
-          throw $th;
-        }
+        // } catch (\Throwable $th) {
+        //   $shop_order->invoice_status = 'fail';
+        //   $shop_order->save();
+        //   throw $th;
+        // }
       }
       if ($shop_order->invoice_status == 'done') {
         self::createBonusPointFromShopOrder($shop_order);

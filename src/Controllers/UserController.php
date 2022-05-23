@@ -29,6 +29,8 @@ use Wasateam\Laravelapistone\Helpers\UserHelper;
  * description
  * scopes 權限
  * tel 電話
+ * mobile 手機
+ * mobile_country_code 手機國碼
  * payload
  * is_active 是否啟用
  * sequence 排序
@@ -51,6 +53,8 @@ use Wasateam\Laravelapistone\Helpers\UserHelper;
  * customer_id 系統自動生成之客戶ID
  * acumatica_id Acumatica ID
  * invite_no 邀請碼
+ * mobile 手機
+ * mobile_country_code 手機國碼
  *
  * @authenticated
  */
@@ -93,6 +97,8 @@ class UserController extends Controller
     "subscribe_start_at",
     "subscribe_end_at",
     "color",
+    "mobile",
+    "mobile_country_code",
   ];
   public $filter_fields = [
     'byebye_at',
@@ -206,6 +212,8 @@ class UserController extends Controller
    * @bodyParam subscribe_start_at datetime No-example
    * @bodyParam subscribe_end_at datetime No-example
    * @bodyParam color string #000000
+   * @bodyParam mobile string Example: 555666555
+   * @bodyParam mobile_country_code string 886
    * @bodyParam acumatica_id string No-example
    */
   public function store(Request $request, $id = null)
@@ -258,6 +266,8 @@ class UserController extends Controller
    * @bodyParam subscribe_start_at datetime No-example
    * @bodyParam subscribe_end_at datetime No-example
    * @bodyParam color string #000000
+   * @bodyParam mobile string Example: 555666555
+   * @bodyParam mobile_country_code string 886
    * @bodyParam acumatica_id string No-example
    */
   public function update(Request $request, $id)

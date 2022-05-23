@@ -8,6 +8,13 @@ return [
     ],
   ],
   'mode'                => 'webapi',
+  'sms'                 => [
+    'service' => 'every8d',
+    'every8d' => [
+      'UID' => env('EVERY8D_UID'),
+      'PWD' => env('EVERY8D_PWD'),
+    ],
+  ],
   'storage'             => [
     'service' => 'gcs', # gcs, s3, local
     'gcs'     => [

@@ -21,6 +21,7 @@ use Wasateam\Laravelapistone\Controllers\CmsLogController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestAutoReplyController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestController;
 use Wasateam\Laravelapistone\Controllers\ContactRequestNotifyMailController;
+use Wasateam\Laravelapistone\Controllers\CountryDataController;
 use Wasateam\Laravelapistone\Controllers\DownloadInfoController;
 use Wasateam\Laravelapistone\Controllers\EcpayController;
 use Wasateam\Laravelapistone\Controllers\EzAboutUsController;
@@ -280,6 +281,10 @@ class RoutesHelper
         'prefix' => 'auth',
       ], function () use ($model_name, $auth_scope) {
         Route::post('/signin', [AuthController::class, 'signin']);
+        if (config('stone.auth.signin.mobile')) {
+          Route::post('/signin/mobile/get_sms', [AuthController::class, 'signin_mobile_get_sms']);
+          Route::post('/signin/mobile', [AuthController::class, 'signin_mobile']);
+        }
         if (config('stone.auth.signup')) {
           Route::post('/signup', [AuthController::class, 'signup']);
         }
@@ -1353,6 +1358,9 @@ class RoutesHelper
         'index', 'show',
       ])->shallow();
     }
+
+    # Mobile Country Code
+    Route::get('mobile_country_code', [CountryDataController::class, 'mobile_country_code']);
   }
 
   # 以下準備拉進垃圾車

@@ -14,6 +14,7 @@ use Validator;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\EmailHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\RequestHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
 use Wasateam\Laravelapistone\Helpers\UserHelper;
 use Wasateam\Laravelapistone\Models\Admin;
@@ -22,6 +23,10 @@ use Wasateam\Laravelapistone\Models\Admin;
  * @group @Auth
  *
  * @authenticated
+ *
+ * email 信箱
+ * mobile 註冊用手機 (不同於 tel)
+ * mobile_country_code (手機國碼，可透過)
  *
  * APIs for auth
  */
@@ -166,6 +171,122 @@ class AuthController extends Controller
       throw new \Wasateam\Laravelapistone\Exceptions\AuthException();
     }
     if (!Hash::check($request->password, $user->password)) {
+      throw new \Wasateam\Laravelapistone\Exceptions\AuthException();
+    }
+    $tokenResult = $user->createToken('Personal Access Token', AuthHelper::getUserScopes($user));
+    $token       = $tokenResult->token;
+    if ($request->remember_me) {
+      $token->expires_at = Carbon::now()->addWeeks(60);
+    }
+    $token->save();
+    ModelHelper::ws_Log($model, $this, 'signin', $user);
+    return response()->json([
+      'access_token'  => $tokenResult->accessToken,
+      'expires_at'    => Carbon::parse(
+        $tokenResult->token->expires_at
+      )->toDateTimeString(),
+      "{$model_name}" => $user,
+    ], 200);
+  }
+
+  /**
+   * Signin Mobile Get SMS
+   *
+   * 若無此使用者會新增帳號，但無論如何，若回傳 200 則會發送驗證簡訊，再導至驗證碼輸入頁面
+   *
+   * @bodyParam mobile string Example: 555666555
+   * @bodyParam mobile_country_code string Example: 886
+   *
+   */
+  public function signin_mobile_get_sms(Request $request)
+  {
+    $model          = config('stone.auth.model');
+    $model_name     = config('stone.auth.model_name');
+    $active_check   = config('stone.auth.active_check');
+    $default_scopes = config('stone.auth.default_scopes');
+    RequestHelper::requestValidate(
+      $request,
+      [
+        'mobile'              => "required|string|unique:{$model_name}s",
+        'mobile_country_code' => 'required',
+      ]
+    );
+
+    $snap = $model::where('mobile', $request->mobile)
+      ->where('mobile_country_code', $request->mobile_country_code);
+    if ($active_check) {
+      $snap = $snap->where('is_active', 1);
+    }
+    $user = $snap->first();
+    if (!$user) {
+      $user                      = new $model();
+      $user->mobile              = $request->mobile;
+      $user->mobile_country_code = $request->mobile_country_code;
+      if (config('stone.auth.active_check')) {
+        $user->is_active = 1;
+      }
+      if (config('stone.auth.uuid')) {
+        $user->uuid = Str::uuid();
+      }
+      $user->scopes = $default_scopes;
+      $user->save();
+      if (config('stone.mode') == 'webapi') {
+        if (config('stone.user.invite')) {
+          $user = UserHelper::generateInviteNo($user, 'Wasateam\Laravelapistone\Models\User');
+        }
+      }
+      if (config('stone.auth.customer_id')) {
+        $user->customer_id = AuthHelper::getCustomerId($model, config('stone.auth.customer_id'));
+        $user->save();
+      }
+      if (config('stone.auth.signup_complete_action')) {
+        config('stone.auth.signup_complete_action')::signup_complete_action($user);
+      }
+    }
+
+    return response()->json([
+      'message' => 'sms sent.',
+    ]);
+  }
+
+  /**
+   * Signin Mobile
+   *
+   * OTP 在簡訊串接完成前都用 556655
+   *
+   *
+   * @bodyParam mobile string Example: 555666555
+   * @bodyParam mobile_country_code string Example: 886
+   * @bodyParam otp string Example: 556655
+   *
+   */
+  public function signin_mobile(Request $request)
+  {
+    $model          = config('stone.auth.model');
+    $model_name     = config('stone.auth.model_name');
+    $active_check   = config('stone.auth.active_check');
+    $default_scopes = config('stone.auth.default_scopes');
+    $this->name   = 'auth';
+    RequestHelper::requestValidate(
+      $request,
+      [
+        'mobile'              => "required|string",
+        'mobile_country_code' => 'required',
+        'otp'                 => 'required|digits:6',
+      ]
+    );
+
+    // @Q@ Temp
+    if ($request->otp != '556655') {
+      throw new \Wasateam\Laravelapistone\Exceptions\AuthException();
+    }
+    $snap = $model::where('mobile', $request->mobile)
+      ->where('mobile_country_code', $request->mobile_country_code);
+    if ($active_check) {
+      $snap = $snap->where('is_active', 1);
+    }
+    $user = $snap->first();
+    if (!$user) {
       throw new \Wasateam\Laravelapistone\Exceptions\AuthException();
     }
     $tokenResult = $user->createToken('Personal Access Token', AuthHelper::getUserScopes($user));

@@ -33,8 +33,6 @@ class XcProject extends JsonResource
         'links'             => $this->links,
         'infos'             => $this->infos,
         'payload'           => $this->payload,
-        'members'           => Admin_R1::collection($this->members),
-        'managers'          => Admin_R1::collection($this->managers),
       ];
     }
   }

@@ -36,10 +36,11 @@ use Wasateam\Laravelapistone\Models\XcProject;
  */
 class XcProjectController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Models\XcProject';
-  public $name         = 'xc_project';
-  public $resource     = 'Wasateam\Laravelapistone\Resources\XcProject';
-  public $input_fields = [
+  public $model                   = 'Wasateam\Laravelapistone\Models\XcProject';
+  public $name                    = 'xc_project';
+  public $resource                = 'Wasateam\Laravelapistone\Resources\XcProject';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\XcProjectCollection';
+  public $input_fields            = [
     'url',
     'name',
     'slack_webhook_url',
@@ -99,6 +100,7 @@ class XcProjectController extends Controller
    */
   public function store(Request $request, $id = null)
   {
+    \Log::info('store');
     return ModelHelper::ws_StoreHandler($this, $request, $id);
   }
 

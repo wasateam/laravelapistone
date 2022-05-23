@@ -14,4 +14,13 @@ class XcProject extends Model
   {
     return $this->hasMany(XcProjectMember::class);
   }
+
+  protected $casts = [
+    'url'          => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
+    'gitlab'       => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
+    'github'       => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
+    'google_drive' => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,
+    'links'        => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
+    'infos'        => \Wasateam\Laravelapistone\Casts\PayloadCast::class,
+  ];
 }

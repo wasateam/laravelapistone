@@ -267,7 +267,6 @@ class AppointmentController extends Controller
     }
     $model->status = 'cancel';
     $model->save();
-    \Log::info('cancel');
     AppointmentHelper::appointmentCancelNotify($model);
     return new $this->resource($model);
   }

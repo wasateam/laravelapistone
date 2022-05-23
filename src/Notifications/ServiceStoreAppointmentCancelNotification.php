@@ -43,14 +43,7 @@ class ServiceStoreAppointmentCancelNotification extends Notification implements 
   public function toMail($notifiable)
   {
 
-    // \Log::info()
     $appointment = $this->appointment;
-    // if (config('stone.country_code')) {
-    //   $timezone = TimeHelper::getTimeZoneFromCountryCode($appointment->country_code);
-    //   $time     = Carbon::parse($appointment->start_at)->timezone($timezone);
-    // } else {
-    //   $time = Carbon::parse($appointment->start_at);
-    // }
     return (new MailMessage)
       ->view('wasateam::wasa.mail.appointment.remind', [
         'time'                  => $time->format('Y-m-d H:i:s'),

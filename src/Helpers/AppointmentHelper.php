@@ -70,14 +70,12 @@ class AppointmentHelper
 
   public static function appointmentCancelNotify($appointment)
   {
-    \Log::info('appointmentCancelNotify');
     if (
       config('stone.service_store') &&
       config('stone.service_store.appointment') &&
       config('stone.service_store.appointment.notify') &&
       config('stone.service_store.appointment.notify.cancel')
     ) {
-      \Log::info('ok');
       $service_store = $appointment->service_store;
       if ($service_store->notify_emails) {
         foreach ($service_store->notify_emails as $notify_email) {

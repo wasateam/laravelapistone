@@ -101,10 +101,7 @@ class EcpayController extends Controller
    */
   public function callback_ecpay_inpay_order(Request $request)
   {
-    \Log::info('callback_ecpay_inpay_order');
-    \Log::info($request->Data);
     $res = EcpayHelper::getDecryptData($request->Data);
-    \Log::info(json_encode($res));
     if ($res->RtnCode != 1) {
       return '1|OK';
     }
@@ -118,7 +115,5 @@ class EcpayController extends Controller
    */
   public function callback_invoice_notify(Request $request)
   {
-    \Log::info('callback_invoice_notify');
-    \Log::info($request->all());
   }
 }

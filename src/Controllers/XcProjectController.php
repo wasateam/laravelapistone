@@ -100,7 +100,6 @@ class XcProjectController extends Controller
    */
   public function store(Request $request, $id = null)
   {
-    \Log::info('store');
     return ModelHelper::ws_StoreHandler($this, $request, $id);
   }
 

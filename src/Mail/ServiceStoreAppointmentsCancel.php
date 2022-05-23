@@ -31,8 +31,6 @@ class ServiceStoreAppointmentsCancel extends Mailable
    */
   public function build()
   {
-    \Log::info('ServiceStoreAppointmentsCancel');
-    \Log::info(json_encode($this));
     $appointment          = Appointment::find($this->appointment_id);
     $formated_appointment = AppointmentHelper::getFormatedAppointmentForTable($appointment);
     $service_store        = $appointment->service_store;

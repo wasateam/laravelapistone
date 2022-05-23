@@ -772,8 +772,8 @@ class ShopHelper
     }
 
     if ($shop_order->bonus_points) {
-      $user                 = $shop_order->user;
-      $user->bonus_points   = $user->bonus_points + $shop_order->bonus_points;
+      $user               = $shop_order->user;
+      $user->bonus_points = $user->bonus_points + $shop_order->bonus_points;
       $user->save();
       self::createBonusPointRecordFromShopOrder($shop_order, $shop_campaign->id, $bonus_point_feedback, 'get');
     }
@@ -1347,7 +1347,7 @@ class ShopHelper
 
   public static function readyToCreateInvoice($shop_order, $ori_shop_order = null)
   {
-    if ($shop_order->order_price <= 0) {
+    if (($shop_order->order_price - $shop_order->return_price) <= 0) {
       return;
     }
     if ($ori_shop_order) {
@@ -1358,9 +1358,9 @@ class ShopHelper
       if (count($shop_order->shop_return_records) && $ori_shop_order->status == 'return-part-apply' && $shop_order->status == 'return-part-complete') {
         $check = 1;
       }
-      if ($ori_shop_order->status == 'cancel' && $shop_order->status == 'cancel-complete') {
-        $check = 1;
-      }
+      // if ($ori_shop_order->status == 'cancel' && $shop_order->status == 'cancel-complete') {
+      //   $check = 1;
+      // }
       if (!$check) {
         return;
       }
@@ -1397,7 +1397,7 @@ class ShopHelper
       if (config('stone.invoice.service') == 'ecpay') {
         try {
           $invoice_type       = $shop_order->invoice_type;
-          $SalesAmount        = $shop_order->order_price;
+          $SalesAmount        = $shop_order->order_price - $shop_order->return_price;
           $Items              = EcpayInvoiceHelper::getInvoiceItemsFromShopOrder($shop_order);
           $CustomerID         = $shop_order->user_id;
           $CustomerIdentifier = '';

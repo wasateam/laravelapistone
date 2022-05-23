@@ -94,6 +94,15 @@ class EcpayInvoiceHelper
       "ItemAmount"  => $shop_order->invite_no_deduct * -1,
       "ItemRemark"  => "",
     ];
+    $items[] = [
+      "ItemName"    => '刷退金額',
+      "ItemCount"   => 1,
+      "ItemWord"    => "項",
+      "ItemPrice"   => $shop_order->return_price * -1,
+      "ItemTaxType" => "1",
+      "ItemAmount"  => $shop_order->return_price * -1,
+      "ItemRemark"  => "",
+    ];
     return $items;
   }
 

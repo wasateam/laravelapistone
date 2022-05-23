@@ -1,6 +1,12 @@
 <?php
 
 return [
+  'security'            => [
+    'input' => [
+      'remove-script' => true,
+      'htmlentities'  => true,
+    ],
+  ],
   'mode'                => 'cms',
   'schedule'            => [
     'log' => env('STONE_SCHEDULE_LOG', false),

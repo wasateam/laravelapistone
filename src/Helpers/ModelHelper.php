@@ -52,7 +52,6 @@ class ModelHelper
 
     $snap = self::ws_IndexSnap($controller, $request, $id, $custom_snap_handler, $limit, $custom_scope_handler);
 
-
     // Setting
     $setting = self::getSetting($controller);
 
@@ -519,7 +518,6 @@ class ModelHelper
     $model = $setting->model::find($id);
 
     $sq_key = $sq_key ? $sq_key : "{$target}_sq";
-
 
     foreach ($order as $order_index => $order_item) {
       $model->{$target}()->detach($order_item['id']);
@@ -1168,18 +1166,35 @@ class ModelHelper
       if (is_array($request->{$key}) || is_object($request->{$key})) {
         $arr = $request->{$key};
         array_walk_recursive($arr, function ($value) {
-          $_value = self::removeScriptFromString($value);
-          $value  = htmlentities($_value);
+          $value  = self::encodeRequestValue($value);
         });
         $model[$key] = $arr;
       } else if ($request->{$key}) {
-        $_value      = self::removeScriptFromString($request->{$key});
-        $model[$key] = htmlentities($_value);
+        // $_value      = self::removeScriptFromString($request->{$key});
+        // $model[$key] = htmlentities($_value);
+
+        $model[$key]  = self::encodeRequestValue($request->{$key});
       } else {
         $model[$key] = $request->{$key};
       }
     }
     return $model;
+  }
+
+  public static function encodeRequestValue($value)
+  {
+    $_value = $value;
+    if (config('stone.security')) {
+      if (config('stone.security.input')) {
+        if (config('stone.security.input.remove-script')) {
+          $_value = self::removeScriptFromString($_value);
+        }
+        if (config('stone.security.input.htmlentities')) {
+          $_value = htmlentities($_value);
+        }
+      }
+    }
+    return $_value;
   }
 
   public static function removeScriptFromString($string)

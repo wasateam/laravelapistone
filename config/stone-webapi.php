@@ -1,6 +1,12 @@
 <?php
 
 return [
+  'security'            => [
+    'input' => [
+      'remove-script' => true,
+      'htmlentities'  => true,
+    ],
+  ],
   'mode'                => 'webapi',
   'storage'             => [
     'service' => 'gcs', # gcs, s3, local
@@ -20,7 +26,9 @@ return [
   'web_url'             => env('WEB_URL'),
   // Auth
   'auth'                => [
-    'signup'         => true,
+    'signup'         => [
+      'mobile' => true,
+    ],
     'passwordpatch'  => true,
     'forgetpassword' => true,
     'model_name'     => 'user',

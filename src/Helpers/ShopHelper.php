@@ -763,7 +763,6 @@ class ShopHelper
 
   public static function createBonusPointFromShopOrder($shop_order)
   {
-    \Log::info('createBonusPointFromShopOrder');
     $record = BonusPointRecord::where('shop_order_id', $shop_order->id)
       ->where('source', 'new_shop_order')
       ->where('type', 'get')
@@ -771,14 +770,12 @@ class ShopHelper
     if ($record) {
       return;
     }
-    \Log::info('$shop_order->bonus_points');
-    \Log::info($shop_order->bonus_points);
 
     if ($shop_order->bonus_points) {
       $user               = $shop_order->user;
       $user->bonus_points = $user->bonus_points + $shop_order->bonus_points;
       $user->save();
-      self::createBonusPointRecordFromShopOrder($shop_order, $shop_campaign->id, $bonus_point_feedback, 'get');
+      self::createBonusPointRecordFromShopOrder($shop_order, null, $shop_order->bonus_points, 'get');
     }
 
     if (config('stone.user.invite')) {
@@ -1393,13 +1390,12 @@ class ShopHelper
 
   public static function createInvoice($shop_order)
   {
-    \Log::info('createInvoice');
     if ($shop_order->invoice_status == 'done') {
       return;
     }
     if (config('stone.invoice')) {
       if (config('stone.invoice.service') == 'ecpay') {
-        // try {
+        try {
           $invoice_type       = $shop_order->invoice_type;
           $SalesAmount        = $shop_order->order_price - $shop_order->return_price;
           $Items              = EcpayInvoiceHelper::getInvoiceItemsFromShopOrder($shop_order);
@@ -1470,12 +1466,11 @@ class ShopHelper
           $shop_order->invoice_status = 'done';
           $shop_order->invoice_number = $invoice_res->InvoiceNo;
           $shop_order->save();
-          \Log::info('ok');
-        // } catch (\Throwable $th) {
-        //   $shop_order->invoice_status = 'fail';
-        //   $shop_order->save();
-        //   throw $th;
-        // }
+        } catch (\Throwable $th) {
+          $shop_order->invoice_status = 'fail';
+          $shop_order->save();
+          throw $th;
+        }
       }
       if ($shop_order->invoice_status == 'done') {
         self::createBonusPointFromShopOrder($shop_order);

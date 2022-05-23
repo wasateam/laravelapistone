@@ -199,12 +199,13 @@ class EcpayInvoiceHelper
     $CarrierNum,
     $TaxType,
     $SalesAmount,
-    $Items
+    $Items,
+    $shopOrderNo
   ) {
 
     $post_data = [
       "MerchantID"         => config('stone.invoice.ecpay.merchant_id'),
-      "RelateNumber"       => self::newRelateNumber(),
+      "RelateNumber"       => $shopOrderNo,
       "CustomerID"         => $CustomerID,
       "CustomerIdentifier" => $CustomerIdentifier,
       "CustomerName"       => $CustomerName,

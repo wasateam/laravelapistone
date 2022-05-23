@@ -25,6 +25,11 @@ class ShopSubclass extends Model
     return $this->belongsToMany(ShopProduct::class, 'shop_product_shop_subclass', 'shop_subclass_id', 'shop_product_id')->onshelf()->nostocklast()->withPivot('sq')->orderBy('sq');
   }
 
+  public function shop_products_is_active_order()
+  {
+    return $this->belongsToMany(ShopProduct::class, 'shop_product_shop_subclass', 'shop_subclass_id', 'shop_product_id')->onshelf()->withPivot('sq')->orderBy('sq');
+  }
+
   protected $casts = [
     'icon' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
   ];

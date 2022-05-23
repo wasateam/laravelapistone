@@ -53,9 +53,6 @@ class ModelHelper
     $snap = self::ws_IndexSnap($controller, $request, $id, $custom_snap_handler, $limit, $custom_scope_handler);
 
 
-    // \Log::info($snap->toSql());
-    // \Log::info($snap->getBindings());
-
     // Setting
     $setting = self::getSetting($controller);
 
@@ -134,8 +131,8 @@ class ModelHelper
     $model = self::setUUID($model, $setting);
 
     // Save
+    $model->save();
     try {
-      $model->save();
     } catch (\Throwable $th) {
       throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException($setting->name, $request);
       // return response()->json([
@@ -506,7 +503,7 @@ class ModelHelper
     return $resource::collection($model->{$target});
   }
 
-  public static function ws_BelongsToManyOrderPatchHandler($id, $controller, $target, $request, $sq_key = null)
+  public static function ws_BelongsToManyOrderPatchHandler($id, $controller, $target, $request, $sq_key = null, $sq_field = 'sq')
   {
     if (!$request->has('order')) {
       return response()->json([
@@ -523,10 +520,11 @@ class ModelHelper
 
     $sq_key = $sq_key ? $sq_key : "{$target}_sq";
 
+
     foreach ($order as $order_index => $order_item) {
       $model->{$target}()->detach($order_item['id']);
       $model->{$target}()->attach($order_item['id'], [
-        $sq_key => $order_index,
+        $sq_key => $order_item[$sq_field],
       ]);
     }
 

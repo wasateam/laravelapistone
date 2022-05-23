@@ -20,6 +20,11 @@ class FeaturedClass extends Model
     return $this->belongsToMany(ShopProduct::class, 'featured_class_shop_product', 'featured_class_id', 'shop_product_id')->onshelf()->nostocklast()->withPivot('sq')->orderBy('sq');
   }
 
+  public function shop_products_is_active_order()
+  {
+    return $this->belongsToMany(ShopProduct::class, 'featured_class_shop_product', 'featured_class_id', 'shop_product_id')->onshelf()->withPivot('sq')->orderBy('sq');
+  }
+
   protected $casts = [
     'icon' => \Wasateam\Laravelapistone\Casts\UrlCast::class,
   ];

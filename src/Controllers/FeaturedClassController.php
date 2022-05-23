@@ -146,7 +146,7 @@ class FeaturedClassController extends Controller
    */
   public function shop_product_order_get($id)
   {
-    return ModelHelper::ws_BelongsToManyOrderGetHandler($id, $this, 'shop_products_is_active', 'Wasateam\Laravelapistone\Resources\ShopProduct_R_Order_FeaturedClass');
+    return ModelHelper::ws_BelongsToManyOrderGetHandler($id, $this, 'shop_products_is_active_order', 'Wasateam\Laravelapistone\Resources\ShopProduct_R_Order_FeaturedClass');
   }
 
   /**

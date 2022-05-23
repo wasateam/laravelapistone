@@ -58,8 +58,6 @@ class EcpayController extends Controller
 
     $pay_data = EcpayHelper::getInpayInitData($shop_order, $trade_date, $order_price, $order_product_names, $user_id, $shop_order->orderer_email, $shop_order->orderer_tel, $shop_order->orderer);
     $token    = EcpayHelper::getMerchantToken($pay_data);
-    \Log::info('get_inpay_merchant_init');
-    \Log::info($pay_data);
     return response()->json([
       'token'           => $token,
       'MerchantTradeNo' => $pay_data['OrderInfo']['MerchantTradeNo'],

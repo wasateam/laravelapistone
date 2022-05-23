@@ -457,12 +457,12 @@ class ShopOrderController extends Controller
         ) {
 
           // @Q@
-          ShopHelper::deductBonusPointFromShopOrder($model);
           ShopHelper::createShopOrderShopProductsFromCartProducts($filtered_cart_products, $model);
           ShopHelper::updateShopOrderPrice($model, $discount_code, $bonus_points, $invite_no);
           ShopHelper::setCampaignDeduct($model, $discount_code);
           ShopHelper::ShopOrderNoPriceCheck($model);
           ShopHelper::ShopOrderShipTimeSet($model);
+          ShopHelper::deductBonusPointFromShopOrder($model);
 
         }, function ($model) use (
           $user,

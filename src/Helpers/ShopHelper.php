@@ -763,6 +763,7 @@ class ShopHelper
 
   public static function createBonusPointFromShopOrder($shop_order)
   {
+    \Log::info('createBonusPointFromShopOrder');
     $record = BonusPointRecord::where('shop_order_id', $shop_order->id)
       ->where('source', 'new_shop_order')
       ->where('type', 'get')
@@ -770,6 +771,8 @@ class ShopHelper
     if ($record) {
       return;
     }
+    \Log::info('$shop_order->bonus_points');
+    \Log::info($shop_order->bonus_points);
 
     if ($shop_order->bonus_points) {
       $user               = $shop_order->user;
@@ -1459,12 +1462,14 @@ class ShopHelper
             $CarrierNum,
             $TaxType,
             $SalesAmount,
-            $Items
+            $Items,
+            $shop_order->no
           );
           $invoice_res                = EcpayInvoiceHelper::createInvoice($post_data);
           $shop_order->invoice_status = 'done';
           $shop_order->invoice_number = $invoice_res->InvoiceNo;
           $shop_order->save();
+          \Log::info('ok');
         } catch (\Throwable $th) {
           $shop_order->invoice_status = 'fail';
           $shop_order->save();

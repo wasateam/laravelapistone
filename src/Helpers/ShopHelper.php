@@ -1053,9 +1053,15 @@ class ShopHelper
     } else {
       $shop_stock_count = $shop_cart_product->shop_product->stock_count;
     }
-    if ($buy_count > $shop_stock_count) {
-      throw new \Wasateam\Laravelapistone\Exceptions\OutOfException('shop product stock', 'shop_product', $shop_cart_product->shop_product->id);
+    if (!$shop_stock_count) {
+      $shop_cart_product->delete();
+      return null;
+    }else if ($buy_count > $shop_stock_count) {
+      $shop_cart_product->count = $shop_stock_count;
+      $shop_cart_product->save();
+      // throw new \Wasateam\Laravelapistone\Exceptions\OutOfException('shop product stock', 'shop_product', $shop_cart_product->shop_product->id);
     }
+    return $shop_cart_product;
   }
 
   public static function get_user_shop_cart($user)
@@ -1221,8 +1227,13 @@ class ShopHelper
         throw new \Wasateam\Laravelapistone\Exceptions\FieldNotMatchException('order_type', $order_type);
       }
       self::updateShopCartProductPrice($cart_product);
-      self::checkProductStockEnough($cart_product);
-      $_filtered_cart_products[] = $cart_product;
+      $cart_product = self::checkProductStockEnough($cart_product);
+      if ($cart_product) {
+        $_filtered_cart_products[] = $cart_product;
+      }
+    }
+    if (!count($_filtered_cart_products)) {
+      throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('not cart products or no stock.');
     }
     return $_filtered_cart_products;
   }

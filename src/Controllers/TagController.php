@@ -12,6 +12,9 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  *
  * @authenticated
  *
+ * name Tag名稱
+ * target 目標 Model 資料類型
+ *
  * APIs for tag
  */
 class TagController extends Controller
@@ -22,6 +25,7 @@ class TagController extends Controller
   public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\TagCollection';
   public $input_fields            = [
     'name',
+    'target',
   ];
   public $belongs_to = [
   ];
@@ -31,7 +35,6 @@ class TagController extends Controller
     'updated_at',
     'created_at',
   ];
-  public $user_record_field = 'updated_admin_id';
 
   /**
    * Index
@@ -46,13 +49,8 @@ class TagController extends Controller
   /**
    * Store
    *
-   * @bodyParam title string No-example
-   * @bodyParam description string No-example
-   * @bodyParam publish_at datetime No-example
-   * @bodyParam read_count int No-example
-   * @bodyParam content string No-example
-   * @bodyParam tags object No-example
-   * @bodyParam cover_image id No-example
+   * @bodyParam name string Example: 我是大
+   * @bodyParam target string Example: User
    */
   public function store(Request $request, $id = null)
   {
@@ -62,7 +60,7 @@ class TagController extends Controller
   /**
    * Show
    *
-   * @urlParam  blog required The ID of blog. Example: 1
+   * @urlParam  tag required The ID of tag. Example: 1
    */
   public function show(Request $request, $id = null)
   {
@@ -72,14 +70,9 @@ class TagController extends Controller
   /**
    * Update
    *
-   * @urlParam  blog required The ID of blog. Example: 1
-   * @bodyParam title string No-example
-   * @bodyParam description string No-example
-   * @bodyParam publish_at datetime No-example
-   * @bodyParam read_count int No-example
-   * @bodyParam content string No-example
-   * @bodyParam tags object No-example
-   * @bodyParam cover_image id No-example
+   * @urlParam  tag required The ID of tag. Example: 1
+   * @bodyParam name string Example: 我是大
+   * @bodyParam target string Example: User
    */
   public function update(Request $request, $id)
   {
@@ -89,7 +82,7 @@ class TagController extends Controller
   /**
    * Delete
    *
-   * @urlParam  blog required The ID of blog. Example: 2
+   * @urlParam  tag required The ID of tag. Example: 2
    */
   public function destroy($id)
   {

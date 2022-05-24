@@ -10,10 +10,10 @@ class XcProject extends Model
   use HasFactory;
   use \Illuminate\Database\Eloquent\SoftDeletes;
 
-  public function xc_project_members()
-  {
-    return $this->hasMany(XcProjectMember::class);
-  }
+  // public function xc_project_members()
+  // {
+  //   return $this->hasMany(XcProjectMember::class);
+  // }
 
   protected $casts = [
     'url'          => \Wasateam\Laravelapistone\Casts\PostEncodeCast::class,

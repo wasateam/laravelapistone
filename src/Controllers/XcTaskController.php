@@ -34,6 +34,9 @@ use Wasateam\Laravelapistone\Models\XcTask;
  * taker 執行人
  * xc_task_template Task 公版
  * is_personal 個人 task
+ * remark 備註
+ * time_review_at 完成時間評估時間
+ * tags 標籤
  *
  */
 class XcTaskController extends Controller
@@ -44,19 +47,18 @@ class XcTaskController extends Controller
   public $input_fields = [
     'name',
     'start_at',
-    'reviewed_at',
+    // 'reviewed_at',
     'status',
-    'open',
-    'done',
-    'closed',
     'hour',
     'finish_hour',
-    'creator_remark',
-    'taker_remark',
-    'is_adjust',
-    'is_rd',
-    'is_not_complete',
+    // 'creator_remark',
+    // 'taker_remark',
+    // 'is_adjust',
+    // 'is_rd',
+    // 'is_not_complete',
     'is_personal',
+    'remark',
+    'tags',
   ];
   public $belongs_to = [
     'xc_work_type',
@@ -64,6 +66,9 @@ class XcTaskController extends Controller
     'creator',
     'taker',
     'xc_task_template',
+  ];
+  public $filter_fields = [
+    'status',
   ];
   public $filter_belongs_to = [
     'xc_work_type',
@@ -75,6 +80,14 @@ class XcTaskController extends Controller
   public $order_fields = [
     'updated_at',
     'created_at',
+  ];
+  public $search_fields = [
+    'id',
+    'name',
+    // 'tags',
+  ];
+  public $filter_time_fields = [
+    'start_at',
   ];
 
   public function __construct()

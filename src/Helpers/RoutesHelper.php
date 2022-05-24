@@ -197,6 +197,12 @@ class RoutesHelper
         Route::get("xc_task/{id}", [XcTaskController::class, 'show']);
       });
 
+      self::get_resource_scope_routes(
+        XcTaskController::class,
+        'xc_task',
+        ['read', 'edit']
+      );
+
       // Route::group([
       //   "middleware" => ["wasascopes:xc_task-edit,xc_task-edit-my,xc_task-edit-my-xc_project,xc_task-edit-my-xc_work_type"],
       // ], function () {

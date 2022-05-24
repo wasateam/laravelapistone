@@ -12,7 +12,7 @@ class XcMilestone extends Model
 
   public function xc_project()
   {
-    return $this->belongsTo(ErpProject::class, 'xc_project_id');
+    return $this->belongsTo(XcProject::class, 'xc_project_id');
   }
 
   public function creator()

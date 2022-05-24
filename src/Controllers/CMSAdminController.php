@@ -29,10 +29,11 @@ use Wasateam\Laravelapistone\Helpers\ModelHelper;
  */
 class CMSAdminController extends Controller
 {
-  public $model               = 'Wasateam\Laravelapistone\Models\Admin';
-  public $name                = 'admin';
-  public $resource            = 'Wasateam\Laravelapistone\Resources\Admin';
-  public $validation_messages = [
+  public $model                   = 'Wasateam\Laravelapistone\Models\Admin';
+  public $name                    = 'admin';
+  public $resource                = 'Wasateam\Laravelapistone\Resources\Admin';
+  public $resource_for_collection = 'Wasateam\Laravelapistone\Resources\AdminCollection';
+  public $validation_messages     = [
     'password.min' => 'password too short.',
     'email.unique' => 'email has been token.',
   ];
@@ -98,10 +99,10 @@ class CMSAdminController extends Controller
       $this->filter_fields[] = 'country_code';
     }
     if (config('stone.xc_project')) {
-      $this->belongs_to_many[]        = 'xc_projects';
-      $this->belongs_to_many[]        = 'manage_xc_projects';
-      $this->filter_belongs_to_many[] = 'xc_projects';
-      $this->filter_belongs_to_many[] = 'manage_xc_projects';
+      // $this->belongs_to_many[]        = 'xc_projects';
+      // $this->belongs_to_many[]        = 'manage_xc_projects';
+      // $this->filter_belongs_to_many[] = 'xc_projects';
+      // $this->filter_belongs_to_many[] = 'manage_xc_projects';
     }
   }
 

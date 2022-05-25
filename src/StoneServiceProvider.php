@@ -9,6 +9,12 @@ use Wasateam\Laravelapistone\Helpers\AuthHelper;
 
 class StoneServiceProvider extends ServiceProvider
 {
+  public function register()
+  {
+    $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+    $loader->alias('WsRoute', 'Wasateam\Laravelapistone\Helpers\WsRoute');
+
+  }
   public function boot()
   {
     \Laravel\Passport\Passport::tokensCan(AuthHelper::getScopesForProvider());
@@ -25,6 +31,25 @@ class StoneServiceProvider extends ServiceProvider
     ], 'stone-config-webapi');
 
     if (config('stone.mode') == 'cms') {
+
+      # Routes
+      ## AppDeveloper
+      if (config('stone.app_developer')) {
+        Route::middleware('api')->prefix('api')->group(function () {
+          $this->loadRoutesFrom(__DIR__ . '/Modules/AppDeveloper/routes/cms-api.php');
+        });
+      }
+
+      # Migrations
+      if (config('stone.migration')) {
+
+        ## AppDeveloper
+        if (config('stone.app_developer')) {
+          $this->loadMigrationsFrom(__DIR__ . '/Modules/AppDeveloper/database/migrations');
+        }
+      }
+
+      # _______ OLD _______
 
       # Routes
       Route::middleware('api')->prefix('api')->group(function () {
@@ -268,6 +293,11 @@ class StoneServiceProvider extends ServiceProvider
         # Showcase
         if (config('stone.showcase')) {
           $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/showcase');
+        }
+
+        # SMS
+        if (config('stone.sms')) {
+          $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/sms');
         }
       }
 

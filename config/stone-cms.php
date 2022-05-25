@@ -8,6 +8,14 @@ return [
     ],
   ],
   'mode'                => 'cms',
+  'app_developers'      => true,
+  'sms'                 => [
+    'service' => 'every8d',
+    'every8d' => [
+      'UID' => env('EVERY8D_UID'),
+      'PWD' => env('EVERY8D_PWD'),
+    ],
+  ],
   'schedule'            => [
     'log' => env('STONE_SCHEDULE_LOG', false),
   ],

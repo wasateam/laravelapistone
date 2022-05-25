@@ -193,7 +193,7 @@ class LinePayHelper
 
   public static function getBaseUrl()
   {
-    $mode = env('THIRD_PARTY_PAYMENT_MODE');
+    $mode = config('stone.third_party_payment.mode');
     if ($mode == 'dev') {
       return self::$url_dev;
     } else {

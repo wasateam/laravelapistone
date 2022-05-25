@@ -30,7 +30,7 @@ class EcpayHelper
 
   public static function getMerchantToken($data)
   {
-    $mode         = env('THIRD_PARTY_PAYMENT_MODE');
+    $mode         = config('stone.third_party_payment.mode');
     $data_encrypt = self::getEncryptData($data);
     if ($mode == 'dev') {
       $post_url = 'https://ecpg-stage.ecpay.com.tw/Merchant/GetTokenbyTrade';
@@ -47,12 +47,26 @@ class EcpayHelper
       "Data"       => $data_encrypt,
     ]);
     if ($res->status() == '200') {
-      $res_json = $res->json();
-      $res_data = self::getDecryptData($res_json['Data']);
-    if ($res_data->RtnCode != '1') {
-        throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('getMerchantToken', $res_data->RtnCode, $res_data->RtnMsg);
+      try {
+        $res_json = $res->json();
+        $res_data = self::getDecryptData($res_json['Data']);
+        if ($res_data->RtnCode != '1') {
+          throw new \Wasateam\Laravelapistone\Exceptions\EcpayException('getMerchantToken', $res_data->RtnCode, $res_data->RtnMsg);
+        }
+        return $res_data->Token;
+      } catch (\Throwable $th) {
+        \Log::info('$mode');
+        \Log::info($mode);
+        \Log::info('$post_url');
+        \Log::info($post_url);
+        \Log::info('$data');
+        \Log::info($data);
+        \Log::info('$res_json');
+        \Log::info($res_json);
+        \Log::info('$res_data');
+        \Log::info($res_data);
+        throw $th;
       }
-      return $res_data->Token;
     }
   }
 
@@ -126,7 +140,7 @@ class EcpayHelper
 
   public static function createPayment($PayToken, $MerchantTradeNo)
   {
-    $mode         = env('THIRD_PARTY_PAYMENT_MODE');
+    $mode         = config('stone.third_party_payment.mode');
     $data_encrypt = self::getEncryptData([
       "MerchantID"      => config('stone.third_party_payment.ecpay_inpay.merchant_id'),
       "PayToken"        => $PayToken,

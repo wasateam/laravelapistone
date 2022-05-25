@@ -8,6 +8,7 @@ return [
     ],
   ],
   'mode'                => 'webapi',
+  'app_developers'      => true,
   'sms'                 => [
     'service' => 'every8d',
     'every8d' => [
@@ -176,6 +177,7 @@ return [
   'privacy_terms'       => true,
   'ez_about_us'         => true,
   'third_party_payment' => [
+    'mode'        => env('THIRD_PARTY_PAYMENT_MODE'),
     'ecpay_inpay' => [
       'threed'                  => [
         'return_url' => env('WEB_URL') . env('ECPAY_CARDINFO_3DORDER_RETURN_URL', "/ecpay/payment/threed"),

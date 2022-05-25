@@ -14,7 +14,9 @@ use Validator;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\EmailHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
+use Wasateam\Laravelapistone\Helpers\OtpHelper;
 use Wasateam\Laravelapistone\Helpers\RequestHelper;
+use Wasateam\Laravelapistone\Helpers\SmsHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
 use Wasateam\Laravelapistone\Helpers\UserHelper;
 use Wasateam\Laravelapistone\Models\Admin;
@@ -190,7 +192,7 @@ class AuthController extends Controller
   }
 
   /**
-   * Signin Mobile Get SMS
+   * Mobile Get OTP
    *
    * 若無此使用者會新增帳號，但無論如何，若回傳 200 則會發送驗證簡訊，再導至驗證碼輸入頁面
    *
@@ -198,7 +200,7 @@ class AuthController extends Controller
    * @bodyParam mobile_country_code string Example: 886
    *
    */
-  public function signin_mobile_get_sms(Request $request)
+  public function mobile_get_otp(Request $request)
   {
     $model          = config('stone.auth.model');
     $model_name     = config('stone.auth.model_name');
@@ -207,7 +209,7 @@ class AuthController extends Controller
     RequestHelper::requestValidate(
       $request,
       [
-        'mobile'              => "required|string|unique:{$model_name}s",
+        'mobile'              => "required|string",
         'mobile_country_code' => 'required',
       ]
     );
@@ -244,8 +246,14 @@ class AuthController extends Controller
       }
     }
 
+    $otp = OtpHelper::getAuthOtp($user->id);
+
+    if (config('stone.auth.mobile.otp.types.sms')) {
+      SmsHelper::sendAuthOtp($otp, $user);
+    }
+
     return response()->json([
-      'message' => 'sms sent.',
+      'message' => 'otp sent.',
     ]);
   }
 
@@ -266,7 +274,7 @@ class AuthController extends Controller
     $model_name     = config('stone.auth.model_name');
     $active_check   = config('stone.auth.active_check');
     $default_scopes = config('stone.auth.default_scopes');
-    $this->name   = 'auth';
+    $this->name     = 'auth';
     RequestHelper::requestValidate(
       $request,
       [
@@ -275,11 +283,6 @@ class AuthController extends Controller
         'otp'                 => 'required|digits:6',
       ]
     );
-
-    // @Q@ Temp
-    if ($request->otp != '556655') {
-      throw new \Wasateam\Laravelapistone\Exceptions\AuthException();
-    }
     $snap = $model::where('mobile', $request->mobile)
       ->where('mobile_country_code', $request->mobile_country_code);
     if ($active_check) {
@@ -288,6 +291,10 @@ class AuthController extends Controller
     $user = $snap->first();
     if (!$user) {
       throw new \Wasateam\Laravelapistone\Exceptions\AuthException();
+    }
+
+    if (!OtpHelper::checkOtp($user->id, $request->otp)) {
+      throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('otp not match or expired');
     }
     $tokenResult = $user->createToken('Personal Access Token', AuthHelper::getUserScopes($user));
     $token       = $tokenResult->token;

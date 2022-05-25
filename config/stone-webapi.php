@@ -8,6 +8,7 @@ return [
     ],
   ],
   'mode'                => 'webapi',
+  'otp'                 => true,
   'app_developers'      => true,
   'sms'                 => [
     'service' => 'every8d',
@@ -34,8 +35,13 @@ return [
   'web_url'             => env('WEB_URL'),
   // Auth
   'auth'                => [
-    'signup'         => [
-      'mobile' => true,
+    'mobile'         => [
+      'otp' => [
+        'types'   => [
+          'sms' => true,
+        ],
+        'minutes' => 15,
+      ],
     ],
     'passwordpatch'  => true,
     'forgetpassword' => true,

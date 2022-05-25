@@ -8,6 +8,7 @@ class WsRoute
 {
   public static function get_resource_scope_routes($controller, $model_name, $scopes)
   {
+
     if (in_array('read', $scopes)) {
       Route::group([
         "middleware" => ["wasascopes:{$model_name}-read"],
@@ -16,6 +17,7 @@ class WsRoute
         Route::get("{$model_name}/{id}", [$controller, 'show']);
       });
     }
+
     if (in_array('edit', $scopes)) {
       Route::group([
         "middleware" => ["wasascopes:{$model_name}-edit"],

@@ -39,6 +39,12 @@ class StoneServiceProvider extends ServiceProvider
           $this->loadRoutesFrom(__DIR__ . '/Modules/AppDeveloper/routes/cms-api.php');
         });
       }
+      ## Otp
+      if (config('stone.otp')) {
+        Route::middleware('api')->prefix('api')->group(function () {
+          $this->loadRoutesFrom(__DIR__ . '/Modules/Otp/routes/cms-api.php');
+        });
+      }
 
       # Migrations
       if (config('stone.migration')) {
@@ -46,6 +52,10 @@ class StoneServiceProvider extends ServiceProvider
         ## AppDeveloper
         if (config('stone.app_developer')) {
           $this->loadMigrationsFrom(__DIR__ . '/Modules/AppDeveloper/database/migrations');
+        }
+        ## Otp
+        if (config('stone.otp')) {
+          $this->loadMigrationsFrom(__DIR__ . '/Modules/Otp/database/migrations');
         }
       }
 

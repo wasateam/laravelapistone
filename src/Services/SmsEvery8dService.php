@@ -32,13 +32,10 @@ class SmsEvery8dService
 
   public function send($subject, $message, $dest)
   {
-    $token = self::get_token();
-
     $url      = 'https://api.e8d.tw/API21/HTTP/SendSMS.ashx';
     $response = Http::asForm()
       ->withHeaders([
-        'Authorization' => "Bearer {$token}",
-        "Content-Type"  => "application/x-www-form-urlencoded",
+        "Content-Type" => "application/x-www-form-urlencoded",
       ])->post($url, [
       'UID'  => config('stone.sms.every8d.UID'),
       'PWD'  => config('stone.sms.every8d.PWD'),

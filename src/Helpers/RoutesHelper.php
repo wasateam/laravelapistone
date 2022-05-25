@@ -287,8 +287,8 @@ class RoutesHelper
         'prefix' => 'auth',
       ], function () use ($model_name, $auth_scope) {
         Route::post('/signin', [AuthController::class, 'signin']);
-        if (config('stone.auth.signin.mobile')) {
-          Route::post('/signin/mobile/get_sms', [AuthController::class, 'signin_mobile_get_sms']);
+        if (config('stone.auth.mobile')) {
+          Route::post('/signin/mobile/get_otp', [AuthController::class, 'mobile_get_otp']);
           Route::post('/signin/mobile', [AuthController::class, 'signin_mobile']);
         }
         if (config('stone.auth.signup')) {

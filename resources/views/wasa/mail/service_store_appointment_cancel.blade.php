@@ -1,4 +1,4 @@
-{{ __("wasateam::messages.預約已取消，請前往後台查看",[],$lang) }}
+{{ __("wasateam::messages.收到一筆取消預約，請前往後台查看",[],$lang) }}
 <a
   target="_blank"
   href="{{$link}}"

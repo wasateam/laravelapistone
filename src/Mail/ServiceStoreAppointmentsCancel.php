@@ -35,7 +35,7 @@ class ServiceStoreAppointmentsCancel extends Mailable
     $formated_appointment = AppointmentHelper::getFormatedAppointmentForTable($appointment);
     $service_store        = $appointment->service_store;
     $lang                 = LangHelper::getLangFromCountryCode($service_store->country_code);
-    $title                = __('wasateam::messages.預約已取消', [], $lang);
+    $title                = __('wasateam::messages.收到一筆取消預約', [], $lang);
     $subject              = "{$service_store->name}-{$title}";
     $link                 = config('stone.cms_url') . '/appointment/' . $this->appointment_id;
 

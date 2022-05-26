@@ -585,6 +585,7 @@ class ShopOrderController extends Controller
     return ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
       ShopHelper::CancelCompleteRestoreStockCount($model, $ori_model);
       ShopHelper::readyToCreateInvoice($model, $ori_model);
+      ShopHelper::shopOrderShippedNotifyCheck($model, $ori_model);
     });
   }
 
@@ -810,6 +811,7 @@ class ShopOrderController extends Controller
       ModelHelper::ws_UpdateHandler($this, $request, $id, [], function ($model) use ($ori_model) {
         ShopHelper::CancelCompleteRestoreStockCount($model, $ori_model);
         ShopHelper::readyToCreateInvoice($model, $ori_model);
+        ShopHelper::shopOrderShippedNotifyCheck($model, $ori_model);
       });
     }
     return $this->resource_for_collection::collection($this->model::find($ids));

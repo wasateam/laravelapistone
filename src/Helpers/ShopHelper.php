@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Helpers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Wasateam\Laravelapistone\Helpers\EcpayInvoiceHelper;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
@@ -1056,7 +1057,7 @@ class ShopHelper
     if (!$shop_stock_count) {
       $shop_cart_product->delete();
       return null;
-    }else if ($buy_count > $shop_stock_count) {
+    } else if ($buy_count > $shop_stock_count) {
       $shop_cart_product->count = $shop_stock_count;
       $shop_cart_product->save();
       // throw new \Wasateam\Laravelapistone\Exceptions\OutOfException('shop product stock', 'shop_product', $shop_cart_product->shop_product->id);
@@ -1665,6 +1666,19 @@ class ShopHelper
     }
   }
 
+  public static function shopOrderShippedNotify($shop_order)
+  {
+    $user = $shop_order->user;
+    if (!$shop_order->user) {
+      return;
+    }
+    if (!$shop_order->user->email) {
+      return;
+    }
+    Mail::to($shop_order->user->email)
+      ->queue(new \Wasateam\Laravelapistone\Mail\ShopOrderShipped($shop_order->id));
+  }
+
   public static function shopOrderShipStatusModifyCheck($shop_order, $request)
   {
     if ($request->filled('ship_status') && $request->ship_status == 'shipped') {
@@ -1994,6 +2008,13 @@ class ShopHelper
       $shop_product = $shop_return_record->shop_product;
       $shop_product->stock_count += $shop_return_record->count;
       $shop_product->save();
+    }
+  }
+
+  public static function shopOrderShippedNotifyCheck($model, $ori_model)
+  {
+    if ($ori_model->ship_status == 'collected' && $model->ship_status == 'shipped') {
+      self::shopOrderShippedNotify($model);
     }
   }
 }

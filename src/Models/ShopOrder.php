@@ -4,12 +4,18 @@ namespace Wasateam\Laravelapistone\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Wasateam\Laravelapistone\Database\Factories\ShopOrderFactory;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;
 
 class ShopOrder extends Model
 {
   use HasFactory;
   use \Illuminate\Database\Eloquent\SoftDeletes;
+
+  protected static function newFactory()
+  {
+    return ShopOrderFactory::new ();
+  }
 
   public function area()
   {

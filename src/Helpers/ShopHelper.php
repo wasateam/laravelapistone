@@ -1358,7 +1358,7 @@ class ShopHelper
     $bonus_point_record->shop_order_id    = $shop_order->id;
     $bonus_point_record->shop_campaign_id = $shop_campaign_id;
     $bonus_point_record->type             = $type;
-    $bonus_point_record->source           = 'new_shop_order';
+    $bonus_point_record->source           = $source;
     $bonus_point_record->count            = $point_count;
     $bonus_point_record->save();
   }

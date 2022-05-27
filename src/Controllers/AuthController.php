@@ -209,8 +209,8 @@ class AuthController extends Controller
     RequestHelper::requestValidate(
       $request,
       [
-        'mobile'              => "required|string",
-        'mobile_country_code' => 'required',
+        'mobile'              => "required|integer",
+        'mobile_country_code' => 'required|integer',
       ]
     );
 
@@ -278,8 +278,8 @@ class AuthController extends Controller
     RequestHelper::requestValidate(
       $request,
       [
-        'mobile'              => "required|string",
-        'mobile_country_code' => 'required',
+        'mobile'              => "required|integer",
+        'mobile_country_code' => 'required|integer',
         'otp'                 => 'required|digits:6',
       ]
     );
@@ -387,6 +387,7 @@ class AuthController extends Controller
     $rules    = [
       'password' => 'string|min:6',
       'name'     => 'string|min:1|max:40',
+      'tel'      => 'integer',
     ];
     $validator = Validator::make($request->all(), $rules);
     if ($validator->fails()) {

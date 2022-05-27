@@ -341,25 +341,50 @@ class ShopHelper
     return "{$time}{$str}";
   }
 
+  public static function checkShopOrderHasProductCount($shop_order)
+  {
+    $order_count = 0;
+    foreach ($shop_order->shop_order_shop_products as $shop_order_shop_product) {
+      $order_count += $shop_order_shop_product['count'];
+    }
+    if ($order_count > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public static function updateShopOrderPrice(
     $shop_order,
     $discount_code,
     $bonus_points,
     $invite_no
   ) {
-    $products_price      = self::getOrderProductsAmount($shop_order->shop_order_shop_products);
-    $campaign_deduct     = self::getDateCampaignDeduct($shop_order->user, $shop_order->created_at, $products_price, $discount_code);
-    $invite_no_deduct    = self::getInviteNoDeduct($products_price, $invite_no, $shop_order->user, [$shop_order->id]);
-    $bonus_points_deduct = self::getBonusPointsDeduct($bonus_points, $products_price, $campaign_deduct, $invite_no_deduct);
-    $freight             = self::getFreightAfterDeduct($shop_order->order_type, $products_price, $campaign_deduct, $invite_no_deduct);
-    $order_price         = self::getOrderPrice($products_price, $freight, $bonus_points_deduct, $campaign_deduct, $invite_no_deduct);
 
-    $shop_order->products_price      = $products_price;
-    $shop_order->campaign_deduct     = $campaign_deduct;
-    $shop_order->invite_no_deduct    = $invite_no_deduct;
-    $shop_order->bonus_points_deduct = $bonus_points_deduct;
-    $shop_order->freight             = $freight;
-    $shop_order->order_price         = $order_price;
+    $has_count_check = self::checkShopOrderHasProductCount($shop_order);
+    if($has_count_check){
+      $products_price      = self::getOrderProductsAmount($shop_order->shop_order_shop_products);
+      $campaign_deduct     = self::getDateCampaignDeduct($shop_order->user, $shop_order->created_at, $products_price, $discount_code);
+      $invite_no_deduct    = self::getInviteNoDeduct($products_price, $invite_no, $shop_order->user, [$shop_order->id]);
+      $bonus_points_deduct = self::getBonusPointsDeduct($bonus_points, $products_price, $campaign_deduct, $invite_no_deduct);
+      $freight             = self::getFreightAfterDeduct($shop_order->order_type, $products_price, $campaign_deduct, $invite_no_deduct);
+      $order_price         = self::getOrderPrice($products_price, $freight, $bonus_points_deduct, $campaign_deduct, $invite_no_deduct);
+  
+      $shop_order->products_price      = $products_price;
+      $shop_order->campaign_deduct     = $campaign_deduct;
+      $shop_order->invite_no_deduct    = $invite_no_deduct;
+      $shop_order->bonus_points_deduct = $bonus_points_deduct;
+      $shop_order->freight             = $freight;
+      $shop_order->order_price         = $order_price;
+    }else{
+      $shop_order->products_price      = 0;
+      $shop_order->campaign_deduct     = 0;
+      $shop_order->invite_no_deduct    = 0;
+      $shop_order->bonus_points_deduct = 0;
+      $shop_order->freight             = 0;
+      $shop_order->order_price         = 0;
+    }
+
     $shop_order->save();
 
     // self::createShopCampaignShopOrder($shop_order, $today_dicount_decode_campaign, $campaign_deduct);

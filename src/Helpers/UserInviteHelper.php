@@ -22,7 +22,7 @@ class UserInviteHelper
     }
     $snap = ShopOrder::where('user_id', $user->id)
       ->where('pay_status', '!=', 'not-paid')
-      ->whereNull('deleted_at')
+      // ->where('invite_no', $invite_no);
       ->where('invite_no', $invite_no)
       ->whereIn('status',
         [

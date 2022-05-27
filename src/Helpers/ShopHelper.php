@@ -81,7 +81,9 @@ class ShopHelper
       $new_shop_order_product = self::createShopOrderShopProduct($cart_product, $shop_order->id);
       $_cart_product->status  = 0;
       $_cart_product->save();
-      self::shopOrderProductChangeCount($new_shop_order_product->id);
+      if ($new_shop_order_product) {
+        self::shopOrderProductChangeCount($new_shop_order_product->id);
+      }
     }
 
   }
@@ -837,7 +839,7 @@ class ShopHelper
       }
       if ($shop_campaign->condition == 'first-purchase') {
         $shop_order = ShopOrder::where('user_id', $user_id)
-          ->where('pay_status', 'paid')
+          ->whereIn('pay_status', ['paid', 'waiting'])
           ->first();
         if ($shop_order) {
           return null;
@@ -1079,11 +1081,25 @@ class ShopHelper
   public static function createShopOrderShopProduct($shop_cart_product, $shop_order_id)
   {
     # 建立訂單時建立訂單商品(用購物車商品判斷)
-    $shop_order_shop_product                       = new ShopOrderShopProduct;
-    $shop_product                                  = $shop_cart_product->shop_product;
+    $shop_order_shop_product = new ShopOrderShopProduct;
+    $shop_product            = $shop_cart_product->shop_product;
+
+    $shop_stock_count = 0;
+    $buy_count        = $shop_cart_product->count ? $shop_cart_product->count : 0;
+    if (isset($shop_cart_product->shop_product_spec)) {
+      $shop_stock_count = $shop_cart_product->shop_product_spec->stock_count;
+    } else {
+      $shop_stock_count = $shop_cart_product->shop_product->stock_count;
+    }
+
+    if ($buy_count > $shop_stock_count) {
+      $shop_order_shop_product->count = $shop_stock_count;
+    } else {
+      $shop_order_shop_product->count = $shop_cart_product->count;
+    }
+
     $shop_order_shop_product->name                 = $shop_product->name;
     $shop_order_shop_product->subtitle             = $shop_product->subtitle;
-    $shop_order_shop_product->count                = $shop_cart_product->count;
     $shop_order_shop_product->original_count       = $shop_cart_product->count;
     $shop_order_shop_product->price                = $shop_product->price;
     $shop_order_shop_product->discount_price       = $shop_product->discount_price;
@@ -1227,8 +1243,8 @@ class ShopHelper
       if ($order_type && $cart_product->shop_product->order_type != $order_type) {
         throw new \Wasateam\Laravelapistone\Exceptions\FieldNotMatchException('order_type', $order_type);
       }
-      self::updateShopCartProductPrice($cart_product);
-      $cart_product = self::checkProductStockEnough($cart_product);
+      // self::updateShopCartProductPrice($cart_product);
+      // $cart_product = self::checkProductStockEnough($cart_product);
       if ($cart_product) {
         $_filtered_cart_products[] = $cart_product;
       }
@@ -1335,7 +1351,7 @@ class ShopHelper
     return $shop_return_record;
   }
 
-  public static function createBonusPointRecordFromShopOrder($shop_order, $shop_campaign_id = null, $point_count, $type)
+  public static function createBonusPointRecordFromShopOrder($shop_order, $shop_campaign_id = null, $point_count, $type, $source = 'new_shop_order')
   {
     $bonus_point_record                   = new BonusPointRecord;
     $bonus_point_record->user_id          = $shop_order->user_id;
@@ -1624,26 +1640,63 @@ class ShopHelper
 
   public static function checkShopOrderPayExpire()
   {
-    $expire_time = config('stone.shop.pay_expire.time_limit');
-    if (!$expire_time) {
-      throw new \Wasateam\Laravelapistone\Exceptions\StoneConfigNotSetException('stone.shop.pay_expire.time_limit');
-    }
+    $expire_time = config('stone.shop.pay_expire.time_limit') ? config('stone.shop.pay_expire.time_limit') : 600;
     $check_time  = Carbon::now()->addSeconds($expire_time * -1);
     $shop_orders = ShopOrder::where('pay_status', 'waiting')
       ->where('created_at', '<', $check_time)
       ->get();
     foreach ($shop_orders as $shop_order) {
-      foreach ($shop_order->shop_order_shop_products as $shop_order_shop_product) {
-        $shop_product = $shop_order_shop_product->shop_product;
-        $shop_product->stock_count += $shop_order_shop_product->count;
-        $shop_product->save();
-      }
+      self::makeShopOrderNotPaid($shop_order);
+      // foreach ($shop_order->shop_order_shop_products as $shop_order_shop_product) {
+      //   $shop_product = $shop_order_shop_product->shop_product;
+      //   $shop_product->stock_count += $shop_order_shop_product->count;
+      //   $shop_product->save();
+      // }
     }
-    $shop_orders = ShopOrder::where('pay_status', 'waiting')
-      ->where('created_at', '<', $check_time)
-      ->update([
-        'pay_status' => 'not-paid',
-      ]);
+    // $shop_orders = ShopOrder::where('pay_status', 'waiting')
+    //   ->where('created_at', '<', $check_time)
+    //   ->update([
+    //     'pay_status' => 'not-paid',
+    //   ]);
+  }
+
+  public static function makeShopOrderNotPaid($shop_order)
+  {
+    self::returnStockCountFromShopOrder($shop_order);
+    self::returnBonusPointsFromShopOrder($shop_order);
+    $shop_order->pay_status = 'not-paid';
+    $shop_order->save();
+  }
+
+  public static function returnBonusPointsFromShopOrder($shop_order)
+  {
+    if (!$shop_order->bonus_points_deduct) {
+      return;
+    }
+
+    $record = BonusPointRecord::where('shop_order_id', $shop_order->id)
+      ->where('source', 'not_paid_shop_order')
+      ->where('type', 'get')
+      ->first();
+    if ($record) {
+      return;
+    }
+
+    if ($shop_order->bonus_points_deduct) {
+      $user               = $shop_order->user;
+      $user->bonus_points = $user->bonus_points + $shop_order->bonus_points_deduct;
+      $user->save();
+      self::createBonusPointRecordFromShopOrder($shop_order, null, $shop_order->bonus_points_deduct, 'get', 'not_paid_shop_order');
+    }
+  }
+
+  public static function returnStockCountFromShopOrder($shop_order)
+  {
+    foreach ($shop_order->shop_order_shop_products as $shop_order_shop_product) {
+      $shop_product = $shop_order_shop_product->shop_product;
+      $shop_product->stock_count += $shop_order_shop_product->count;
+      $shop_product->save();
+    }
   }
 
   public static function ShopOrderShipTimeSet($shop_order)

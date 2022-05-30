@@ -233,20 +233,53 @@ class ShopProductController extends Controller
   public function index(Request $request, $id = null)
   {
     if (config('stone.mode') == 'cms') {
-      return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($model) use ($request) {
-        $stock_level = $request->has('stock_level') ? $request->stock_level : null;
-        if ($stock_level) {
-          if ($stock_level == 2) {
-            return $model->whereRaw('stock_count < stock_alert_count');
-          } else if ($stock_level == 1) {
-            return $model->whereRaw('stock_count >= stock_alert_count');
+      if (
+        $request->filled('shop_subclasses') &&
+        !str_contains($request->shop_subclasses, ',') &&
+        $request->has('is_active') &&
+        $request->is_active == 1
+      ) {
+        $shop_subclass = ShopSubclass::find($request->shop_subclasses);
+        if ($shop_subclass) {
+          if ($request->filled('page')) {
+            $page = ($request != null) && $request->filled('page') ? $request->page : 1;
+            return \Wasateam\Laravelapistone\Resources\ShopProductCollection::collection($shop_subclass->shop_products_is_active_order()->paginate($this->paginate, ['*'], 'page', $page));
+          } else {
+            return \Wasateam\Laravelapistone\Resources\ShopProductCollection::collection($shop_subclass->shop_products_is_active_order);
+          }
+        }
+      } else if (
+        $request->filled('featured_classes') &&
+        !str_contains($request->featured_classes, ',') &&
+        $request->has('is_active') &&
+        $request->is_active == 1
+      ) {
+        $featured_class = FeaturedClass::find($request->featured_classes);
+        if ($featured_class) {
+          if ($request->filled('page')) {
+            $page = ($request != null) && $request->filled('page') ? $request->page : 1;
+            return \Wasateam\Laravelapistone\Resources\ShopProductCollection::collection($featured_class->shop_products_is_active_order()->paginate($this->paginate, ['*'], 'page', $page));
+          } else {
+            return \Wasateam\Laravelapistone\Resources\ShopProductCollection::collection($featured_class->shop_products_is_active_order);
+          }
+        }
+      } else {
+        return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($model) use ($request) {
+          $stock_level = $request->has('stock_level') ? $request->stock_level : null;
+          if ($stock_level) {
+            if ($stock_level == 2) {
+              return $model->whereRaw('stock_count < stock_alert_count');
+            } else if ($stock_level == 1) {
+              return $model->whereRaw('stock_count >= stock_alert_count');
+            } else {
+              return $model;
+            }
           } else {
             return $model;
           }
-        } else {
-          return $model;
-        }
-      });
+        });
+      }
+
     } else if (config('stone.mode') == 'webapi') {
       if (
         $request->filled('shop_subclasses') &&

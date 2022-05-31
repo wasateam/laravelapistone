@@ -69,7 +69,7 @@ class EcpayInvoiceHelper
       "ItemCount"   => 1,
       "ItemWord"    => "件",
       "ItemPrice"   => $shop_order->freight,
-      "ItemTaxType" => "1",
+      "ItemTaxType" => "3",
       "ItemAmount"  => $shop_order->freight,
       "ItemRemark"  => "",
     ];
@@ -78,7 +78,7 @@ class EcpayInvoiceHelper
       "ItemCount"   => 1,
       "ItemWord"    => "個",
       "ItemPrice"   => $shop_order->campaign_deduct * -1,
-      "ItemTaxType" => "1",
+      "ItemTaxType" => "3",
       "ItemAmount"  => $shop_order->campaign_deduct * -1,
       "ItemRemark"  => "",
     ];
@@ -87,7 +87,7 @@ class EcpayInvoiceHelper
       "ItemCount"   => 1,
       "ItemWord"    => "個",
       "ItemPrice"   => $shop_order->bonus_points_deduct * -1,
-      "ItemTaxType" => "1",
+      "ItemTaxType" => "3",
       "ItemAmount"  => $shop_order->bonus_points_deduct * -1,
       "ItemRemark"  => "",
     ];
@@ -96,7 +96,7 @@ class EcpayInvoiceHelper
       "ItemCount"   => 1,
       "ItemWord"    => "個",
       "ItemPrice"   => $shop_order->invite_no_deduct * -1,
-      "ItemTaxType" => "1",
+      "ItemTaxType" => "3",
       "ItemAmount"  => $shop_order->invite_no_deduct * -1,
       "ItemRemark"  => "",
     ];
@@ -105,7 +105,7 @@ class EcpayInvoiceHelper
       "ItemCount"   => 1,
       "ItemWord"    => "項",
       "ItemPrice"   => $shop_order->return_price * -1,
-      "ItemTaxType" => "1",
+      "ItemTaxType" => "3",
       "ItemAmount"  => $shop_order->return_price * -1,
       "ItemRemark"  => "",
     ];

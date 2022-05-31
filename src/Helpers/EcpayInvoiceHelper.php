@@ -232,7 +232,6 @@ class EcpayInvoiceHelper
     $Items,
     $shopOrderNo
   ) {
-
     $post_data = [
       "MerchantID"         => config('stone.invoice.ecpay.merchant_id'),
       "RelateNumber"       => $shopOrderNo,
@@ -255,6 +254,15 @@ class EcpayInvoiceHelper
       "vat"                => "1",
       "Items"              => $Items,
     ];
+
+    $mode = config('stone.invoice.mode');
+    if ($mode == 'dev') {
+      $post_data['CustomerIdentifier'] = '123412';
+      $post_data['CustomerName']       = '測試仔';
+      $post_data['CustomerAddr']       = '台北市中山區民權東路十段99號地下7樓';
+      $post_data['CustomerPhone']      = '0900000000';
+      $post_data['CustomerEmail']      = 'hello@wasateam.com';
+    }
 
     return $post_data;
   }

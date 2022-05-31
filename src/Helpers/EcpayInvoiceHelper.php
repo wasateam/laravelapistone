@@ -257,7 +257,6 @@ class EcpayInvoiceHelper
 
     $mode = config('stone.invoice.mode');
     if ($mode == 'dev') {
-      $post_data['CustomerIdentifier'] = '123412';
       $post_data['CustomerName']       = '測試仔';
       $post_data['CustomerAddr']       = '台北市中山區民權東路十段99號地下7樓';
       $post_data['CustomerPhone']      = '0900000000';

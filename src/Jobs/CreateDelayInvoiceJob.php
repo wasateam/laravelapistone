@@ -31,6 +31,10 @@ class CreateDelayInvoiceJob implements ShouldQueue
    */
   public function handle()
   {
+    if ($this->invoice_job->shop_order->status == 'cancel-complete') {
+      return;
+    }
+
     try {
       \Wasateam\Laravelapistone\Helpers\ShopHelper::createInvoice($this->invoice_job->shop_order);
       $this->invoice_job->status = 'invoiced';

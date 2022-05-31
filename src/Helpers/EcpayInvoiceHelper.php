@@ -69,7 +69,7 @@ class EcpayInvoiceHelper
       "ItemCount"   => 1,
       "ItemWord"    => "件",
       "ItemPrice"   => $shop_order->freight,
-      "ItemTaxType" => "3",
+      "ItemTaxType" => "1",
       "ItemAmount"  => $shop_order->freight,
       "ItemRemark"  => "",
     ];
@@ -105,7 +105,7 @@ class EcpayInvoiceHelper
       "ItemCount"   => 1,
       "ItemWord"    => "項",
       "ItemPrice"   => $shop_order->return_price * -1,
-      "ItemTaxType" => "3",
+      "ItemTaxType" => "1",
       "ItemAmount"  => $shop_order->return_price * -1,
       "ItemRemark"  => "",
     ];

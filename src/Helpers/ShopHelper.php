@@ -362,21 +362,21 @@ class ShopHelper
   ) {
 
     $has_count_check = self::checkShopOrderHasProductCount($shop_order);
-    if($has_count_check){
+    if ($has_count_check) {
       $products_price      = self::getOrderProductsAmount($shop_order->shop_order_shop_products);
       $campaign_deduct     = self::getDateCampaignDeduct($shop_order->user, $shop_order->created_at, $products_price, $discount_code);
       $invite_no_deduct    = self::getInviteNoDeduct($products_price, $invite_no, $shop_order->user, [$shop_order->id]);
       $bonus_points_deduct = self::getBonusPointsDeduct($bonus_points, $products_price, $campaign_deduct, $invite_no_deduct);
       $freight             = self::getFreightAfterDeduct($shop_order->order_type, $products_price, $campaign_deduct, $invite_no_deduct);
       $order_price         = self::getOrderPrice($products_price, $freight, $bonus_points_deduct, $campaign_deduct, $invite_no_deduct);
-  
+
       $shop_order->products_price      = $products_price;
       $shop_order->campaign_deduct     = $campaign_deduct;
       $shop_order->invite_no_deduct    = $invite_no_deduct;
       $shop_order->bonus_points_deduct = $bonus_points_deduct;
       $shop_order->freight             = $freight;
       $shop_order->order_price         = $order_price;
-    }else{
+    } else {
       $shop_order->products_price      = 0;
       $shop_order->campaign_deduct     = 0;
       $shop_order->invite_no_deduct    = 0;
@@ -1411,9 +1411,6 @@ class ShopHelper
       if (count($shop_order->shop_return_records) && $ori_shop_order->status == 'return-part-apply' && $shop_order->status == 'return-part-complete') {
         $check = 1;
       }
-      // if ($ori_shop_order->status == 'cancel' && $shop_order->status == 'cancel-complete') {
-      //   $check = 1;
-      // }
       if (!$check) {
         return;
       }
@@ -1441,10 +1438,14 @@ class ShopHelper
     $model->save();
   }
 
-  public static function createInvoice($shop_order)
+  public static function createInvoice($shop_order, $retry = null)
   {
     if ($shop_order->invoice_status == 'done') {
       return;
+    }
+    $no = $shop_order->no;
+    if ($retry) {
+      $no = $no . '-' . $retry;
     }
     if (config('stone.invoice')) {
       if (config('stone.invoice.service') == 'ecpay') {
@@ -1463,7 +1464,8 @@ class ShopHelper
           $Donation           = '0';
           $CarrierType        = '';
           $CarrierNum         = '';
-          $TaxType            = '1';
+          $TaxType            = EcpayInvoiceHelper::getTaxType($shop_order);
+          // $TaxType            = '1';
           if ($invoice_type == 'personal') {
             $invoice_carrier_type   = $shop_order->invoice_carrier_type;
             $invoice_carrier_number = $shop_order->invoice_carrier_number;
@@ -1513,12 +1515,21 @@ class ShopHelper
             $TaxType,
             $SalesAmount,
             $Items,
-            $shop_order->no
+            $no
           );
-          $invoice_res                = EcpayInvoiceHelper::createInvoice($post_data);
-          $shop_order->invoice_status = 'done';
-          $shop_order->invoice_number = $invoice_res->InvoiceNo;
-          $shop_order->save();
+          $invoice_res = EcpayInvoiceHelper::createInvoice($post_data);
+          if ($invoice_res->code == 1) {
+            $shop_order->invoice_status = 'done';
+            $shop_order->invoice_number = $invoice_res->data->InvoiceNo;
+            $shop_order->save();
+          } else if ($invoice_res->code == 5070) {
+            if (!$retry) {
+              $retry = 1;
+            } else {
+              $retry = $retry + 1;
+            }
+            self::createInvoice($shop_order, $retry);
+          }
         } catch (\Throwable $th) {
           $shop_order->invoice_status = 'fail';
           $shop_order->save();

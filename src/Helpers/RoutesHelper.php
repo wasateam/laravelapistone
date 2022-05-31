@@ -167,15 +167,6 @@ class RoutesHelper
     # XcTask
     if (config('stone.xc_task')) {
 
-      # XcMilestone
-      if (config('stone.xc_milestone')) {
-        self::get_resource_scope_routes(
-          XcTaskTemplateController::class,
-          'xc_task_template',
-          ['read', 'edit']
-        );
-      }
-
       Route::group([
         "middleware" => [
           "isuser",
@@ -203,39 +194,6 @@ class RoutesHelper
         ['read', 'edit']
       );
 
-      // Route::group([
-      //   "middleware" => ["wasascopes:xc_task-edit,xc_task-edit-my,xc_task-edit-my-xc_project,xc_task-edit-my-xc_work_type"],
-      // ], function () {
-      //   Route::post("xc_task", [XcTaskController::class, 'store']);
-      //   Route::patch("xc_task/{id}", [XcTaskController::class, 'update']);
-      //   Route::delete("xc_task", [XcTaskController::class, 'destroy']);
-      // });
-
-      // self::get_resource_scope_routes(
-      //   XcTaskTemplateController::class,
-      //   'xc_task_template',
-      //   ['read', 'edit']
-      // );
-      // self::get_resource_scope_routes(
-      //   XcTaskController::class,
-      //   'xc_task',
-      //   ['read', 'edit']
-      // );
-      // Route::group([
-      //   "middleware" => ["wasascopes:read-my"],
-      // ], function () use ($model_name, $controller) {
-      //   Route::get("{$model_name}/my", [$controller, 'index_my']);
-      //   Route::get("{$model_name}/my/{id}", [$controller, 'show_my']);
-      // });
-      // Route::group([
-      //   "middleware" => ["wasascopes:edit-my"],
-      // ], function () use ($model_name, $controller) {
-      //   Route::post("{$model_name}/my", [$controller, 'store_my']);
-      //   Route::patch("{$model_name}/my/{id}", [$controller, 'update_my']);
-      //   Route::delete("{$model_name}/my", [$controller, 'destroy_my']);
-      // });
-      // personal
-      // admin_group
     }
 
     # XcMilestone

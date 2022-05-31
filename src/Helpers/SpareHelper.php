@@ -21,6 +21,9 @@ class SpareHelper
       'showcase-read',
       'showcase-edit',
 
+      'xc_billing_statement-my',
+      'xc_billing_statement-review',
+
       // 'xc_task-read',
       // 'xc_task-edit',
       // 'xc_task-read-my',

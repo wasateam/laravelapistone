@@ -53,6 +53,8 @@ use Wasateam\Laravelapistone\Models\ShopSubclass;
  * weight_capacity_unit 重量/容量單位
  * show_weight_capacity 重量/容量 前台是否顯示
  * tax 稅
+ * ~ 0 免稅
+ * ~ 1 應稅
  * stock_count 庫存
  * stock_alert_count 庫存警示數量
  * max_buyable_count 最大購買數量

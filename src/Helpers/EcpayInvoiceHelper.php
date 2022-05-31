@@ -47,13 +47,19 @@ class EcpayInvoiceHelper
       } else {
         $shop_cart_product_price = config('stone.shop.discount_price') && $shop_cart_product['discount_price'] ? $shop_cart_product['discount_price'] : $shop_cart_product['price'];
       }
+      $ItemTaxType = "3";
+      if ($shop_cart_product->shop_product &&
+        $shop_cart_product->shop_product->tax
+      ) {
+        $ItemTaxType = 1;
+      }
       $items[] = [
         // "ItemSeq"     => 1,
         "ItemName"    => $shop_cart_product['name'],
         "ItemCount"   => $shop_cart_product['count'],
         "ItemWord"    => "件",
         "ItemPrice"   => $shop_cart_product_price,
-        "ItemTaxType" => "1",
+        "ItemTaxType" => $ItemTaxType,
         "ItemAmount"  => $amount,
         "ItemRemark"  => "",
       ];
@@ -104,6 +110,30 @@ class EcpayInvoiceHelper
       "ItemRemark"  => "",
     ];
     return $items;
+  }
+
+  public static function getTaxType($shop_order)
+  {
+    $is_tax_1 = 1;
+    $is_tax_3 = 1;
+
+    foreach ($shop_order->shop_order_shop_products as $shop_order_shop_product) {
+      if (!$shop_order_shop_product->shop_product) {
+        continue;
+      }
+      if ($shop_order_shop_product->shop_product->tax) {
+        $is_tax_3 = 0;
+      } else {
+        $is_tax_1 = 0;
+      }
+    }
+    if ($is_tax_1) {
+      return '1';
+    } else if ($is_tax_3) {
+      return '3';
+    } else {
+      return '9';
+    }
   }
 
   public static function getDelayInvoicePostData(
@@ -253,12 +283,23 @@ class EcpayInvoiceHelper
 
     $res_json = $res->json();
     if ($res_json['TransCode'] != '1') {
+      \Log::info($res_json);
       throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', null, null, $res_json['TransCode'], $res_json['TransMsg']);
     }
     $res_data = self::getDecryptData($res_json['Data'], 'invoice');
     if ($res_data->RtnCode != '1') {
-      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', $res_data->RtnCode, $res_data->RtnMsg);
+      if ($res_data->RtnCode == 5070357) {
+        return (object) ([
+          'code' => 5070,
+        ]);
+      } else {
+        \Log::info(json_encode($res_data));
+        throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', $res_data->RtnCode, $res_data->RtnMsg);
+      }
     }
-    return $res_data;
+    return (object) ([
+      'code' => 1,
+      'data' => $res_data,
+    ]);
   }
 }

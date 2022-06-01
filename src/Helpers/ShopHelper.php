@@ -1445,7 +1445,7 @@ class ShopHelper
     }
     $no = $shop_order->no;
     if ($retry) {
-      $no = $no . '-' . $retry;
+      $no = $no . '-' . Str::random(1) . $retry;
     }
     if (config('stone.invoice')) {
       if (config('stone.invoice.service') == 'ecpay') {

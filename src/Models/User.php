@@ -108,6 +108,11 @@ class User extends Authenticatable
     return $this->hasMany(BonusPointRecord::class, 'user_id');
   }
 
+  public function getIsVerifiedAttribute()
+  {
+    return $this->email_verified_at ? true : false;
+  }
+
   /**
    * The attributes that are mass assignable.
    *

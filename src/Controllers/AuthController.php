@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Validator;
 use Wasateam\Laravelapistone\Helpers\AuthHelper;
 use Wasateam\Laravelapistone\Helpers\EmailHelper;
@@ -20,6 +21,7 @@ use Wasateam\Laravelapistone\Helpers\SmsHelper;
 use Wasateam\Laravelapistone\Helpers\StorageHelper;
 use Wasateam\Laravelapistone\Helpers\UserHelper;
 use Wasateam\Laravelapistone\Models\Admin;
+use Wasateam\Laravelapistone\Models\User;
 
 /**
  * @group @Auth
@@ -383,11 +385,22 @@ class AuthController extends Controller
    */
   public function update(Request $request)
   {
+    $user = Auth::user();
+    if (!$user) {
+      return response()->json([
+        'message' => 'cannot find user.',
+      ], 401);
+    }
+
     $resource = config('stone.auth.resource');
-    $rules    = [
+    $rules = [
       'password' => 'string|min:6',
       'name'     => 'string|min:1|max:40',
       'tel'      => 'integer',
+      'email'    => [
+        'required',
+        Rule::unique('users')->ignore($user->id),
+      ],
     ];
     $validator = Validator::make($request->all(), $rules);
     if ($validator->fails()) {
@@ -625,6 +638,12 @@ class AuthController extends Controller
     $model = config('stone.auth.model');
 
     $user = $model::where('email', $request->email)->first();
+
+    if ($user->is_verified) {
+      return response()->json([
+        'message' => 'email has been verified.',
+      ], 400);
+    }
 
     $url = AuthHelper::getEmailVerifyUrl($user);
     EmailHelper::email_verify_request($url, $user->email);

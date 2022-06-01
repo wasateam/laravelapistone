@@ -1477,7 +1477,7 @@ class ShopHelper
               $CarrierNum     = '';
               $CustomerEmail  = $customer_email;
             } else {
-              if ($invoice_carrier_type == 'mobile') {
+              if ($invoice_carrier_type == 'phone') {
                 $CarrierType = '3';
                 $CarrierNum  = $invoice_carrier_number;
               } else if ($invoice_carrier_type == 'certificate') {

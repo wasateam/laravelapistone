@@ -396,7 +396,7 @@ class AuthController extends Controller
     $rules    = [
       'password' => 'string|min:6',
       'name'     => 'string|min:1|max:40',
-      'tel'      => 'string|regex:/(01)[0-9]{9}/',
+      'tel'      => 'string|regex:/^[0-9]+$/',
       'email'    => [
         'required',
         Rule::unique('users')->ignore($user->id),

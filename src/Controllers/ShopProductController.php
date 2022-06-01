@@ -582,7 +582,7 @@ class ShopProductController extends Controller
               $shop_product->weight_capacity . ' ' . $shop_product->weight_capacity_unit,
               $shop_product->cost,
               $shop_product->price,
-              $shop_product->stock_count,
+              $shop_product->stock_count ? $shop_product->stock_count : '0',
               $shop_product->storage_space,
               'sales_count' => 0,
             ];

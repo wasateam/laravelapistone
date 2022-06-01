@@ -393,10 +393,10 @@ class AuthController extends Controller
     }
 
     $resource = config('stone.auth.resource');
-    $rules = [
+    $rules    = [
       'password' => 'string|min:6',
       'name'     => 'string|min:1|max:40',
-      'tel'      => 'integer',
+      'tel'      => 'string|regex:/(01)[0-9]{9}/',
       'email'    => [
         'required',
         Rule::unique('users')->ignore($user->id),

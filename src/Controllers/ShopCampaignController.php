@@ -270,6 +270,9 @@ class ShopCampaignController extends Controller
    */
   public function get_today_discount_code(Request $request)
   {
+    $request->validate([
+      'discount_code' => 'required',
+    ]);
     if (!$request->has('discount_code')) {
       throw new \Wasateam\Laravelapistone\Exceptions\FieldRequiredException('discount_code');
     }

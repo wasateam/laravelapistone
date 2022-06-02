@@ -1451,7 +1451,7 @@ class ShopHelper
       if (config('stone.invoice.service') == 'ecpay') {
         try {
           $invoice_type       = $shop_order->invoice_type;
-          $SalesAmount        = $shop_order->order_price - $shop_order->return_price;
+          $SalesAmount        = EcpayInvoiceHelper::getInvoiceAmount($shop_order);
           $Items              = EcpayInvoiceHelper::getInvoiceItemsFromShopOrder($shop_order);
           $CustomerID         = $shop_order->user_id;
           $CustomerIdentifier = '';

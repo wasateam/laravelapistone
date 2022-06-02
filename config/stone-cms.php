@@ -211,6 +211,13 @@ return [
       'hash_key'    => env('INVOICE_ECPAY_HASH_KEY', "ejCk326UnaZWKisg"),
       'hash_iv'     => env('INVOICE_ECPAY_HASH_IV', "q9jcZX8Ib9LM8wYk"),
     ],
+    'items'      => [
+      'freight'             => true,
+      'campaign_deduct'     => true,
+      'bonus_points_deduct' => true,
+      'invite_no_deduct'    => true,
+      'return_price'        => true,
+    ],
   ],
   // multiple layers
   'featured_class'       => true,

@@ -35,6 +35,27 @@ class EcpayInvoiceHelper
     return "{$time}{$str}";
   }
 
+  public static function getInvoiceAmount($shop_order)
+  {
+    $amount = $shop_order->order_price;
+    if (!config('stone.invoice.items.freight')) {
+      $amount -= $shop_order->freight;
+    }
+    if (!config('stone.invoice.items.campaign_deduct')) {
+      $amount += $shop_order->campaign_deduct;
+    }
+    if (!config('stone.invoice.items.bonus_points_deduct')) {
+      $amount += $shop_order->bonus_points_deduct;
+    }
+    if (!config('stone.invoice.items.invite_no_deduct')) {
+      $amount += $shop_order->invite_no_deduct;
+    }
+    if (config('stone.invoice.items.return_price')) {
+      $amount -= $shop_order->return_price;
+    }
+    return $amount;
+  }
+
   public static function getInvoiceItemsFromShopOrder($shop_order)
   {
     $shop_cart_products = $shop_order->shop_order_shop_products;
@@ -64,51 +85,61 @@ class EcpayInvoiceHelper
         "ItemRemark"  => "",
       ];
     }
-    $items[] = [
-      "ItemName"    => '運費',
-      "ItemCount"   => 1,
-      "ItemWord"    => "件",
-      "ItemPrice"   => $shop_order->freight,
-      "ItemTaxType" => "1",
-      "ItemAmount"  => $shop_order->freight,
-      "ItemRemark"  => "",
-    ];
-    $items[] = [
-      "ItemName"    => '活動折抵',
-      "ItemCount"   => 1,
-      "ItemWord"    => "個",
-      "ItemPrice"   => $shop_order->campaign_deduct * -1,
-      "ItemTaxType" => "3",
-      "ItemAmount"  => $shop_order->campaign_deduct * -1,
-      "ItemRemark"  => "",
-    ];
-    $items[] = [
-      "ItemName"    => '紅利折抵',
-      "ItemCount"   => 1,
-      "ItemWord"    => "個",
-      "ItemPrice"   => $shop_order->bonus_points_deduct * -1,
-      "ItemTaxType" => "3",
-      "ItemAmount"  => $shop_order->bonus_points_deduct * -1,
-      "ItemRemark"  => "",
-    ];
-    $items[] = [
-      "ItemName"    => '邀請碼折抵',
-      "ItemCount"   => 1,
-      "ItemWord"    => "個",
-      "ItemPrice"   => $shop_order->invite_no_deduct * -1,
-      "ItemTaxType" => "3",
-      "ItemAmount"  => $shop_order->invite_no_deduct * -1,
-      "ItemRemark"  => "",
-    ];
-    $items[] = [
-      "ItemName"    => '刷退金額',
-      "ItemCount"   => 1,
-      "ItemWord"    => "項",
-      "ItemPrice"   => $shop_order->return_price * -1,
-      "ItemTaxType" => "3",
-      "ItemAmount"  => $shop_order->return_price * -1,
-      "ItemRemark"  => "",
-    ];
+    if (config('stone.invoice.items.freight')) {
+      $items[] = [
+        "ItemName"    => '運費',
+        "ItemCount"   => 1,
+        "ItemWord"    => "件",
+        "ItemPrice"   => $shop_order->freight,
+        "ItemTaxType" => "1",
+        "ItemAmount"  => $shop_order->freight,
+        "ItemRemark"  => "",
+      ];
+    }
+    if (config('stone.invoice.items.campaign_deduct')) {
+      $items[] = [
+        "ItemName"    => '活動折抵',
+        "ItemCount"   => 1,
+        "ItemWord"    => "個",
+        "ItemPrice"   => $shop_order->campaign_deduct * -1,
+        "ItemTaxType" => "3",
+        "ItemAmount"  => $shop_order->campaign_deduct * -1,
+        "ItemRemark"  => "",
+      ];
+    }
+    if (config('stone.invoice.items.bonus_points_deduct')) {
+      $items[] = [
+        "ItemName"    => '紅利折抵',
+        "ItemCount"   => 1,
+        "ItemWord"    => "個",
+        "ItemPrice"   => $shop_order->bonus_points_deduct * -1,
+        "ItemTaxType" => "3",
+        "ItemAmount"  => $shop_order->bonus_points_deduct * -1,
+        "ItemRemark"  => "",
+      ];
+    }
+    if (config('stone.invoice.items.invite_no_deduct')) {
+      $items[] = [
+        "ItemName"    => '邀請碼折抵',
+        "ItemCount"   => 1,
+        "ItemWord"    => "個",
+        "ItemPrice"   => $shop_order->invite_no_deduct * -1,
+        "ItemTaxType" => "3",
+        "ItemAmount"  => $shop_order->invite_no_deduct * -1,
+        "ItemRemark"  => "",
+      ];
+    }
+    if (config('stone.invoice.items.return_price')) {
+      $items[] = [
+        "ItemName"    => '刷退金額',
+        "ItemCount"   => 1,
+        "ItemWord"    => "項",
+        "ItemPrice"   => $shop_order->return_price * -1,
+        "ItemTaxType" => "3",
+        "ItemAmount"  => $shop_order->return_price * -1,
+        "ItemRemark"  => "",
+      ];
+    }
     return $items;
   }
 
@@ -257,10 +288,10 @@ class EcpayInvoiceHelper
 
     $mode = config('stone.invoice.mode');
     if ($mode == 'dev') {
-      $post_data['CustomerName']       = '測試仔';
-      $post_data['CustomerAddr']       = '台北市中山區民權東路十段99號地下7樓';
-      $post_data['CustomerPhone']      = '0900000000';
-      $post_data['CustomerEmail']      = 'hello@wasateam.com';
+      $post_data['CustomerName']  = '測試仔';
+      $post_data['CustomerAddr']  = '台北市中山區民權東路十段99號地下7樓';
+      $post_data['CustomerPhone'] = '0900000000';
+      $post_data['CustomerEmail'] = 'hello@wasateam.com';
     }
 
     return $post_data;
@@ -291,6 +322,7 @@ class EcpayInvoiceHelper
     $res_json = $res->json();
     if ($res_json['TransCode'] != '1') {
       \Log::info($res_json);
+      \Log::info(json_encode($data));
       throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', null, null, $res_json['TransCode'], $res_json['TransMsg']);
     }
     $res_data = self::getDecryptData($res_json['Data'], 'invoice');
@@ -301,6 +333,7 @@ class EcpayInvoiceHelper
         ]);
       } else {
         \Log::info(json_encode($res_data));
+        \Log::info(json_encode($data));
         throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', $res_data->RtnCode, $res_data->RtnMsg);
       }
     }

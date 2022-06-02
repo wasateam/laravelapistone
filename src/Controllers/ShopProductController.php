@@ -633,7 +633,7 @@ class ShopProductController extends Controller
             $weight,
             $model->cost,
             $model->price,
-            $model->stock_count,
+            $model->stock_count ? $model->stock_count : '0',
             $model->storage_space,
           ];
           return $map;

@@ -32,6 +32,8 @@ class CreateDelayInvoiceJob implements ShouldQueue
   public function handle()
   {
     if ($this->invoice_job->shop_order->status == 'cancel-complete') {
+      $this->invoice_job->status = 'ignore';
+      $this->invoice_job->save();
       return;
     }
 
@@ -44,11 +46,14 @@ class CreateDelayInvoiceJob implements ShouldQueue
         $this->invoice_job->status = 'ignore';
         $this->invoice_job->save();
       } else {
+        \Log::info(1);
+        \Log::info(json_encode($res));
         $this->invoice_job->status  = 'fail';
         $this->invoice_job->err_msg = $res->msg;
         $this->invoice_job->save();
       }
     } catch (\Throwable $th) {
+      \Log::info(2);
       throw $th;
       $this->invoice_job->status = 'fail';
       $this->invoice_job->save();

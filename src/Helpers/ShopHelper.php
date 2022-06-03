@@ -1447,99 +1447,107 @@ class ShopHelper
     if ($retry) {
       $no = $no . '-' . Str::random(1) . $retry;
     }
-    if (config('stone.invoice')) {
-      if (config('stone.invoice.service') == 'ecpay') {
-        try {
-          $invoice_type       = $shop_order->invoice_type;
-          $SalesAmount        = EcpayInvoiceHelper::getInvoiceAmount($shop_order);
-          $Items              = EcpayInvoiceHelper::getInvoiceItemsFromShopOrder($shop_order);
-          $CustomerID         = $shop_order->user_id;
-          $CustomerIdentifier = '';
-          $CustomerName       = '';
-          $CustomerAddr       = $shop_order->receive_address;
-          $CustomerPhone      = $shop_order->orderer_tel;
-          $CustomerEmail      = $shop_order->orderer_email;
-          $Tsr                = $shop_order->no;
-          $Print              = '0';
-          $Donation           = '0';
-          $CarrierType        = '';
-          $CarrierNum         = '';
-          $TaxType            = EcpayInvoiceHelper::getTaxType($shop_order);
-          // $TaxType            = '1';
-          if ($invoice_type == 'personal') {
-            $invoice_carrier_type   = $shop_order->invoice_carrier_type;
-            $invoice_carrier_number = $shop_order->invoice_carrier_number;
-            $Print                  = '0';
-            $CustomerName           = $shop_order->orderer;
-            if ($shop_order->invoice_status == 'fail') {
-              $customer_email = $shop_order->user->email;
-              $CarrierType    = '1';
-              $CarrierNum     = '';
-              $CustomerEmail  = $customer_email;
-            } else {
-              if ($invoice_carrier_type == 'phone') {
-                $CarrierType = '3';
-                $CarrierNum  = $invoice_carrier_number;
-              } else if ($invoice_carrier_type == 'certificate') {
-                $CarrierType = '2';
-                $CarrierNum  = $invoice_carrier_number;
-              } else if ($invoice_carrier_type == 'email') {
-                $customer_email = $invoice_carrier_number;
-                if (!$invoice_carrier_number && $shop_order->user) {
-                  $customer_email = $shop_order->user->email;
-                }
-                $CarrierType   = '1';
-                $CarrierNum    = '';
-                $CustomerEmail = $customer_email;
+    if (!config('stone.invoice')) {
+      return;
+    }
+    if (config('stone.invoice.service') == 'ecpay') {
+      try {
+        $invoice_type       = $shop_order->invoice_type;
+        $SalesAmount        = EcpayInvoiceHelper::getInvoiceAmount($shop_order);
+        $Items              = EcpayInvoiceHelper::getInvoiceItemsFromShopOrder($shop_order);
+        $CustomerID         = $shop_order->user_id;
+        $CustomerIdentifier = '';
+        $CustomerName       = '';
+        $CustomerAddr       = $shop_order->receive_address;
+        $CustomerPhone      = $shop_order->orderer_tel;
+        $CustomerEmail      = $shop_order->orderer_email;
+        $Tsr                = $shop_order->no;
+        $Print              = '0';
+        $Donation           = '0';
+        $CarrierType        = '';
+        $CarrierNum         = '';
+        $TaxType            = EcpayInvoiceHelper::getTaxType($shop_order);
+        // $TaxType            = '1';
+        if ($invoice_type == 'personal') {
+          $invoice_carrier_type   = $shop_order->invoice_carrier_type;
+          $invoice_carrier_number = $shop_order->invoice_carrier_number;
+          $Print                  = '0';
+          $CustomerName           = $shop_order->orderer;
+          if ($shop_order->invoice_status == 'fail') {
+            $customer_email = $shop_order->user->email;
+            $CarrierType    = '1';
+            $CarrierNum     = '';
+            $CustomerEmail  = $customer_email;
+          } else {
+            if ($invoice_carrier_type == 'phone') {
+              $CarrierType = '3';
+              $CarrierNum  = $invoice_carrier_number;
+            } else if ($invoice_carrier_type == 'certificate') {
+              $CarrierType = '2';
+              $CarrierNum  = $invoice_carrier_number;
+            } else if ($invoice_carrier_type == 'email') {
+              $customer_email = $invoice_carrier_number;
+              if (!$invoice_carrier_number && $shop_order->user) {
+                $customer_email = $shop_order->user->email;
               }
+              $CarrierType   = '1';
+              $CarrierNum    = '';
+              $CustomerEmail = $customer_email;
             }
-          } else if ($invoice_type == 'triple') {
-            $invoice_title          = $shop_order->invoice_title;
-            $invoice_uniform_number = $shop_order->invoice_uniform_number;
-            $CarrierType            = '';
-            $Print                  = '1';
-            $CustomerName           = $invoice_title;
-            $CustomerIdentifier     = $invoice_uniform_number;
           }
-          $post_data = EcpayInvoiceHelper::getInvoicePostData(
-            $CustomerID,
-            $CustomerIdentifier,
-            $CustomerName,
-            $CustomerAddr,
-            $CustomerPhone,
-            $CustomerEmail,
-            $Print,
-            $Donation,
-            $CarrierType,
-            $CarrierNum,
-            $TaxType,
-            $SalesAmount,
-            $Items,
-            $no
-          );
-          $invoice_res = EcpayInvoiceHelper::createInvoice($post_data);
-          if ($invoice_res->code == 1) {
-            $shop_order->invoice_status = 'done';
-            $shop_order->invoice_number = $invoice_res->data->InvoiceNo;
-            $shop_order->save();
-          } else if ($invoice_res->code == 5070) {
-            if (!$retry) {
-              $retry = 1;
-            } else {
-              $retry = $retry + 1;
-            }
-            self::createInvoice($shop_order, $retry);
+        } else if ($invoice_type == 'triple') {
+          $invoice_title          = $shop_order->invoice_title;
+          $invoice_uniform_number = $shop_order->invoice_uniform_number;
+          $CarrierType            = '';
+          $Print                  = '1';
+          $CustomerName           = $invoice_title;
+          $CustomerIdentifier     = $invoice_uniform_number;
+        }
+        $post_data = EcpayInvoiceHelper::getInvoicePostData(
+          $CustomerID,
+          $CustomerIdentifier,
+          $CustomerName,
+          $CustomerAddr,
+          $CustomerPhone,
+          $CustomerEmail,
+          $Print,
+          $Donation,
+          $CarrierType,
+          $CarrierNum,
+          $TaxType,
+          $SalesAmount,
+          $Items,
+          $no
+        );
+        $invoice_res = EcpayInvoiceHelper::createInvoice($post_data);
+        if ($invoice_res->code == 1) {
+          $shop_order->invoice_status = 'done';
+          $shop_order->invoice_number = $invoice_res->data->InvoiceNo;
+          $shop_order->save();
+          return $invoice_res;
+        } else if ($invoice_res->code == 5070) {
+          if (!$retry) {
+            $retry = 1;
+          } else {
+            $retry = $retry + 1;
           }
-        } catch (\Throwable $th) {
+          $invoice_res = self::createInvoice($shop_order, $retry);
+          return $invoice_res;
+        } else {
           $shop_order->invoice_status = 'fail';
           $shop_order->save();
-          throw $th;
+          return $invoice_res;
         }
-      }
-      if ($shop_order->invoice_status == 'done') {
-        self::createBonusPointFromShopOrder($shop_order);
+      } catch (\Throwable $th) {
+        $shop_order->invoice_status = 'fail';
+        $shop_order->save();
+        throw $th;
       }
     }
+    if ($shop_order->invoice_status == 'done') {
+      self::createBonusPointFromShopOrder($shop_order);
+    }
+    return $invoice_res;
   }
 
   public static function deductBonusPointFromShopOrder($shop_order)

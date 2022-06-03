@@ -316,25 +316,45 @@ class EcpayInvoiceHelper
     ]);
 
     if (!$res->status() == '200') {
-      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', '-', 'status not 200');
+      return (object) ([
+        'code' => 2,
+        'msg'  => 'res not 200',
+      ]);
+      // throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', '-', 'status not 200');
+    }
+
+    if (!$res->json()) {
+      return (object) ([
+        'code' => 3,
+        'msg'  => 'no res json',
+      ]);
     }
 
     $res_json = $res->json();
     if ($res_json['TransCode'] != '1') {
-      \Log::info($res_json);
-      \Log::info(json_encode($data));
-      throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', null, null, $res_json['TransCode'], $res_json['TransMsg']);
+      // \Log::info($res_json);
+      // \Log::info(json_encode($data));
+      // throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', null, null, $res_json['TransCode'], $res_json['TransMsg']);
+      return (object) ([
+        'code' => 4,
+        'msg'  => $res_json['TransMsg'],
+      ]);
     }
     $res_data = self::getDecryptData($res_json['Data'], 'invoice');
     if ($res_data->RtnCode != '1') {
+      // \Log::info('aa');
+      // \Log::info(json_encode($res_data));
+      // \Log::info(json_encode($data));
       if ($res_data->RtnCode == 5070357) {
         return (object) ([
           'code' => 5070,
         ]);
       } else {
-        \Log::info(json_encode($res_data));
-        \Log::info(json_encode($data));
-        throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', $res_data->RtnCode, $res_data->RtnMsg);
+        // throw new \Wasateam\Laravelapistone\Exceptions\EcpayInvoiceException('createInvoice', $res_data->RtnCode, $res_data->RtnMsg);
+        return (object) ([
+          'code' => 5,
+          'msg'  => $res_data->RtnMsg,
+        ]);
       }
     }
     return (object) ([

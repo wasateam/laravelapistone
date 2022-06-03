@@ -36,10 +36,17 @@ class CreateDelayInvoiceJob implements ShouldQueue
     }
 
     try {
-      \Wasateam\Laravelapistone\Helpers\ShopHelper::createInvoice($this->invoice_job->shop_order);
-      $this->invoice_job->status = 'invoiced';
-      $this->invoice_job->save();
+      $res = \Wasateam\Laravelapistone\Helpers\ShopHelper::createInvoice($this->invoice_job->shop_order);
+      if ($res->code == 1) {
+        $this->invoice_job->status = 'invoiced';
+        $this->invoice_job->save();
+      } else {
+        $this->invoice_job->status  = 'fail';
+        $this->invoice_job->err_msg = $res->msg;
+        $this->invoice_job->save();
+      }
     } catch (\Throwable $th) {
+      throw $th;
       $this->invoice_job->status = 'fail';
       $this->invoice_job->save();
     }

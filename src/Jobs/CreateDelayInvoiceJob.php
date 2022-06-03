@@ -40,6 +40,9 @@ class CreateDelayInvoiceJob implements ShouldQueue
       if ($res->code == 1) {
         $this->invoice_job->status = 'invoiced';
         $this->invoice_job->save();
+      } else if ($res->code == 6) {
+        $this->invoice_job->status = 'ignore';
+        $this->invoice_job->save();
       } else {
         $this->invoice_job->status  = 'fail';
         $this->invoice_job->err_msg = $res->msg;

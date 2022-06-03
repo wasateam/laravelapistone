@@ -1441,7 +1441,9 @@ class ShopHelper
   public static function createInvoice($shop_order, $retry = null)
   {
     if ($shop_order->invoice_status == 'done') {
-      return;
+      return (object) ([
+        'code' => 6,
+      ]);
     }
     $no = $shop_order->no;
     if ($retry) {

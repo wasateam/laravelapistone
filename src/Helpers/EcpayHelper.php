@@ -55,16 +55,6 @@ class EcpayHelper
         }
         return $res_data->Token;
       } catch (\Throwable $th) {
-        \Log::info('$mode');
-        \Log::info($mode);
-        \Log::info('$post_url');
-        \Log::info($post_url);
-        \Log::info('$data');
-        \Log::info($data);
-        \Log::info('$res_json');
-        \Log::info($res_json);
-        \Log::info('$res_data');
-        \Log::info($res_data);
         throw $th;
       }
     }

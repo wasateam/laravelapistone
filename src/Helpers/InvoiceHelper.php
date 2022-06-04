@@ -9,12 +9,14 @@ class InvoiceHelper
 {
   public static function checkDelayInvoice()
   {
-    $models = InvoiceJob::where('status', 'waiting')
+    InvoiceJob::where('status', 'waiting')
       ->whereDate('invoice_date', '<=', \Carbon\Carbon::now())
+      ->update([
+        'status' => 'queue',
+      ]);
+    $models = InvoiceJob::where('status', 'queue')
       ->get();
     foreach ($models as $model) {
-      $model->status = 'queue';
-      $model->save();
       \Wasateam\Laravelapistone\Jobs\CreateDelayInvoiceJob::dispatch($model);
     }
   }

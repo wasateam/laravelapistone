@@ -72,25 +72,6 @@ class XcBillingStatementController extends Controller
   }
 
   /**
-   * Store
-   *
-   * invoice_type 發票類型 integer Example: 0
-   * images 圖片 No-example
-   * pay_type 付款類型 integer Example: 0
-   * amount 金額 integer Example: 5566
-   * pay_at 付款時間 datetime No-example
-   * review_at 覆核時間 datetime No-example
-   * remark 備註 string No-example
-   * review_status 覆核狀態 Example: 0
-   * admin 申請人 Example:1
-   * reviewer 覆核人 Example:1
-   */
-  public function store(Request $request, $id = null)
-  {
-    return ModelHelper::ws_StoreHandler($this, $request, $id);
-  }
-
-  /**
    * Show
    *
    * @urlParam  xc_billing_statement required The ID of xc_billing_statement. Example: 1
@@ -128,5 +109,34 @@ class XcBillingStatementController extends Controller
   public function destroy($id)
   {
     return ModelHelper::ws_DestroyHandler($this, $id);
+  }
+
+  /**
+   * Index Admin My
+   * @queryParam search string No-example
+   *
+   */
+  public function index_admin_my(Request $request, $id = null)
+  {
+    return ModelHelper::ws_IndexHandler($this, $request, $id, true, function ($snap) {
+      return $snap->where('admin_id', \Auth::user()->id);
+    });
+  }
+
+  /**
+   * Store Admin My
+   *
+   * invoice_type 發票類型 integer Example: 0
+   * images 圖片 No-example
+   * pay_type 付款類型 integer Example: 0
+   * amount 金額 integer Example: 5566
+   * remark 備註 string No-example
+   */
+  public function store_admin_my(Request $request, $id = null)
+  {
+    return ModelHelper::ws_StoreHandler($this, $request, $id, function ($model) {
+      $model->admin_id = \Auth::user()->id;
+      $model->save();
+    });
   }
 }

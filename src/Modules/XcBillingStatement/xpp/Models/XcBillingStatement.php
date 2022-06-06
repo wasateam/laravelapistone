@@ -4,6 +4,7 @@ namespace Wasateam\Laravelapistone\Modules\XcBillingStatement\App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Wasateam\Laravelapistone\Models\Admin;
 
 class XcBillingStatement extends Model
 {
@@ -12,12 +13,12 @@ class XcBillingStatement extends Model
 
   public function admin()
   {
-    return $this->belongsTo(User::class, 'admin_id');
+    return $this->belongsTo(Admin::class, 'admin_id');
   }
 
   public function reviewer()
   {
-    return $this->belongsTo(User::class, 'reviewer_id');
+    return $this->belongsTo(Admin::class, 'reviewer_id');
   }
 
   protected $casts = [

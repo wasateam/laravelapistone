@@ -178,6 +178,12 @@ class ShopOrder extends Model
     return ShopHelper::getBonusPointFromShopOrder($this);
   }
 
+  public function invoice_jobs()
+  {
+    return $this->hasMany(InvoiceJob::class);
+    // return $this->hasOne(InvoiceJob::class, 'shop_order_id')->first();
+  }
+
   protected $casts = [
     'discounts'         => \Wasateam\Laravelapistone\Casts\JsonCast::class,
     'orderer_birthday'  => 'datetime',

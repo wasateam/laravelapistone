@@ -22,6 +22,7 @@ use Wasateam\Laravelapistone\Helpers\StorageHelper;
 use Wasateam\Laravelapistone\Helpers\UserHelper;
 use Wasateam\Laravelapistone\Models\Admin;
 use Wasateam\Laravelapistone\Models\User;
+use Wasateam\Laravelapistone\Modules\AppDeveloper\App\Models\AppDeveloper;
 
 /**
  * @group @Auth
@@ -248,6 +249,17 @@ class AuthController extends Controller
       }
     }
 
+    if (config('stone.app_developer')) {
+      $app_developer = AppDeveloper::where('mobile', $request->mobile)
+        ->where('mobile_country_code', $request->mobile_country_code)
+        ->first();
+      if ($app_developer) {
+        return response()->json([
+          'message' => 'otp sent.',
+        ]);
+      }
+    }
+
     $otp = OtpHelper::getAuthOtp($user->id);
 
     if (config('stone.auth.mobile.otp.types.sms')) {
@@ -295,9 +307,25 @@ class AuthController extends Controller
       throw new \Wasateam\Laravelapistone\Exceptions\AuthException();
     }
 
-    if (!OtpHelper::checkOtp($user->id, $request->otp)) {
+    $check = 0;
+
+    if (config('stone.app_developer')) {
+      $app_developer = AppDeveloper::where('mobile', $request->mobile)
+        ->where('mobile_country_code', $request->mobile_country_code)
+        ->where('otp', $request->otp)
+        ->first();
+      if ($app_developer) {
+        $check = 1;
+      }
+    }
+
+    if (OtpHelper::checkOtp($user->id, $request->otp)) {
+      $check = 1;
+    }
+    if (!$check) {
       throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('otp not match or expired');
     }
+
     $tokenResult = $user->createToken('Personal Access Token', AuthHelper::getUserScopes($user));
     $token       = $tokenResult->token;
     if ($request->remember_me) {

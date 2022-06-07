@@ -51,6 +51,12 @@ class StoneServiceProvider extends ServiceProvider
           $this->loadRoutesFrom(__DIR__ . '/Modules/XcBillingStatement/routes/cms-api.php');
         });
       }
+      ## UserPosition
+      if (config('stone.user_position')) {
+        Route::middleware('api')->prefix('api')->group(function () {
+          $this->loadRoutesFrom(__DIR__ . '/Modules/UserPosition/routes/cms-api.php');
+        });
+      }
 
       # Migrations
       if (config('stone.migration')) {
@@ -66,6 +72,10 @@ class StoneServiceProvider extends ServiceProvider
         ## XcBillingStatement
         if (config('stone.xc_billing_statement')) {
           $this->loadMigrationsFrom(__DIR__ . '/Modules/XcBillingStatement/database/migrations');
+        }
+        ## UserPosition
+        if (config('stone.user_position')) {
+          $this->loadMigrationsFrom(__DIR__ . '/Modules/UserPosition/database/migrations');
         }
       }
 
@@ -345,6 +355,16 @@ class StoneServiceProvider extends ServiceProvider
     }
 
     if (config('stone.mode') == 'webapi') {
+
+      ## UserPosition
+      if (config('stone.user_position')) {
+        Route::middleware('api')->prefix('api')->group(function () {
+          $this->loadRoutesFrom(__DIR__ . '/Modules/UserPosition/routes/web-api.php');
+        });
+      }
+
+
+      // OLD
       Route::middleware('api')->prefix('api')->group(function () {
         $this->loadRoutesFrom(__DIR__ . '/../routes/api-webapi.php');
       });
@@ -496,6 +516,7 @@ class StoneServiceProvider extends ServiceProvider
         \Wasateam\Laravelapistone\Commands\CommandFixShopOrderShipTime::class,
         \Wasateam\Laravelapistone\Commands\CommandStoneCityToArea::class,
         \Wasateam\Laravelapistone\Commands\CommandGenerateFakeShopOrder::class,
+        \Wasateam\Laravelapistone\Commands\CommandFillShopOrderInvoiceJob::class,
       ]);
     }
     $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {

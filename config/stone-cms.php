@@ -8,7 +8,7 @@ return [
     ],
   ],
   'mode'                 => 'cms',
-  'app_developers'       => true,
+  'app_developer'       => true,
   'sms'                  => [
     'service' => 'every8d',
     'every8d' => [
@@ -301,4 +301,5 @@ return [
   ],
   'showcase'             => true,
   'xc_billing_statement' => true,
+  'user_position'        => true,
 ];

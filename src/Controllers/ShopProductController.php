@@ -598,6 +598,8 @@ class ShopProductController extends Controller
 
     } else {
 
+      \Log::info('ok');
+
       $date_arr = array_map('intval', explode(',', $request->created_at));
 
       $headings = [

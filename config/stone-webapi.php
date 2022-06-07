@@ -9,7 +9,7 @@ return [
   ],
   'mode'                => 'webapi',
   'otp'                 => true,
-  'app_developers'      => true,
+  'app_developer'      => true,
   'sms'                 => [
     'service' => 'every8d',
     'every8d' => [
@@ -145,6 +145,14 @@ return [
       ],
       // 'each'    => true,
     ],
+    'index'               => [
+      'search'     => true,
+      'ilike'      => true,
+      'likeme'     => true,
+      'mutuallike' => true,
+    ],
+    'friend'              => true,
+    'blacklist'           => true,
   ],
   'shop'                => [
     'uuid'              => true,

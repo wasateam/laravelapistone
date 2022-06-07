@@ -322,6 +322,7 @@ class AuthController extends Controller
     if (OtpHelper::checkOtp($user->id, $request->otp)) {
       $check = 1;
     }
+    
     if (!$check) {
       throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('otp not match or expired');
     }

@@ -517,6 +517,8 @@ class StoneServiceProvider extends ServiceProvider
         \Wasateam\Laravelapistone\Commands\CommandStoneCityToArea::class,
         \Wasateam\Laravelapistone\Commands\CommandGenerateFakeShopOrder::class,
         \Wasateam\Laravelapistone\Commands\CommandFillShopOrderInvoiceJob::class,
+        \Wasateam\Laravelapistone\Commands\CommandReturnBonusPointFromShopOrderNotPaid::class,
+        \Wasateam\Laravelapistone\Commands\CommandReturnBonusPointFromShopOrderCanceled::class,
       ]);
     }
     $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Wasateam\Laravelapistone\Commands;
 
 use Illuminate\Console\Command;
 use Wasateam\Laravelapistone\Helpers\ShopHelper;

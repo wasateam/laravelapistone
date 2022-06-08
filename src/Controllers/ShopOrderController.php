@@ -586,6 +586,7 @@ class ShopOrderController extends Controller
       ShopHelper::CancelCompleteRestoreStockCount($model, $ori_model);
       ShopHelper::readyToCreateInvoice($model, $ori_model);
       ShopHelper::shopOrderShippedNotifyCheck($model, $ori_model);
+      ShopHelper::returnBonusPointsCheck($model);
     });
   }
 
@@ -763,7 +764,7 @@ class ShopOrderController extends Controller
     $shop_order->return_at = Carbon::now();
     $shop_order->save();
     ShopHelper::shopOrderReturnAllProducts($shop_order);
-    ShopHelper::returnBonusPointsFromShopOrder($shop_order, 'cancel_shop_order');
+    // ShopHelper::returnBonusPointsFromShopOrder($shop_order, 'cancel_shop_order');
     return response()->json([
       'message' => "shop_order canceled.",
       'data'    => $shop_order,
@@ -813,6 +814,7 @@ class ShopOrderController extends Controller
         ShopHelper::CancelCompleteRestoreStockCount($model, $ori_model);
         ShopHelper::readyToCreateInvoice($model, $ori_model);
         ShopHelper::shopOrderShippedNotifyCheck($model, $ori_model);
+        ShopHelper::returnBonusPointsCheck($model);
       });
     }
     return $this->resource_for_collection::collection($this->model::find($ids));

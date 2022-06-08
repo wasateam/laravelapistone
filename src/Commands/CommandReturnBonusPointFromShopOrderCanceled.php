@@ -48,7 +48,7 @@ class CommandReturnBonusPointFromShopOrderCanceled extends Command
   {
     error_log('CommandReturnBonusPointFromShopOrderCanceled');
     $shop_orders = ShopOrder::where('pay_status', 'paid')
-      ->where('status', 'cancel')
+      ->where('status', 'cancel-complete')
       ->where('bonus_points_deduct', '>', 0)
       ->get();
 

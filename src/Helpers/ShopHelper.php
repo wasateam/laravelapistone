@@ -1717,6 +1717,13 @@ class ShopHelper
     $shop_order->save();
   }
 
+  public static function returnBonusPointsCheck($shop_order)
+  {
+    if ($shop_order->status == 'cancel-complete') {
+      self::returnBonusPointsFromShopOrder($shop_order, 'cancel_shop_order');
+    }
+  }
+
   public static function returnBonusPointsFromShopOrder($shop_order, $source = 'not_paid_shop_order')
   {
     if (!$shop_order->bonus_points_deduct) {

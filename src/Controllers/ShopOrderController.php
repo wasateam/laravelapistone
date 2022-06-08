@@ -763,6 +763,7 @@ class ShopOrderController extends Controller
     $shop_order->return_at = Carbon::now();
     $shop_order->save();
     ShopHelper::shopOrderReturnAllProducts($shop_order);
+    ShopHelper::returnBonusPointsFromShopOrder($shop_order, 'cancel_shop_order');
     return response()->json([
       'message' => "shop_order canceled.",
       'data'    => $shop_order,

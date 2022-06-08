@@ -1717,14 +1717,14 @@ class ShopHelper
     $shop_order->save();
   }
 
-  public static function returnBonusPointsFromShopOrder($shop_order)
+  public static function returnBonusPointsFromShopOrder($shop_order, $source = 'not_paid_shop_order')
   {
     if (!$shop_order->bonus_points_deduct) {
       return;
     }
 
     $record = BonusPointRecord::where('shop_order_id', $shop_order->id)
-      ->where('source', 'not_paid_shop_order')
+      ->where('source', $source)
       ->where('type', 'get')
       ->first();
     if ($record) {
@@ -1735,7 +1735,7 @@ class ShopHelper
       $user               = $shop_order->user;
       $user->bonus_points = $user->bonus_points + $shop_order->bonus_points_deduct;
       $user->save();
-      self::createBonusPointRecordFromShopOrder($shop_order, null, $shop_order->bonus_points_deduct, 'get', 'not_paid_shop_order');
+      self::createBonusPointRecordFromShopOrder($shop_order, null, $shop_order->bonus_points_deduct, 'get', $source);
     }
   }
 

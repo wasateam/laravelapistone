@@ -17,6 +17,7 @@ class ShopOrderShopProductCollection extends JsonResource
     if (config('stone.mode') == 'cms') {
       $res = [
         'id'                                         => $this->id,
+        'no'                                         => $this->no,
         'type'                                       => $this->type,
         'created_at'                                 => $this->created_at,
         'updated_at'                                 => $this->updated_at,
@@ -25,12 +26,14 @@ class ShopOrderShopProductCollection extends JsonResource
         'price'                                      => $this->price,
         'spec'                                       => $this->spec,
         'weight_capacity'                            => $this->weight_capacity,
+        'weight_capacity_unit'                       => $this->weight_capacity_unit,
         'cover_image'                                => $this->cover_image,
         'count'                                      => $this->count,
         'original_count'                             => $this->original_count,
         'cost'                                       => $this->cost,
         'order_type'                                 => $this->order_type,
         'freight'                                    => $this->freight,
+        'storage_space'                              => $this->storage_space,
         'shop_order'                                 => new ShopOrder_R1($this->shop_order),
         'shop_product'                               => new ShopProduct_R0($this->shop_product),
         'shop_cart_product'                          => new ShopCartProduct_R1($this->shop_cart_product),

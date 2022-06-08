@@ -34,6 +34,7 @@ use Wasateam\Laravelapistone\Models\ShopSubclass;
  * get_all 可以直接取得所有商品
  *
  * fields ----
+ * no 商品編號
  * type 類型
  * order_type 訂單類型 如要建立訂單，商品的訂單類型皆需一致，不然無法建立訂單
  * ~ next-day 隔日配

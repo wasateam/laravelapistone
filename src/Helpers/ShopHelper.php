@@ -582,13 +582,13 @@ class ShopHelper
     foreach ($order_products as $order_product) {
       $datas[] = [
         'id'                   => $order_product->id,
-        'no'                   => $order_product->shop_product->no,
+        'no'                   => $order_product->no ? $order_product->no : $order_product->shop_product->no,
         'name'                 => $order_product->name,
         'spec'                 => $order_product->spec,
         'weight_capacity'      => $order_product->weight_capacity,
-        'storage_space'        => $order_product->shop_product->storage_space,
+        'storage_space'        => $order_product->storage_space ? $order_product->storage_space : $order_product->shop_product->storage_space,
         'count'                => $order_product->count,
-        'weight_capacity_unit' => $order_product->shop_product->weight_capacity_unit,
+        'weight_capacity_unit' => $order_product->weight_capacity_unit ? $order_product->weight_capacity_unit : $order_product->shop_product->weight_capacity_unit,
       ];
     }
 
@@ -1123,6 +1123,7 @@ class ShopHelper
       $shop_order_shop_product->count = $shop_cart_product->count;
     }
 
+    $shop_order_shop_product->no                   = $shop_product->no;
     $shop_order_shop_product->name                 = $shop_product->name;
     $shop_order_shop_product->subtitle             = $shop_product->subtitle;
     $shop_order_shop_product->original_count       = $shop_cart_product->count;
@@ -1130,6 +1131,8 @@ class ShopHelper
     $shop_order_shop_product->discount_price       = $shop_product->discount_price;
     $shop_order_shop_product->spec                 = $shop_product->spec;
     $shop_order_shop_product->weight_capacity      = $shop_product->weight_capacity;
+    $shop_order_shop_product->weight_capacity_unit = $shop_product->weight_capacity_unit;
+    $shop_order_shop_product->storage_space        = $shop_product->storage_space;
     $shop_order_shop_product->cover_image          = $shop_product->cover_image;
     $shop_order_shop_product->order_type           = $shop_product->order_type;
     $shop_order_shop_product->freight              = $shop_product->freight;

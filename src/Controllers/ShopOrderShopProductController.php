@@ -14,6 +14,7 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  *
  * 訂單商品 API
  *
+ * no 商品編號
  * name 商品名稱
  * subtitle 商品副標
  * count 數量
@@ -22,6 +23,7 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * discount_price 優惠價
  * spec 商品規格
  * weight_capacity 重量/容量
+ * weight_capacity_unit 重量/容量單位
  * cost 成本
  * type 類型
  * order_type 訂單類型
@@ -32,6 +34,7 @@ use Wasateam\Laravelapistone\Models\ShopProduct;
  * shop_order_shop_product_spec 訂單商品規格
  * shop_order_shop_product_spec_setting 訂單商品規格設定
  * shop_order_shop_product_spec_setting_item 訂單商品規格項目
+ * storage_space 儲位
  *
  * @authenticated
  */

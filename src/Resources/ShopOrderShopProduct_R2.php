@@ -17,6 +17,7 @@ class ShopOrderShopProduct_R2 extends JsonResource
     if (config('stone.mode') == 'cms') {
       $res = [
         'id'                   => $this->id,
+        'no'                   => $this->no,
         'type'                 => $this->type,
         'created_at'           => $this->created_at,
         'updated_at'           => $this->updated_at,
@@ -32,6 +33,7 @@ class ShopOrderShopProduct_R2 extends JsonResource
         'cost'                 => $this->cost,
         'order_type'           => $this->order_type,
         'freight'              => $this->freight,
+        'storage_space'        => $this->storage_space,
         'shop_product'         => new ShopProduct_R4($this->shop_product),
       ];
       if (config('stone.shop.discount_price')) {

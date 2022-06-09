@@ -13,6 +13,7 @@ class StoneServiceProvider extends ServiceProvider
   {
     $loader = \Illuminate\Foundation\AliasLoader::getInstance();
     $loader->alias('WsRoute', 'Wasateam\Laravelapistone\Helpers\WsRoute');
+    $loader->alias('Request', 'Wasateam\Laravelapistone\Facades\Request');
 
   }
   public function boot()

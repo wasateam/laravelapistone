@@ -599,8 +599,6 @@ class ShopProductController extends Controller
 
     } else {
 
-      \Log::info('ok');
-
       $date_arr = array_map('intval', explode(',', $request->created_at));
 
       $headings = [
@@ -659,6 +657,14 @@ class ShopProductController extends Controller
                   ]);
               });
             });
+          }
+          $stock_level = $request->has('stock_level') ? $request->stock_level : null;
+          if ($stock_level) {
+            if ($stock_level == 2) {
+              $snap->whereRaw('stock_count < stock_alert_count');
+            } else if ($stock_level == 1) {
+              $snap->whereRaw('stock_count >= stock_alert_count');
+            }
           }
           return $snap;
         }

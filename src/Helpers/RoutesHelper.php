@@ -1154,7 +1154,7 @@ class RoutesHelper
       //   'store',
       //   'delete',
       // ])->shallow()->middleware('throttle:10,1');
-      Route::post('/auth/shop_cart_product/{shop_cart_product_id}/update', [ShopCartProductController::class, 'update_auth_cart_product']);
+      Route::post('/auth/shop_cart_product/{shop_cart_product_id}/update', [ShopCartProductController::class, 'update_auth_cart_product'])->middleware('throttle:30,1');
       Route::post('/shop_cart_product/{shop_cart_product_id}', [ShopCartProductController::class, 'disabled']);
       # Shop Return Record
       Route::resource('shop_return_record', ShopReturnRecordController::class)->only([

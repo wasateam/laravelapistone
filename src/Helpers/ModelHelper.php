@@ -337,7 +337,13 @@ class ModelHelper
       $complete_action($model);
     }
 
-    Self::ws_Log($model, $controller, 'update');
+    if ($request->filled('_source')) {
+      $source = $request->_source;
+    } else {
+      $source = '';
+    }
+
+    Self::ws_Log($model, $controller, 'update', null, null, $source);
 
     return new $setting->resource($model);
   }
@@ -562,7 +568,7 @@ class ModelHelper
     $log->save();
   }
 
-  public static function ws_Log($model, $controller, $action, $user = null, $name = null)
+  public static function ws_Log($model, $controller, $action, $user = null, $name = null, $source = null)
   {
     if (!config('stone.log')) {
       return;
@@ -591,6 +597,7 @@ class ModelHelper
       'target'        => $name,
       'target_id'     => $action === 'signin' || $action === 'signout' ? null : $model->id,
       'ip'            => \Request::ip(),
+      'source'        => $source,
     ];
     $log->save();
 
@@ -1166,14 +1173,14 @@ class ModelHelper
       if (is_array($request->{$key}) || is_object($request->{$key})) {
         $arr = $request->{$key};
         array_walk_recursive($arr, function ($value) {
-          $value  = self::encodeRequestValue($value);
+          $value = self::encodeRequestValue($value);
         });
         $model[$key] = $arr;
       } else if ($request->{$key}) {
         // $_value      = self::removeScriptFromString($request->{$key});
         // $model[$key] = htmlentities($_value);
 
-        $model[$key]  = self::encodeRequestValue($request->{$key});
+        $model[$key] = self::encodeRequestValue($request->{$key});
       } else {
         $model[$key] = $request->{$key};
       }

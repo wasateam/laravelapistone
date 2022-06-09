@@ -1145,7 +1145,7 @@ class RoutesHelper
         'index',
         'store',
         'delete',
-      ])->shallow();
+      ])->shallow()->middleware('throttle:100,1');
       Route::post('/auth/shop_cart_product/{shop_cart_product_id}/update', [ShopCartProductController::class, 'update_auth_cart_product']);
       Route::post('/shop_cart_product/{shop_cart_product_id}', [ShopCartProductController::class, 'disabled']);
       # Shop Return Record

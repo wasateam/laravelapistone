@@ -77,6 +77,11 @@ class ShopOrder extends Model
     return $this->hasMany(BonusPointRecord::class);
   }
 
+  public function bonus_point_record_new_show_order()
+  {
+    return $this->hasOne(BonusPointRecord::class)->where('type', 'get')->where('source', 'new_shop_order')->latest('created_at');
+  }
+
   public function shop_campaigns_discount_code()
   {
     return $this->belongsToMany(ShopCampaign::class, 'shop_campaign_shop_orders', 'shop_order_id', 'shop_campaign_id')->wherePivot('type', 'discount_code');

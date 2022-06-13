@@ -1529,6 +1529,7 @@ class ShopHelper
           $shop_order->invoice_status = 'done';
           $shop_order->invoice_number = $invoice_res->data->InvoiceNo;
           $shop_order->save();
+          self::createBonusPointFromShopOrder($shop_order);
           return $invoice_res;
         } else if ($invoice_res->code == 5070) {
           if (!$retry) {
@@ -1548,9 +1549,6 @@ class ShopHelper
         $shop_order->save();
         throw $th;
       }
-    }
-    if ($shop_order->invoice_status == 'done') {
-      self::createBonusPointFromShopOrder($shop_order);
     }
     return $invoice_res;
   }

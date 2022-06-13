@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Wasateam\Laravelapistone\Database\Factories\UserFactory;
-use Wasateam\Laravelapistone\Modules\UserPosition\App\Models\UserPosition;
+use Wasateam\Laravelapistone\Modules\UserLocation\App\Models\UserLocation;
 
 class User extends Authenticatable
 {
@@ -114,9 +114,9 @@ class User extends Authenticatable
     return $this->email_verified_at ? true : false;
   }
 
-  public function user_position_recent()
+  public function user_location_recent()
   {
-    return $this->hasOne(UserPosition::class)->latest();
+    return $this->hasOne(UserLocation::class)->latest();
   }
 
   /**

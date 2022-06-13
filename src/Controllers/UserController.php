@@ -55,6 +55,8 @@ use Wasateam\Laravelapistone\Helpers\UserHelper;
  * invite_no 邀請碼
  * mobile 手機
  * mobile_country_code 手機國碼
+ * distance 距離(公里)
+ * coordinates 座標(緯度,精度)
  *
  * @authenticated
  */
@@ -159,32 +161,50 @@ class UserController extends Controller
   /**
    * Index
    * @queryParam search string No-example
+   * @queryParam age number Example:18
+   * @queryParam gender number Example:female
+   * @queryParam coordinates string Example: 25.05501,121.30538
    *
    */
   public function index(Request $request, $id = null)
   {
-    return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) use ($request) {
-      if (config('stone.user.subscribe')) {
-        if ($request->has('subscribe_status')) {
-          $subscribe_status = $request->subscribe_status;
-          if ($subscribe_status == 'unsubscribe') {
-            $snap = $snap
-              ->whereNull('subscribe_start_at')
-              ->whereNull('subscribe_end_at');
-          } else if ($subscribe_status == 'subscribing') {
-            $today_datetime = Carbon::now();
-            $snap           = $snap
-              ->where('subscribe_start_at', '<=', $today_datetime)
-              ->where('subscribe_end_at', '>=', $today_datetime);
-          } else if ($subscribe_status == 'subscribe-expired') {
-            $today_datetime = Carbon::now();
-            $snap           = $snap
-              ->where('subscribe_end_at', '<', $today_datetime);
+    if (config('stone.mode') == 'cms') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) use ($request) {
+        if (config('stone.user.subscribe')) {
+          if ($request->has('subscribe_status')) {
+            $subscribe_status = $request->subscribe_status;
+            if ($subscribe_status == 'unsubscribe') {
+              $snap = $snap
+                ->whereNull('subscribe_start_at')
+                ->whereNull('subscribe_end_at');
+            } else if ($subscribe_status == 'subscribing') {
+              $today_datetime = Carbon::now();
+              $snap           = $snap
+                ->where('subscribe_start_at', '<=', $today_datetime)
+                ->where('subscribe_end_at', '>=', $today_datetime);
+            } else if ($subscribe_status == 'subscribe-expired') {
+              $today_datetime = Carbon::now();
+              $snap           = $snap
+                ->where('subscribe_end_at', '<', $today_datetime);
+            }
           }
         }
-      }
-      return $snap;
-    });
+        return $snap;
+      });
+    } else if (config('stone.mode') == 'webapi') {
+      return ModelHelper::ws_IndexHandler($this, $request, $id, false, function ($snap) use ($request) {
+        if ($request->filled('age')) {
+          $snap = $snap->where('birthday', '>', Carbon::now()->format('Y-m-d'));
+        }
+        if ($request->filled('distance') && $requset->filled('coordinates')) {
+          $snap = $snap->whereHas('user_location_recent', function ($query) {
+            $coordinates = array_map('intval', explode(',', $request->coordinates));
+            $query->isWithinMaxDistance($query, $radius, $coordinates[0], $coordinates[1]);
+          });
+        }
+        return $snap;
+      });
+    }
   }
 
   /**

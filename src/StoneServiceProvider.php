@@ -52,10 +52,16 @@ class StoneServiceProvider extends ServiceProvider
           $this->loadRoutesFrom(__DIR__ . '/Modules/XcBillingStatement/routes/cms-api.php');
         });
       }
-      ## UserPosition
-      if (config('stone.user_position')) {
+      ## UserLocation
+      if (config('stone.user_location')) {
         Route::middleware('api')->prefix('api')->group(function () {
-          $this->loadRoutesFrom(__DIR__ . '/Modules/UserPosition/routes/cms-api.php');
+          $this->loadRoutesFrom(__DIR__ . '/Modules/UserLocation/routes/cms-api.php');
+        });
+      }
+      ## UserRelation
+      if (config('stone.user_relation')) {
+        Route::middleware('api')->prefix('api')->group(function () {
+          $this->loadRoutesFrom(__DIR__ . '/Modules/UserRelation/routes/cms-api.php');
         });
       }
 
@@ -74,9 +80,13 @@ class StoneServiceProvider extends ServiceProvider
         if (config('stone.xc_billing_statement')) {
           $this->loadMigrationsFrom(__DIR__ . '/Modules/XcBillingStatement/database/migrations');
         }
-        ## UserPosition
-        if (config('stone.user_position')) {
-          $this->loadMigrationsFrom(__DIR__ . '/Modules/UserPosition/database/migrations');
+        ## UserLocation
+        if (config('stone.user_location')) {
+          $this->loadMigrationsFrom(__DIR__ . '/Modules/UserLocation/database/migrations');
+        }
+        ## UserRelation
+        if (config('stone.user_relation')) {
+          $this->loadMigrationsFrom(__DIR__ . '/Modules/UserRelation/database/migrations');
         }
       }
 
@@ -357,13 +367,12 @@ class StoneServiceProvider extends ServiceProvider
 
     if (config('stone.mode') == 'webapi') {
 
-      ## UserPosition
-      if (config('stone.user_position')) {
+      ## UserLocation
+      if (config('stone.user_location')) {
         Route::middleware('api')->prefix('api')->group(function () {
-          $this->loadRoutesFrom(__DIR__ . '/Modules/UserPosition/routes/web-api.php');
+          $this->loadRoutesFrom(__DIR__ . '/Modules/UserLocation/routes/web-api.php');
         });
       }
-
 
       // OLD
       Route::middleware('api')->prefix('api')->group(function () {

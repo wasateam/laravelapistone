@@ -1,10 +1,10 @@
 <?php
 
-namespace Wasateam\Laravelapistone\Modules\UserPosition\App\Http\Resources;
+namespace Wasateam\Laravelapistone\Modules\UserLocation\App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserPosition extends JsonResource
+class UserLocation extends JsonResource
 {
   public function toArray($request)
   {

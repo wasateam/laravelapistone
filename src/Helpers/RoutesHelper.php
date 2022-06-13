@@ -105,7 +105,6 @@ use Wasateam\Laravelapistone\Controllers\WsBlogController;
 use Wasateam\Laravelapistone\Controllers\XcMilestoneController;
 use Wasateam\Laravelapistone\Controllers\XcProjectController;
 use Wasateam\Laravelapistone\Controllers\XcTaskController;
-use Wasateam\Laravelapistone\Controllers\XcTaskTemplateController;
 use Wasateam\Laravelapistone\Controllers\XcWorkTypeController;
 
 class RoutesHelper
@@ -1002,6 +1001,33 @@ class RoutesHelper
   # Web 不需登入
   public static function webapi_public_routes()
   {
+
+    # Search
+    if (config('stone.user.index')) {
+      Route::resource('user', UserController::class)->only([
+        'show',
+      ])->shallow();
+      if (config('stone.user.index.search')) {
+        Route::resource('user', UserController::class)->only([
+          'index',
+        ])->shallow();
+      }
+      if (config('stone.user.index.ilike')) {
+        Route::resource('user', UserController::class)->only([
+          'index_ilike',
+        ])->shallow();
+      }
+      if (config('stone.user.index.likeme')) {
+        Route::resource('user', UserController::class)->only([
+          'index_likeme',
+        ])->shallow();
+      }
+      if (config('stone.user.index.mutuallike')) {
+        Route::resource('user', UserController::class)->only([
+          'index_mutuallike',
+        ])->shallow();
+      }
+    }
 
     # Tulpa
     if (config('stone.tulpa')) {

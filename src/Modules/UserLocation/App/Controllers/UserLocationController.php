@@ -1,14 +1,14 @@
 <?php
 
-namespace Wasateam\Laravelapistone\Modules\UserPosition\App\Controllers;
+namespace Wasateam\Laravelapistone\Modules\UserLocation\App\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Wasateam\Laravelapistone\Helpers\ModelHelper;
-use Wasateam\Laravelapistone\Models\UserPosition;
+use Wasateam\Laravelapistone\Models\UserLocation;
 
 /**
- * @group UserPosition 使用者位置
+ * @group UserLocation 使用者位置
  *
  *
  * @authenticated
@@ -18,11 +18,11 @@ use Wasateam\Laravelapistone\Models\UserPosition;
  * user 使用者
  *
  */
-class UserPositionController extends Controller
+class UserLocationController extends Controller
 {
-  public $model        = 'Wasateam\Laravelapistone\Modules\UserPosition\App\Models\UserPosition';
-  public $name         = 'user_position';
-  public $resource     = 'Wasateam\Laravelapistone\Modules\UserPosition\App\Http\Resources\UserPosition';
+  public $model        = 'Wasateam\Laravelapistone\Modules\UserLocation\App\Models\UserLocation';
+  public $name         = 'user_location';
+  public $resource     = 'Wasateam\Laravelapistone\Modules\UserLocation\App\Http\Resources\UserLocation';
   public $input_fields = [
     'lat',
     'lng',
@@ -57,7 +57,7 @@ class UserPositionController extends Controller
   /**
    * Show
    *
-   * @urlParam  user_position required The ID of user_position. Example: 1
+   * @urlParam  user_location required The ID of user_location. Example: 1
    */
   public function show(Request $request, $id = null)
   {
@@ -67,8 +67,8 @@ class UserPositionController extends Controller
   /**
    * Store User My
    *
-   * lat 緯度 float Example: 25.055190
-   * lng 經度 float Example: 121.532771
+   * @bodyParam lat 緯度 float Example: 25.055190
+   * @bodyParam lng 經度 float Example: 121.532771
    */
   public function store_user_my(Request $request, $id = null)
   {
@@ -79,14 +79,16 @@ class UserPositionController extends Controller
   }
 
   /**
-   * Store User My
+   * Show User My Recent
    *
-   * lat 緯度 float Example: 25.055190
-   * lng 經度 float Example: 121.532771
    */
   public function show_user_my_recent()
   {
-    $user = Auth::user();
-    return new \Wasateam\Laravelapistone\Modules\UserPosition\App\Http\Resources\UserPosition_R1($user->user_position_recent);
+    $user = \Auth::user();
+    if (!$user->user_location_recent) {
+      return null;
+    } else {
+      return new \Wasateam\Laravelapistone\Modules\UserLocation\App\Http\Resources\UserLocation_R1($user->user_location_recent);
+    }
   }
 }

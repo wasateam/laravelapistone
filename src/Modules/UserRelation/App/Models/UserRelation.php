@@ -1,12 +1,12 @@
 <?php
 
-namespace Wasateam\Laravelapistone\Modules\UserPosition\App\Models;
+namespace Wasateam\Laravelapistone\Modules\UserRelation\App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Wasateam\Laravelapistone\Models\User;
 
-class UserPosition extends Model
+class UserRelation extends Model
 {
   use HasFactory;
   use \Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,5 +14,9 @@ class UserPosition extends Model
   public function user()
   {
     return $this->belongsTo(User::class, 'user_id');
+  }
+  public function target()
+  {
+    return $this->belongsTo(User::class, 'target_id');
   }
 }

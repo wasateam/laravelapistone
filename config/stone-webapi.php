@@ -9,7 +9,7 @@ return [
   ],
   'mode'                => 'webapi',
   'otp'                 => true,
-  'app_developer'      => true,
+  'app_developer'       => true,
   'sms'                 => [
     'service' => 'every8d',
     'every8d' => [
@@ -270,4 +270,5 @@ return [
     ],
   ],
   'showcase'            => true,
+  'user_location'       => true,
 ];

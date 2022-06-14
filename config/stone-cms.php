@@ -30,7 +30,7 @@ return [
     'acl'     => true,
   ],
   'mail'                 => [
-    'service'    => 'gmail', # gmail, surenotify,smtp
+    'service'    => 'smtp', # gmail, surenotify,smtp
     'api_key'    => env('MAIL_API_KEY'),
     'api_domain' => env('MAIL_API_DOMAIN'),
     'test_mail'  => env('MAIL_TEST_MAIL', 'wasalearn@gmail.com'),

@@ -364,7 +364,7 @@ class ShopHelper
     $has_count_check = self::checkShopOrderHasProductCount($shop_order);
     if ($has_count_check) {
       $products_price      = self::getOrderProductsAmount($shop_order->shop_order_shop_products);
-      $campaign_deduct     = self::getDateCampaignDeduct($shop_order->user, $shop_order->created_at, $products_price, $discount_code);
+      $campaign_deduct     = self::getDateCampaignDeduct($shop_order->user, $shop_order->created_at, $products_price, $discount_code, $shop_order);
       $invite_no_deduct    = self::getInviteNoDeduct($products_price, $invite_no, $shop_order->user, [$shop_order->id]);
       $bonus_points_deduct = self::getBonusPointsDeduct($bonus_points, $products_price, $campaign_deduct, $invite_no_deduct);
       $freight             = self::getFreightAfterDeduct($shop_order->order_type, $products_price, $campaign_deduct, $invite_no_deduct);
@@ -420,12 +420,13 @@ class ShopHelper
     $user,
     $datetime,
     $products_price,
-    $discount_code
+    $discount_code,
+    $shop_order = null
   ) {
     $campaign_deduct = 0;
     if ($discount_code) {
-      $today_dicount_decode_campaign = self::getAvailableShopCampaign('discount_code', $user->id, $datetime, $discount_code);
-      $campaign_deduct               = self::getShopCampaignDeductFromShopCampaign($products_price, $today_dicount_decode_campaign);
+      $today_dicount_decode_campaign = self::getAvailableShopCampaign('discount_code', $user->id, $datetime, $discount_code, $shop_order);
+      $campaign_deduct = self::getShopCampaignDeductFromShopCampaign($products_price, $today_dicount_decode_campaign);
       // if ($today_dicount_decode_campaign) {
       //   if ($products_price >= $today_dicount_decode_campaign->full_amount) {
       //     if ($today_dicount_decode_campaign->discount_percent) {
@@ -836,7 +837,7 @@ class ShopHelper
     }
   }
 
-  public static function getAvailableShopCampaign($type, $user_id, $date = null, $discount_code = null)
+  public static function getAvailableShopCampaign($type, $user_id, $date = null, $discount_code = null, $shop_order = null)
   {
     $snap = ShopCampaign::where('type', $type)
       ->where('is_active', 1)
@@ -867,9 +868,12 @@ class ShopHelper
         }
       }
       if ($shop_campaign->condition == 'first-purchase') {
-        $shop_order = ShopOrder::where('user_id', $user_id)
-          ->whereIn('pay_status', ['paid', 'waiting'])
-          ->first();
+        $snap = ShopOrder::where('user_id', $user_id)
+          ->whereIn('pay_status', ['paid', 'waiting']);
+        if ($shop_order) {
+          $snap = $snap->whereNotIn('id', [$shop_order->id]);
+        }
+        $shop_order = $snap->first();
         if ($shop_order) {
           return null;
         }

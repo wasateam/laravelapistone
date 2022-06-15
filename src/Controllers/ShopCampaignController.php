@@ -72,6 +72,7 @@ class ShopCampaignController extends Controller
   ];
   public $search_fields = [
     'name',
+    'discount_code',
   ];
   public $filter_fields = [
     'is_active',

@@ -426,7 +426,7 @@ class ShopHelper
     $campaign_deduct = 0;
     if ($discount_code) {
       $today_dicount_decode_campaign = self::getAvailableShopCampaign('discount_code', $user->id, $datetime, $discount_code, $shop_order);
-      $campaign_deduct = self::getShopCampaignDeductFromShopCampaign($products_price, $today_dicount_decode_campaign);
+      $campaign_deduct               = self::getShopCampaignDeductFromShopCampaign($products_price, $today_dicount_decode_campaign);
       // if ($today_dicount_decode_campaign) {
       //   if ($products_price >= $today_dicount_decode_campaign->full_amount) {
       //     if ($today_dicount_decode_campaign->discount_percent) {
@@ -1281,6 +1281,10 @@ class ShopHelper
       }
       // self::updateShopCartProductPrice($cart_product);
       // $cart_product = self::checkProductStockEnough($cart_product);
+      $check_onshelf = self::checkCartProductOnShelf($cart_product);
+      if (!$check_onshelf) {
+        continue;
+      }
       if ($cart_product) {
         $_filtered_cart_products[] = $cart_product;
       }
@@ -1289,6 +1293,17 @@ class ShopHelper
       throw new \Wasateam\Laravelapistone\Exceptions\GeneralException('not cart products or no stock.');
     }
     return $_filtered_cart_products;
+  }
+
+  public static function checkCartProductOnShelf($shop_cart_product)
+  {
+    if (!$shop_cart_product->shop_product) {
+      return 0;
+    }
+    if (!$shop_cart_product->shop_product->is_on_shelf) {
+      return 0;
+    }
+    return 1;
   }
 
   public static function updateShopCartProductPrice($shop_cart_product)

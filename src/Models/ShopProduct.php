@@ -108,6 +108,20 @@ class ShopProduct extends Model
     return $this->belongsToMany(ShopCampaign::class, 'shop_product_shop_campaign', 'shop_product_id', 'shop_campaign_id');
   }
 
+  public function getIsOnShelfAttribute()
+  {
+    if (!$this->is_active) {
+      return 0;
+    }
+    if ($this->on_time && $this->on_time >= \Carbon\Carbon::now()) {
+      return 0;
+    }
+    if ($this->end_time && $this->end_time <= \Carbon\Carbon::now()) {
+      return 0;
+    }
+    return 1;
+  }
+
   public function scopeOnshelf($query)
   {
     return $query

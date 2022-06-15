@@ -1283,6 +1283,7 @@ class ShopHelper
       // $cart_product = self::checkProductStockEnough($cart_product);
       $check_onshelf = self::checkCartProductOnShelf($cart_product);
       if (!$check_onshelf) {
+        $cart_product->delete();
         continue;
       }
       if ($cart_product) {

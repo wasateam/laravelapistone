@@ -302,4 +302,5 @@ return [
   'showcase'             => true,
   'xc_billing_statement' => true,
   'user_location'        => true,
+  'app_version'          => true,
 ];

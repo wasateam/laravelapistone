@@ -271,4 +271,5 @@ return [
   ],
   'showcase'            => true,
   'user_location'       => true,
+  'app_version'         => true,
 ];

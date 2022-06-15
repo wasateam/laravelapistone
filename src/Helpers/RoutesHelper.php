@@ -11,6 +11,7 @@ use Wasateam\Laravelapistone\Controllers\AdminScopeController;
 use Wasateam\Laravelapistone\Controllers\AppController;
 use Wasateam\Laravelapistone\Controllers\AppointmentController;
 use Wasateam\Laravelapistone\Controllers\AppRoleController;
+use Wasateam\Laravelapistone\Controllers\AppVersionController;
 use Wasateam\Laravelapistone\Controllers\AreaController;
 use Wasateam\Laravelapistone\Controllers\AreaSectionController;
 use Wasateam\Laravelapistone\Controllers\AuthController;
@@ -731,6 +732,14 @@ class RoutesHelper
       Route::patch('ez_about_us', [EzAboutUsController::class, 'update']);
     }
 
+    # App Version
+    if (config('stone.app_version')) {
+      Route::get('app_version_min_android', [AppVersionController::class, 'show_app_version_min_android']);
+      Route::patch('app_version_min_android', [AppVersionController::class, 'update_app_version_min_android']);
+      Route::get('app_version_min_ios', [AppVersionController::class, 'show_app_version_min_ios']);
+      Route::patch('app_version_min_ios', [AppVersionController::class, 'update_app_version_min_ios']);
+    }
+
     # Web Log
     if (config('stone.web_log')) {
       Route::resource('web_log', WebLogController::class)->only([
@@ -1244,6 +1253,12 @@ class RoutesHelper
       Route::get('privacy', [PrivacyController::class, 'show']);
       Route::get('terms', [TermsController::class, 'show']);
       Route::get('ez_about_us', [EzAboutUsController::class, 'show']);
+    }
+
+    # App Version
+    if (config('stone.app_version')) {
+      Route::get('app_version_min_android', [AppVersionController::class, 'show_app_version_min_android']);
+      Route::get('app_version_min_ios', [AppVersionController::class, 'show_app_version_min_ios']);
     }
 
     # Ecpay
